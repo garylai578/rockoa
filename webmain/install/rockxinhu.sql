@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : 本地
-Source Server Version : 50540
+Source Server Version : 50610
 Source Host           : localhost:3306
 Source Database       : rockxinhu
 
 Target Server Type    : MYSQL
-Target Server Version : 50540
+Target Server Version : 50610
 File Encoding         : 65001
 
-Date: 2016-07-01 18:05:35
+Date: 2016-07-04 19:50:08
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,7 +26,6 @@ CREATE TABLE `xinhu_admin` (
   `name` varchar(50) DEFAULT NULL,
   `pass` varchar(100) DEFAULT NULL,
   `loginci` smallint(6) DEFAULT '0' COMMENT '登录次数',
-  `lastdt` datetime DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1' COMMENT '是否启用',
   `type` tinyint(1) DEFAULT '0' COMMENT '0普通1管理员',
   `sex` varchar(10) DEFAULT NULL COMMENT '性别',
@@ -38,25 +37,26 @@ CREATE TABLE `xinhu_admin` (
   `superman` varchar(20) DEFAULT NULL COMMENT '上级主管',
   `ranking` varchar(255) DEFAULT NULL COMMENT '岗位',
   `sort` smallint(6) DEFAULT '0' COMMENT '排序号',
-  `lastip` varchar(30) DEFAULT NULL,
   `deptpath` varchar(100) DEFAULT NULL,
   `superpath` varchar(100) DEFAULT NULL,
   `groupname` varchar(100) DEFAULT NULL,
   `mobile` varchar(100) DEFAULT NULL,
   `apptx` tinyint(1) DEFAULT '1' COMMENT '是否app提醒',
+  `workdate` date DEFAULT NULL COMMENT '入职时间',
+  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_admin
 -- ----------------------------
-INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '241', '2016-05-08 20:25:03', '1', '1', '男', null, 'upload/face/1.jpg', '2', '开发部', '5', '磐石', '项目主管', '0', '127.0.0.1', '[1],[2]', '[5]', null, null, '1');
-INSERT INTO `xinhu_admin` VALUES ('2', null, 'diaochan', '貂蝉', 'e10adc3949ba59abbe56e057f20f883e', '34', null, '1', '0', '女', null, 'upload/face/2.jpg', '3', '财务部', '5', '磐石', '财务总监', '0', null, '[1],[3]', '[5]', null, null, '1');
-INSERT INTO `xinhu_admin` VALUES ('3', null, 'xiaoqiao', '小乔', 'e10adc3949ba59abbe56e057f20f883e', '25', null, '1', '0', '女', null, 'upload/face/3.jpg', '3', '财务部', '2', '貂蝉', '出纳', '0', null, '[1],[3]', '[5],[2]', null, null, '1');
-INSERT INTO `xinhu_admin` VALUES ('4', null, 'daqiao', '大乔', 'e10adc3949ba59abbe56e057f20f883e', '4', null, '1', '0', '女', null, 'upload/face/4.jpg', '4', '行政人事部', '5', '磐石', '人事主管', '0', null, '[1],[4]', '[5]', null, null, '1');
-INSERT INTO `xinhu_admin` VALUES ('5', null, 'rock', '磐石', 'e10adc3949ba59abbe56e057f20f883e', '33', null, '1', '0', '男', null, 'upload/face/5.jpg', '5', '管理层', null, null, '董事长', '0', null, '[1],[5]', null, null, null, '1');
-INSERT INTO `xinhu_admin` VALUES ('6', null, 'zhangfei', '张飞', 'e10adc3949ba59abbe56e057f20f883e', '5', null, '1', '0', '男', null, 'upload/face/6.jpg', '2', '开发部', '1', '管理员', '程序员', '100', null, '[1],[2]', '[5],[1]', null, null, '1');
-INSERT INTO `xinhu_admin` VALUES ('7', null, 'zhaozl', '赵子龙', 'e10adc3949ba59abbe56e057f20f883e', '4', null, '1', '0', '男', null, 'upload/face/7.jpg', '2', '开发部', '1', '管理员', '高级程序员', '100', null, '[1],[2]', '[5],[1]', null, null, '1');
+INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '265', '1', '1', '男', '0592-1234567', 'upload/face/1.jpg', '2', '开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, null, '1', '2016-07-01', 'xinhu@rockoa.com');
+INSERT INTO `xinhu_admin` VALUES ('2', null, 'diaochan', '貂蝉', 'e10adc3949ba59abbe56e057f20f883e', '36', '1', '0', '女', null, 'upload/face/2.jpg', '3', '财务部', '5', '磐石', '财务总监', '0', '[1],[3]', '[5]', null, null, '1', null, null);
+INSERT INTO `xinhu_admin` VALUES ('3', null, 'xiaoqiao', '小乔', 'e10adc3949ba59abbe56e057f20f883e', '31', '1', '0', '女', null, 'upload/face/3.jpg', '3', '财务部', '2', '貂蝉', '出纳', '0', '[1],[3]', '[5],[2]', null, null, '1', null, null);
+INSERT INTO `xinhu_admin` VALUES ('4', null, 'daqiao', '大乔', 'e10adc3949ba59abbe56e057f20f883e', '4', '1', '0', '女', null, 'upload/face/4.jpg', '4', '行政人事部', '5', '磐石', '人事主管', '0', '[1],[4]', '[5]', null, null, '1', null, null);
+INSERT INTO `xinhu_admin` VALUES ('5', null, 'rock', '磐石', 'e10adc3949ba59abbe56e057f20f883e', '33', '1', '0', '男', null, 'upload/face/5.jpg', '5', '管理层', null, null, '董事长', '0', '[1],[5]', null, null, null, '1', null, null);
+INSERT INTO `xinhu_admin` VALUES ('6', null, 'zhangfei', '张飞', 'e10adc3949ba59abbe56e057f20f883e', '5', '1', '0', '男', null, 'upload/face/6.jpg', '2', '开发部', '1', '管理员', '程序员', '100', '[1],[2]', '[5],[1]', null, null, '1', null, null);
+INSERT INTO `xinhu_admin` VALUES ('7', null, 'zhaozl', '赵子龙', 'e10adc3949ba59abbe56e057f20f883e', '4', '1', '0', '男', null, 'upload/face/7.jpg', '2', '开发部', '1', '管理员', '高级程序员', '100', '[1],[2]', '[5],[1]', null, null, '1', null, null);
 
 -- ----------------------------
 -- Table structure for `xinhu_daily`
@@ -143,7 +143,7 @@ CREATE TABLE `xinhu_file` (
   `mid` int(11) DEFAULT '0' COMMENT '管理id',
   `downci` int(11) DEFAULT '0' COMMENT '下载次数',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_file
@@ -175,6 +175,66 @@ INSERT INTO `xinhu_file` VALUES ('44', '1', 'daiban.png', null, 'png', '3989', '
 INSERT INTO `xinhu_file` VALUES ('45', '1', 'install.png', null, 'png', '26843', '26.21 KB', 'upload/2016-06/24_21052436.png', 'upload/2016-06/24_21052436_s.png', '1', '管理员', '2016-06-24 21:05:24', '127.0.0.1', 'Firefox', 'im_mess', '90', '0');
 INSERT INTO `xinhu_file` VALUES ('47', '1', '截图.png', null, 'png', '19748', '19.29 KB', 'upload/2016-06/24_22292262.png', 'upload/2016-06/24_22292262_s.png', '3', '小乔', '2016-06-24 22:29:22', '192.168.1.103', 'Chrome', 'im_mess', '112', '0');
 INSERT INTO `xinhu_file` VALUES ('50', '1', 'wx.png', null, 'png', '57808', '56.45 KB', 'upload/2016-06/27_09292533.png', 'upload/2016-06/27_09292533_s.png', '1', '管理员', '2016-06-27 09:29:23', '192.168.1.126', 'Chrome', null, '0', '0');
+INSERT INTO `xinhu_file` VALUES ('68', '1', 'daiban.png', null, 'png', '3989', '3.90 KB', 'upload/2016-07/02_19011868.png', 'upload/2016-07/02_19011868.png', '1', '管理员', '2016-07-02 19:01:18', '192.168.1.103', 'Chrome', 'im_mess', '116', '0');
+
+-- ----------------------------
+-- Table structure for `xinhu_flow_bill`
+-- ----------------------------
+DROP TABLE IF EXISTS `xinhu_flow_bill`;
+CREATE TABLE `xinhu_flow_bill` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sericnum` varchar(50) DEFAULT NULL COMMENT '单号',
+  `table` varchar(50) DEFAULT NULL COMMENT '对应表',
+  `mid` int(11) DEFAULT NULL COMMENT '主id',
+  `modeid` smallint(6) DEFAULT '0' COMMENT '模块id',
+  `modename` varchar(20) DEFAULT NULL COMMENT '模块名称',
+  `uid` smallint(6) DEFAULT NULL COMMENT '用户id',
+  `optdt` datetime DEFAULT NULL,
+  `optid` smallint(6) DEFAULT '0',
+  `optname` varchar(20) DEFAULT NULL COMMENT '操作人',
+  `allcheckid` varchar(200) DEFAULT NULL COMMENT '@所有审核人',
+  `isdel` tinyint(4) DEFAULT '0' COMMENT '是否删除',
+  `nstatus` tinyint(1) DEFAULT '0',
+  `applydt` date DEFAULT NULL COMMENT '申请日期',
+  `nstatustext` varchar(100) DEFAULT NULL COMMENT '当前状态',
+  `status` tinyint(1) DEFAULT '0',
+  `nowcheckid` varchar(100) DEFAULT NULL COMMENT '当前审核人',
+  `nowcheckname` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `table` (`table`,`mid`),
+  KEY `sericnum` (`sericnum`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of xinhu_flow_bill
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `xinhu_flow_course`
+-- ----------------------------
+DROP TABLE IF EXISTS `xinhu_flow_course`;
+CREATE TABLE `xinhu_flow_course` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `setid` smallint(6) DEFAULT '0',
+  `name` varchar(20) DEFAULT NULL,
+  `num` varchar(20) DEFAULT NULL,
+  `checktype` varchar(20) DEFAULT NULL,
+  `checktypeid` varchar(20) DEFAULT NULL,
+  `checktypename` varchar(20) DEFAULT NULL,
+  `sort` smallint(6) DEFAULT '0',
+  `where` varchar(100) DEFAULT NULL,
+  `explain` varchar(100) DEFAULT NULL,
+  `optdt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of xinhu_flow_course
+-- ----------------------------
+INSERT INTO `xinhu_flow_course` VALUES ('1', '5', '上级审核', null, 'super', null, null, '0', null, null, '2016-07-02 21:05:00');
+INSERT INTO `xinhu_flow_course` VALUES ('2', '5', '人事审核', null, 'rank', null, '人事经理', '0', null, null, '2016-07-02 22:24:58');
+INSERT INTO `xinhu_flow_course` VALUES ('3', '6', '上级审核', null, 'super', null, null, '0', null, null, '2016-07-02 22:25:29');
+INSERT INTO `xinhu_flow_course` VALUES ('4', '5', '总经理审核', null, 'auto', null, '总经理', '0', 'totals>24', '超3天审核', '2016-07-02 23:07:51');
 
 -- ----------------------------
 -- Table structure for `xinhu_flow_element`
@@ -198,7 +258,7 @@ CREATE TABLE `xinhu_flow_element` (
   `lattr` varchar(100) DEFAULT NULL COMMENT '列属性',
   `width` varchar(10) DEFAULT NULL COMMENT '列宽',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_flow_element
@@ -232,6 +292,12 @@ INSERT INTO `xinhu_flow_element` VALUES ('26', '4', '创建人', 'optname', 'tex
 INSERT INTO `xinhu_flow_element` VALUES ('27', '4', '创建时间', 'optdt', 'text', '12', null, '0', null, '0', '1', null, '0', '0', null, null);
 INSERT INTO `xinhu_flow_element` VALUES ('28', '4', '开始时间', 'startdt', 'datetime', '8', '{now}', '1', null, '1', '1', null, '0', '0', null, null);
 INSERT INTO `xinhu_flow_element` VALUES ('29', '4', '截止时间', 'enddt', 'datetime', '9', null, '0', null, '1', '1', null, '0', '0', null, null);
+INSERT INTO `xinhu_flow_element` VALUES ('30', '5', '请假', 'kind', 'fixed', '0', '请假', '1', null, '1', '1', null, '0', '0', null, null);
+INSERT INTO `xinhu_flow_element` VALUES ('31', '5', '请假类型', 'qjkind', 'rockcombo', '0', null, '1', 'kqqjkind', '1', '1', null, '0', '0', null, null);
+INSERT INTO `xinhu_flow_element` VALUES ('32', '5', '开始时间', 'stime', 'datetime', '0', null, '1', null, '1', '1', null, '0', '0', null, null);
+INSERT INTO `xinhu_flow_element` VALUES ('33', '5', '截止时间', 'etime', 'datetime', '0', null, '1', null, '1', '1', null, '0', '0', null, null);
+INSERT INTO `xinhu_flow_element` VALUES ('34', '5', '时间(小时)', 'totals', 'number', '0', '0', '1', null, '1', '1', null, '0', '0', null, null);
+INSERT INTO `xinhu_flow_element` VALUES ('35', '5', '说明', 'explain', 'textarea', '0', null, '1', null, '1', '1', null, '0', '0', null, null);
 
 -- ----------------------------
 -- Table structure for `xinhu_flow_extent`
@@ -247,7 +313,7 @@ CREATE TABLE `xinhu_flow_extent` (
   `explain` varchar(500) DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_flow_extent
@@ -262,6 +328,8 @@ INSERT INTO `xinhu_flow_extent` VALUES ('10', '全体人员', 'all', '1', '2', '
 INSERT INTO `xinhu_flow_extent` VALUES ('11', '全体人员', 'all', '2', '2', 'b3B0aWQ9e3VpZH0gYW5kIHN0YXRlPTA:', '我创建的', '1');
 INSERT INTO `xinhu_flow_extent` VALUES ('12', '全体人员', 'all', '4', '1', null, null, '1');
 INSERT INTO `xinhu_flow_extent` VALUES ('13', '全体人员', 'all', '4', '0', 'YWxs', '任何人都可以看到任务', '1');
+INSERT INTO `xinhu_flow_extent` VALUES ('14', '全体人员', 'all', '5', '1', null, null, '1');
+INSERT INTO `xinhu_flow_extent` VALUES ('15', '全体人员', 'all', '6', '1', null, null, '1');
 
 -- ----------------------------
 -- Table structure for `xinhu_flow_log`
@@ -382,7 +450,7 @@ CREATE TABLE `xinhu_flow_set` (
   `status` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`,`num`),
   KEY `num` (`num`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_flow_set
@@ -391,6 +459,8 @@ INSERT INTO `xinhu_flow_set` VALUES ('1', '通知公告', 'gong', '0', 'infor', 
 INSERT INTO `xinhu_flow_set` VALUES ('2', '会议', 'meet', '0', 'meet', null, '[{hyname}]{title},{startdt}→{enddt}', '行政', '1', '1', 'XB-Ymd-', '0', 'all', '全体人员', '2016-06-17 21:21:01', '1');
 INSERT INTO `xinhu_flow_set` VALUES ('3', '工作日报', 'daily', '0', 'daily', null, '[{optname}]{content}', '行政', '1', '1', 'XC-Ymd-', '0', 'all', '全体人员', '2016-06-17 21:20:27', '1');
 INSERT INTO `xinhu_flow_set` VALUES ('4', '任务', 'work', '0', 'work', null, '[{type}]{title},分配给:{dist}', '工作', '1', '1', 'WO-Ymd-', '0', 'all', '全体人员', '2016-06-28 21:42:47', '1');
+INSERT INTO `xinhu_flow_set` VALUES ('5', '请假条', 'leave', '10', 'kqinfo', 'kind=[F]请假[F]', '[{qjkind}]{stime}→{stime}共{totals}小时,{explain}', '考勤', '1', '1', 'KA-Ymd-', '1', 'all', '全体人员', '2016-07-02 22:13:58', '0');
+INSERT INTO `xinhu_flow_set` VALUES ('6', '加班单', 'jiaban', '11', 'kqinfo', 'kind=[F]加班[F]', '{stime}→{stime}共加班{totals}小时,{explain}', '考勤', '1', '1', 'KB-Ymd-', '1', 'all', '全体人员', '2016-07-02 22:14:08', '0');
 
 -- ----------------------------
 -- Table structure for `xinhu_group`
@@ -434,7 +504,7 @@ CREATE TABLE `xinhu_im_group` (
   `explain` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `num` (`num`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_im_group
@@ -448,6 +518,7 @@ INSERT INTO `xinhu_im_group` VALUES ('7', '工作日报', '2', '0', null, null, 
 INSERT INTO `xinhu_im_group` VALUES ('12', '任务', '2', '8', '1', '管理员', '2015-09-10 13:38:07', 'images/work.png', 'work', null, null, 'auto', '1', '0', '0', null);
 INSERT INTO `xinhu_im_group` VALUES ('13', '万年历', '2', '10', null, null, null, 'images/calendar.png', 'calendar', null, null, 'buin', '1', '0', '0', null);
 INSERT INTO `xinhu_im_group` VALUES ('14', '呵呵', '1', '0', '1', '管理员', '2016-06-30 21:29:52', null, null, null, null, null, '1', '0', '0', '嗯嗯');
+INSERT INTO `xinhu_im_group` VALUES ('15', '流程', '2', '0', null, null, null, 'images/flow.png', 'flow', null, null, 'auto', '0', '0', '0', null);
 
 -- ----------------------------
 -- Table structure for `xinhu_im_groupuser`
@@ -494,29 +565,34 @@ CREATE TABLE `xinhu_im_history` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `type` (`type`,`receid`,`uid`),
   KEY `optdt` (`optdt`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_im_history
 -- ----------------------------
-INSERT INTO `xinhu_im_history` VALUES ('28', 'user', '1', '2', '1', '2016-06-24 19:33:27', 'W!WbvueJhyA0NC45MyBLQl0:', '0');
-INSERT INTO `xinhu_im_history` VALUES ('4', 'group', '2', '2', '3', '2016-06-24 22:29:20', 'W!WbvueJhyAxOS4yOSBLQl0:', '8');
-INSERT INTO `xinhu_im_history` VALUES ('5', 'group', '2', '5', '3', '2016-06-24 22:29:20', 'W!WbvueJhyAxOS4yOSBLQl0:', '0');
-INSERT INTO `xinhu_im_history` VALUES ('6', 'group', '2', '6', '3', '2016-06-24 22:29:20', 'W!WbvueJhyAxOS4yOSBLQl0:', '0');
-INSERT INTO `xinhu_im_history` VALUES ('7', 'group', '2', '7', '3', '2016-06-24 22:29:20', 'W!WbvueJhyAxOS4yOSBLQl0:', '14');
-INSERT INTO `xinhu_im_history` VALUES ('8', 'group', '2', '3', '3', '2016-06-24 22:29:20', 'W!WbvueJhyAxOS4yOSBLQl0:', '0');
-INSERT INTO `xinhu_im_history` VALUES ('9', 'group', '2', '4', '3', '2016-06-24 22:29:20', 'W!WbvueJhyAxOS4yOSBLQl0:', '0');
+INSERT INTO `xinhu_im_history` VALUES ('28', 'user', '1', '2', '1', '2016-07-03 15:34:53', 'MjE:', '2');
+INSERT INTO `xinhu_im_history` VALUES ('4', 'group', '2', '2', '1', '2016-07-02 19:42:37', '6LCU6LCU', '0');
+INSERT INTO `xinhu_im_history` VALUES ('5', 'group', '2', '5', '1', '2016-07-02 19:42:37', '6LCU6LCU', '9');
+INSERT INTO `xinhu_im_history` VALUES ('6', 'group', '2', '6', '1', '2016-07-02 19:42:37', '6LCU6LCU', '9');
+INSERT INTO `xinhu_im_history` VALUES ('7', 'group', '2', '7', '1', '2016-07-02 19:42:37', '6LCU6LCU', '23');
+INSERT INTO `xinhu_im_history` VALUES ('8', 'group', '2', '3', '1', '2016-07-02 19:42:37', '6LCU6LCU', '0');
+INSERT INTO `xinhu_im_history` VALUES ('9', 'group', '2', '4', '1', '2016-07-02 19:42:37', '6LCU6LCU', '9');
 INSERT INTO `xinhu_im_history` VALUES ('10', 'group', '5', '7', '1', '2016-06-24 12:58:37', 'W!WPkeWRhl1b5bC05bCsXVvlj5HmgJJd', '6');
 INSERT INTO `xinhu_im_history` VALUES ('12', 'group', '5', '6', '1', '2016-06-24 12:58:37', 'W!WPkeWRhl1b5bC05bCsXVvlj5HmgJJd', '0');
 INSERT INTO `xinhu_im_history` VALUES ('14', 'user', '1', '5', '1', '2016-06-22 15:17:16', 'W!WwtOWwrF0:', '0');
 INSERT INTO `xinhu_im_history` VALUES ('16', 'user', '1', '6', '1', '2016-06-22 15:18:57', 'W!Wkp!WTrV0:', '0');
 INSERT INTO `xinhu_im_history` VALUES ('18', 'user', '1', '7', '1', '2016-06-22 15:17:50', 'W!iJsl0:', '2');
-INSERT INTO `xinhu_im_history` VALUES ('20', 'user', '1', '3', '1', '2016-07-01 12:43:57', '5ZiO5ZiO', '1');
+INSERT INTO `xinhu_im_history` VALUES ('20', 'user', '1', '3', '1', '2016-07-02 19:19:54', '5ZOI5ZOI', '0');
 INSERT INTO `xinhu_im_history` VALUES ('32', 'user', '1', '4', '1', '2016-06-22 15:18:14', '6Z2W', '0');
 INSERT INTO `xinhu_im_history` VALUES ('37', 'user', '3', '4', '4', '2016-06-24 22:10:11', '6YKj5piv5piv', '0');
 INSERT INTO `xinhu_im_history` VALUES ('38', 'user', '4', '3', '4', '2016-06-24 22:10:11', '6YKj5piv5piv', '0');
-INSERT INTO `xinhu_im_history` VALUES ('41', 'user', '3', '1', '1', '2016-07-01 12:43:57', '5ZiO5ZiO', '0');
+INSERT INTO `xinhu_im_history` VALUES ('42', 'group', '2', '1', '1', '2016-07-02 19:42:37', '6LCU6LCU', '0');
 INSERT INTO `xinhu_im_history` VALUES ('40', 'group', '14', '5', '1', '2016-07-01 11:15:29', '5Zev5Zev', '2');
+INSERT INTO `xinhu_im_history` VALUES ('45', 'user', '2', '3', '3', '2016-07-02 19:46:29', 'MTI:', '0');
+INSERT INTO `xinhu_im_history` VALUES ('44', 'user', '3', '2', '3', '2016-07-02 19:46:29', 'MTI:', '0');
+INSERT INTO `xinhu_im_history` VALUES ('43', 'user', '2', '1', '1', '2016-07-03 15:34:53', 'MjE:', '0');
+INSERT INTO `xinhu_im_history` VALUES ('47', 'user', '1', '1', '1', '2016-07-04 19:30:00', 'MTI:', '0');
+INSERT INTO `xinhu_im_history` VALUES ('46', 'user', '3', '1', '1', '2016-07-02 19:19:54', '5ZOI5ZOI', '0');
 
 -- ----------------------------
 -- Table structure for `xinhu_im_menu`
@@ -532,7 +608,7 @@ CREATE TABLE `xinhu_im_menu` (
   `url` varchar(50) DEFAULT NULL COMMENT '对应地址',
   `num` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_im_menu
@@ -559,6 +635,14 @@ INSERT INTO `xinhu_im_menu` VALUES ('19', '1', '0', '＋建议反馈', '1', '1',
 INSERT INTO `xinhu_im_menu` VALUES ('22', '12', '6', '我创建的', '2', '0', 'wcj', null);
 INSERT INTO `xinhu_im_menu` VALUES ('20', '12', '6', '未完成', '0', '0', 'wwc', null);
 INSERT INTO `xinhu_im_menu` VALUES ('21', '12', '6', '已完成', '1', '0', 'ywc', null);
+INSERT INTO `xinhu_im_menu` VALUES ('23', '15', '0', '流程申请', '3', '0', null, null);
+INSERT INTO `xinhu_im_menu` VALUES ('24', '15', '23', '请假条', '0', '1', 'add_leave', null);
+INSERT INTO `xinhu_im_menu` VALUES ('25', '15', '23', '加班单', '0', '1', 'add_jiaban', null);
+INSERT INTO `xinhu_im_menu` VALUES ('26', '15', '0', '我的申请', '0', '0', null, 'myapp');
+INSERT INTO `xinhu_im_menu` VALUES ('27', '15', '0', '流程单据', '0', '0', null, null);
+INSERT INTO `xinhu_im_menu` VALUES ('28', '15', '26', '我申请的', '0', '0', null, 'myapply');
+INSERT INTO `xinhu_im_menu` VALUES ('29', '15', '26', '审核未通过', '0', '0', null, 'mywtg');
+INSERT INTO `xinhu_im_menu` VALUES ('30', '15', '26', '已完成', '0', '0', null, 'myywc');
 
 -- ----------------------------
 -- Table structure for `xinhu_im_mess`
@@ -577,7 +661,7 @@ CREATE TABLE `xinhu_im_mess` (
   `fileid` int(11) NOT NULL DEFAULT '0' COMMENT '对应文件Id',
   PRIMARY KEY (`id`),
   KEY `optdt` (`optdt`,`receid`)
-) ENGINE=MyISAM AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=161 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_im_mess
@@ -599,13 +683,12 @@ INSERT INTO `xinhu_im_mess` VALUES ('14', '2016-06-14 22:19:59', '0', 'MTI:', '1
 INSERT INTO `xinhu_im_mess` VALUES ('15', '2016-06-14 22:20:03', '1', 'MjE:', '1', '3', '1,3', 'user', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('16', '2016-06-14 23:12:01', '1', '5om!5L2g5ZWK', '2', '1', '1', 'user', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('17', '2016-06-15 11:13:52', '1', 'MTI:', '1', '2', '1', 'user', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('18', '2016-06-15 11:14:05', '1', 'MTIxMg::', '1', '1', '1,1', 'user', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('19', '2016-06-15 11:16:26', '1', 'MTIxMjEy', '1', '1', '1,1', 'user', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('20', '2016-06-15 11:20:41', '1', 'W!iJsl0:', '1', '1', '1,1', 'user', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('21', '2016-06-15 18:57:43', '1', 'MjM:', '1', '1', '1,1', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('157', '2016-07-03 12:20:14', '0', 'MTI:', '1', '2', '1,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('156', '2016-07-03 11:53:55', '1', 'dw::', '1', '1', '1,1', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('155', '2016-07-03 11:52:55', '1', 'W!W3puWTvOWTvF0:', '1', '1', '1,1', 'user', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('22', '2016-06-15 19:07:11', '1', '5Zyo5bmy5Zib5ZGi77yf', '1', '2', '2,5,6,7,3,4', 'group', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('23', '2016-06-16 09:00:06', '1', 'd2U:', '1', '1', '1,1', 'user', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('24', '2016-06-17 14:43:53', '1', 'W!WbvueJhywxLjkyIEtCXQ::', '1', '1', '1,1', 'user', null, '36');
+INSERT INTO `xinhu_im_mess` VALUES ('158', '2016-07-03 15:34:53', '0', 'MjE:', '1', '2', '1,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('159', '2016-07-03 15:34:55', '1', 'MTI:', '1', '1', '1,1', 'user', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('25', '2016-06-17 14:53:22', '1', 'W!WPkeWRhl0:', '1', '2', '2,5,6,7,3,4', 'group', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('26', '2016-06-17 14:54:05', '1', 'aGFoYWhhaGFoIA::', '5', '2', '2,5,6,7,3,4', 'group', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('27', '2016-06-17 14:54:05', '1', 'aGFoYWhhaGFoIA::', '5', '2', '2,5,6,7,3,4', 'group', null, '0');
@@ -696,7 +779,46 @@ INSERT INTO `xinhu_im_mess` VALUES ('111', '2016-06-24 22:11:41', '1', '5ZOI5ZOI
 INSERT INTO `xinhu_im_mess` VALUES ('112', '2016-06-24 22:29:20', '1', 'W!WbvueJhyAxOS4yOSBLQl0:', '3', '2', '2,5,6,7,3,4', 'group', null, '47');
 INSERT INTO `xinhu_im_mess` VALUES ('113', '2016-06-30 21:30:28', '1', '5L2g5aW9', '1', '14', '1,5', 'group', null, '0');
 INSERT INTO `xinhu_im_mess` VALUES ('114', '2016-07-01 11:15:29', '1', '5Zev5Zev', '1', '14', '1,5', 'group', null, '0');
-INSERT INTO `xinhu_im_mess` VALUES ('115', '2016-07-01 12:43:57', '0', '5ZiO5ZiO', '1', '3', '1,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('115', '2016-07-01 12:43:57', '1', '5ZiO5ZiO', '1', '3', '1,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('116', '2016-07-02 19:01:18', '1', 'W!WbvueJhyAzLjkwIEtCXQ::', '1', '2', '1,2,5,6,7,3,4', 'group', null, '68');
+INSERT INTO `xinhu_im_mess` VALUES ('117', '2016-07-02 19:07:30', '1', 'aGVoZQ::', '1', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('118', '2016-07-02 19:14:50', '1', '6Zeu', '1', '2', '1,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('119', '2016-07-02 19:14:55', '1', '6Zeu', '2', '1', '2,1', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('120', '2016-07-02 19:16:43', '1', '5aSn5a625aW9', '1', '2', '1,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('121', '2016-07-02 19:16:52', '1', '6aKd', '1', '2', '1,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('122', '2016-07-02 19:17:29', '1', '6aKd', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('123', '2016-07-02 19:17:40', '1', '6Zeu', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('124', '2016-07-02 19:17:50', '1', '5ZOI5ZOI', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('125', '2016-07-02 19:17:52', '1', 'aGFoaGE:', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('126', '2016-07-02 19:18:25', '1', 'aGFo', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('127', '2016-07-02 19:19:08', '1', '5aSn5a625aW9', '3', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('128', '2016-07-02 19:19:48', '1', '5ZOI5ZOI', '3', '1', '3,1', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('129', '2016-07-02 19:19:54', '1', '5ZOI5ZOI', '1', '3', '1,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('130', '2016-07-02 19:20:28', '1', '5L2g5aW9', '1', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('131', '2016-07-02 19:20:34', '1', '6YeR6aKd6YeR6aKd6L!R', '2', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('132', '2016-07-02 19:23:44', '1', '6LCU6LCU', '2', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('133', '2016-07-02 19:25:32', '1', '6aKd5Li6', '2', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('134', '2016-07-02 19:28:04', '1', '6Zeu', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('135', '2016-07-02 19:34:11', '1', '6ICM', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('136', '2016-07-02 19:35:21', '1', '6LCU6LCU', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('137', '2016-07-02 19:35:26', '1', 'd3dldw::', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('138', '2016-07-02 19:37:11', '1', '6Zeu', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('139', '2016-07-02 19:37:18', '1', 'aGVlaA::', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('140', '2016-07-02 19:37:41', '1', '6aKd', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('141', '2016-07-02 19:37:44', '1', 'd2U:', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('142', '2016-07-02 19:38:28', '1', 'ZWU:', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('143', '2016-07-02 19:38:39', '1', 'ZWU:', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('144', '2016-07-02 19:39:19', '1', 'aGVoZQ::', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('145', '2016-07-02 19:39:23', '1', 'ZWU:', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('146', '2016-07-02 19:40:00', '1', 'ZQ::', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('147', '2016-07-02 19:40:03', '1', 'ZXc:', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('148', '2016-07-02 19:41:22', '1', 'ZQ::', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('149', '2016-07-02 19:42:29', '1', 'aGVoZQ::', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('150', '2016-07-02 19:42:34', '1', 'ZQ::', '2', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('151', '2016-07-02 19:42:37', '1', '6LCU6LCU', '1', '2', '1,2,5,6,7,3,4', 'group', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('152', '2016-07-02 19:46:26', '1', 'MTI:', '2', '3', '2,3', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('153', '2016-07-02 19:46:29', '1', 'MTI:', '3', '2', '3,2', 'user', null, '0');
+INSERT INTO `xinhu_im_mess` VALUES ('160', '2016-07-04 19:30:00', '1', 'MTI:', '1', '1', '1,1', 'user', null, '0');
 
 -- ----------------------------
 -- Table structure for `xinhu_im_messzt`
@@ -708,19 +830,19 @@ CREATE TABLE `xinhu_im_messzt` (
   `uid` int(11) DEFAULT NULL COMMENT '人员id',
   `gid` smallint(6) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=201 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=255 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_im_messzt
 -- ----------------------------
-INSERT INTO `xinhu_im_messzt` VALUES ('164', '68', '2', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('182', '110', '2', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('217', '127', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('216', '127', '5', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('198', '112', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('180', '91', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('114', '43', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('174', '69', '7', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('188', '111', '2', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('194', '112', '2', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('215', '127', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('212', '117', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('192', '111', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('168', '68', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('108', '41', '7', '2');
@@ -729,11 +851,11 @@ INSERT INTO `xinhu_im_messzt` VALUES ('186', '110', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('162', '67', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('120', '44', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('126', '50', '7', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('152', '66', '2', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('158', '67', '2', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('211', '117', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('210', '117', '5', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('132', '51', '7', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('176', '91', '2', '2');
-INSERT INTO `xinhu_im_messzt` VALUES ('169', '69', '2', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('209', '117', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('227', '131', '4', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('138', '52', '7', '2');
 INSERT INTO `xinhu_im_messzt` VALUES ('140', '57', '7', '5');
 INSERT INTO `xinhu_im_messzt` VALUES ('142', '59', '7', '5');
@@ -743,6 +865,34 @@ INSERT INTO `xinhu_im_messzt` VALUES ('148', '62', '7', '5');
 INSERT INTO `xinhu_im_messzt` VALUES ('199', '113', '5', '14');
 INSERT INTO `xinhu_im_messzt` VALUES ('150', '63', '7', '5');
 INSERT INTO `xinhu_im_messzt` VALUES ('200', '114', '5', '14');
+INSERT INTO `xinhu_im_messzt` VALUES ('239', '133', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('203', '116', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('204', '116', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('205', '116', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('206', '116', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('218', '127', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('245', '150', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('221', '130', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('222', '130', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('223', '130', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('224', '130', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('228', '131', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('229', '131', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('230', '131', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('233', '132', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('234', '132', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('235', '132', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('236', '132', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('240', '133', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('241', '133', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('242', '133', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('246', '150', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('247', '150', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('248', '150', '7', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('251', '151', '4', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('252', '151', '5', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('253', '151', '6', '2');
+INSERT INTO `xinhu_im_messzt` VALUES ('254', '151', '7', '2');
 
 -- ----------------------------
 -- Table structure for `xinhu_infor`
@@ -803,6 +953,28 @@ INSERT INTO `xinhu_items` VALUES ('6', 'fininfom', '3', null, '0', '市内交通
 INSERT INTO `xinhu_items` VALUES ('7', 'fininfom', '3', null, '0', '市内交通费', '2016-05-05', null, '200.00', '1', '厦门', '打了黑车啊，坑', '0', '2016-05-05 21:50:09', '1', '1');
 
 -- ----------------------------
+-- Table structure for `xinhu_kqinfo`
+-- ----------------------------
+DROP TABLE IF EXISTS `xinhu_kqinfo`;
+CREATE TABLE `xinhu_kqinfo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` smallint(6) DEFAULT '0',
+  `stime` datetime DEFAULT NULL,
+  `etime` datetime DEFAULT NULL,
+  `kind` varchar(10) DEFAULT NULL COMMENT '类型',
+  `qjkind` varchar(20) DEFAULT NULL COMMENT '请假类型',
+  `explain` varchar(200) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '0' COMMENT '状态',
+  `totals` decimal(6,1) DEFAULT '0.0' COMMENT '时间',
+  `optdt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of xinhu_kqinfo
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `xinhu_log`
 -- ----------------------------
 DROP TABLE IF EXISTS `xinhu_log`;
@@ -817,36 +989,11 @@ CREATE TABLE `xinhu_log` (
   `web` varchar(100) DEFAULT NULL COMMENT '浏览器',
   `device` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_log
 -- ----------------------------
-INSERT INTO `xinhu_log` VALUES ('1', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-06-28 21:24:57', '192.168.1.103', 'Chrome', '1466770353990');
-INSERT INTO `xinhu_log` VALUES ('2', 'pc登录', '1', '管理员', '[admin]登录成功', '2016-06-28 21:28:37', '127.0.0.1', 'Chrome', '1466779305269');
-INSERT INTO `xinhu_log` VALUES ('3', 'pc登录', '1', '管理员', '[admin]登录成功', '2016-06-29 09:06:00', '127.0.0.1', 'Chrome', '1465964276241');
-INSERT INTO `xinhu_log` VALUES ('4', 'reim登录', '5', '磐石', '[rock]登录成功', '2016-06-29 09:07:20', '192.168.1.126', 'Chrome', '1465961511150');
-INSERT INTO `xinhu_log` VALUES ('5', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-06-29 09:13:16', '192.168.1.126', 'Chrome', '1465961511150');
-INSERT INTO `xinhu_log` VALUES ('6', 'reim登录', '5', '磐石', '[rock]登录成功', '2016-06-29 09:13:53', '192.168.1.126', 'Chrome', '1465961511150');
-INSERT INTO `xinhu_log` VALUES ('7', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-06-29 09:33:30', '192.168.1.126', 'Chrome', '1465961511150');
-INSERT INTO `xinhu_log` VALUES ('8', 'reim登录', '2', '貂蝉', '[diaochan]登录成功', '2016-06-29 12:26:46', '192.168.1.126', 'Chrome', '1465961511150');
-INSERT INTO `xinhu_log` VALUES ('9', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-06-29 12:30:19', '192.168.1.176', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('10', 'pc登录', '1', '管理员', '[admin]登录成功', '2016-06-30 12:16:25', '127.0.0.1', 'Chrome', '1465964276241');
-INSERT INTO `xinhu_log` VALUES ('11', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-06-30 12:21:21', '192.168.1.126', 'Chrome', '1465961511150');
-INSERT INTO `xinhu_log` VALUES ('12', 'appandroid登录', '1', null, '[admin]密码不对', '2016-06-30 17:12:54', '192.168.1.176', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('13', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-06-30 17:13:03', '192.168.1.176', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('14', 'pc登录', '1', '管理员', '[admin]登录成功', '2016-06-30 19:23:15', '127.0.0.1', 'Chrome', '1466779305269');
-INSERT INTO `xinhu_log` VALUES ('15', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-06-30 19:23:23', '192.168.1.103', 'Chrome', '1466770353990');
-INSERT INTO `xinhu_log` VALUES ('16', 'reim登录', '0', null, '[zhangf]用户不存在', '2016-06-30 20:01:40', '192.168.1.103', 'Chrome', '1466770353990');
-INSERT INTO `xinhu_log` VALUES ('17', 'reim登录', '6', '张飞', '[zhangfei]登录成功', '2016-06-30 20:01:44', '192.168.1.103', 'Chrome', '1466770353990');
-INSERT INTO `xinhu_log` VALUES ('18', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-06-30 20:11:13', '127.0.0.1', 'Firefox', '1466772091327');
-INSERT INTO `xinhu_log` VALUES ('19', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-06-30 20:43:41', '192.168.1.100', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('20', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-06-30 21:32:13', '192.168.1.100', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('21', 'reim登录', '3', '小乔', '[xiaoqiao]登录成功', '2016-06-30 22:02:41', '192.168.1.103', 'Chrome', '1465732443257');
-INSERT INTO `xinhu_log` VALUES ('22', 'reim登录', '1', '管理员', '[admin]登录成功', '2016-07-01 09:36:01', '192.168.1.126', 'Chrome', '1467336712627');
-INSERT INTO `xinhu_log` VALUES ('23', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-07-01 09:40:10', '192.168.1.176', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('24', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-07-01 10:12:45', '192.168.1.176', 'Chrome', '867112020521204');
-INSERT INTO `xinhu_log` VALUES ('25', 'appandroid登录', '1', '管理员', '[admin]登录成功', '2016-07-01 11:14:04', '192.168.1.176', 'Chrome', '867112020521204');
 
 -- ----------------------------
 -- Table structure for `xinhu_logintoken`
@@ -866,34 +1013,11 @@ CREATE TABLE `xinhu_logintoken` (
   `online` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `token` (`token`,`cfrom`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_logintoken
 -- ----------------------------
-INSERT INTO `xinhu_logintoken` VALUES ('1', '1', '管理员', 'wap1tgul', '2016-06-28 21:24:57', '2016-06-28 23:13:40', 'reim', '1466770353990', '192.168.1.103', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('2', '1', '管理员', 'q835pxk0', '2016-06-28 21:28:37', '2016-06-28 21:28:37', 'pc', '1466779305269', '127.0.0.1', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('3', '1', '管理员', 'xcrjcigy', '2016-06-29 09:05:59', '2016-06-29 09:05:59', 'pc', '1465964276241', '127.0.0.1', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('4', '5', '磐石', 'l2gyq710', '2016-06-29 09:07:18', '2016-06-29 09:07:20', 'reim', '1465961511150', '192.168.1.126', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('5', '1', '管理员', 'nomr7ide', '2016-06-29 09:13:15', '2016-06-29 09:13:17', 'reim', '1465961511150', '192.168.1.126', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('6', '5', '磐石', 't8i1t8bw', '2016-06-29 09:13:52', '2016-06-29 09:23:55', 'reim', '1465961511150', '192.168.1.126', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('7', '1', '管理员', 'k5br4qke', '2016-06-29 09:33:29', '2016-06-29 09:50:35', 'reim', '1465961511150', '192.168.1.126', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('8', '2', '貂蝉', 'ukme0pbc', '2016-06-29 12:26:45', '2016-06-29 13:36:48', 'reim', '1465961511150', '192.168.1.126', 'Chrome', '1');
-INSERT INTO `xinhu_logintoken` VALUES ('9', '1', '管理员', '18ngf0wa', '2016-06-29 12:30:18', '2016-06-29 15:31:11', 'appandroid', '867112020521204', '192.168.1.176', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('10', '1', '管理员', 'm7nbplja', '2016-06-30 12:16:24', '2016-06-30 12:16:24', 'pc', '1465964276241', '127.0.0.1', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('11', '1', '管理员', 'kjvntsis', '2016-06-30 12:21:19', '2016-06-30 14:18:25', 'reim', '1465961511150', '192.168.1.126', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('12', '1', '管理员', '5zaad0d5', '2016-06-30 17:13:02', '2016-06-30 17:14:23', 'appandroid', '867112020521204', '192.168.1.176', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('13', '1', '管理员', 'jdwd8c7f', '2016-06-30 19:23:15', '2016-06-30 19:23:15', 'pc', '1466779305269', '127.0.0.1', 'Chrome', '1');
-INSERT INTO `xinhu_logintoken` VALUES ('14', '1', '管理员', 'uic71ynu', '2016-06-30 19:23:23', '2016-06-30 19:53:23', 'reim', '1466770353990', '192.168.1.103', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('15', '6', '张飞', '2vzg8dwz', '2016-06-30 20:01:44', '2016-06-30 22:14:05', 'reim', '1466770353990', '192.168.1.103', 'Chrome', '1');
-INSERT INTO `xinhu_logintoken` VALUES ('16', '1', '管理员', '2z1750sg', '2016-06-30 20:11:13', '2016-06-30 22:41:15', 'reim', '1466772091327', '127.0.0.1', 'Firefox', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('17', '1', '管理员', 'o70jumwe', '2016-06-30 20:43:41', '2016-06-30 21:31:25', 'appandroid', '867112020521204', '192.168.1.100', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('18', '1', '管理员', '0iqsyi2r', '2016-06-30 21:32:13', '2016-06-30 23:00:09', 'appandroid', '867112020521204', '192.168.1.100', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('19', '3', '小乔', 'k2qats0u', '2016-06-30 22:02:41', '2016-06-30 23:08:00', 'reim', '1465732443257', '192.168.1.103', 'Chrome', '1');
-INSERT INTO `xinhu_logintoken` VALUES ('20', '1', '管理员', '3j4foj6s', '2016-07-01 09:36:00', '2016-07-01 09:47:30', 'reim', '1467336712627', '192.168.1.126', 'Chrome', '1');
-INSERT INTO `xinhu_logintoken` VALUES ('21', '1', '管理员', 'gpm7ss1d', '2016-07-01 09:40:09', '2016-07-01 09:40:38', 'appandroid', '867112020521204', '192.168.1.176', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('22', '1', '管理员', '32qvzwb4', '2016-07-01 10:12:44', '2016-07-01 11:13:44', 'appandroid', '867112020521204', '192.168.1.176', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('23', '1', '管理员', '3hxd300h', '2016-07-01 11:14:03', '2016-07-01 14:03:27', 'appandroid', '867112020521204', '192.168.1.176', 'Chrome', '1');
 
 -- ----------------------------
 -- Table structure for `xinhu_meet`
@@ -952,18 +1076,18 @@ CREATE TABLE `xinhu_menu` (
   `color` varchar(10) DEFAULT NULL,
   `ishs` tinyint(4) DEFAULT '0' COMMENT '是否在首页显示',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_menu
 -- ----------------------------
 INSERT INTO `xinhu_menu` VALUES ('1', '管理后台', '0', '5', null, 'cog', null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('2', '菜单管理', '1', '0', 'system,menu', 'th-list', null, 'menu', '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('2', '菜单管理', '1', '0', 'system,menu', 'list-ul', null, 'menu', '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('3', '用户管理', '14', '2', 'system,admin', 'user', null, 'user', '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('4', '计划任务', '1', '7', 'system,task', 'time', null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('5', '组管理', '1', '3', 'system,group', 'group', null, 'group', '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('6', '组织结构', '14', '1', 'system,dept', 'sitemap', null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('7', '流程管理', '0', '2', null, null, null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('7', '流程模块管理', '0', '2', null, null, null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('8', '权限管理', '1', '0', null, null, null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('9', '人员→菜单', '8', '0', 'system,extent,type=um', null, null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('10', '菜单→人员', '8', '0', 'system,extent,type=mu', null, null, null, '1', '1', null, '0');
@@ -973,14 +1097,15 @@ INSERT INTO `xinhu_menu` VALUES ('13', '人员权限查看', '8', '0', 'system,e
 INSERT INTO `xinhu_menu` VALUES ('14', '信呼', '0', '0', null, 'comment', null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('15', '应用管理', '14', '4', 'main,yingyong', 'th-large', null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('16', '会话管理', '14', '3', 'main,imgroup', 'comments', null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('17', '流程模块', '7', '2', 'main,flow,set', null, null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('17', '流程模块', '7', '2', 'main,flow,set', 'check', null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('18', '服务器设置', '14', '0', 'main,xinhu,cog', 'cog', null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('19', '流程选项', '7', '0', 'system,option,num=flow', 'cog', null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('20', '表单元素管理', '7', '2', 'main,flow,element', null, null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('21', '数据查看权限', '7', '5', 'main,view', 'zoom-in', null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('20', '表单元素管理', '7', '4', 'main,flow,element', 'th-list', null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('21', '流程模块权限', '7', '5', 'main,view', 'lock', null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('22', '流程单据管理', '7', '6', 'main,flow,view', 'search', null, null, '1', '1', null, '0');
 INSERT INTO `xinhu_menu` VALUES ('23', '系统升级', '1', '10', 'system,upgrade', 'arrow-up', null, null, '1', '1', null, '0');
-INSERT INTO `xinhu_menu` VALUES ('24', '数据选项', '7', '1', 'system,option,num=xinhu', null, null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('24', '数据选项', '7', '1', 'system,option,num=xinhu', 'cog', null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('25', '初始化备份', '14', '5', 'main,xinhu,csh', null, null, null, '1', '1', null, '0');
+INSERT INTO `xinhu_menu` VALUES ('26', '流程审核进程', '7', '3', 'main,flow,course', 'resize-vertical', null, null, '1', '1', null, '0');
 
 -- ----------------------------
 -- Table structure for `xinhu_option`
@@ -997,17 +1122,17 @@ CREATE TABLE `xinhu_option` (
   `valid` tinyint(1) DEFAULT '1',
   `optdt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_option
 -- ----------------------------
-INSERT INTO `xinhu_option` VALUES ('31', null, null, 'reimrecidsystem', 'rockreim', '0', null, '1', '2016-06-14 20:45:30');
-INSERT INTO `xinhu_option` VALUES ('2', null, null, 'reimhostsystem', 'ws://127.0.0.1:6552/', '0', null, '1', '2016-06-14 20:45:30');
-INSERT INTO `xinhu_option` VALUES ('3', null, null, 'reimpushurlsystem', 'http://127.0.0.1:6553/', '0', null, '1', '2016-06-14 20:45:30');
-INSERT INTO `xinhu_option` VALUES ('4', '流程分类', '5', 'flowfenlei', null, '0', null, '1', null);
-INSERT INTO `xinhu_option` VALUES ('5', '流程选项', '1', 'flow', null, '0', null, '1', null);
-INSERT INTO `xinhu_option` VALUES ('6', '表单类型', '5', 'flowinputtype', null, '1', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('31', null, null, 'reimrecidsystem', 'rockxinhu', '0', null, '1', '2016-07-03 11:46:51');
+INSERT INTO `xinhu_option` VALUES ('2', null, null, 'reimhostsystem', 'ws://127.0.0.1:6552/', '0', null, '1', '2016-07-03 11:46:51');
+INSERT INTO `xinhu_option` VALUES ('3', null, null, 'reimpushurlsystem', 'http://127.0.0.1:6553/', '0', null, '1', '2016-07-03 11:46:51');
+INSERT INTO `xinhu_option` VALUES ('4', '流程分类', '1', 'flowfenlei', null, '0', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('5', '考勤', '4', null, null, '0', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('6', '表单类型', '1', 'flowinputtype', null, '0', null, '1', null);
 INSERT INTO `xinhu_option` VALUES ('7', '文本框', '6', null, 'text', '0', null, '1', null);
 INSERT INTO `xinhu_option` VALUES ('8', '日期', '6', null, 'date', '1', null, '1', null);
 INSERT INTO `xinhu_option` VALUES ('9', '日期时间', '6', null, 'datetime', '2', null, '1', null);
@@ -1047,6 +1172,10 @@ INSERT INTO `xinhu_option` VALUES ('42', '待执行', '41', null, '0', '0', null
 INSERT INTO `xinhu_option` VALUES ('43', '执行中', '41', null, '2', '0', null, '1', null);
 INSERT INTO `xinhu_option` VALUES ('44', '已完成', '41', null, '1', '0', null, '1', null);
 INSERT INTO `xinhu_option` VALUES ('45', '中止', '41', null, '3', '0', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('46', '请假类型', '1', 'kqqjkind', null, '0', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('47', '事假', '46', null, null, '0', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('48', '病假', '46', null, null, '0', null, '1', null);
+INSERT INTO `xinhu_option` VALUES ('49', '年假', '46', null, null, '0', null, '1', null);
 
 -- ----------------------------
 -- Table structure for `xinhu_reads`
@@ -1062,435 +1191,11 @@ CREATE TABLE `xinhu_reads` (
   `web` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `table` (`table`,`mid`)
-) ENGINE=MyISAM AUTO_INCREMENT=425 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_reads
 -- ----------------------------
-INSERT INTO `xinhu_reads` VALUES ('1', 'work', '1', '1', '2016-06-28 21:25:01', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('2', 'work', '1', '1', '2016-06-28 21:25:03', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('3', 'work', '1', '1', '2016-06-28 21:27:24', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('4', 'daily', '8', '1', '2016-06-28 21:28:06', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('5', 'work', '1', '1', '2016-06-28 21:28:42', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('6', 'work', '1', '1', '2016-06-28 21:29:31', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('7', 'daily', '10', '1', '2016-06-28 21:29:44', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('8', 'daily', '10', '1', '2016-06-28 21:29:58', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('9', 'daily', '10', '1', '2016-06-28 21:29:58', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('10', 'daily', '10', '1', '2016-06-28 21:30:37', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('11', 'daily', '10', '1', '2016-06-28 21:30:47', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('12', 'daily', '10', '1', '2016-06-28 21:32:30', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('13', 'daily', '10', '1', '2016-06-28 21:32:51', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('14', 'daily', '10', '1', '2016-06-28 21:32:55', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('15', 'daily', '10', '1', '2016-06-28 21:33:20', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('16', 'daily', '10', '1', '2016-06-28 21:34:00', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('17', 'daily', '10', '1', '2016-06-28 21:34:24', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('18', 'daily', '10', '1', '2016-06-28 21:35:13', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('19', 'daily', '10', '1', '2016-06-28 21:35:16', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('20', 'work', '1', '1', '2016-06-28 21:36:13', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('21', 'work', '1', '1', '2016-06-28 21:37:07', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('22', 'work', '1', '1', '2016-06-28 21:37:10', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('23', 'work', '1', '1', '2016-06-28 21:41:02', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('24', 'work', '1', '1', '2016-06-28 21:41:07', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('25', 'work', '1', '1', '2016-06-28 21:41:17', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('26', 'work', '1', '1', '2016-06-28 21:42:24', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('27', 'work', '1', '1', '2016-06-28 21:44:46', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('28', 'work', '1', '1', '2016-06-28 22:37:51', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('29', 'work', '1', '1', '2016-06-28 22:37:53', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('30', 'work', '1', '1', '2016-06-28 22:39:46', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('31', 'work', '1', '1', '2016-06-28 22:39:48', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('32', 'work', '1', '1', '2016-06-28 22:41:28', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('33', 'work', '1', '1', '2016-06-28 22:41:28', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('34', 'work', '1', '1', '2016-06-28 22:41:29', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('35', 'work', '1', '1', '2016-06-28 22:41:29', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('36', 'work', '1', '1', '2016-06-28 22:41:31', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('37', 'work', '1', '1', '2016-06-28 22:41:31', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('38', 'work', '1', '1', '2016-06-28 22:41:31', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('39', 'work', '1', '1', '2016-06-28 22:41:32', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('40', 'work', '1', '1', '2016-06-28 22:41:32', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('41', 'work', '1', '1', '2016-06-28 22:41:32', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('42', 'work', '1', '1', '2016-06-28 22:41:58', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('43', 'work', '1', '1', '2016-06-28 22:42:00', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('44', 'work', '1', '1', '2016-06-28 22:43:14', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('45', 'work', '1', '1', '2016-06-28 22:43:16', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('46', 'work', '1', '1', '2016-06-28 22:43:22', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('47', 'work', '1', '1', '2016-06-28 22:44:30', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('48', 'work', '1', '1', '2016-06-28 22:44:33', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('49', 'work', '1', '1', '2016-06-28 22:45:26', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('50', 'work', '1', '1', '2016-06-28 22:46:12', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('51', 'work', '1', '1', '2016-06-28 22:46:15', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('52', 'work', '1', '1', '2016-06-28 22:46:16', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('53', 'work', '1', '1', '2016-06-28 22:46:16', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('54', 'work', '1', '1', '2016-06-28 22:46:26', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('55', 'work', '1', '1', '2016-06-28 22:46:29', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('56', 'work', '1', '1', '2016-06-28 22:48:41', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('57', 'work', '1', '1', '2016-06-28 22:48:50', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('58', 'work', '1', '1', '2016-06-28 22:48:59', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('59', 'work', '1', '1', '2016-06-28 22:49:02', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('60', 'work', '1', '1', '2016-06-28 22:49:50', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('61', 'work', '1', '1', '2016-06-28 22:50:00', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('62', 'work', '1', '1', '2016-06-28 22:51:31', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('63', 'work', '1', '1', '2016-06-28 22:51:36', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('64', 'daily', '10', '1', '2016-06-28 22:51:46', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('65', 'daily', '10', '1', '2016-06-28 22:51:50', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('66', 'daily', '10', '1', '2016-06-28 22:53:11', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('67', 'daily', '10', '1', '2016-06-28 22:53:35', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('68', 'daily', '10', '1', '2016-06-28 22:53:37', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('69', 'work', '1', '1', '2016-06-28 22:53:39', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('70', 'work', '1', '1', '2016-06-28 22:54:07', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('71', 'daily', '7', '1', '2016-06-28 22:57:35', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('72', 'daily', '7', '1', '2016-06-28 22:57:47', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('73', 'work', '1', '1', '2016-06-28 22:58:18', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('74', 'work', '1', '1', '2016-06-28 23:01:19', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('75', 'work', '1', '1', '2016-06-28 23:01:19', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('76', 'work', '1', '1', '2016-06-28 23:02:35', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('77', 'work', '1', '1', '2016-06-28 23:02:39', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('78', 'work', '1', '1', '2016-06-28 23:02:40', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('79', 'work', '1', '1', '2016-06-28 23:03:51', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('80', 'work', '1', '1', '2016-06-28 23:03:51', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('81', 'work', '1', '1', '2016-06-28 23:03:56', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('82', 'work', '1', '1', '2016-06-28 23:04:53', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('83', 'work', '1', '1', '2016-06-28 23:04:53', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('84', 'work', '1', '1', '2016-06-28 23:06:52', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('85', 'work', '1', '1', '2016-06-28 23:07:17', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('86', 'work', '1', '1', '2016-06-28 23:07:17', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('87', 'work', '1', '1', '2016-06-28 23:08:46', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('88', 'work', '1', '1', '2016-06-28 23:08:52', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('89', 'work', '1', '1', '2016-06-28 23:10:55', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('90', 'work', '1', '1', '2016-06-28 23:11:01', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('91', 'work', '1', '1', '2016-06-28 23:11:13', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('92', 'work', '1', '1', '2016-06-28 23:11:20', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('93', 'work', '1', '1', '2016-06-28 23:12:55', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('94', 'work', '1', '1', '2016-06-29 09:13:35', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('95', 'work', '2', '5', '2016-06-29 09:15:44', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('96', 'work', '2', '5', '2016-06-29 09:19:14', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('97', 'work', '2', '5', '2016-06-29 09:19:24', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('98', 'work', '3', '5', '2016-06-29 09:32:49', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('99', 'work', '3', '5', '2016-06-29 09:32:57', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('100', 'work', '3', '1', '2016-06-29 09:46:17', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('101', 'work', '3', '1', '2016-06-29 09:47:13', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('102', 'work', '3', '1', '2016-06-29 09:47:19', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('103', 'work', '3', '1', '2016-06-29 09:47:56', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('104', 'work', '3', '1', '2016-06-29 09:48:22', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('105', 'work', '2', '1', '2016-06-29 09:52:41', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('106', 'work', '3', '1', '2016-06-29 10:59:08', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('107', 'work', '3', '1', '2016-06-29 10:59:17', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('108', 'work', '2', '1', '2016-06-29 10:59:20', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('109', 'work', '2', '1', '2016-06-29 10:59:57', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('110', 'work', '2', '1', '2016-06-29 11:04:09', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('111', 'work', '2', '1', '2016-06-29 11:10:07', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('112', 'work', '2', '1', '2016-06-29 11:10:45', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('113', 'work', '2', '1', '2016-06-29 11:10:47', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('114', 'work', '2', '1', '2016-06-29 11:11:35', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('115', 'work', '2', '1', '2016-06-29 11:13:04', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('116', 'work', '2', '1', '2016-06-29 11:13:32', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('117', 'work', '2', '1', '2016-06-29 11:14:03', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('118', 'work', '4', '1', '2016-06-29 11:16:52', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('119', 'work', '4', '1', '2016-06-29 11:19:57', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('120', 'work', '4', '1', '2016-06-29 11:20:01', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('121', 'work', '4', '1', '2016-06-29 11:20:14', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('122', 'work', '4', '1', '2016-06-29 11:21:58', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('123', 'work', '4', '1', '2016-06-29 12:25:44', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('124', 'work', '4', '2', '2016-06-29 12:26:54', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('125', 'work', '4', '2', '2016-06-29 12:27:09', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('126', 'work', '4', '2', '2016-06-29 12:27:16', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('127', 'work', '4', '2', '2016-06-29 12:29:20', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('128', 'work', '4', '1', '2016-06-29 12:33:47', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('129', 'work', '2', '1', '2016-06-29 12:34:12', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('130', 'work', '4', '1', '2016-06-29 12:35:32', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('131', 'work', '4', '2', '2016-06-29 13:42:05', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('132', 'infor', '1', '1', '2016-06-29 15:30:28', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('133', 'work', '4', '1', '2016-06-30 12:17:55', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('134', 'work', '4', '1', '2016-06-30 12:22:48', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('135', 'work', '4', '1', '2016-06-30 12:23:00', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('136', 'work', '4', '1', '2016-06-30 13:38:40', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('137', 'work', '4', '1', '2016-06-30 13:40:13', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('138', 'work', '4', '1', '2016-06-30 13:43:54', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('139', 'daily', '11', '1', '2016-06-30 13:47:16', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('140', 'daily', '11', '1', '2016-06-30 13:47:25', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('141', 'work', '4', '1', '2016-06-30 13:47:30', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('142', 'work', '4', '1', '2016-06-30 13:47:32', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('143', 'work', '4', '1', '2016-06-30 13:48:01', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('144', 'work', '4', '1', '2016-06-30 13:49:00', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('145', 'work', '4', '1', '2016-06-30 13:49:13', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('146', 'work', '4', '1', '2016-06-30 13:49:42', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('147', 'work', '4', '1', '2016-06-30 13:49:56', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('148', 'work', '4', '1', '2016-06-30 13:50:30', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('149', 'work', '4', '1', '2016-06-30 13:50:55', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('150', 'work', '4', '1', '2016-06-30 13:53:12', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('151', 'work', '4', '1', '2016-06-30 13:53:17', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('152', 'work', '4', '1', '2016-06-30 13:53:18', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('153', 'work', '4', '1', '2016-06-30 13:53:25', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('154', 'daily', '11', '1', '2016-06-30 13:53:50', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('155', 'daily', '11', '1', '2016-06-30 13:53:58', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('156', 'daily', '11', '1', '2016-06-30 13:58:45', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('157', 'work', '4', '1', '2016-06-30 14:08:13', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('158', 'work', '4', '1', '2016-06-30 14:08:50', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('159', 'work', '4', '1', '2016-06-30 14:09:01', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('160', 'work', '4', '1', '2016-06-30 14:10:17', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('161', 'work', '4', '1', '2016-06-30 14:10:34', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('162', 'work', '4', '1', '2016-06-30 14:10:58', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('163', 'work', '4', '1', '2016-06-30 14:11:14', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('164', 'work', '4', '1', '2016-06-30 14:11:37', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('165', 'work', '4', '1', '2016-06-30 14:11:44', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('166', 'work', '4', '1', '2016-06-30 14:11:53', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('167', 'work', '4', '1', '2016-06-30 14:12:05', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('168', 'work', '4', '1', '2016-06-30 14:12:12', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('169', 'work', '4', '1', '2016-06-30 14:12:43', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('170', 'work', '4', '1', '2016-06-30 14:12:50', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('171', 'work', '4', '1', '2016-06-30 14:13:20', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('172', 'work', '4', '1', '2016-06-30 14:14:22', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('173', 'work', '4', '1', '2016-06-30 14:14:53', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('174', 'work', '4', '1', '2016-06-30 14:15:16', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('175', 'work', '4', '1', '2016-06-30 14:15:30', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('176', 'work', '4', '1', '2016-06-30 14:15:59', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('177', 'work', '4', '1', '2016-06-30 14:16:19', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('178', 'work', '4', '1', '2016-06-30 14:16:29', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('179', 'work', '4', '1', '2016-06-30 14:16:35', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('180', 'work', '4', '1', '2016-06-30 14:16:59', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('181', 'work', '4', '1', '2016-06-30 14:17:14', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('182', 'work', '4', '1', '2016-06-30 14:17:19', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('183', 'work', '4', '1', '2016-06-30 14:17:59', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('184', 'work', '4', '1', '2016-06-30 14:18:09', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('185', 'work', '4', '1', '2016-06-30 14:18:30', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('186', 'work', '4', '1', '2016-06-30 14:18:32', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('187', 'daily', '11', '1', '2016-06-30 14:18:51', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('188', 'daily', '11', '1', '2016-06-30 14:18:55', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('189', 'daily', '11', '1', '2016-06-30 14:19:51', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('190', 'work', '4', '1', '2016-06-30 14:19:58', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('191', 'work', '4', '1', '2016-06-30 14:21:53', '192.168.1.126', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('192', 'work', '4', '1', '2016-06-30 19:23:31', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('193', 'work', '4', '1', '2016-06-30 19:26:22', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('194', 'work', '4', '1', '2016-06-30 19:26:32', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('195', 'work', '4', '1', '2016-06-30 19:32:20', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('196', 'work', '4', '1', '2016-06-30 19:33:14', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('197', 'work', '4', '1', '2016-06-30 19:33:15', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('198', 'work', '4', '1', '2016-06-30 19:34:49', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('199', 'work', '4', '1', '2016-06-30 19:39:24', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('200', 'work', '4', '1', '2016-06-30 19:39:26', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('201', 'work', '4', '1', '2016-06-30 19:40:24', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('202', 'work', '4', '1', '2016-06-30 19:40:47', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('203', 'work', '4', '1', '2016-06-30 19:40:48', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('204', 'work', '4', '1', '2016-06-30 19:40:59', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('205', 'work', '4', '1', '2016-06-30 19:41:04', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('206', 'work', '4', '1', '2016-06-30 19:41:36', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('207', 'work', '4', '1', '2016-06-30 19:41:48', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('208', 'work', '4', '1', '2016-06-30 19:41:48', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('209', 'work', '4', '1', '2016-06-30 19:41:52', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('210', 'work', '4', '1', '2016-06-30 19:41:53', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('211', 'work', '4', '1', '2016-06-30 19:42:44', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('212', 'work', '4', '1', '2016-06-30 19:42:48', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('213', 'work', '4', '1', '2016-06-30 19:42:53', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('214', 'work', '4', '1', '2016-06-30 19:44:31', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('215', 'work', '4', '1', '2016-06-30 19:45:03', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('216', 'work', '4', '1', '2016-06-30 19:45:30', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('217', 'work', '4', '1', '2016-06-30 19:47:29', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('218', 'work', '4', '1', '2016-06-30 19:47:32', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('219', 'work', '4', '1', '2016-06-30 19:47:49', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('220', 'work', '4', '1', '2016-06-30 19:48:21', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('221', 'work', '4', '1', '2016-06-30 19:50:21', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('222', 'work', '4', '1', '2016-06-30 19:50:42', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('223', 'work', '4', '1', '2016-06-30 19:50:48', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('224', 'work', '4', '1', '2016-06-30 19:51:47', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('225', 'work', '4', '1', '2016-06-30 19:52:14', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('226', 'work', '4', '1', '2016-06-30 19:52:21', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('227', 'work', '4', '1', '2016-06-30 19:52:59', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('228', 'work', '4', '1', '2016-06-30 19:54:06', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('229', 'work', '4', '1', '2016-06-30 19:54:33', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('230', 'work', '4', '1', '2016-06-30 19:54:34', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('231', 'work', '4', '1', '2016-06-30 19:55:05', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('232', 'work', '4', '1', '2016-06-30 19:55:25', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('233', 'work', '4', '6', '2016-06-30 20:01:47', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('234', 'work', '4', '6', '2016-06-30 20:02:15', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('235', 'work', '4', '6', '2016-06-30 20:04:25', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('236', 'work', '4', '6', '2016-06-30 20:05:20', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('237', 'work', '4', '6', '2016-06-30 20:05:42', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('238', 'work', '4', '6', '2016-06-30 20:09:47', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('239', 'work', '4', '6', '2016-06-30 20:10:45', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('240', 'work', '4', '6', '2016-06-30 20:10:46', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('241', 'work', '4', '6', '2016-06-30 20:11:33', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('242', 'work', '4', '6', '2016-06-30 20:12:17', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('243', 'work', '4', '6', '2016-06-30 20:12:18', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('244', 'work', '4', '6', '2016-06-30 20:12:50', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('245', 'work', '3', '1', '2016-06-30 20:13:18', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('246', 'work', '2', '1', '2016-06-30 20:13:20', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('247', 'work', '2', '1', '2016-06-30 20:13:32', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('248', 'work', '4', '6', '2016-06-30 20:15:02', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('249', 'infor', '4', '1', '2016-06-30 20:16:10', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('250', 'infor', '1', '1', '2016-06-30 20:16:56', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('251', 'work', '3', '1', '2016-06-30 20:17:18', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('252', 'work', '3', '1', '2016-06-30 20:17:46', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('253', 'work', '3', '1', '2016-06-30 20:17:55', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('254', 'work', '3', '1', '2016-06-30 20:18:00', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('255', 'work', '3', '1', '2016-06-30 20:23:19', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('256', 'work', '3', '1', '2016-06-30 20:25:04', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('257', 'work', '3', '1', '2016-06-30 20:25:10', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('258', 'work', '3', '1', '2016-06-30 20:26:26', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('259', 'work', '4', '1', '2016-06-30 20:26:41', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('260', 'work', '4', '1', '2016-06-30 20:26:46', '127.0.0.1', 'Firefox');
-INSERT INTO `xinhu_reads` VALUES ('261', 'work', '4', '1', '2016-06-30 20:26:53', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('262', 'work', '4', '1', '2016-06-30 20:28:51', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('263', 'work', '4', '1', '2016-06-30 20:29:04', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('264', 'work', '4', '1', '2016-06-30 20:29:15', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('265', 'work', '4', '1', '2016-06-30 20:37:13', '127.0.0.1', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('266', 'daily', '13', '6', '2016-06-30 20:37:21', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('267', 'daily', '13', '6', '2016-06-30 20:37:27', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('268', 'daily', '13', '6', '2016-06-30 20:37:30', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('269', 'daily', '13', '6', '2016-06-30 20:37:33', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('270', 'daily', '13', '6', '2016-06-30 20:38:27', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('271', 'daily', '13', '6', '2016-06-30 20:39:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('272', 'daily', '13', '6', '2016-06-30 20:40:13', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('273', 'daily', '13', '6', '2016-06-30 20:40:36', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('274', 'daily', '13', '6', '2016-06-30 20:40:38', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('275', 'daily', '13', '6', '2016-06-30 20:40:46', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('276', 'daily', '13', '6', '2016-06-30 20:41:01', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('277', 'daily', '13', '6', '2016-06-30 20:41:01', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('278', 'daily', '13', '6', '2016-06-30 20:41:02', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('279', 'daily', '13', '6', '2016-06-30 20:41:02', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('280', 'daily', '13', '6', '2016-06-30 20:41:02', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('281', 'daily', '13', '6', '2016-06-30 20:41:03', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('282', 'daily', '13', '6', '2016-06-30 20:41:04', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('283', 'daily', '13', '6', '2016-06-30 20:41:35', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('284', 'daily', '13', '6', '2016-06-30 20:41:52', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('285', 'daily', '13', '6', '2016-06-30 20:42:12', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('286', 'daily', '13', '6', '2016-06-30 20:42:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('287', 'daily', '13', '6', '2016-06-30 20:42:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('288', 'daily', '13', '6', '2016-06-30 20:42:33', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('289', 'daily', '13', '6', '2016-06-30 20:42:36', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('290', 'daily', '11', '1', '2016-06-30 20:43:52', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('291', 'daily', '11', '1', '2016-06-30 20:44:23', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('292', 'daily', '11', '1', '2016-06-30 20:44:52', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('293', 'daily', '11', '1', '2016-06-30 20:45:13', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('294', 'daily', '11', '1', '2016-06-30 20:45:42', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('295', 'daily', '11', '1', '2016-06-30 20:46:26', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('296', 'daily', '11', '1', '2016-06-30 20:46:28', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('297', 'daily', '11', '1', '2016-06-30 20:46:44', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('298', 'daily', '11', '1', '2016-06-30 20:46:58', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('299', 'daily', '11', '1', '2016-06-30 20:47:52', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('300', 'daily', '13', '6', '2016-06-30 20:48:47', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('301', 'daily', '13', '6', '2016-06-30 20:49:00', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('302', 'daily', '13', '6', '2016-06-30 20:49:13', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('303', 'daily', '13', '6', '2016-06-30 20:49:15', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('304', 'daily', '13', '6', '2016-06-30 20:49:18', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('305', 'daily', '13', '6', '2016-06-30 20:49:19', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('306', 'daily', '13', '6', '2016-06-30 20:49:20', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('307', 'daily', '13', '6', '2016-06-30 20:49:21', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('308', 'daily', '11', '1', '2016-06-30 20:49:24', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('309', 'daily', '11', '1', '2016-06-30 20:49:44', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('310', 'daily', '11', '1', '2016-06-30 20:49:53', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('311', 'daily', '13', '6', '2016-06-30 20:50:59', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('312', 'daily', '13', '6', '2016-06-30 20:51:12', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('313', 'daily', '13', '6', '2016-06-30 20:51:23', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('314', 'daily', '13', '6', '2016-06-30 20:52:14', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('315', 'daily', '13', '6', '2016-06-30 20:52:14', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('316', 'daily', '13', '6', '2016-06-30 20:52:15', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('317', 'daily', '13', '6', '2016-06-30 20:52:16', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('318', 'daily', '13', '6', '2016-06-30 20:52:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('319', 'daily', '13', '6', '2016-06-30 20:52:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('320', 'daily', '13', '6', '2016-06-30 20:52:19', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('321', 'daily', '13', '6', '2016-06-30 20:52:19', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('322', 'daily', '13', '6', '2016-06-30 20:52:37', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('323', 'daily', '13', '6', '2016-06-30 20:52:58', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('324', 'daily', '13', '6', '2016-06-30 20:53:03', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('325', 'daily', '11', '1', '2016-06-30 20:53:10', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('326', 'daily', '11', '1', '2016-06-30 20:53:31', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('327', 'daily', '11', '1', '2016-06-30 20:54:28', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('328', 'daily', '13', '6', '2016-06-30 20:55:40', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('329', 'daily', '13', '6', '2016-06-30 20:55:43', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('330', 'daily', '11', '1', '2016-06-30 20:55:47', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('331', 'daily', '11', '1', '2016-06-30 20:55:53', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('332', 'daily', '13', '6', '2016-06-30 20:56:06', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('333', 'daily', '13', '6', '2016-06-30 20:56:34', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('334', 'daily', '13', '6', '2016-06-30 20:56:38', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('335', 'daily', '13', '6', '2016-06-30 20:56:51', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('336', 'daily', '13', '6', '2016-06-30 20:56:56', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('337', 'daily', '11', '1', '2016-06-30 20:56:59', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('338', 'daily', '13', '6', '2016-06-30 20:57:28', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('339', 'daily', '13', '6', '2016-06-30 20:57:29', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('340', 'daily', '13', '6', '2016-06-30 20:57:33', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('341', 'daily', '11', '1', '2016-06-30 20:57:36', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('342', 'daily', '11', '1', '2016-06-30 20:58:06', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('343', 'daily', '11', '1', '2016-06-30 20:58:08', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('344', 'daily', '11', '1', '2016-06-30 20:58:12', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('345', 'work', '3', '1', '2016-06-30 20:58:20', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('346', 'work', '3', '1', '2016-06-30 20:58:23', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('347', 'work', '3', '1', '2016-06-30 20:58:33', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('348', 'work', '3', '1', '2016-06-30 20:58:34', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('349', 'work', '4', '6', '2016-06-30 21:00:22', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('350', 'work', '4', '6', '2016-06-30 21:00:29', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('351', 'work', '4', '6', '2016-06-30 21:00:35', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('352', 'work', '4', '6', '2016-06-30 21:01:33', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('353', 'work', '4', '6', '2016-06-30 21:01:44', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('354', 'work', '4', '6', '2016-06-30 21:02:27', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('355', 'work', '4', '6', '2016-06-30 21:02:46', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('356', 'work', '4', '6', '2016-06-30 21:03:06', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('357', 'work', '4', '6', '2016-06-30 21:03:14', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('358', 'work', '4', '6', '2016-06-30 21:03:24', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('359', 'work', '4', '6', '2016-06-30 21:03:36', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('360', 'work', '4', '6', '2016-06-30 21:03:47', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('361', 'work', '4', '6', '2016-06-30 21:04:28', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('362', 'work', '4', '6', '2016-06-30 21:04:59', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('363', 'work', '4', '6', '2016-06-30 21:05:08', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('364', 'work', '4', '6', '2016-06-30 21:06:46', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('365', 'work', '4', '6', '2016-06-30 21:07:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('366', 'work', '4', '6', '2016-06-30 21:08:27', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('367', 'work', '4', '6', '2016-06-30 21:09:16', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('368', 'work', '4', '6', '2016-06-30 21:09:31', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('369', 'work', '4', '6', '2016-06-30 21:11:12', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('370', 'work', '4', '6', '2016-06-30 21:11:24', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('371', 'work', '4', '6', '2016-06-30 21:11:35', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('372', 'work', '4', '6', '2016-06-30 21:11:43', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('373', 'work', '4', '6', '2016-06-30 21:12:00', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('374', 'work', '4', '6', '2016-06-30 21:12:54', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('375', 'work', '4', '6', '2016-06-30 21:13:11', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('376', 'work', '4', '6', '2016-06-30 21:13:15', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('377', 'work', '3', '1', '2016-06-30 21:13:24', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('378', 'work', '3', '1', '2016-06-30 21:13:25', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('379', 'work', '3', '1', '2016-06-30 21:13:36', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('380', 'work', '4', '6', '2016-06-30 21:14:29', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('381', 'work', '4', '6', '2016-06-30 21:14:42', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('382', 'work', '4', '6', '2016-06-30 21:14:50', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('383', 'work', '4', '6', '2016-06-30 21:14:52', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('384', 'work', '4', '6', '2016-06-30 21:15:11', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('385', 'work', '4', '6', '2016-06-30 21:15:34', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('386', 'work', '4', '6', '2016-06-30 21:15:37', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('387', 'work', '4', '6', '2016-06-30 21:15:40', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('388', 'work', '4', '6', '2016-06-30 21:15:45', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('389', 'work', '3', '1', '2016-06-30 21:15:56', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('390', 'work', '4', '6', '2016-06-30 21:17:47', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('391', 'work', '4', '6', '2016-06-30 21:17:48', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('392', 'work', '4', '6', '2016-06-30 21:17:49', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('393', 'work', '4', '6', '2016-06-30 21:17:49', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('394', 'work', '4', '6', '2016-06-30 21:17:50', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('395', 'work', '4', '6', '2016-06-30 21:22:46', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('396', 'work', '4', '6', '2016-06-30 21:22:53', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('397', 'work', '4', '6', '2016-06-30 21:22:53', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('398', 'work', '4', '6', '2016-06-30 21:23:17', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('399', 'work', '4', '6', '2016-06-30 21:23:21', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('400', 'work', '4', '6', '2016-06-30 21:23:21', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('401', 'work', '4', '6', '2016-06-30 21:23:29', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('402', 'work', '4', '6', '2016-06-30 21:23:47', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('403', 'work', '3', '1', '2016-06-30 21:23:51', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('404', 'work', '3', '1', '2016-06-30 21:23:58', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('405', 'work', '3', '1', '2016-06-30 21:24:19', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('406', 'work', '3', '1', '2016-06-30 21:24:30', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('407', 'work', '3', '1', '2016-06-30 21:25:30', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('408', 'work', '3', '1', '2016-06-30 21:26:04', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('409', 'work', '3', '1', '2016-06-30 21:27:51', '192.168.1.100', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('410', 'work', '4', '6', '2016-06-30 21:30:44', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('411', 'work', '4', '6', '2016-06-30 21:32:49', '192.168.1.103', 'Safari');
-INSERT INTO `xinhu_reads` VALUES ('412', 'daily', '13', '6', '2016-06-30 21:47:50', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('413', 'daily', '13', '6', '2016-06-30 21:57:42', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('414', 'daily', '13', '6', '2016-06-30 21:57:46', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('415', 'daily', '13', '6', '2016-06-30 21:57:47', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('416', 'infor', '4', '6', '2016-06-30 21:57:55', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('417', 'infor', '3', '6', '2016-06-30 21:58:18', '192.168.1.103', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('418', 'work', '2', '1', '2016-07-01 10:13:16', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('419', 'work', '2', '1', '2016-07-01 10:13:41', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('420', 'daily', '13', '1', '2016-07-01 10:14:25', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('421', 'daily', '6', '1', '2016-07-01 10:14:30', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('422', 'work', '2', '1', '2016-07-01 10:57:22', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('423', 'work', '2', '1', '2016-07-01 11:01:32', '192.168.1.176', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('424', 'infor', '2', '1', '2016-07-01 11:12:23', '192.168.1.176', 'Chrome');
 
 -- ----------------------------
 -- Table structure for `xinhu_sjoin`
@@ -1533,8 +1238,8 @@ CREATE TABLE `xinhu_task` (
 -- ----------------------------
 -- Records of xinhu_task
 -- ----------------------------
-INSERT INTO `xinhu_task` VALUES ('1', '任务提醒', 'work,todo', 'd', '01:20:00', '每天凌晨1.20', '1', '2', '2016-03-12 01:20:00', null, '0', null, '﻿success');
-INSERT INTO `xinhu_task` VALUES ('2', '流程匹配', 'flow,pipei', 'd,d', '01:00:00,12:00:00', '每天凌晨1点,12点', '1', '2', '2016-03-12 01:00:00', null, '0', null, '﻿success');
+INSERT INTO `xinhu_task` VALUES ('1', '任务提醒', 'work,todo', 'd', '01:20:00', '每天凌晨1.20', '0', '0', null, null, '0', null, '');
+INSERT INTO `xinhu_task` VALUES ('2', '数据备份', 'sys,beifen', 'd', '00:20:00', '每天12点', '1', '1', '2016-07-03 10:47:06', null, '0', null, 'success');
 
 -- ----------------------------
 -- Table structure for `xinhu_todo`
@@ -1552,16 +1257,11 @@ CREATE TABLE `xinhu_todo` (
   `readdt` datetime DEFAULT NULL COMMENT '已读时间',
   `tododt` datetime DEFAULT NULL COMMENT '提醒时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_todo
 -- ----------------------------
-INSERT INTO `xinhu_todo` VALUES ('26', '2', '立项任务', 'hehehe(待执行)，将在2天后到期', '1', '2016-03-10 13:26:15', 'work', '11', '2016-03-10 13:28:17', '2016-03-10 08:00:00');
-INSERT INTO `xinhu_todo` VALUES ('24', '1', '绩效任务', '[管理员]修改[绩效任务]任务:请尽快提交相关资料', '1', '2016-03-10 12:00:38', 'work', '8', '2016-03-10 12:36:35', '2016-03-10 12:00:38');
-INSERT INTO `xinhu_todo` VALUES ('29', '2', '立项任务', 'hehehe(待执行)，今日到期', '0', '2016-03-12 01:20:00', 'work', '11', null, '2016-03-12 19:49:50');
-INSERT INTO `xinhu_todo` VALUES ('28', '1', '立项任务', '[管理员]新增[立项任务]任务:hehehehee', '1', '2016-03-11 22:20:45', 'work', '12', '2016-03-12 08:43:42', '2016-03-11 22:20:45');
-INSERT INTO `xinhu_todo` VALUES ('30', '1', '绩效任务', '[管理员]新增[绩效任务]任务:哈哈哈哈哈啊', '1', '2016-03-12 19:15:56', 'work', '13', '2016-03-13 13:37:02', '2016-03-12 19:15:56');
 
 -- ----------------------------
 -- Table structure for `xinhu_work`

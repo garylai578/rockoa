@@ -1,0 +1,108 @@
+<script >
+$(document).ready(function(){
+	{params};
+	var id = params.id;
+	if(!id)id = 0;
+	var h = $.bootsform({
+		window:false,rand:'{rand}',tablename:'flow_course',
+		url:publicsave('{mode}','{dir}'),
+		params:{otherfields:'optdt={now}'},
+		submitfields:'setid,name,num,checktype,checktypeid,checktypename,sort,where,explain',
+		requiredfields:'name',
+		success:function(){
+			closenowtabs();
+			try{guanflowcourselist.reload();}catch(e){}
+		}
+	});
+	h.forminit();
+	h.load(js.getajaxurl('loaddatacourse','{mode}','{dir}',{id:id}));
+	var c = {
+		getdist:function(o1, lx){
+			var cans = {
+				nameobj:h.form.recename,
+				idobj:h.form.receid,
+				type:'deptusercheck',
+				title:'选择针对人员'
+			};
+			js.getuser(cans);
+		},
+		allqt:function(){
+			h.form.recename.value='全体人员';
+			h.form.receid.value='all';
+		}
+	};
+	js.initbtn(c);
+	
+	if(id==0)h.form.setid.value=params.setid;
+});
+
+</script>
+
+<div align="center">
+<div  style="padding:10px;width:700px">
+	
+	
+	<form name="form_{rand}">
+	
+		<input name="id" value="0" type="hidden" />
+		<input name="setid" value="0" type="hidden" />
+		
+		<table cellspacing="0" border="0" width="100%" align="center" cellpadding="0">
+		<tr>
+			<td  align="right" ><font color=red>*</font> 进程名称：</td>
+			<td class="tdinput"><input name="name" class="form-control"></td>
+			<td  align="right"  >编号：</td>
+			<td class="tdinput"><input name="num" class="form-control"></td>
+		</tr>
+		
+		<tr>
+			<td  align="right" width="15%" nowrap >审核人员类型：</td>
+			<td width="35%"  class="tdinput"><select class="form-control" name="checktype"><option value="">-类型-</option><option value="super">直属上级</option><option value="rank">职位</option><option value="user">指定人员</option><option value="dept">部门负责人</option><option value="auto">自定义</option></select></td>
+			
+			<td  width="15%" align="right" nowrap>审核人：</td>
+			<td width="35%"  class="tdinput"><input name="checktypename" class="form-control"></td>
+		</tr>
+		
+
+		
+		<tr style="display:none">
+			<td  align="right" ><font color=red>*</font> 选择审核人员：</td>
+			<td class="tdinput" colspan="3">
+				<div class="input-group">
+					<input readonly class="form-control"  name="recename" >
+					<input type="hidden" name="receid" >
+					<span class="input-group-btn">
+						<button class="btn btn-default" click="getdist,1" type="button"><i class="icon-search"></i></button>
+					</span>
+				</div>
+			</td>
+			
+		</tr>
+
+		<tr>
+			<td  align="right" >审核条件：</td>
+			<td class="tdinput" colspan="3"><textarea  name="where" style="height:60px" class="form-control"></textarea><div class="tishi">Sql的条件，为空此步需要审核，不为空时当条件满足了就需要审核</div></td>
+		</tr>
+		
+		<tr>
+			<td  align="right" >说明：</td>
+			<td class="tdinput" colspan="3"><textarea  name="explain" style="height:60px" class="form-control"></textarea></td>
+		</tr>
+		
+		<tr>
+			<td align="right">排序号：</td>
+			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
+		</tr>
+		
+		
+		<tr>
+			<td  align="right"></td>
+			<td style="padding:15px 0px" colspan="3" align="left"><button disabled class="btn btn-success" id="save_{rand}" type="button"><i class="icon-save"></i>&nbsp;保存</button>&nbsp; <span id="msgview_{rand}"></span>
+		</td>
+		</tr>
+		
+		</table>
+		</form>
+	
+</div>
+</div>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="yes" />
+<title><?=$da['title']?></title>
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/cssm.css">
+<link rel="stylesheet" href="mode/kindeditor/themes/default/default.css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/js.js"></script>
+<script type="text/javascript" src="js/base64-min.js"></script>
+<script type="text/javascript" src="js/rmb.js"></script>
+<script type="text/javascript" src="mode/My97DatePicker/WdatePicker.js"></script>
+
+<script type="text/javascript">
+var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=1,mid='<?=$da['mid']?>';
+function initbodys(){};
+function geturlact(act){
+	var url=js.getajaxurl(act,'mode_'+moders.num+'|input','flow');
+	return url;
+}
+function changesubmit(d){};
+function changesubmitbefore(){};
+var c={
+	save:function(){
+		if(js.ajaxbool||isedit==0)return;
+		var len = arr.length,i,val,fid;
+		changesubmitbefore();
+		var d = js.getformdata();
+		for(i=0;i<len;i++){
+			fid=arr[i].fields;
+			if(arr[i].isbt=='1'){
+				val=d[fid];
+				if(isempt(val)){
+					if(form(fid))form(fid).focus();
+					js.msg('msg',''+arr[i].name+'不能为空');
+					return;
+				}
+			}
+		}
+		var s=changesubmit(d);
+		if(typeof(s)=='string'&&s!=''){
+			js.msg('msg',s);
+			return false;
+		}
+		if(typeof(s)=='object')d=js.apply(d,s);
+		d.modeid=moders.id;
+		d.modenum=moders.num;
+		js.msg('wait','保存中...');
+		get('AltS').disabled=true;
+		js.ajax(geturlact('save'),d,function(str){
+			c.backsave(js.decode(str));
+		}, 'post', function(){
+			js.setmsg('error:内部错误,可F12调试');
+		});
+	},
+	backsave:function(a){
+		if(a.success){
+			js.msg('success','提交成功');
+			this.formdisabled();
+			$('#AltS').hide();
+			form('id').value=a.data;
+			isedit=0;
+			js.sendevent('reload', 'yingyong_mode_'+moders.num+'');
+			js.backla();
+		}else{
+			get('AltS').disabled=false;
+			js.msg('msg',a.msg);
+		}
+	},
+	formdisabled:function(){
+		$('form').find('*').attr('disabled', true);
+		$('#fileupaddbtn').remove();
+	},
+	date:function(o1,lx){
+		var da={};if(lx=='datetime')lx='Y-m-d H:i:00';if(lx=='date')lx='Y-m-d';if(lx=='time')lx='H:i:s';if(lx=='month')lx='Y-m';if(lx=='year')lx='Y';lx=lx.replace('Y','yyyy');lx=lx.replace('m','MM');lx=lx.replace('d','dd');lx=lx.replace('H','HH');lx=lx.replace('i','mm');lx=lx.replace('s','ss');da.dateFmt = lx;
+		WdatePicker(da);
+	},
+	changeuser:function(na, lx){
+		changeuser(na,lx);
+		return false;
+	},
+	changeclear:function(na){
+		clearuser(na);
+	}
+}
+var changename_uuusw;
+function changeuser(na,lx){
+	changename_uuusw=na;
+	if(!lx)lx='';
+	var url='task.php?fn=dept&adminid='+adminid+'&token='+token+'&changetype='+lx+'';
+	var s='<div style="height:100%;width:100%;position:fixed;top:0px;left:0px;z-index:99; background:rgba(0,0,0,0.2)"  align="center" id="changmodddid">';
+	s+='<div style="max-width:300px;height:100%;max-height:450px;margin-top:5%; background:while;border:1px #dddddd solid">';
+	s+='<iframe style="background:white" name="changdept" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0" width="100%" src="'+url+'"></iframe>';
+	s+='</div>';
+	s+='</div>';
+	$('body').append(s);
+}
+function changecancel(){
+	$('#changmodddid').remove();
+}
+function changeok(sna,sid){
+	get(changename_uuusw).value=sna;
+	get(changename_uuusw+'_id').value=sid;
+}
+function clearuser(na){
+	get(na).value='';
+	get(na+'_id').value='';
+	get(na).focus();
+}
+</script>
+<style>
+.datesss{background:url(mode/icons/date.png) no-repeat right;cursor:pointer}
+</style>
+</head>
+
+<body class="mbody">
+<div>
+	<form name="myform">
+		<input name="id" type="hidden" value="<?=$da['mid']?>">
+		<?=$da['content']?>
+	</form>
+	<div class="padding10"><input type="button" id="AltS" onclick="c.save()" class="btn" value="提交"></div>
+</div>
+<script type="text/javascript" src="<?=$da['p']?>/flow/input/inputjs/mode_<?=$da['moders']['num']?>.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<script >
+$(document).ready(function(){
+	
+	var c={
+		init:function(){
+			$.get(js.getajaxurl('getset','{mode}','{dir}'), function(s){
+				var a=js.decode(s);
+				get('push_{rand}').value=a.reimpushurl;
+				get('host_{rand}').value=a.reimhost;
+				get('receid_{rand}').value=a.reimrecid;
+			});
+		},
+		save:function(o){
+			var d={push:get('push_{rand}').value};
+			d.host = get('host_{rand}').value;
+			d.receid = get('receid_{rand}').value;
+			js.setmsg('保存中...','','msgview_{rand}');
+			js.ajax(js.getajaxurl('setsave','{mode}','{dir}'), d, function(s){
+				js.setmsg('保存成功','green','msgview_{rand}');
+				$(o).hide();
+			});
+		},
+		testss:function(){
+			js.msg('wait','测试发送中...');
+			$.get(js.getajaxurl('testsend','{mode}','{dir}'), function(s){
+				js.msg('success',s);
+			});
+		}
+	};
+	
+	js.initbtn(c);
+	c.init();
+});
+</script>
+
+<div align="left">
+<div  style="padding:10px;">
+	
+	
+		
+		<table cellspacing="0" border="0" cellpadding="0">
+		
+		
+	
+		
+		<tr>
+			<td  align="right"><font color=red>*</font> 通信地址：</td>
+			<td class="tdinput"><input id="host_{rand}" class="form-control"><br><font color=#888888>用于客户端连接的通信地址,ws://开头</font></td>
+		</tr>
+		
+		<tr>
+			<td  align="right" width="200"><font color=red>*</font> 服务端推送地址：</td>
+			<td class="tdinput"><input id="push_{rand}" class="form-control"><br><font color=#888888>用于推送到信呼客户端,http://开头</font></td>
+		</tr>
+		
+		<tr>
+			<td  align="right"><font color=red>*</font> recID号：</td>
+			<td class="tdinput"><input id="receid_{rand}" class="form-control"></td>
+		</tr>
+		
+		<tr>
+			<td></td>
+			<td class="tdinput"><font color="#888888">不知道地址？请先安装并运行服务端，</font><a href="http://xinhu.pw/view_server.html" target="_blank">[帮助?]</a></td>
+		</tr>
+		
+		<tr>
+			<td  align="right"></td>
+			<td style="padding:15px 0px" colspan="3" align="left"><button click="save" class="btn btn-success" type="button"><i class="icon-save"></i>&nbsp;保存</button>&nbsp; <button click="testss" class="btn btn-primary" type="button">测试发送</button>&nbsp; <span id="msgview_{rand}"></span>
+		</td>
+		</tr>
+		
+
+	
+</div>
+</div>

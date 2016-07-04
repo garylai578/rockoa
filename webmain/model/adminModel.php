@@ -1,0 +1,220 @@
+<?php
+class adminClassModel extends Model
+{
+	public function gjoin($joinid, $glx='ud', $blx='bxl')
+	{
+		$uid 	= $did = '0';
+		if($this->rock->isempt($joinid))return '';
+		if($this->rock->contain($joinid, 'all'))return 'all';
+		$narr 	= explode(',', $joinid);
+		$dwhe	= array();
+		foreach($narr as $sid){
+			$lx 	= substr($sid, 0, 1);
+			$ssid 	= str_replace(array('u','d','U','D'), array('','','',''), $sid);
+			if($lx == 'd' || $glx=='d'){
+				$did.=','.$ssid.'';
+				$dwhe[] = "instr(`deptpath`, '[$ssid]')>0";
+			}else{
+				$uid.=','.$ssid.'';
+			}
+		}
+		$where = '';
+		if($did != '0'){
+			$where = join(' or ', $dwhe);
+			if($uid!='0')$where.=" or `id` in($uid)";
+		}else{
+			if($uid!='0')$where ="`id` in($uid)";
+		}
+		if($blx == 'where')return $where;
+		$guid = '';
+		if($where!=''){
+			$rows = $this->getall("`status`=1 and ($where)", '`id`');
+			foreach($rows as $k=>$rs)$guid.=','.$rs['id'].'';
+			if($guid !='')$guid = substr($guid, 1);
+		}
+		return $guid;
+	}
+	
+	/**
+		判断某个id是不是在里面
+	*/
+	public function containjoin($joinid, $myid=0, $glx='ud')
+	{
+		$bo 	= false;
+		$wh 	= $this->gjoin($joinid, $glx, 'where');
+		if($wh == 'all')$bo = true;
+		if(!$bo && $wh != ''){
+			if($this->rows("`id`='$myid' and ($wh)")>0)$bo = true;
+		}
+		return $bo;
+	}
+	
+	public function getjoinstr($fids, $us, $lx=0)
+	{
+		$s 		= '';
+		if(is_numeric($us))$us	= $this->getone($us,'id,`name`,`deptid`,`deptpath`');
+		if(!$us)return '';
+		$uid	= $us['id'];
+		$tj[]	= "ifnull($fids,'')=''";
+		$tj[]	= $this->rock->dbinstr($fids, 'all');
+		$tj[]	= $this->rock->dbinstr($fids, 'u'.$uid);
+		if($us){
+			$dep = explode(',', $us['deptpath']);
+			foreach($dep as $deps){
+				$_deps 	= str_replace(array('[',']'), array('',''), $deps);
+				$tj[]	= $this->rock->dbinstr($fids, 'd'.$_deps);
+			}
+		}
+		$s	= join(' or ', $tj);
+		if($s != '' && $lx==0)$s = ' and ('.$s.')';
+		return $s;
+	}
+	
+	/**
+		获取人员上级主管id
+	*/
+	public function getup($uid)
+	{
+		$one 	= $this->getone($uid, 'superid,deptid');
+		$rows 	= $this->getpath($one['deptid'], $one['superid']);
+		$s		= $rows['superpath'];
+		$s		= str_replace('[', '', $s);
+		$s		= str_replace(']', '', $s);
+		return $s;
+	}
+	
+	public function getpath($did, $sup)
+	{
+		$deptpath 	= $this->db->getpval('[Q]dept', 'pid', 'id', $did, '],[');
+		$deptname	= $this->db->getmou('[Q]dept', 'name', "`id`='$did'");
+		$supername	= '';
+		
+		$superpath	= '';
+		if(!$this->rock->isempt($sup)){
+			$sua = explode(',', $sup);
+			foreach($sua as $suas){
+				$sss1 	= $this->db->getpval('[Q]admin', 'superid', 'id' ,$suas, '],[');
+				if($sss1 != '')$superpath.=',['.$sss1.']';
+				$sss2	= $this->db->getmou('[Q]admin', 'name', "`id`='$suas'");
+				if(!$this->rock->isempt($sss2))$supername.=','.$sss2;
+			}
+			if($superpath!='')$superpath=substr($superpath,1);
+			if($supername!='')$supername=substr($supername,1);
+		}
+		$rows['deptpath'] 	= $this->rock->strformat('[?0]', $deptpath);
+		$rows['superpath'] 	= $superpath;
+		$rows['deptname'] 	= $deptname;
+		$rows['superman'] 	= $supername;
+		
+		return $rows;
+	}
+	
+	/**
+		获取下级人员id
+	*/
+	public function getdown($uid)
+	{
+		$rows = $this->getall("instr(superpath,'[$uid]')>0", 'id');
+		$s	  = '';
+		foreach($rows as $k=>$rs)$s.=','.$rs['id'];
+		if($s != '')$s = substr($s, 1);
+		return $s;
+	}
+	
+	/**
+		获取用户信息(部门，单位，职位等)
+	*/
+	public function getinfor($uid)
+	{
+		$unitname 	= $deptname = $ranking = '';
+		$name	= '';
+		$face	= '';
+		$deptid	= '';
+		$rs		= $this->getone($uid, 'name,deptname,deptid,ranking,face');
+		if($rs){
+			$deptname 	= $rs['deptname'];
+			$ranking 	= $rs['ranking'];
+			$name 		= $rs['name'];
+			$deptid 	= $rs['deptid'];
+			$face 		= $this->getface($rs['face']);
+			if(!$this->isempt($deptid))$unitname = $this->db->getpval('[Q]dept','pid','name', $deptid);
+		}
+		return array(
+			'unitname' => $unitname,
+			'deptname' => $deptname,
+			'name' 		=> $name,
+			'ranking' 	=> $ranking,
+			'face' 		=> $face,
+			'deptid' 	=> $deptid
+		);
+	}
+	
+	/*
+		获取在线的人员Id
+	*/
+	public function getonline($receid, $lx=10)
+	{
+		$uarr 		= $this->getonlines('reim', $receid, $lx);
+		$jonus		= join(',', $uarr);
+		return $jonus;
+	}
+	
+	//获取对应类型在线人员
+	public function getonlines($type, $teuid='all', $lx=11, $where='')
+	{
+		$arrs 	= array();
+		$dts 	= c('date')->adddate($this->rock->now, 'i', 0-$lx);
+		$wheres		= '';
+		if($teuid != 'all' && $teuid!=''){
+			if($this->contain($teuid,'u') || $this->contain($teuid,'d')){
+				$teuid = $this->gjoin($teuid);
+				if($teuid=='')return $arrs;
+			}
+			$wheres=" and `uid` in($teuid)";
+		}
+		if($lx>0){
+			$wheres .= " and `moddt`>'$dts'";
+		}
+		$sql 	= "select `uid` from `[Q]logintoken` where `cfrom`='$type' and `online`=1 $wheres $where group by `uid`";
+		
+		$rows   = $this->db->getall($sql);
+		foreach($rows as $k=>$rs){
+			$arrs[] = $rs['uid'];
+		}
+		return $arrs;
+	}
+	
+	private function getface($face, $mr='')
+	{
+		if($mr=='')$mr 	= 'images/noface.png';
+		if(substr($face,0,4)!='http' && !$this->isempt($face))$face = URL.''.$face.'';
+		$face 			= $this->rock->repempt($face, $mr);
+		return $face;
+	}
+	
+	public function getuser($lx=0)
+	{
+		$rows = $this->getall("`status`=1",'id,name,deptid,deptname,ranking,tel,face,sex,email','sort,name');
+		$py   = c('pingyin');
+		foreach($rows as $k=>$rs){
+			$rows[$k]['face'] = $this->getface($rs['face']);
+			if($lx==1)$rows[$k]['pingyin'] = $py->get($rs['name'],1);
+		}
+		return $rows;
+	}
+	
+	public function getadmininfor($rows, $suids, $fid='checkid')
+	{
+		$farr	= $this->db->getarr('[Q]admin', "`id` in($suids)",'`face`,`name`');
+		foreach($rows as $k=>$rs){
+			$face =  $name = '';
+			if(isset($farr[$rs[$fid]])){
+				$face = $farr[$rs[$fid]]['face'];
+				$name = $farr[$rs[$fid]]['name'];
+				$rows[$k]['name'] = $name;
+			}	
+			$rows[$k]['face'] = $this->getface($face);
+		}
+		return $rows;
+	}
+}

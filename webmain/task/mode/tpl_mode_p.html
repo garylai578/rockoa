@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="yes" />
+<title><?=$da['title']?></title>
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="stylesheet" type="text/css" href="webmain/css/css.css">
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/js.js"></script>
+
+
+<style>
+.stitle{padding:5px;border-bottom:1px #dddddd solid;font-size:14px;}
+.ydullist{display:inline-block;width:100%;}
+.ydullist li{float:left;width:10%;text-align:center;padding:5px 0px;font-size:12px;display:block;line-height:25px;padding-top:10px}
+.ydullist li:active{ background-color:#eeeeee}
+.ydullist li img,.faces{height:30px;width:30px;border-radius:15px}
+.ydullist li span{font-size:12px;color:#888888;}
+
+.faces{margin-right:10px}
+.ptitle{ text-align:center;font-size:20px;padding-top:15px;padding-bottom:10px}
+.tabled2 td{padding:5px;border:1px #e5e5e5 solid;text-align:center}
+.createtable{width:98%}
+.menulls{position:absolute;left:1px;top:10px}
+.menullss{position:absolute;left:1px;top:32px; background-color:white; border:1px #cccccc solid;border-bottom:0px;display:none}
+.menullss li{padding:5px 10px;border-bottom:1px #dddddd solid;cursor:pointer}
+.menullss li:hover{ background-color:#f1f1f1}
+.pcont{line-height:27px}
+.pcont p{text-indent:24pt;margin:10px 0px}
+</style>
+<script>
+var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>';
+
+function initbody(){
+	$('body').click(function(){
+		$('.menullss').hide();
+	});
+	$('body').keydown(c.onkeydown);
+	$('#showmenu').click(function(){
+		$('.menullss').toggle();
+		return false;
+	});
+	$('.menullss li').click(function(){
+		c.mencc(this);
+	});
+}
+function _submitother(nae,zt,ztid,ocan,las){
+	if(!las)las='other_explain';
+	if(!nae||!get(las)){js.setmsg('sorry;不允许操作','','msgview_spage');return;}
+	var sm=$('#'+las+'').val();
+	if(!zt)zt='';if(!ocan)ocan={};
+	if(!ztid){js.setmsg('没有选择状态','','msgview_spage');return;}
+	if(!sm){js.setmsg('没有输入备注/说明','','msgview_spage');return;}
+	var da = js.apply({'name':nae,'mid':mid,'modenum':modenum,'zt':zt,'ztid':ztid,'sm':sm},ocan);
+	js.setmsg('处理中...','','msgview_spage');
+	js.ajax(c.gurl('addlog'),da,function(s){
+		js.setmsg('处理成功','green', 'msgview_spage');
+		$('#spage_btn').hide();
+	},'post',function(s){
+		js.setmsg(s,'','msgview_spage');
+	});
+	return false;
+}
+var c={
+	gurl:function(a){
+		var url=js.getajaxurl(a,'flowopt','flow');
+		return url;
+	},
+	close:function(){
+		window.close();
+	},
+	other:function(nae,las){
+		_submitother(nae,'','1',las);
+	},
+	others:function(nae,zt,ztid,ocan,las){
+		_submitother(nae,zt,ztid,ocan,las);
+	},
+	mencc:function(o1){
+		var lx=$(o1).attr('lx');
+		if(lx=='2')c.delss();
+		if(lx=='3')c.close();
+		if(lx=='0'){
+			c.hideoth();
+			window.print();
+		}
+		if(lx=='1'){
+			var url='index.php?a=lu&m=input&d=flow&num='+modenum+'&mid='+mid+'';
+			location.href=url;
+		}
+	},
+	hideoth:function(){
+		$('.menulls').hide();
+		$('.menullss').hide();
+		$('a[temp]').remove();
+	},
+	delss:function(){
+		if(!confirm('慎用，删除将不能恢复，确定要删除吗？'))return;
+		var da = {'mid':mid,'modenum':modenum,'sm':''};
+		js.ajax(c.gurl('delflow'),da,function(a){
+			js.msg('success','单据已删除,3秒后自动关闭页面,<a href="javascript:;" onclick="c.close()">[关闭]</a>');
+			setTimeout('c.close()',3000);
+		},'post');
+	},
+	onkeydown:function(e){
+		var code	= event.keyCode;
+		if(code==27){
+			c.close();
+			return false;
+		}
+		if(event.altKey){
+			if(code == 67){
+				c.close();
+				return false;
+			}
+		}
+	}
+};
+</script>
+</head>
+<body style="background:white">
+<div align="center">
+<div style="width:670px;position:relative" align="left">
+
+	<div class="menulls"><a href="javascript:;" id="showmenu" style="background-color:#888888;font-size:12px" class="webbtn">操作V</a></div>
+	<div class="menullss"><ul><li lx="0">打印...</li>
+	<?php
+	if($da['arr']['isedit']==1)echo '<li lx="1">编辑</li>';
+	if($da['arr']['isdel']==1)echo '<li lx="2">删除...</li>';
+	?>
+	<li lx="3">关闭</li>
+	</ul></div>
+
+	<div class="ptitle"><?=$da['title']?></div>
+	<div class="padding10 pcont" align="left"><?=$da['arr']['contview']?></div>
+
+	<div class="padding10">
+		<?php 
+		if($da['spagepath']!=''){
+			include_once($da['spagepath']);
+		}
+		
+		if($da['arr']['logarr']){
+		?>
+		<div id="recordss">
+		<div class="stitle zhu">处理记录 <a temp="clo" href="javascript:;" onclick="$('#recordss').remove();">×</a></div>
+		<div>
+			<table border="0"  class="tabled2" style="border-collapse:collapse;" width="100%" cellspacing="0" cellpadding="0">
+				<tr bgcolor="#E1F4F0">
+					<td>序号</td>
+					<td>动作</td>
+					<td>处理人</td>
+					<td>状态</td>
+					<td>说明</td>
+					<td>时间</td>
+				</tr>
+				<?php 
+				foreach($da['arr']['logarr'] as $k=>$rs){
+				?>
+				<tr >
+					<td><?=$k+1?></td>
+					<td><?=$rs['actname']?></td>
+					<td><?=$rs['name']?></td>
+					<td><?=$rs['statusname']?></td>
+					<td><?=$rs['explain']?></td>
+					<td><?=$rs['optdt']?></td>
+				</tr>
+				<?php }?>
+			</table>
+		</div>
+		<div class="blank10"></div>
+		</div>
+		<?php }?>
+		<div id="recordsss">
+		<div class="stitle zhu">查阅记录 <a temp="clo" href="javascript:;" onclick="$('#recordsss').remove();">×</a></div>
+		<div><ul class="ydullist"><?php
+			foreach($da['arr']['readarr'] as $k=>$rs){
+				echo '<li title="共查阅'.$rs['stotal'].'次&#13;最后查阅：'.$rs['optdt'].'" ><img src="'.$rs['face'].'" align="absmiddle"><br><span>'.$rs['name'].'</span></li>';
+			}
+		?></ul></div>
+		</div>
+	</div>
+
+</div>
+</div>
+</body>
+</html>

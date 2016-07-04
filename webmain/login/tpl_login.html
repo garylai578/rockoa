@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><?=$da['title']?></title>
+<link rel="stylesheet" type="text/css" href="mode/bootstrap3.3/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/webmain.css"/>
+<link rel="shortcut icon" href="favicon.ico" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/js.js"></script>
+<script type="text/javascript" src="js/base64-min.js"></script>
+<script type="text/javascript" src="<?=$da['p']?>/<?=$da['d']?><?=$da['m']?>/<?=$da['m']?>script.js"></script>
+<style>
+.lmaisft{width:450px;border-radius:5px;text-align:left; background-color:#C4E0F4;background: rgba(255,255,255,0.3);}
+.ltoplog{}
+</style>
+</head>
+
+
+<body style="background:#66A8E5 url(images/loginbg.jpg) top center no-repeat">
+
+<div id="topheih" class="blank40"></div>
+
+<div align="center">
+
+	<div class="ltoplog"><img src="images/logo.png" align="absmiddle" style="margin-right:15px;" height="80" width="80"><b style="font-size:22px"><?=$da['title']?></b></div>
+	<div class="blank30"></div>
+
+	<div class="lmaisft">
+		
+		
+		<form style="padding:20px;padding-left:80px" name="myform">
+			<div style="font-size:20px">系统登录</div>
+			<div class="blank10"></div>
+			<div>
+				<div><input type="text" style="height:40px;width:300px" class="input" onKeyUp="if(event.keyCode==13)form('adminpass').focus()" value="<?=$da['ca_adminuser']?>"  placeholder="请输入用户名" name="adminuser" ></div>
+			</div>
+
+			<div class="blank30"></div>
+			<div>
+				<div><input  style="height:40px;width:300px" class="input"  onKeyUp="if(event.keyCode==13)loginsubmit()" value="<?php if($da['ca_rempass']=='1')echo $da['ca_adminpass'];?>"  name="adminpass" type="password" placeholder="请输入密码"></div>
+			</div>
+
+			<div class="blank10"></div>
+			<div align="left">
+				 <div class="checkbox"><label><input type="checkbox" <?php if($da['ca_rempass']=='1')echo 'checked';?> name="rempass">记住密码</label>&nbsp; &nbsp; <font color=#888888></font></div>
+			</div>
+
+			<div class="blank10"></div>
+
+			<div align="left">
+				<button type="button" onClick="loginsubmit()" class="btn btn-success" name="button"><i class="glyphicon glyphicon-hand-up"></i> 登录</button>&nbsp;<span id="msgview"></span>
+			</div>
+
+		</form>
+		
+		
+	</div>
+
+
+
+	<div class="blank20"></div>
+	<div align="center" style="height:30px;line-height:30px;color:#555555">
+		Copyright &copy;<?=date('Y')?> <?=$da['title']?> &nbsp; - &nbsp; 
+		技术支持：<a href="http://xinhu.pw/" class="lonad" target="_blank">信呼开发团队 </a>
+	</div>
+
+</div>
+</body>
+</html>

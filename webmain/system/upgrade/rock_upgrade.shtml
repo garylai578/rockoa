@@ -1,0 +1,14 @@
+<script >
+$(document).ready(function(){
+	
+});
+</script>
+
+
+<div class="blank10"></div>
+<div style="font-size:16px;line-height:35px">
+系统升级方法：<br>
+1、使用svn地址升级(推荐)，地址：<a href="https://git.oschina.net/rainrock/xinhu" target="_blank">https://git.oschina.net/rainrock/xinhu</a><br>
+2、去官网下载源码全部覆盖升级，如果您自己修改，请谨慎覆盖。<br>
+3、下载补丁文件升级，后续推出。
+</div>

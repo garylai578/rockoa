@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title><?=$da['title']?></title>
+<link rel="stylesheet" href="<?=$da['p']?>/css/css.css" />
+<link rel="stylesheet" href="mode/kindeditor/themes/default/default.css" />
+<link rel="shortcut icon" href="favicon.ico" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/js.js"></script>
+<script type="text/javascript" src="js/base64-min.js"></script>
+<script type="text/javascript" src="js/rmb.js"></script>
+<script type="text/javascript" src="mode/kindeditor/kindeditor-min.js"></script>
+<script type="text/javascript" src="mode/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=0,mid='<?=$da['mid']?>';
+function initbodys(){};
+function geturlact(act){
+	var url=js.getajaxurl(act,'mode_'+moders.num+'|input','flow');
+	return url;
+}
+function initbody(){
+	$('body').keydown(function(et){
+		var code	= event.keyCode;
+		if(code==27){
+			c.close();
+			return false;
+		}
+		if(event.altKey){
+			if(code == 83){
+				get('AltS').click();
+				return false;
+			}
+		}
+	});
+	
+	var len = arr.length,i,fid,nfid='';
+	for(i=0;i<len;i++){
+		fid=arr[i].fields;
+		if(arr[i].islu=='1'){
+			if(arr[i].fieldstype=='checkboxall')fid+='[]';
+			if(!form(fid)){
+				nfid+='\n('+fid+'.'+arr[i].name+')';
+			}
+			if(arr[i].fieldstype=='htmlediter')c.htmlediter(arr[i].fields);
+		}
+	}
+	c.initsubtable();
+	if(nfid==''){
+		c.showdata();
+	}else{
+		alert('录入页面缺少必要的字段：'+nfid+'');
+	}
+}
+function changesubmit(d){};
+function changesubmitbefore(){};
+var c={
+	save:function(){
+		if(js.ajaxbool||isedit==0)return;
+		var len = arr.length,i,val,fid;
+		changesubmitbefore();
+		var d = js.getformdata();
+		for(i=0;i<len;i++){
+			fid=arr[i].fields;
+			if(arr[i].islu=='1'&&arr[i].fieldstype=='htmlediter'){
+				d[fid] = this.editorobj[fid].html();
+			}
+			if(arr[i].isbt=='1'){
+				val=d[fid];
+				if(isempt(val)){
+					if(form(fid))form(fid).focus();
+					js.setmsg(''+arr[i].name+'不能为空');
+					return;
+				}
+			}
+		}
+		var s=changesubmit(d);
+		if(typeof(s)=='string'&&s!=''){
+			js.setmsg(s);
+			return false;
+		}
+		if(typeof(s)=='object')d=js.apply(d,s);
+		d.modeid=moders.id;
+		d.modenum=moders.num;
+		js.setmsg('保存中...');
+		get('AltS').disabled=true;
+		js.ajax(geturlact('save'),d,function(str){
+			c.backsave(js.decode(str));
+		}, 'post', function(){
+			js.setmsg('error:内部错误,可F12调试');
+		});
+	},
+	showdata:function(){
+		var smid=form('id').value;
+		if(smid=='0'||smid==''){
+			isedit=1;
+			$('#AltS').show();
+			initbodys(smid);
+		}else{
+			js.setmsg('加载数据中...');
+			js.ajax(geturlact('getdata'),{mid:smid,flownum:moders.num},function(str){
+				c.showdataback(js.decode(str));	
+			},'post', function(){
+				js.setmsg('error:内部错误,可F12调试');
+			});
+		}
+	},
+	showdataback:function(a){
+		if(a.success){
+			var da = a.data;
+			js.setmsg();
+			var len = arr.length,i,fid,val,flx,ojb,j;
+			for(i=0;i<len;i++){
+				fid=arr[i].fields;
+				flx=arr[i].fieldstype;
+				if(arr[i].islu=='1'){
+					val=da.data[fid];
+					if(val==null)val='';
+					if(flx=='checkboxall'){
+						ojb=$("input[name='"+fid+"[]']");
+						val=','+val+',';
+						for(j=0;j<ojb.length;j++){
+							if(val.indexOf(','+ojb[j].value+',')>-1)ojb[j].checked=true;
+						}
+					}else if(flx=='checkbox'){
+						form(fid).checked = (val=='1');
+					}else if(flx=='htmlediter'){
+						this.editorobj[fid].html(val);
+					}else{
+						if(form(fid))form(fid).value=val;
+					}
+				}
+			}
+			isedit=da.isedit;
+			if(form('base_name'))form('base_name').value=da.user.name;
+			if(form('base_deptname'))form('base_deptname').value=da.user.deptname;
+			js.downupshow(da.filers,'fileidview','', (isedit==0));
+			var subd = da.subdata,subds;
+			for(j=0;j<=3;j++){
+				subds=subd['subdata'+j+''];
+				if(subds)for(i=0;i<subds.length;i++){
+					subds[i].sid=subds[i].id;
+					if(form('xuhao0_'+i+'')){
+						c.adddatarow('0',i, subds[i]);
+					}else{
+						c.insertrow('0', subds[i]);
+					}
+				}
+			}
+			initbodys(form('id').value);
+			if(isedit==0){
+				this.formdisabled();
+			}else{
+				$('#AltS').show();
+			}
+			if(da.isflow==1){
+				$('.status').show();
+				var zt=da.status;
+				if(da.data.isturn=='0')zt='3';
+				get('statusimg').src='images/status'+zt+'.png';
+			}
+		}else{
+			get('AltS').disabled=true;
+			this.formdisabled();
+			js.setmsg(a.msg);
+		}
+	},
+	backsave:function(a){
+		if(a.success){
+			js.setmsg(a.msg,'green');
+			this.formdisabled();
+			$('#AltS').hide();
+			form('id').value=a.data;
+			isedit=0;
+			if(gridid!=''){
+				try{parent.getcmp(gridid).store.reload();}catch(e){}
+			}
+		}else{
+			get('AltS').disabled=false;
+			js.setmsg(a.msg);
+		}
+	},
+	date:function(o1,lx){
+		var da={};if(lx=='datetime')lx='Y-m-d H:i:00';if(lx=='date')lx='Y-m-d';if(lx=='time')lx='H:i:s';if(lx=='month')lx='Y-m';if(lx=='year')lx='Y';lx=lx.replace('Y','yyyy');lx=lx.replace('m','MM');lx=lx.replace('d','dd');lx=lx.replace('H','HH');lx=lx.replace('i','mm');lx=lx.replace('s','ss');da.dateFmt = lx;
+		WdatePicker(da);
+	},
+	close:function(){
+		window.close();
+	},
+	formdisabled:function(){
+		$('form').find('*').attr('disabled', true);
+		$('#fileupaddbtn').remove();
+	},
+	upload:function(){
+		js.upload('',{showid:'fileidview'});
+	},
+	changeuser:function(na, lx){
+		js.changeuser(na,lx);
+	},
+	changeclear:function(na){
+		js.changeclear(na);
+	},
+	editorobj:{},
+	htmlediter:function(fid){
+		var cans  = {
+			resizeType : 0,
+			allowPreviewEmoticons : false,
+			allowImageUpload : true,
+			formatUploadUrl:false,
+			allowFileManager:true,
+			uploadJson:'mode/kindeditor/kindeditor_upload.php',
+			minWidth:'300px',height:'250',
+			items : [
+				'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+				'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+				'insertunorderedlist', '|','image', 'link','unlink','|','source','clearhtml','fullscreen'
+			]	
+		};
+		this.editorobj[fid] = KindEditor.create("[name='"+fid+"']", cans);
+	},
+	subtablefields:[],
+	initsubtable:function(){
+		var i,oba,j,o,nas,nle,nasa,fname;
+		for(i=0;i<=3;i++){
+			if(get('tablesub'+i+'')){
+				fname=[];
+				o=$('#tablesub'+i+'');
+				form('sub_totals'+i+'').value=o.find('tr').length-1;
+				this.repaixuhao(i);
+				oba = o.find('tr:eq(1)').find('[name]');
+				for(j=0;j<oba.length;j++){
+					nas=oba[j].name;
+					nasa=nas.split('_');
+					nle = nasa.length;
+					nna= nasa[0];
+					if(nle>2)nna+='_'+nasa[1]+'';
+					if(nle>3)nna+='_'+nasa[2]+'';
+					fname.push(nna.substr(0,nna.length-1));
+				}
+				this.subtablefields[i]=fname;
+			}
+		}
+	},
+	delrow:function(o,xu){
+		if(isedit==0){
+			$(o).remove();
+			return;
+		}
+		var o1=$('#tablesub'+xu+'').find('tr');
+		if(o1.length<=2){
+			js.msg('msg','最后一行不能删除');
+			return;
+		}
+		$(o).parent().parent().remove();
+		this.repaixuhao(xu);
+	},
+	repaixuhao:function(xu){
+		var o=$('#tablesub'+xu+'').find("input[temp='xuhao']");
+		for(var i=0;i<o.length;i++){
+			o[i].value=(i+1);
+		}
+	},
+	insertrow:function(xu, d){
+		if(!get('tablesub'+xu+'')){
+			alert('error=201：表单设计有误');
+			return;
+		}
+		var o=$('#tablesub'+xu+'');
+		var o1=o.find('tr'),oi=o1.length-1,i,str,oba,nas,oj,nna,ax2,d1;
+		str = o.find('tr:eq('+oi+')').html();
+		oba = o.find('tr:eq('+oi+')').find('[name]');
+		oj  = parseFloat(form('sub_totals'+xu+'').value);
+		var narrs=[],fasr=this.subtablefields[xu],wux=''+xu+'_'+oj+'';
+		for(i=0;i<oba.length;i++){
+			nas=oba[i].name;
+			nna=fasr[i]+''+wux+'';
+			str=str.replace(nas, nna);
+			narrs.push(nna);
+		}
+		form('sub_totals'+xu+'').value=(oj+1);
+		o.append('<tr>'+str+'</tr>');
+		d=js.apply({sid:'0'},d);
+		for(d1 in d){
+			ax2=d1+wux;
+			if(form(ax2))form(ax2).value=d[d1];
+		}
+		this.repaixuhao(xu);
+	},
+	adddatarow:function(xu, oj, d){
+		d=js.apply({sid:'0'},d);
+		var fasr=this.subtablefields[xu],ans;
+		for(var i=0;i<fasr.length;i++){
+			ans=fasr[i]+''+xu+'_'+oj+'';
+			if(form(ans)&&d[fasr[i]])form(ans).value=d[fasr[i]];
+		}
+	},
+	addrow:function(o,xu){
+		if(isedit==0){
+			$(o).remove();
+			return;
+		}
+		this.insertrow(xu);
+	},
+	getsubtabledata:function(){
+		
+	},
+	_getsubtabledatas:function(xu){
+		var oxut=form('sub_totals'+xu+'');
+		if(!oxut)return false;
+		var da={},fasr,len=parseFloat(oxut.value),j,f,na;
+		da['sub_totals'+xu+'']=oxut.value;
+		fasr=this.subtablefields[xu];
+		for(j=1;j<=len;j++){
+			for(f=0;j<fasr.length;j++){
+				na=fasr[f]+''+xu+'_'+j+'';
+				if(form(na))da[na]=form(na).value;
+			}
+		};
+		return da;
+	},
+	getsubtotals:function(fid, xu){
+		var oi=0;
+		if(!xu)xu='0';
+		var oxut=form('sub_totals'+xu+'');
+		if(!oxut)return oi;
+		var len=parseFloat(oxut.value),j,na,val;
+		for(j=0;j<len;j++){
+			na=fid+''+xu+'_'+j+'';
+			if(form(na)){
+				val=form(na).value;
+				if(val)oi+=parseFloat(val);
+			}
+		}
+		return oi;
+	}
+};
+
+</script>
+
+<style>
+.tdcont{padding:0px 0px;font-size:14px;}
+.tdcont *{font-size:14px;}
+.tdcont a{color:blue;font-size:12px}
+.ys0{border:1px #888888 solid}
+.ys1{padding:5px 5px; border:1px #888888 solid;color:#555555}
+.ys2{padding:5px 5px; border:1px #888888 solid}
+
+.inputs{width:95%;font-size:14px;}
+.cionsss{padding:4px; background-color:#dddddd}
+.datesss{background:url(mode/icons/date.png) no-repeat right;cursor:pointer}
+.status{position: absolute;right:5px;top:-10px;display:none}
+
+.tablesub td{height:25px;text-align:center;border-bottom:1px #888888 solid;border-right:1px #888888 solid;}
+.tablesub .inputs{border:none}
+
+.course{padding:8px 10px; background-color:#CDF4EC;border:1px #AADDD3 solid;margin-right:10px}
+.coursejt{height:8px;overflow:hidden;width:30px;background-color:#CDF4EC}
+.coursejts{width:0px;  height:0px; overflow:hidden;border-width:8px;border-style:solid;border-color:transparent transparent transparent #CDF4EC;}
+</style>
+</head>
+<body style="background:white">
+<div align="center">
+	<div class="blank10"></div>
+	<div style="width:650px; position:relative">
+		<div class="status"><img id="statusimg" src="images/status1.png"></div>
+		<div onclick="location.reload()" style="padding-bottom:15px;font-size:24px"><?=$da['title']?></div>
+		<div class="tdcont" align="left">
+			<form name="myform">
+			<input name="id" type="hidden" value="<?=$da['mid']?>">
+			<input value="0" type="hidden" name="sub_totals0">
+			<input value="0" type="hidden" name="sub_totals1">
+			<?=$da['content']?>
+			</form>
+		</div>
+		<?php 
+		if($da['course']){
+			$s = '<div align="center" style="padding:20px 0px">';
+			$s .='<table><tr>';
+			foreach($da['course'] as $k=>$rs){
+				
+				$s .='<td><div class="course">'.$rs['name'].'</div></td>';
+				if($rs['id']>-1){
+					$s .='<td><div class="coursejt"></div></td>';
+					$s .='<td><div class="coursejts"></div></td>';
+				}
+			}
+			$s .= '</tr></table>';
+			$s .= '</div>';
+			echo $s;
+		}
+		?>
+		<div style="height:60px; overflow:hidden"></div>
+	</div>
+	<div align="right" style="background:#eeeeee;border-top:1px #aaaaaa solid;padding:10px 0px; position:fixed;width:100%;bottom:0px;left:0px">
+		<span id="msgview"></span>&nbsp; 
+		<input id="AltS" style="display:none" type="button" onclick="return c.save()" value="保存(S)" class="webbtn">&nbsp; &nbsp; 
+	</div>
+</div>
+<script type="text/javascript" src="<?=$da['p']?>/flow/input/inputjs/mode_<?=$da['moders']['num']?>.js"></script>
+</body>
+</html>

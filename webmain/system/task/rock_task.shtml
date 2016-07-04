@@ -1,0 +1,125 @@
+<script >
+$(document).ready(function(){
+	var a = $('#veiw_{rand}').bootstable({
+		tablename:'task',celleditor:true,
+		columns:[{
+			text:'名称',dataIndex:'name',editor:true,align:'left'
+		},{
+			text:'地址',dataIndex:'url',editor:true
+		},{
+			text:'频率',dataIndex:'type',editor:true
+		},{
+			text:'运行时间',dataIndex:'time',editor:true
+		},{
+			text:'运行说明',dataIndex:'ratecont',editor:true
+		},{
+			text:'状态',dataIndex:'status',editor:true,type:'checkbox',editor:true,sortable:true
+		},{
+			text:'排序号',dataIndex:'sort',editor:true
+		},{
+			text:'最后运行',dataIndex:'lastdt'
+		},{
+			text:'最后状态',dataIndex:'state',renderer:function(v){
+				var s='<font color=#888888>待运行</font>';
+				if(v==1)s='<font color=green>成功</font>';
+				if(v==2)s='<font color=red>失败</font>';
+				return s;
+			}
+		},{
+			text:'最后内容',dataIndex:'lastcont'
+		},{
+			text:'ID',dataIndex:'id'	
+		}],
+		itemclick:function(){
+			btn(false);
+		}
+	});
+	
+	var c = {
+		del:function(){
+			a.del({check:function(lx){if(lx=='yes')btn(true)}});
+		},
+		clickwin:function(o1,lx){
+			var h = $.bootsform({
+				title:'计划任务',height:400,width:500,
+				tablename:'task',isedit:lx,
+				params:{int_filestype:'sort,status'},
+				submitfields:'name,url,sort,status,type,time,ratecont',
+				items:[{
+					labelText:'名称',name:'name',required:true
+				},{
+					labelText:'运行地址',name:'url',required:true
+				},{
+					labelText:'频率',name:'type',required:true
+				},{
+					labelText:'运行时间',name:'time',required:true
+				},{
+					labelText:'说明',name:'ratecont'
+				},{
+					name:'status',labelBox:'启用',type:'checkbox',checked:true
+				},{
+					labelText:'序号',name:'sort',type:'number',value:'0'
+				}],
+				success:function(){
+					a.reload();
+				}
+			});
+			if(lx==1){
+				h.setValues(a.changedata);
+			}
+			h.getField('name').focus();
+		},
+		refresh:function(){
+			a.reload();
+		},
+		creaefile:function(){
+			js.msg('wait','创建中...');
+			js.ajax(js.getajaxurl('creaefile','{mode}','{dir}'),{},function(s){
+				js.msg('success','创建成功');
+			});
+		},
+		yunx:function(){
+			if(a.changedata.status!=1){
+				js.msg('msg','没有启用不能运行');
+				return;
+			}
+			js.msg('wait','运行中...');
+			var url='task.php?m=base|runt&a=run&mid='+a.changeid+'';
+			js.ajax(url,{},function(s){
+				if(s=='success'){
+					js.msg('success','运行成功');
+					a.reload();
+				}else{
+					js.msg('msg','运行失败');
+				}
+			});
+		}
+	};
+	
+	function btn(bo){
+		get('del_{rand}').disabled = bo;
+		get('edit_{rand}').disabled = bo;
+		get('yun_{rand}').disabled = bo;
+	}
+	//<button class="btn btn-info" click="creaefile" type="button">创建文件</button> &nbsp; 
+	js.initbtn(c);
+});
+</script>
+
+
+<div>
+<ul class="floats">
+	<li class="floats50">
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button> &nbsp; 
+		
+		<button class="btn btn-success" click="refresh" type="button"><i class="icon-refresh"></i> 刷新</button>
+	</li>
+	<li class="floats50" style="text-align:right">
+		<button class="btn btn-info" id="yun_{rand}" click="yunx" disabled type="button">运行</button> &nbsp; 
+		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
+		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>
+	</li>
+</ul>
+</div>
+<div class="blank10"></div>
+<div id="veiw_{rand}"></div>

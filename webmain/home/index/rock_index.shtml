@@ -1,0 +1,87 @@
+﻿<script>
+
+$(document).ready(function(){
+	var optdt = '',loadci=0,miao=200;
+	var c= {
+		gettotal:function(){
+			clearTimeout(this.timeteims);
+			var url = js.getajaxurl('gettotal','index','home');
+			$('#refresh_text').html('刷新统计中...');
+			$.post(url,{loadci:loadci,optdt:optdt}, function(da){
+				c.gettotalshow(js.decode(da));
+			});
+		},
+		refresh:function(){
+			this.gettotal();
+		},
+		shumiao:function(oi){
+			clearTimeout(this.timeteims);
+			if(oi<=0){
+				this.gettotal();
+			}else{
+				$('#refresh_text').html(''+oi+'秒后刷新');
+				this.timeteims = setTimeout(function(){c.shumiao(oi-1)},1000);
+			}
+		},
+		gettotalshow:function(a){
+			this.shumiao(miao);
+			loadci++;
+			optdt = a.optdt;
+			if(loadci==1){
+				jm.setJmstr(jm.base64decode(a.showkey));
+				//this.showicons(a.menuarr);
+			}
+			$('#guestbook_wd').html(a.todo+'');
+		},
+		showtotal:function(to, sid){
+			var o = $('#'+sid+'_{rand}');
+			if(!o)return;
+			if(to<=0){
+				o.hide();
+			}else{
+				o.show();
+				o.html(to);
+			}
+		},
+		showicons:function(a){
+			a.push({name:'刷新统计中...',icons:'refresh',num:'refresh',color:'#888888'});
+			this.menuarr = a;
+			var o = $('.homelishow'),s='';
+			o.html('');
+			for(var i=0; i<a.length;i++){
+				s = '<li>';
+				s+= '<div onclick="opentabsshowshwo('+i+')" class="homeiconss">';
+				s+=	'<div class="div00"><span id="'+a[i].num+'_{rand}" style="display:none" class="badge red"></span></div>';
+				s+=	'	<div style="background-color:'+a[i].color+'" class="homeiconss2">';
+				s+=	'		<div class="div01"><i class="icon-'+a[i].icons+'"></i></div>';
+				s+=	'		<div id="'+a[i].num+'_text">'+a[i].name+'<div>';
+				s+=	'	</div>';
+				s+=	'</div>';
+				s+=	'</li>';
+				o.append(s);
+			}
+		}
+	}
+	js.initbtn(c);
+	c.gettotal();
+	$('#banben').html(VERSION);
+});
+</script>
+
+<style>
+.homelishow{display:inline-block}
+.homelishow li{float:left;text-align:center;}
+</style>
+
+
+<div style="padding:20px;padding-top:0px">
+	
+	<h3>关于信呼</h3>
+	<div>软件：信呼<br>官网地址：<a href="http://xinhu.pw/" target="_blank">http://xinhu.pw/</a><br>版本：V<span id="banben">1.0</span></div>
+	<h3>信呼是什么？</h3>
+	<div>信呼是一款开源的即时工作软件，支持APP安卓和苹果，电脑PC客户端支持Windows，Mac，支持网页版。</div>
+	<h3>相关软件下载</h3>
+	<div>APP下载，电脑客户端下载，即时通信服务端下载，<a href="http://xinhu.pw/view_down.html" target="_blank">[去官网下载]</a></div>
+	<h3>系统软件声明</h3>
+	<div>我们是一款开源软件，你可以定制并开发各种应用到你的工作中，我们不能保证系统百分百的稳定性，也请不要恶意去破坏程序。</div>
+</div>

@@ -24,9 +24,13 @@ function geturlact(act){
 }
 function changesubmit(d){};
 function changesubmitbefore(){};
+function initbody(){
+	initbodys();
+}
 var c={
 	save:function(){
 		if(js.ajaxbool||isedit==0)return;
+		js.setmsg('');
 		var len = arr.length,i,val,fid;
 		changesubmitbefore();
 		var d = js.getformdata();
@@ -114,6 +118,7 @@ function clearuser(na){
 </script>
 <style>
 .datesss{background:url(mode/icons/date.png) no-repeat right;cursor:pointer}
+input,textarea,select,*{font-size:16px}
 </style>
 </head>
 
@@ -123,7 +128,10 @@ function clearuser(na){
 		<input name="id" type="hidden" value="<?=$da['mid']?>">
 		<?=$da['content']?>
 	</form>
-	<div class="padding10"><input type="button" id="AltS" onclick="c.save()" class="btn" value="提交"></div>
+	<div class="padding10">
+		<input type="button" id="AltS" onclick="c.save()" class="btn" value="提交">
+		<div id="msgview"></div>
+	</div>
 </div>
 <script type="text/javascript" src="<?=$da['p']?>/flow/input/inputjs/mode_<?=$da['moders']['num']?>.js"></script>
 </body>

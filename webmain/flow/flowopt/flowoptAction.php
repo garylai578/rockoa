@@ -26,4 +26,15 @@ class flowoptClassAction extends Action
 		if($msg != 'ok')$this->showreturn('', $msg, 201);
 		$this->showreturn('ok');
 	}
+	
+	public function checkAjax()
+	{
+		$mid 	= (int)$this->post('mid');
+		$zt 	= (int)$this->post('zt');
+		$modenum= $this->post('modenum');
+		$sm 	= $this->post('sm');
+		$msg 	= m('flow')->opt('check', $modenum, $mid, $zt, $sm);
+		
+		backmsg('', $msg);
+	}
 }

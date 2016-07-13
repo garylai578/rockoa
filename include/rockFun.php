@@ -121,3 +121,14 @@ function isajax()
 		return false;
 	};
 }
+
+function backmsg($msg='', $demsg='处理成功', $da=array())
+{
+	$bo = false;
+	if($msg == ''){
+		$msg = $demsg;
+		$bo = true;
+	}
+	echo json_encode(array('success'=>$bo,'msg'=>$msg,'data'=>$da));
+	exit;
+}

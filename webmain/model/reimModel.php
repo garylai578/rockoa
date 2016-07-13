@@ -30,6 +30,7 @@ class reimClassModel extends Model
 			$this->serverpushurl=$asss[0];
 			$this->serverhosturl=$asss[1];
 		}
+		if(getconfig('systype')=='demo')$this->serverhosturl = $this->rock->jm->base64decode('d3M6Ly8yMTEuMTQ5LjIzNC45Mzo2NTUyLw::');
 		if($this->isempt($this->servertitle))$this->servertitle='信呼';
 	}
 	
@@ -289,7 +290,7 @@ class reimClassModel extends Model
 	{
 		if($uid==0)$uid = $this->adminid;
 		$where	= m('admin')->getjoinstr('receid', $this->adminid);
-		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where",'`id`,`name`,`url`,`face`,`num`');
+		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where",'`id`,`name`,`url`,`face`,`num`','`sort`');
 		$dbs 	= m('im_menu');
 		foreach($rows as $k=>$rs){
 			$rows[$k]['face'] 		= $this->getface($rs['face']);
@@ -421,7 +422,7 @@ class reimClassModel extends Model
 					$path = $frs['filepath'];
 					if(!$this->isempt($path)&&file_exists($path)){
 						if($this->contain($imgext, ','.$type.',')){
-							$cont = '<img fid="'.$fid.'" src="'.URL.''.$frs['thumbpath'].'">';
+							$cont = '<img fid="'.$fid.'" src="{url}'.$frs['thumbpath'].'">';
 							$rows[$k]['cont'] = $this->rock->jm->base64encode($cont);
 						}else{
 							
@@ -605,7 +606,7 @@ class reimClassModel extends Model
 		$tos 	= m('logintoken')->rows($where);
 		if($tos>0){//没有打开应用
 			$conts = substr($this->rock->jm->base64decode($cont),0,99);
-			c('JPush')->send($receid,'['.$this->adminname.']发来一条消息', ''.$this->adminname.':'.$conts);
+			c('JPush')->send($receid,'['.$this->adminname.']发来一条消息', ''.$this->adminname.':'.$conts, 1);
 		}
 		
 		return $arr;
@@ -689,7 +690,7 @@ class reimClassModel extends Model
 			$tos 	= m('logintoken')->rows($where);
 			if($tos>0){//有打开应用
 				$conts = substr($this->rock->jm->base64decode($cont),0,99);
-				c('JPush')->send($asid,'['.$this->adminname.']通过['.$gname.']发来一条消息', ''.$this->adminname.':'.$conts);
+				c('JPush')->send($asid,'['.$this->adminname.']通过['.$gname.']发来一条消息', ''.$this->adminname.':'.$conts, 1);
 			}
 		}
 		$arr['gname'] = $gname;

@@ -16,7 +16,7 @@ class JPushChajian extends Chajian{
 		}
 	}
 	
-	public function send($uid, $title='', $cont='')
+	public function send($uid, $title='', $cont='', $lx=0)
 	{
 		if($uid=='')return false;
 		$client = new JPush($this->app_key, $this->master_secret);
@@ -31,11 +31,19 @@ class JPushChajian extends Chajian{
 				$where 	= "id in($uid) and ";
 			}
 		}
-		
-		$rows 	= m('logintoken')->getrows("`uid` in(select id from `[Q]admin` where $where `status`=1 and `apptx`=1) and `cfrom` in ('appandroid','appios') and `online`=1",'token');
+		$wheres = '';
+		if($lx==1){
+			$stal 	= date('Y-m-d H:i:s', time()-5*60);
+			$wheres = "and ifnull(`lastpush`,'')<'$stal'";
+		}
+		$uwhere = "$where `status`=1 and `apptx`=1 $wheres";
+		$rows 	= m('logintoken')->getrows("`uid` in(select id from `[Q]admin` where $uwhere) and `cfrom` in ('appandroid','appios') and `online`=1",'`token`,`uid`');
+		//$this->rock->debugs($this->db->nowsql,'nosql');
 		$alias 	= array();
+		$uids	= '0';
 		foreach($rows as $k=>$rs){
 			$alias[] = $rs['token'];
+			$uids	.= ','.$rs['uid'].'';
 		}
 		if(!$alias)return false;
 		$obj->addAlias($alias);
@@ -47,7 +55,8 @@ class JPushChajian extends Chajian{
 			//->addIosNotification($cont, null, JPush::DISABLE_BADGE, true, 'iOS category',array())
 			->send();
 		$msg = json_encode($result);	
-		$this->rock->debugs(json_encode($alias).$msg, 'jpush');	
+		if($uids!='0')$this->db->update('[Q]admin',"`lastpush`='".$this->rock->now."'", "id in($uids)");
+		
 		return $result;
 	}
 }

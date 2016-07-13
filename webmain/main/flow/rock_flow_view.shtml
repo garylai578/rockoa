@@ -14,10 +14,7 @@ $(document).ready(function(){
 		},{
 			text:'ID',dataIndex:'id',sortable:true
 		},{
-			text:'状态',dataIndex:'status',sortable:true,renderer:function(v){
-				var s='&nbsp;';
-				return s;
-			}
+			text:'状态',dataIndex:'status',sortable:true
 		}],
 		itemclick:function(d){
 			btn(false, d);
@@ -42,7 +39,7 @@ $(document).ready(function(){
 		del:function(){
 			a.del({
 				url:js.getajaxurl('delmodeshuju','{mode}','{dir}'),
-				params:{modeid:modeid}
+				params:{modeid:modeid,mid:a.changeid}
 			});
 		},
 		view:function(){

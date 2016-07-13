@@ -39,6 +39,8 @@ $(document).ready(function(){
 		},{
 			text:'排序号',dataIndex:'sort',editor:true
 		},{
+			text:'状态',dataIndex:'status',type:'checkbox',editor:true,sortable:true
+		},{
 			text:'ID',dataIndex:'id'
 		}],
 		load:function(){

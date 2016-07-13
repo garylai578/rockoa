@@ -411,7 +411,7 @@ class inputAction extends ActionNot
 			if($type=='changeusercheck'||$type=='changeuser'||$type=='changedept'||$type=='changedeptusercheck'){
 				
 				$str = '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:98%" id="change'.$fname.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" id="change'.$fname.'_id" type="hidden"></td>';
-				$str .= '<td nowrap><a href="javascript:;" style="border-right:1px #036CA0 solid" onclick="c.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="c.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
+				$str .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="c.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="c.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
 				
 				if($ism==1)$str = '<div style="background:white;padding:10px 0px 10px 10px">'.$str.'</div>';
 			}

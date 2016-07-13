@@ -62,7 +62,7 @@ class installClassAction extends ActionNot{
 		$db1->changeattr($host, $user, $pass, 'information_schema');
 		$db1->connectdb();
 		$msg = $db1->errormsg;
-		if(!$this->isempt($msg))exit('用户名/密码有误:'.$msg.'');
+		if(!$this->isempt($msg))exit('数据库用户名/密码有误:'.$msg.'');
 		
 		
 		//2
@@ -111,8 +111,8 @@ return array(
 	'install'	=> true			//已安装，不要去掉啊
 );";
 		$this->rock->createtxt($paths, $txt);
-		
 		$this->delinstall();
+		c('curl')->getcurl('http://xh829.com/api.php?a=xinhuinstall&version='.VERSION.'');//这个只是用于统计安装数而已
 		echo 'success';
 	}
 }

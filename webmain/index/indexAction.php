@@ -103,12 +103,7 @@ class indexClassAction extends Action{
 		$this->display = false;
 		//echo m('view')->viewwhere(3,3);
 		//m('beifen')->start();
-		$url = 'http://127.0.0.1:6552/?reimrecid=rockxinhu&a='.time().'';
-		echo c('curl')->postcurl($url, array(
-			'adminid'=>'1'
-		));
-		
-		
+		m('flow')->submit('leave', '1', '提交');
 	}
 	
 	public function downAction()

@@ -1,4 +1,4 @@
-var userarr = {},deptarr={},agentarr={},connectbool=false,fromrecid='',fromwshost='',relianshotime_time,otherlogin=false,grouparr= {},maindata={},tabsarr={},nowtabs,opentabs=[],chatobj={},notifyobj,agentobj={},systemtitle,windowfocus=true;
+var userarr = {},deptarr={},agentarr={},connectbool=false,fromrecid='',fromwshost='',relianshotime_time,otherlogin=false,grouparr= {},maindata={},tabsarr={},nowtabs,opentabs=[],chatobj={},notifyobj,agentobj={},systemtitle,windowfocus=true,enterbool=false;
 function addtabs(d){
 	var d=js.apply({num:js.getrand(),scroll:true,face:'images/white.gif',onshow:function(){},onclose:function(){}},d),num=d.num,i,ura;
 	nowtabs=d;
@@ -190,6 +190,7 @@ var im={
 		nwjs.init();
 		$('.msousou').keyup(function(){im.searchss();});
 		$('.msousou').click(function(){im.searchss();});
+		enterbool = (js.getoption('sendkey')=='1');
 	},
 	resize:function(){
 		var hw=$('.main').height();
@@ -491,6 +492,7 @@ var im={
 		js.ajax('reim','yiduall',{'type':type,'gid':gid},false,'none');
 	},
 	receivemesb:function(d){
+		js.debug(d);
 		var lx=d.type,sendid=d.adminid,num,face,ops=false,msg='',ot,ots,garr,tits,gid;
 		if(lx=='offoline'){
 			this.otherlogin();
@@ -597,6 +599,7 @@ var im={
 		if(lx==22)this.indexsyscog();
 		if(lx==23)this.initdata(true);
 		if(lx==24)location.reload();
+		if(lx==25)this.editpass();
 		if(lx>20)return;
 		var o1 = $(im.rightdivobj);
 		var tsaid = o1.attr('tsaid'),
@@ -611,19 +614,21 @@ var im={
 		}
 		if(lx==2){
 			o1.remove();
+			var tst=$('#historylist').text();if(tst=='')$('#historylist_tems').show();
 			js.ajax('reim','delhistory',{type:tsayp,gid:tsaid},false,'none');
 		}
 		if(lx==3)im.openrecord(tsayp, tsaid);
 	},
 	clickcog:function(o1){
 		var d=[{name:'＋创建会话',lx:21}];
-		d.push({name:'提醒设置',lx:22});
+		d.push({name:'设置',lx:22});
+		d.push({name:'修改密码',lx:25});
 		d.push({name:'重新加载数据',lx:23});
 		d.push({name:'刷新页面',lx:24});
 		d.push({name:'退出',lx:99});
 		righthistroboj.setData(d);
 		var off = $(o1).offset();
-		righthistroboj.showAt(off.left,off.top-185);
+		righthistroboj.showAt(off.left,off.top-220);
 	},
 	backemts:function(s){
 		var num=nowtabs.num;
@@ -643,34 +648,55 @@ var im={
 		var ops = this.getchatobj(nowtabs.num);
 		if(ops)ops.sendcont();
 	},
+	entersend:function(){
+		var ops = this.getchatobj(nowtabs.num);
+		if(ops)ops.entersend();
+	},
 	onkeyup:function(event){
 		var code	= event.keyCode;
-		if(code==27){
-			closenowtabs();
-			return false;
-		}
-		if(event.ctrlKey){
-			if(code == 13){
-				im.nowsend();
-				return false;
-			}
-		}
-		if(event.altKey){
-			if(code == 83){
-				im.nowsend();
-				return false;
-			}
-			if(code == 67){
-				closenowtabs();
-				return false;
-			}
-		}
+		if(code==27){closenowtabs();return false;}
+		if(enterbool && !event.ctrlKey && code == 13){im.nowsend();return false;}
+		if(event.ctrlKey && code == 13){if(enterbool){im.entersend();}else{im.nowsend();}return false;}
+		if(event.altKey){if(code == 83){im.nowsend();return false;}if(code == 67){closenowtabs();return false;}}
 		return true;
+	},
+	editpass:function(){
+		var s='<div style="padding:10px" align="center">';
+		s+='<div>旧的密码：<input id="passoldPost" type="password" style="width:180px" class="input"></div>';
+		s+='<div style="padding:5px 0px">新的密码：<input id="passwordPost" style="width:180px"  type="password" class="input"></div>';
+		s+='<div>确认密码：<input id="password1Post" type="password" style="width:180px"  class="input"></div>';
+		s+='</div>';
+		js.tanbody('editpassa','修改密码', 320,200,{html:s,btn:[{
+			text:'确认修改'
+		}]});
+		$('#editpassa_btn0').click(function(){
+			im.editpassok();
+		});
+	},
+	editpassok:function(){
+		var opass	= get('passoldPost').value,pass	= get('passwordPost').value,pass1	= get('password1Post').value,msgview	= 'msgview_editpassa';
+		if(opass==''){js.setmsg('旧密码不能为空','red', msgview);get('passoldPost').focus();return false;}
+		if(pass.length <4){js.setmsg('新密码不能少于4个字符','red', msgview);get('passwordPost').focus();return false;}
+		if(!/[a-zA-Z]{1,}/.test(pass) || !/[0-9]{1,}/.test(pass)){js.setmsg('新密码须字母+数字','red', msgview);get('passwordPost').focus();return false;}
+		if(opass==pass){js.setmsg('新旧密码不能相同','red', msgview);get('passwordPost').focus();return false;}
+		if(pass!=pass1){js.setmsg('确认密码不一致','red', msgview);get('password1Post').focus();return false;}
+		var data	= {'passoldPost':opass,'passwordPost':pass,'password1Post':pass1};
+		js.setmsg('修改中...','#ff6600', msgview);
+		js.ajax('user','editpass',data,function(da){
+			if(da=='success'){
+				js.setmsg('密码修改成功','green', msgview);
+				js.msg('success','密码修改成功');
+				js.tanclose('editpassa');
+			}else{
+				if(da=='')da='修改失败';
+				js.setmsg(da,'red', msgview);
+			}
+		},'none');
 	},
 	creategroup:function(){
 		var s='<div style="padding:10px">';
 		s+='<div>创建会话名称：</div>';
-		s+='<div style="padding:10px"><input  id="keylasou" maxlength="8" style="line-height:26px;height:30px;border:1px #cccccc solid;background-color:white;width:120px;padding:0px 5px"></div>';
+		s+='<div style="padding:10px"><input  class="input" id="keylasou" maxlength="8" style="width:150px"></div>';
 		s+='<div style="padding:10px"><a class="webbtn" onclick="return false" id="yaoqingbtn" href="javascript:">确定</a>&nbsp;<span id="msgview_yaoqing"></span></div>';
 		s+='</div>';
 		js.tanbody('yaoqingla','创建会话', 200,200,{html:s,bbar:'none'});
@@ -879,7 +905,12 @@ var chatclass = function(opts){
 		this._sssnuid = nuid;
 		this._sssoptdt = optdt;
 		var nr = '<div id="showve_'+nuid+'">';
-		if(f)nr+= '<div><img src="images/fileicons/'+f.fileext+'.gif" align="absmiddle">&nbsp;'+f.filename+' ('+f.filesizecn+')</div>';
+		
+		if(f){
+			var slx = f.fileext;
+			if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
+			nr+= '<div><img src="images/fileicons/'+slx+'.gif" align="absmiddle">&nbsp;'+f.filename+' ('+f.filesizecn+')</div>';
+		}
 		if(snr){
 			nr+= '<div><img src="'+snr+'" id="jietuimg_'+nuid+'" width="150" height="150"></div>';
 			nr+= '<div><a onclick="im.upbase64(\''+nuid+'\')" href="javascript:;">[发送截图]</a> &nbsp; &nbsp; <a onclick="$(\'#ltcont_'+nuid+'\').remove();" href="javascript:;">[取消]</a>';
@@ -989,22 +1020,24 @@ var chatclass = function(opts){
 		this.charcontobj.showAt(e.clientX,e.clientY,130);
 	};
 	this.clickmenuss=function(d){
-		if(d.lx==0){
+		var lx=d.lx;
+		if(lx==0){
 			var cont = $('#qipaocont_'+this.randmess+'').text();
 			if(cont){
 				this.addinput(cont);
 			}
 		}
-		if(d.lx==1){
+		if(lx==1){
 			$('#ltcont_'+this.randmess+'').remove();
 			var ids=this.randmess.replace('mess_','');
 			if(ids)js.ajax('reim','clearrecord',{type:this.type,gid:this.gid,ids:ids},false,'none');
 		}
-		if(d.lx==2){
+		if(lx==2){
 			js.confirm('确定要清除1个月前的记录吗？',function(lx){
 				if(lx=='yes')me.clearjilss(30);
 			});
 		}
+		if(lx==90||lx==91)this.changesssssne(lx);
 	};
 	this.clearjilss=function(d){
 		js.ajax('reim','clearrecord',{type:this.type,gid:this.gid,day:d},function(s){
@@ -1057,6 +1090,7 @@ var chatclass = function(opts){
 			}
 			s+='</div>';
 			if(!isbf)this.addcont(s);
+			if(isbf)this._addclickf();
 		}
 	};
 	this.clearping=function(){
@@ -1065,13 +1099,15 @@ var chatclass = function(opts){
 		this.showobj.html(s);
 	};
 	this.contshozt=function(d){
-		var s='';
+		var s='',slx;
 		if(d){
 			if(!d.fileid)d.fileid=d.id;
 			if(js.isimg(d.fileext)){
 				s='<img src="'+apiurl+''+d.thumbpath+'" fid="'+d.fileid+'">';
 			}else{
-				s='<img src="images/fileicons/'+d.fileext+'.gif" align="absmiddle">&nbsp;'+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;'+d.filesizecn+'';
+				slx = d.fileext;
+				if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
+				s='<img src="images/fileicons/'+slx+'.gif" align="absmiddle">&nbsp;'+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;'+d.filesizecn+'';
 			}
 		}
 		return s;
@@ -1106,13 +1142,29 @@ var chatclass = function(opts){
 		if(lx=='clear')this.clearping();
 		if(lx=='crop')this.cropScreen();
 		if(lx=='file')uploadobj.click();
-		if(lx=='cropput'){
-			js.msg('msg','请使用快捷键Ctrl+V');
+		if(lx=='change')this.changesend(o);
+		if(lx=='cropput')js.msg('msg','请使用快捷键Ctrl+V');
+	};
+	this.changesend=function(o){
+		var d=[{name:'Ctrl+Enter发送',icons:'images/white.gif',lx:90},{name:'Enter发送',icons:'images/white.gif',lx:91}];
+		var sk = js.getoption('sendkey');
+		if(sk=='1'){
+			d[1].icons='images/ok.png';
+		}else{
+			d[0].icons='images/ok.png';
 		}
+		var off = o.offset();
+		this.charcontobj.setData(d);
+		this.charcontobj.showAt(off.left-135,off.top-75,150);
+	};
+	this.changesssssne=function(lx){
+		var oi=lx-90;
+		js.setoption('sendkey',''+oi);
+		enterbool = (oi==1);
 	};
 	this.cropScreen=function(){
 		if(!nwjsgui){
-			js.msg('msg','无法使用截屏，请使用客户端,<a href="http://xinnu.pw/" target="_blank">[去下载]</a>');
+			js.msg('msg','无法使用截屏，请使用客户端,<a href="http://xinhu.pw/" target="_blank">[去下载]</a>');
 			return;
 		}
 		var oatg = this.getpath();
@@ -1172,6 +1224,9 @@ var chatclass = function(opts){
 		},'none',false,function(){
 			me.senderror(nuid);
 		});
+	};
+	this.entersend=function(){
+		this.addinput("\n");
 	};
 	this.sendsuccess=function(d,nuid){
 		this.bool = false;
@@ -1356,9 +1411,10 @@ function agentclass(opts){
 			me.showdata(ret);
 		},'none');
 	};
-	this.xiang=function(ids){
+	this.xiang=function(ids,nus){
 		if(!ids)return;
-		var url=''+apiurl+'task.php?a=p&num='+this.num+'&mid='+ids+'';
+		if(!nus||nus=='undefined')nus = this.num;
+		var url=''+apiurl+'task.php?a=p&num='+nus+'&mid='+ids+'';
 		js.open(url,740,500);
 	};
 	this._showstotal=function(d){
@@ -1384,7 +1440,7 @@ function agentclass(opts){
 				if(!d.statuscolor)d.statuscolor='';
 				st='';
 				if(d.ishui==1)st='color:#cccccc;';
-				s='<div onclick="agentobj.'+this.num+'.xiang('+d.id+')" style="'+st+'" class="contlist">';
+				s='<div onclick="agentobj.'+this.num+'.xiang('+d.id+',\''+d.modenum+'\')" style="'+st+'" class="contlist">';
 				if(d.title)s+='<div class="tit">'+d.title+'</div>';
 				if(d.optdt)s+='<div class="dt">'+d.optdt+'</div>';
 				if(d.cont)s+='<div class="cont">'+d.cont.replace(/\n/g,'<br>')+'</div>';

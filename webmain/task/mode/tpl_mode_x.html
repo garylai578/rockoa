@@ -27,12 +27,15 @@
 .pinglun .sm{padding-top:8px;font-size:14px}
 .faces{margin-right:10px}
 .createtable{width:98%}
+.status{position: absolute;right:5px;top:5px;display:}
+td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 </style>
 <script>
 var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>';
 function showchayue(opt, st){
 	alert('总查阅:'+st+'次\n最后查阅：'+opt+'');
 }
+function othercheck(){}
 function _submitother(nae,zt,ztid,ocan,las){
 	if(!las)las='other_explain';
 	if(!nae||!get(las)){js.setmsg('sorry;不允许操作','','msgview_spage');return;}
@@ -56,7 +59,7 @@ var c={
 		return url;
 	},
 	close:function(){
-		window.close();
+		js.backla();
 	},
 	other:function(nae,las){
 		_submitother(nae,'','1',las);
@@ -79,16 +82,112 @@ js.changeuser=function(na,lx){
 function changecancel(){
 	$('#changmodddid').remove();
 }
+
+function check(o1){
+	var da = {'sm':form('check_explain').value,'mid':mid,'modenum':modenum,'zt':_getaolvw('check_status')};
+	if(da.zt==''){js.msg('msg','请选择处理动作');return;}if(da.zt=='2'&&isempt(da.sm)){js.msg('msg','此动作必须填写说明');return;}
+	if(form('zhuangyi_name')){
+		da.zyname 	= form('zhuangyi_name').value;
+		da.zynameid = form('zhuangyi_name_id').value;
+	}
+	var ostr=othercheck();
+	if(typeof(ostr)=='string'&&ostr!=''){js.msg('msg',ostr);return;}
+	if(typeof(ostr)=='object')for(var csa in ostr)da[csa]=ostr[csa];
+	js.msg('wait','处理中...');
+	o1.disabled = true;
+	da.fileid = '';
+	var url = c.gurl('check');
+	js.ajax(url,da,function(a){
+		if(a.success){
+			js.msg('success',a.msg);
+			if(get('autocheckbox').checked)c.close();
+		}else{
+			js.msg('msg',a.msg);
+			o1.disabled = false;
+		}
+	},'post,json',function(){
+		js.msg('msg','处理失败请重试');o1.disabled = false;
+	});
+}
+function _getaolvw(na){
+	var v = '',i,o=$("input[name='"+na+"']");
+	for(i=0;i<o.length;i++)if(o[i].checked)v=o[i].value;
+	return v;
+}
 </script>
 </head>
 <body style="background-color:#fefefe">
-
+<?php
+if($da['arr']['isflow']==1)echo '<div class="status"><img src="images/status'.$da['arr']['flowinfor']['nowstatus'].'.png"></div>';
+?>
 <div class="padding10">
 	<?=$da['arr']['contview']?>
 </div>
 
 <div class="padding10">
-	<?php if($da['arr']['logarr']){?>
+	
+	<?php 
+	if($da['arr']['isflow']==1){
+		$flowinfor = $da['arr']['flowinfor'];
+	?>
+
+	<div>
+	
+		<div align="center">
+		<form name="myform">
+		<table border="0" width="100%" class="tabled1" style="border-collapse:collapse;" cellspacing="0" cellpadding="0">
+		<tr height="40" bgcolor="#E1F4F0">
+			<td class="tdys1"><div align="right" style="color:#555555">状态：</div></td>
+			<td class="tdys1"><div align="left"><?=$flowinfor['nstatustext']?></div></td>
+		</tr>
+		<tr height="40">
+			<td class="tdys1" nowrap><div align="right" style="color:#555555">处理流程：</div></td>
+			<td class="tdys1"><div align="left" style="padding:5px 0px"><?=$flowinfor['flowcoursestr']?></div></td>
+		</tr>
+		<?php if($flowinfor['ischeck']==1){?>
+		<tr height="40">
+			<td class="tdys1"><div align="right" style="color:#555555"><font color=red>*</font>处理人：</div></td>
+			<td class="tdys1"><div align="left"><?=$flowinfor['nowcourse']['nowcheckname']?></div></td>
+		</tr>
+		
+		<tr height="40">
+			<td class="tdys1" nowrap><div align="right" style="color:#555555"><font color=red>*</font>处理动作：</div></td>
+			<td class="tdys1"><div align="left">
+			<?php
+			$s = '';	
+			foreach($flowinfor['courseact'] as $k=>$act){
+				if($k>0)$s.='<label><input name="check_status"  type="radio" value="'.$k.'">'.$act[0].'</label> &nbsp; ';
+			}
+			echo $s;
+			?>
+			</div></td>
+		</tr>
+		
+		<tr>
+			<td class="tdys1"><div  align="right" style="color:#555555">说明:</div></td>
+			<td class="tdys1" style="padding:5px"><div align="left"><textarea class="inputb" name="check_explain" style="width:95%;height:60px;"></textarea></div></td>
+		</tr>
+		
+		<tr>
+			<td class="tdys1">&nbsp;</td>
+			<td class="tdys1" style="padding:5px"><div align="left"><input class="webbtn" onclick="check(this)"  value="提交处理" type="button">&nbsp;<span id="msgview"></span>&nbsp; &nbsp; <label style="color:#888888"><input id="autocheckbox" checked type="checkbox">处理完自动关闭</label></div></td>
+		</tr>
+		
+		<?php }?>
+		</table>
+		</form>
+		</div>
+		<div class="blank10"></div>
+	</div>
+	
+
+
+
+
+	<?php
+	}
+	if($da['arr']['logarr']){
+	?>
 	<div onclick="location.reload()" class="stitle zhu">处理记录</div>
 	<div class="pinglun">
 	<table width="100%">
@@ -97,7 +196,7 @@ function changecancel(){
 		$s = '<tr valign="top">';
 		$s.= '<td align="center" width="45"><img src="'.$rs['face'].'" class="faces"></td>';
 		$s.= '<td>';
-		$s.= '<div class="name">'.$rs['name'].'<span class="act">['.$rs['actname'].']</span>'.$rs['statusname'].'</div>';
+		$s.= '<div class="name">'.$rs['name'].'<span class="act">['.$rs['actname'].']</span><font color="'.$rs['color'].'">'.$rs['statusname'].'</font></div>';
 		$s.= '<div class="dt">'.$rs['optdt'].'</div>';
 		$s.= '<div class="sm">'.$rs['explain'].'</div>';
 		$s.= '</td>';

@@ -203,18 +203,26 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 	{
 		$this->modeid = (int)$this->post('modeid');
 		$this->moders = m('flow_set')->getone($this->modeid);
+		$this->isflow = $this->moders['isflow'];
 		$table = $this->moders['table'];
-		
+		$where = $this->moders['where'];
+		if(!isempt($where)){
+			$where = $this->rock->covexec($where);
+			$where = "and $where";
+		}
 		return array(
-			'table' => '[Q]'.$table
+			'table' => '[Q]'.$table,
+			'where' => $where
 		);
 	}
 	
 	public function viewshowafter($table, $rows)
 	{
 		$arr = array();
+		$ztarr  = explode(',','待处理,已审核,处理不通过');
+		$ztarrc = explode(',','blue,green,red');
 		foreach($rows as $k=>$rs){
-			$zt 	= -1;
+			$zt 	= '';
 			if(isset($rs['status']))$zt = $rs['status'];
 			$narr['id'] 		= $rs['id'];
 			$narr['optname'] 	= $rs['optname'];
@@ -222,6 +230,9 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 			$narr['modename'] 	= $this->moders['name'];
 			$narr['optdt'] 		= $rs['optdt'];
 			$narr['summary'] 	= $this->rock->reparr($this->moders['summary'], $rs);
+			if($this->isflow == 1){
+				$zt = '<font color="'.$ztarrc[$zt].'">'.$ztarr[$zt].'</font>';
+			}
 			$narr['status']		= $zt;
 			$arr[] = $narr;
 		}
@@ -230,10 +241,12 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 	
 	public function delmodeshujuAjax()
 	{
-		$this->modeid = (int)$this->post('modeid');
-		$this->moders = m('flow_set')->getone($this->modeid);
+		$this->modeid 	= (int)$this->post('modeid');
+		$mid 			= (int)$this->post('mid');
+		$this->moders 	= m('flow_set')->getone($this->modeid);
 		if(!$this->moders)exit('sorry!');
-		$table = $this->moders['table'];
-		echo 'success';
+		
+		$msg	= m('flow')->opt('deletebill', $this->moders['num'], $mid);
+		echo $msg;
 	}
 }

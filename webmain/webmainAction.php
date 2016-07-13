@@ -60,13 +60,7 @@ class Action extends mainAction
 	
 	public function backmsg($msg='', $demsg='保存成功', $da=array())
 	{
-		$bo = false;
-		if($msg == ''){
-			$msg = $demsg;
-			$bo = true;
-		}
-		echo json_encode(array('success'=>$bo,'msg'=>$msg,'data'=>$da));
-		exit;
+		backmsg($msg,$demsg,$da);
 	}
 	
 	public function limitRows($table,$fields='*',$wherea='1=1',$order='',$arr=array())

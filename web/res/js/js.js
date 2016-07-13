@@ -1,4 +1,4 @@
-var PROJECT='',HOST='',token='',adminid=0,nwjsgui=false,adminface='images/noface.png',QOM='xinhu_',device='';
+var PROJECT='',HOST='',token='',adminid=0,nwjsgui=false,adminface='images/noface.png',QOM='xinhu_',device='',DEBUG=false;
 var windows	= null;
 apiurl		= 'http://127.0.0.1/app/xinhu/';
 function initbody(){}
@@ -32,6 +32,7 @@ $(document).ready(function(){
 		if(nwjsgui)window.focus=function(){nwjsgui.Window.get().focus()}
 		if(winobj!='')opener.js.openarr[winobj]=window;
 	}catch(e){}
+	if(lurl.indexOf('127.0.0')>0)DEBUG=true;
 	initbody();
 });
 var js={path:'index',url:'',bool:false,login:{},initdata:{},scroll:function(){}};
@@ -291,7 +292,7 @@ js.tanbody=function(act,title,w,h,can1){
 	s+='	<div id="'+act+'_bbar" style="padding:5px 10px;background:#eeeeee;line-height:30px" align="right"><span id="msgview_'+act+'"></span>&nbsp;';
 	for(var i=0; i<can.btn.length; i++){
 		var a	= can.btn[i];
-		s+='<a class="webbtn" id="'+act+'_btn'+i+'" onclick="return false" href="javascript:">';
+		s+='<a class="webbtn" id="'+act+'_btn'+i+'" onclick="return false" >';
 		s+=''+a.text+'</a>&nbsp; ';
 	}
 	s+='		<a class="webbtn" id="'+act+'_cancel" onclick="return js.tanclose(\''+act+'\',\''+can.guanact+'\')" >取消</a>';
@@ -568,6 +569,12 @@ js.changeok=function(sna,sid, blx,plx){
 	
 }
 
+js.debug	= function(s){
+	if(!DEBUG)return;
+	if(typeof(console)!='object')return;
+	console.log(s);
+}
+
 js.confirm	= function(txt,fun, tcls){
 	var h = '<div style="padding:20px;line-height:30px" align="center"><img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'</div>';
 	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" style="padding:5px 10px"  class="webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp; <a sattr="no" style="padding:5px 10px; background-color:#888888" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
@@ -584,3 +591,4 @@ js.confirm	= function(txt,fun, tcls){
 	$('#confirm_btn').click(backl);
 	get('confirm_btn').focus();
 }
+js.fileall=',aac,ace,ai,ain,amr,app,arj,asf,asp,aspx,av,avi,bin,bmp,cab,cad,cat,cdr,chm,com,css,cur,dat,db,dll,dmv,doc,docx,dot,dps,dpt,dwg,dxf,emf,eps,et,ett,exe,fla,ftp,gif,hlp,htm,html,icl,ico,img,inf,ini,iso,jpeg,jpg,js,m3u,max,mdb,mde,mht,mid,midi,mov,mp3,mp4,mpeg,mpg,msi,nrg,ocx,ogg,ogm,pdf,php,png,pot,ppt,pptx,psd,pub,qt,ra,ram,rar,rm,rmvb,rtf,swf,tar,tif,tiff,txt,url,vbs,vsd,vss,vst,wav,wave,wm,wma,wmd,wmf,wmv,wps,wpt,wz,xls,xlsx,xlt,xml,zip,';

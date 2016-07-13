@@ -171,4 +171,10 @@ class reimClassAction extends apiAction
 		m('file')->delfile($id);
 		$this->showreturn($face);
 	}
+	
+	public function downfileAction()
+	{
+		$id 	= (int)$this->post('id');
+		m('file')->download($id);
+	}
 }

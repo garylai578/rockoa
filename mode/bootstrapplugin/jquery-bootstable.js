@@ -474,7 +474,7 @@
 			var url = ds.url;if(!url)url=js.getajaxurl('publicdel','index');
 			var ss 	= js.apply({table:can.tablename,id:sid},ds.params);
 			$.post(url,ss,function(da){
-				if(da=='success'){
+				if(da=='success' || da=='ok'){
 					js.msg('success','删除成功');
 					me.reload();
 				}else{

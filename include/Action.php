@@ -187,17 +187,6 @@ abstract class mainAction{
 		
 	public function showreturn($arr='', $msg='', $code=200)
 	{
-		$callback	= $this->get('callback');
-		$result 	= json_encode(array(
-			'code' 	=> $code,
-			'msg'	=> $msg,
-			'data'	=> $arr
-		));
-		if($callback!=''){
-			echo ''.$callback.'('.$result.')';
-		}else{
-			echo $result;
-		}
-		exit();
+		showreturn($arr, $msg, $code);
 	}
 }

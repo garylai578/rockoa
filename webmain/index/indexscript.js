@@ -33,8 +33,6 @@ function initbody(){
 		data:[{
 			name:'<i class="icon-lock"></i> 修改密码',num:'pass',url:'system,geren,pass',names:'修改密码'
 		},{
-			name:'<i class="icon-picture"></i> 我的头像',num:'face',url:'system,geren,face',names:'我的头像'
-		},{
 			name:'<i class="icon-bell"></i> 提醒信息',num:'todo',url:'system,geren,todo',names:'提醒信息'
 		},{
 			name:'<i class="icon-user"></i> 帐号('+adminuser+')',num:'user'
@@ -102,7 +100,22 @@ function showmenula(da){
 	}
 	$('#menulist').html(s);
 }
-
+function openinput(name,num, id,cbal){
+	if(!id)id=0;
+	if(!cbal)cbal='';
+	if(id==0){name='[新增]'+name+'';}else{name='[编辑]'+name+'';}
+	js.tanbody('openinput',name,720,410,{
+		html:'<div style="height:420px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
+		bbar:'none'
+	});
+	var url='?a=lu&m=input&d=flow&num='+num+'&mid='+id+'&callback='+cbal+'';
+	openinputiframe.location.href=url;
+	return false;
+}
+function openxiang(num,id){
+	var url = 'task.php?a=p&num='+num+'&mid='+id+'';
+	js.open(url, 740,500);
+}
 function opentixiang(){
 	addtabs({num:'todo',url:'system,geren,todo',icons:'bell',name:'提醒信息'});
 	return false;
@@ -201,6 +214,10 @@ function addtabs(a){
 	var url = a.url,
 		num	= a.num;
 	if(isempt(url))return false;
+	if(url.indexOf('add,')==0){
+		openinput(a.name,url.substr(4));
+		return;
+	}
 	nowtabs = a;
 	if(changetabs(num))return true;
 	

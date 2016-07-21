@@ -1,14 +1,44 @@
 <script >
 $(document).ready(function(){
+	var a = $('#view_{rand}').bootstable({
+		tablename:'admin',url:js.getajaxurl('data','{mode}','{dir}'),
+		columns:[{
+			text:'名称',dataIndex:'name'
+		},{
+			text:'说明',dataIndex:'explain',align:'left'
+		},{
+			text:'更新时间',dataIndex:'updatedt'
+		},{
+			text:'详情',dataIndex:'view'
+		},{
+			text:'操作',dataIndex:'opt',renderer:function(v){
+				return '<font color=green>已安装</font> ';
+				return '<button class="btn btn-danger btn-sm" type="button">升级</button> ';
+				//return '<button class="btn btn-info btn-sm"  type="button">安装</button> ';
+			}
+		}],
+		itemclick:function(){
+			btn(false);
+		}
+	});
 	
+	var c={
+		reloads:function(){
+			a.reload();
+		}
+	};
+	js.initbtn(c);
 });
 </script>
-
-
+<div>
+	<button class="btn btn-default" click="reloads"  type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp; 
+</div>
+<div class="blank10"></div>
+<div id="view_{rand}"></div>
 <div class="blank10"></div>
 <div style="font-size:16px;line-height:35px">
-系统升级方法：<br>
+更多升级方法：<br>
 1、使用svn地址升级(推荐)，地址：<a href="https://git.oschina.net/rainrock/xinhu" target="_blank">https://git.oschina.net/rainrock/xinhu</a><br>
 2、去官网下载源码全部覆盖升级，如果您自己修改，请谨慎覆盖。<br>
-3、下载补丁文件升级，后续推出。
+3、根据列表升级安装。
 </div>

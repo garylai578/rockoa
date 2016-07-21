@@ -2,13 +2,16 @@
 $(document).ready(function(){
 	{params};
 	var num = params.num,pid,optlx=0;
+	
 	var at = $('#optionview_{rand}').bootstable({
-		tablename:'option',defaultorder:'sort',url:js.getajaxurl('getlist', 'option', 'system'),
+		tablename:'option',celleditor:true,sort:'sort',dir:'asc',url:js.getajaxurl('getlist', 'option', 'system'),
 		params:{num:num},
 		columns:[{
 			text:'名称',dataIndex:'name',align:'left'
 		},{
 			text:'编号',dataIndex:'num'
+		},{
+			text:'序号',dataIndex:'sort',editor:true,sortable:true
 		},{
 			text:'ID',dataIndex:'id'
 		}],
@@ -45,6 +48,11 @@ $(document).ready(function(){
 	var c = {
 		reload:function(){
 			at.reload();
+		},
+		xiajili:function(){
+			if(at.changeid==0)return;
+			var bh = at.changedata.num;
+			at.setparams({num:bh},true);
 		},
 		clickwin:function(o, lx){
 			var a = this.clicktypewin(false, 0);
@@ -95,7 +103,7 @@ $(document).ready(function(){
 
 <table width="100%">
 <tr valign="top">
-<td width="270">
+<td width="350">
 	<div class="panel panel-info" style="margin:0px">
 	  <div class="panel-heading">
 		<h3 class="panel-title">选项列表</h3>
@@ -105,6 +113,8 @@ $(document).ready(function(){
 		<a href="javascript:" click="clicktypewin,0" onclick="return false"><i class="icon-plus"></i></a>&nbsp; &nbsp; 
 		<a href="javascript:" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp; 
 		<a href="javascript:" click="reload" onclick="return false"><i class="icon-refresh"></i></a>
+		&nbsp; 
+		<a href="javascript:" click="xiajili" onclick="return false">[管理下级]</a>
 		<!--<a href="javascript:" style="float:right" click="typedel" onclick="return false"><i class="icon-trash"></i></a>-->
 	  </div>
 	</div>
@@ -113,11 +123,11 @@ $(document).ready(function(){
 <td>	
 	<div>
 	<ul class="floats">
-		<li class="floats50">
+		<li class="floats70">
 			<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增对应下级</button>&nbsp;&nbsp;
 			<span id="downshow_{rand}"></span>
 		</li>
-		<li class="floats50" style="text-align:right">
+		<li class="floats30" style="text-align:right">
 			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>
 		</li>
 	</ul>

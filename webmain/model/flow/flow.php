@@ -23,11 +23,13 @@ class flowModel extends Model
 	protected function flowcheckbefore($zt, $sm){}
 	protected function flowcheckafter($zt, $sm){}
 	protected function flowcheckfinsh(){}
+	protected function flowgetfields(){}
+	protected function flowisreadqx(){return false;}
 	
 	public function echomsg($msg)
 	{
 		if(isajax()){
-			echo json_encode(array('success'=>false,'msg'=>$msg,'data'=>''));
+			showreturn('', $msg, 201);
 		}else{
 			echo $msg;
 		}
@@ -54,7 +56,8 @@ class flowModel extends Model
 		$this->rs['base_name'] 		= '';
 		$this->rs['base_deptname'] 	= '';
 		if(isset($this->rs['uid']))$this->uid = $this->rs['uid'];
-		if(!isset($this->rs['applydt']))$this->rs['applydt']='';
+		if(!isset($this->rs['applydt']))$this->rs['applydt'] = '';
+		if(!isset($this->rs['status']))$this->rs['status']	 = 1;
 		if($this->uid==0 && isset($this->rs['optid']))$this->uid = $this->rs['optid'];
 		$this->urs 		= $this->db->getone('[Q]admin',$this->uid,'id,name,deptid,deptname,ranking,superid,superpath,superman');
 		if($this->isempt($this->rs['applydt'])&&isset($this->rs['optdt']))$this->rs['applydt']=substr($this->rs['optdt'],0,10);
@@ -95,6 +98,7 @@ class flowModel extends Model
 				if(contain($this->urs['superpath'],'['.$this->adminid.']'))$bo = true;
 			}
 		}
+		if(!$bo)$bo = $this->flowisreadqx();
 		if(!$bo){
 			$where 	= $this->viewmodel->viewwhere($this->modeid, $this->adminid);
 			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
@@ -140,16 +144,19 @@ class flowModel extends Model
 	}
 	
 	
-	public function getfields()
+	public function getfields($lx=0)
 	{
 		$fields = array();
 		$farr 	= $this->db->getrows('[Q]flow_element',"`mid`='$this->modeid' and `iszb`=0 and `iszs`=1",'`fields`,`name`','sort,id');
 		foreach($farr as $k=>$rs)$fields[$rs['fields']] = $rs['name'];
+		$fters	= $this->flowgetfields($lx);
+		if(is_array($fters))$fields = array_merge($fields, $fters);
 		return $fields;
 	}
 	
 	/**
 	*	读取展示数据
+	*	$lx 0pc, 1移动
 	*/
 	public function getdatalog($lx=0)
 	{
@@ -164,16 +171,24 @@ class flowModel extends Model
 		if($fstr != ''){
 			$this->rs['file_content'] 	= $fstr;
 		}
-		
+		if(isset($this->rs['explain']))$this->rs['explain'] = str_replace("\n",'<br>', $this->rs['explain']);
+		if(isset($this->rs['content']))$this->rs['content'] = str_replace("\n",'<br>', $this->rs['content']);
 		if(file_exists($path)){
 			$contview 	 = file_get_contents($path);
 			$contview 	 = $this->rock->reparr($contview, $this->rs);
 		}
 		if($this->isempt($contview)){
-			$fields			 = $this->getfields();
-			if($fstr!='')$fields['file_content'] 	= '相关文件';
-			$contview = c('html')->createtable($fields, $this->rs);
-			$contview = '<div align="center">'.$contview.'</div>';
+			$_fields		 = array();
+			if($this->isflow==1){
+				$_fields['base_sericnum'] 	= '单号';
+				$_fields['base_name'] 		= '申请人';
+				$_fields['base_deptname'] 	= '申请人部门';
+			}
+			$fields			 = array_merge($_fields, $this->getfields($lx));
+			if($lx==0)foreach($fields as $k=>$rs){$this->rs[''.$k.'_style'] = 'width:75%';break;}
+			if($fstr!='')$fields['file_content'] 			= '相关文件';
+			$contview 	= c('html')->createtable($fields, $this->rs);
+			$contview 	= '<div align="center">'.$contview.'</div>';
 		}
 		$arr['contview'] = $contview;
 		$arr['readarr']	 = m('log')->getreadarr($this->mtable, $this->id);
@@ -574,6 +589,8 @@ class flowModel extends Model
 		$bsarr 	 	= $this->getflow();
 		if($zt==1){
 			$nextcheckid = $bsarr['nowcheckid'];
+			$uparr['status'] 	= 0;
+			$bsarr['status'] 	= 0;
 			$this->nexttodo($nextcheckid, 'next', $sm, $act[0]);
 		}else{
 			$bsarr['status'] 	= $zt;

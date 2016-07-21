@@ -18,6 +18,8 @@ class loginClassModel extends Model
 		if(!in_array($cfrom, $cfroar))return 'not found cfrom';
 		if($user=='')return '用户名不能为空';
 		if($pass==''&&strlen($token)<8)return '密码不能为空';
+		$user	= addslashes(substr($user, 0, 20));
+		$pass	= addslashes($pass);
 		$logins = '登录成功';
 		$msg 	= '';
 		$fields = '`pass`,`id`,`name`,`user`,`face`,`deptname`,`ranking`,`apptx`';

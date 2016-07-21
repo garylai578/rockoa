@@ -9,10 +9,14 @@ class flowbillClassModel extends Model
 	public function getrecord($uid, $lx, $page, $limit)
 	{
 		$where	= 'uid='.$uid.'';
-		
+		$isdb	= 0;
 		//未通过
 		if($lx=='flow_wtg'){
 			$where .= ' and `nstatus`=2';
+		}
+		
+		if($lx=='flow_dcl'){
+			$where .= ' and `status`=0';
 		}
 		
 		//已完成
@@ -23,6 +27,7 @@ class flowbillClassModel extends Model
 		//待办
 		if($lx=='daiban_daib' || $lx=='daiban_def'){
 			$where	= '`status`=0 and '.$this->rock->dbinstr('nowcheckid', $uid);
+			$isdb	= 1;
 		}
 		
 		//经我处理
@@ -80,15 +85,29 @@ class flowbillClassModel extends Model
 			if(!isempt($rs['nstatustext']))$cont.='<br>状态：'.$rs['nstatustext'].'';
 			if(!isempt($rs['checksm']))$cont.='<br>处理说明：'.$rs['checksm'].'';
 			
+			$menusub 			= array();
+			if($rs['uid']==$uid && $rs['status']!=1){
+				$menusub[] = array('name'=>'删除','color'=>'red','lx'=>'del', 'modenum'=>$modenum);
+			}
+			
+			$ischeck	= 0;
+			$nowcheckid = ','.$rs['nowcheckid'].',';
+			if(contain($nowcheckid, ','.$uid.','))$ischeck = 1;
+			if($isdb==1 || $ischeck==1){
+				$menusub[] = array('name'=>'通过','color'=>'green','lx'=>'check','status'=>1,'notsm'=>1, 'modenum'=>$modenum);
+				$menusub[] = array('name'=>'不通过','color'=>'red','lx'=>'check','status'=>2, 'modenum'=>$modenum);
+			}
+			
 			$srows[]= array(
 				'title' => $title,
 				'cont' 	=> $cont,
 				'id' 	=> $rs['mid'],
 				'optdt' => $rs['optdt'],
-				'statustext' => $statustext,
-				'statuscolor' => $statuscolor,
-				'modenum'=> $modenum,
-				'modename'=> $modename
+				'statustext' 	=> $statustext,
+				'statuscolor' 	=> $statuscolor,
+				'modenum'		=> $modenum,
+				'modename'		=> $modename,
+				'menusub'		=> $menusub
 			);
 		}
 		

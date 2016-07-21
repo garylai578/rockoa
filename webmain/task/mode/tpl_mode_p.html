@@ -24,14 +24,14 @@
 .ptitle{ text-align:center;font-size:20px;padding-top:15px;padding-bottom:10px}
 .tabled2 td{padding:5px;border:1px #e5e5e5 solid;text-align:center}
 td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
-.createtable{width:98%}
+.createtable{width:90%}
 .menulls{position:absolute;left:1px;top:10px}
 .menullss{position:absolute;left:1px;top:32px; background-color:white; border:1px #cccccc solid;border-bottom:0px;display:none}
 .menullss li{padding:5px 10px;border-bottom:1px #dddddd solid;cursor:pointer}
 .menullss li:hover{ background-color:#f1f1f1}
 .pcont{line-height:27px}
 .pcont p{text-indent:24pt;margin:10px 0px}
-.status{position: absolute;right:5px;top:10px;display:}
+.status{position: absolute;right:20px;top:10px;display:}
 </style>
 <script>
 var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>';
@@ -272,7 +272,7 @@ var c={
 		<?php }?>
 		
 		<div id="recordsss">
-		<div class="stitle zhu">查阅记录 <a temp="clo" href="javascript:;" onclick="$('#recordsss').remove();">×</a></div>
+		<div class="stitle zhu"><span onclick="location.reload()">查阅记录</span> <a temp="clo" href="javascript:;" onclick="$('#recordsss').remove();">×</a></div>
 		<div><ul class="ydullist"><?php
 			foreach($da['arr']['readarr'] as $k=>$rs){
 				echo '<li title="共查阅'.$rs['stotal'].'次&#13;最后查阅：'.$rs['optdt'].'" ><img src="'.$rs['face'].'" align="absmiddle"><br><span>'.$rs['name'].'</span></li>';

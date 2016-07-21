@@ -43,7 +43,7 @@ class installClassAction extends ActionNot{
 		$pass 		= $this->post('pass');
 		$base 		= $this->post('base');
 		$perfix 	= $this->post('perfix');
-		$title 		= '信呼后台管理';
+		$title 		= '信呼协同办公系统';
 		$qom 		= 'xinhu_';
 		$url 		= $this->post('url');
 		$paths 		= ''.P.'/'.P.'Config.php';

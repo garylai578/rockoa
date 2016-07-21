@@ -298,8 +298,8 @@ class reimClassModel extends Model
 			$rows[$k]['stotal'] 	= $btosr['stotal'];
 			$rows[$k]['titles'] 	= $btosr['titles'];
 			
-			$menu	= $dbs->getall("mid='".$rs['id']."' and `pid`=0",'`id`,`name`,`type`,`url`,`num`','`sort`', 3);
-			foreach($menu as $k1=>$rs1)$menu[$k1]['submenu'] = $dbs->getall("pid='".$rs1['id']."'",'`id`,`name`,`type`,`url`,`num`','`sort`');
+			$menu	= $dbs->getall("mid='".$rs['id']."' and `pid`=0",'`id`,`name`,`type`,`url`,`num`,`color`','`sort`', 3);
+			foreach($menu as $k1=>$rs1)$menu[$k1]['submenu'] = $dbs->getall("pid='".$rs1['id']."'",'`id`,`name`,`type`,`url`,`num`,`color`','`sort`');
 			$rows[$k]['menu'] 	= $menu;
 		}
 		return $rows;
@@ -690,7 +690,7 @@ class reimClassModel extends Model
 			$tos 	= m('logintoken')->rows($where);
 			if($tos>0){//有打开应用
 				$conts = substr($this->rock->jm->base64decode($cont),0,99);
-				c('JPush')->send($asid,'['.$this->adminname.']通过['.$gname.']发来一条消息', ''.$this->adminname.':'.$conts, 1);
+				c('JPush')->send($asid,'['.$gname.']发来一条消息', ''.$this->adminname.':'.$conts, 1);
 			}
 		}
 		$arr['gname'] = $gname;

@@ -5,13 +5,14 @@
 <title><?=$da['title']?></title>
 <link rel="stylesheet" href="<?=$da['p']?>/css/css.css" />
 <link rel="stylesheet" href="mode/kindeditor/themes/default/default.css" />
+<link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
 <link rel="shortcut icon" href="favicon.ico" />
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
 <script type="text/javascript" src="js/rmb.js"></script>
 <script type="text/javascript" src="mode/kindeditor/kindeditor-min.js"></script>
-<script type="text/javascript" src="mode/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
 <script type="text/javascript">
 var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=0,mid='<?=$da['mid']?>';
 function initbodys(){};
@@ -95,6 +96,7 @@ var c={
 		if(smid=='0'||smid==''){
 			isedit=1;
 			$('#AltS').show();
+			c.initdatelx();
 			initbodys(smid);
 		}else{
 			js.setmsg('加载数据中...');
@@ -104,6 +106,14 @@ var c={
 				js.setmsg('error:内部错误,可F12调试');
 			});
 		}
+	},
+	initdatelx:function(){
+		var o = $("input[inputtype]").click(function(){
+			$(this).unbind('click');
+			var lx = $(this).attr('inputtype');
+			c.date(this, lx);
+			return false;
+		});
 	},
 	showdataback:function(a){
 		if(a.success){
@@ -126,6 +136,10 @@ var c={
 						form(fid).checked = (val=='1');
 					}else if(flx=='htmlediter'){
 						this.editorobj[fid].html(val);
+					}else if(flx.substr(0,6)=='change'){
+						if(form(fid))form(fid).value=val;
+						fid = arr[i].data;
+						if(!isempt(fid)&&form(fid))form(fid).value=da.data[fid];
 					}else{
 						if(form(fid))form(fid).value=val;
 					}
@@ -152,6 +166,7 @@ var c={
 				this.formdisabled();
 			}else{
 				$('#AltS').show();
+				c.initdatelx();
 			}
 			if(da.isflow==1){
 				$('.status').show();
@@ -172,8 +187,10 @@ var c={
 			$('#AltS').hide();
 			form('id').value=a.data;
 			isedit=0;
-			if(gridid!=''){
-				try{parent.getcmp(gridid).store.reload();}catch(e){}
+			var callback=js.request('callback');
+			if(callback!=''){
+				try{parent[callback](a.data);}catch(e){}
+				try{parent.js.tanclose('openinput');}catch(e){}
 			}
 		}else{
 			get('AltS').disabled=false;
@@ -181,8 +198,7 @@ var c={
 		}
 	},
 	date:function(o1,lx){
-		var da={};if(lx=='datetime')lx='Y-m-d H:i:00';if(lx=='date')lx='Y-m-d';if(lx=='time')lx='H:i:s';if(lx=='month')lx='Y-m';if(lx=='year')lx='Y';lx=lx.replace('Y','yyyy');lx=lx.replace('m','MM');lx=lx.replace('d','dd');lx=lx.replace('H','HH');lx=lx.replace('i','mm');lx=lx.replace('s','ss');da.dateFmt = lx;
-		WdatePicker(da);
+		$(o1).rockdatepicker({view:lx,initshow:true});
 	},
 	close:function(){
 		window.close();

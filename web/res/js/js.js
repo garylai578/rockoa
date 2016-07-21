@@ -575,20 +575,33 @@ js.debug	= function(s){
 	console.log(s);
 }
 
-js.confirm	= function(txt,fun, tcls){
-	var h = '<div style="padding:20px;line-height:30px" align="center"><img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'</div>';
+js.confirm	= function(txt,fun, tcls, tis, lx){
+	if(!lx)lx=0;
+	var h = '<div style="padding:20px;line-height:30px" align="center">';
+	if(lx==1){
+		h+='<div align="left" style="padding-left:15px">'+txt+'</div>';
+		h+='<div style="padding:10px"><input  class="input" id="confirm_input" style="width:230px"></div>';
+	}else{
+		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
+	}
+	h+='</div>';
 	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" style="padding:5px 10px"  class="webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp; <a sattr="no" style="padding:5px 10px; background-color:#888888" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
 	h+='<div class="blank10"></div>';
 	if(!tcls)tcls='danger';
-	js.tanbody('confirm', '<i class="icon-question-sign"></i>&nbsp;系统提示', 300, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
+	if(!tis)tis='<i class="icon-question-sign"></i>&nbsp;系统提示';
+	js.tanbody('confirm', tis, 300, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
 	function backl(e){
-		var jg	= $(this).attr('sattr');
-		js.tanclose('confirm');
-		if(typeof(fun)=='function')fun(jg,this);
+		var jg	= $(this).attr('sattr'),val=$('#confirm_input').val();
+		js.tanclose('confirm');if(val==null)val='';
+		if(typeof(fun)=='function')fun(jg, val);
 		return false;
 	}
 	$('#confirm_btn1').click(backl);
 	$('#confirm_btn').click(backl);
 	get('confirm_btn').focus();
+	if(lx==1)get('confirm_input').focus();
+}
+js.prompt = function(tit,txt,fun){
+	js.confirm(txt, fun, '', tit, 1);
 }
 js.fileall=',aac,ace,ai,ain,amr,app,arj,asf,asp,aspx,av,avi,bin,bmp,cab,cad,cat,cdr,chm,com,css,cur,dat,db,dll,dmv,doc,docx,dot,dps,dpt,dwg,dxf,emf,eps,et,ett,exe,fla,ftp,gif,hlp,htm,html,icl,ico,img,inf,ini,iso,jpeg,jpg,js,m3u,max,mdb,mde,mht,mid,midi,mov,mp3,mp4,mpeg,mpg,msi,nrg,ocx,ogg,ogm,pdf,php,png,pot,ppt,pptx,psd,pub,qt,ra,ram,rar,rm,rmvb,rtf,swf,tar,tif,tiff,txt,url,vbs,vsd,vss,vst,wav,wave,wm,wma,wmd,wmf,wmv,wps,wpt,wz,xls,xlsx,xlt,xml,zip,';

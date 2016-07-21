@@ -80,10 +80,16 @@ class inputAction extends ActionNot
 		if(in_array('optname', $allfields))$uaarr['optname'] = $this->adminname;
 		if(in_array('uid', $allfields))$uaarr['uid'] = $this->post('uid', $this->adminid);
 		if(in_array('applydt', $allfields) && $id==0)$uaarr['applydt'] = $this->post('applydt', $this->date);
+		if($addbo){
+			if(in_array('createdt', $allfields))$uaarr['createdt'] = $this->now;
+			if(in_array('adddt', $allfields))$uaarr['adddt'] = $this->now;
+			if(in_array('createid', $allfields))$uaarr['createid'] = $this->adminid;
+			if(in_array('createname', $allfields))$uaarr['createname'] = $this->adminname;
+		}
 		if($isflow==1){
 			$uaarr['status']= '0';
 		}else{
-			if(in_array('status', $allfields))$uaarr['status'] = 1;
+			if(in_array('status', $allfields))$uaarr['status'] = (int)$this->post('status', '1');
 		}
 		$ss 	= '';
 		$befa 	= $this->savebefore($table, $uaarr, $id, $addbo);
@@ -360,6 +366,7 @@ class inputAction extends ActionNot
 							$sel = ($rs['value']==$val)?'selected':'';
 							$str.='<option value="'.$rs['value'].'" '.$sel.'>'.$rs['name'].'</option>';
 						}
+						$fopt = true;
 					}
 					if($type=='rockcombo' && !$fopt){
 						$_ars= explode(',', $datanum);
@@ -399,7 +406,7 @@ class inputAction extends ActionNot
 			}
 			
 			if($type=='datetime'||$type=='date'||$type=='time'){
-				$str = '<input value="'.$val.'" '.$attr.' class="inputs datesss" onclick="c.date(this,\''.$type.'\')" readonly name="'.$fname.'">';
+				$str = '<input value="'.$val.'" '.$attr.' class="inputs datesss" inputtype="'.$type.'" readonly name="'.$fname.'">';
 				if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
 			}
 			if($type=='number'||$type=='xuhao'){

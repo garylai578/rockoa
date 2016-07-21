@@ -88,3 +88,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="tishi">提示：多条将是或者的关系<div>

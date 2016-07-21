@@ -64,7 +64,7 @@
 					attr = '';
 					if(can.sort == a[i].dataIndex)hs='style="color:#3399FF"';
 					if(a[i].width)attr+=' width="'+a[i].width+'"';
-					s+='<th '+attr+'><div '+hs+' align="'+a[i].align+'" lfields="'+a[i].dataIndex+'">';
+					s+='<th nowrap '+attr+'><div '+hs+' align="'+a[i].align+'" lfields="'+a[i].dataIndex+'">';
 					if(can.celleditor&&a[i].editor)s+='<i class="icon-pencil"></i>&nbsp;';
 					s+=a[i].text;
 					if(a[i].sortable){

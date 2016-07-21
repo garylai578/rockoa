@@ -38,6 +38,17 @@ class indexClassAction extends apiAction
 		$this->showreturn($rows);
 	}
 	
+	public function yyoptmenuAction()
+	{
+		$num 	= $this->post('num');
+		$lx 	= $this->post('lx');
+		$sm 	= $this->post('sm');
+		$mid 	= (int)$this->post('mid');
+		$msg 	= m('agent:'.$num.'')->menuopt($this->adminid, $num, $mid, $lx, $sm);
+		if($msg != 'ok')$this->showreturn('', $msg, 201);
+		$this->showreturn('');
+	}
+	
 	public function pushtestAction()
 	{
 		m('reim')->pushagent('1','会议','关于端午节放假通知');

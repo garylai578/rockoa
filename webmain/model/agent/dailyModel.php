@@ -39,13 +39,19 @@ class agent_dailyClassModel extends agentModel
 			$rows[$k]['title'] 	= '['.$rs['optname'].']'.$rs['dt'].'的'.$typea[$rs['type']].'';
 			$rows[$k]['cont']	= $rs['content'];
 			unset($rows[$k]['content']);
+			$menusub 			= array();
 			
 			if(!in_array($rs['id'], $ydarr)){
 				$rows[$k]['statustext'] 	= '未读';
 				$rows[$k]['statuscolor'] 	= '#ED5A5A';
+				
+				$menusub[] = array('name'=>'标已读','lx'=>'yd');
+				$menusub[] = array('name'=>'全部标已读','lx'=>'allyd');
 			}else{
 				$rows[$k]['ishui']			= 1;
 			}
+			$menusub[] = array('name'=>'点评','lx'=>'log');
+			$rows[$k]['menusub']	= $menusub;
 		}
 		$arr['rows'] 	= $rows;
 		$wdstotal		= $this->getwdtotal($uid);
@@ -53,5 +59,23 @@ class agent_dailyClassModel extends agentModel
 			'under' => $wdstotal
 		);
 		return $arr;
+	}
+	
+	public function menuopts($uid, $mid, $lx, $sm='')
+	{
+		$log 	= m('log');
+		$table  = 'daily';
+		if($lx=='yd'){
+			$log->addread($table, $mid, $uid);
+		}
+		if($lx=='allyd'){
+			$ydid 	= $log->getread($table, $uid);	
+			$where = m('view')->viewwhere($this->modeid, $uid);
+			$where = "((1=1 $where) or (`uid`='$uid') )";
+			$where = "`id` not in($ydid) and $where";
+			
+			$rows 	= m($table)->getrows($where,'id');
+			foreach($rows as $k=>$rs)$log->addread($table, $rs['id'], $uid);
+		}
 	}
 }

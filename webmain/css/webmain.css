@@ -20,7 +20,9 @@ a.blue:hover{TEXT-DECORATION:underline;color:red;}
 a.red:link,a.red:visited{color:red;TEXT-DECORATION:underline;}
 a.red:hover{TEXT-DECORATION:underline;color:red;}
 
-.tishi{color:#888888;padding:5px}
+.tishi{color:#888888;padding:10px 0px}
+
+.basetable td{padding:3px 5px; text-align:center}
 
 .font12{font-size:12px}
 .font14{font-size:14px}
@@ -177,4 +179,5 @@ line-height: 0;
 .floats60{float:left;width:60%}
 .floats40{float:left;width:40%}
 .floats50{float:left;width:50%}
+.floats70{float:left;width:70%}
 .floatr20{float:right;width:20%}

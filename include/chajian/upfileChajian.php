@@ -88,8 +88,7 @@ class upfileChajian extends Chajian{
 		$allfilename= $save_path.'/'.$file_newname.'';
 		$uptempname	= $save_path.'/'.$randname.'.uptemp';
 
-		$upbool	 = true;
-		
+		$upbool	 	= true;
 		if(!$file_kup){
 			$fp	= fopen($file_tmp_name,'r');
 			$filebase64	= base64_encode(fread($fp,$file_size));

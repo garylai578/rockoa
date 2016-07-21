@@ -7,7 +7,9 @@ $(document).ready(function(){
 		url:js.getajaxurl('menudata','{mode}','{dir}',{mid:mid}),
 		tree:true,celleditor:true,
 		columns:[{
-			text:'名称',dataIndex:'name',align:'left'
+			text:'名称',dataIndex:'name',align:'left',renderer:function(v,a){
+				return '<font color="'+a.color+'">'+v+'</font>';
+			}
 		},{
 			text:'编号',dataIndex:'num',editor:true
 		},{
@@ -22,6 +24,8 @@ $(document).ready(function(){
 			text:'排序号',dataIndex:'sort',editor:true
 		},{
 			text:'PID',dataIndex:'pid'
+		},{
+			text:'颜色',dataIndex:'color',editor:true
 		},{
 			text:'ID',dataIndex:'id'	
 		}],
@@ -45,7 +49,7 @@ $(document).ready(function(){
 				title:'应用菜单',height:300,width:400,
 				tablename:'im_menu',isedit:lx,
 				params:{int_filestype:'sort,type,mid,pid'},
-				submitfields:'num,name,url,sort,type,mid,pid',
+				submitfields:'num,name,url,sort,type,mid,pid,color',
 				items:[{
 					labelText:'编号',name:'num'
 				},{
@@ -58,6 +62,8 @@ $(document).ready(function(){
 					labelText:'上级ＩＤ',name:'pid',required:true,value:'0',type:'number'
 				},{
 					labelText:'序号',name:'sort',type:'number',value:'0'
+				},{
+					labelText:'颜色',name:'color'
 				},{
 					labelText:'mid',name:'mid',type:'hidden',value:'0'
 				}],

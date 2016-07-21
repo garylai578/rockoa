@@ -8,10 +8,14 @@ $(document).ready(function(){
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'mid='+mid+''},
 		submitfields:'name,fields,fieldstype,dev,sort,islu,isbt,iszs,data',
-		requiredfields:'name,fields,fieldstype',
+		requiredfields:'name,fields,fieldstype',aftersaveaction:'elemensavefields',
 		success:function(){
 			closenowtabs();
 			try{guanelementedit.reload();}catch(e){}
+		},
+		submitcheck:function(){
+			
+			
 		}
 	});
 	h.forminit();
@@ -26,6 +30,11 @@ $(document).ready(function(){
 	}
 	$(h.form.fieldss).change(function(){
 		h.form.fields.value=this.value;
+	});
+	$(h.form.fields).blur(function(){
+		var val = this.value;
+		val = val.replace(/[^a-zA-Z0-9+\_]/gi,'');
+		this.value = strreplace(val);
 	});
 });
 

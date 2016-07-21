@@ -124,11 +124,29 @@ function isajax()
 
 function backmsg($msg='', $demsg='处理成功', $da=array())
 {
-	$bo = false;
+	$code = 201;
 	if($msg == ''){
 		$msg = $demsg;
-		$bo = true;
+		$code= 200;
 	}
-	echo json_encode(array('success'=>$bo,'msg'=>$msg,'data'=>$da));
-	exit;
+	showreturn($da, $msg, $code);
+}
+
+function showreturn($arr='', $msg='', $code=200)
+{
+	$callback	= @$_GET['callback'];
+	$success	= true;
+	if($code != 200)$success = false;
+	$result 	= json_encode(array(
+		'code' 	=> $code,
+		'msg'	=> $msg,
+		'data'	=> $arr,
+		'success'=> $success
+	));
+	if(!isempt($callback)){
+		echo ''.$callback.'('.$result.')';
+	}else{
+		echo $result;
+	}
+	exit();
 }

@@ -6,7 +6,7 @@ $(document).ready(function(){
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'admin',
 		url:js.getajaxurl('publicsave','admin','system'),
-		params:{int_filestype:'status,type,sort',md5_filestype:'pass'},
+		params:{int_filestype:'status,type,sort',add_otherfields:'adddt={now}',md5_filestype:'pass'},
 		submitfields:'status,type,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate',
 		requiredfields:'name,user,ranking,deptname',
 		success:function(){
@@ -46,6 +46,7 @@ $(document).ready(function(){
 	}
 	
 	js.initbtn(c);
+	$('#dt1_{rand}').val(js.now());
 });
 </script>
 

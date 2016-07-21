@@ -91,11 +91,11 @@ $(document).ready(function(){
 <td>
 	<div>
 	<ul class="floats">
-		<li class="floats80">
+		<li class="floats70">
 			<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增进程</button>&nbsp;&nbsp;
 			<span id="downshow_{rand}"></span>
 		</li>
-		<li class="floats20" style="text-align:right">
+		<li class="floats30" style="text-align:right">
 			<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button> &nbsp; 
 			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>
 		</li>

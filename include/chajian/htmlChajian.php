@@ -47,7 +47,7 @@ class htmlChajian extends Chajian{
 			$val = '';
 			$sty = 'padding:8px;';
 			if(isset($arr[$fid]))$val = $arr[$fid];
-			if(isset($arr[$fid.'_style']))$sty = $arr[$fid.'_style'];
+			if(isset($arr[$fid.'_style']))$sty .= $arr[$fid.'_style'];
 			$s .= '<tr><td align="right" nowrap style="border:1px '.$bcolor.' solid;padding:5px 8px;">'.$na.'</td><td  style="border:1px '.$bcolor.' solid;'.$sty.'" align="left">'.$val.'</td></tr>';
 		}
 		$s .='</table>';

@@ -249,4 +249,34 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$msg	= m('flow')->opt('deletebill', $this->moders['num'], $mid);
 		echo $msg;
 	}
+	
+	//保存字段判断
+	public function elemensavefields($table, $cans)
+	{
+		$fields = $cans['fields'];
+		$name 	= $cans['name'];
+		$mid 	= $cans['mid'];
+		$type 	= $cans['fieldstype'];
+		$tables = m('flow_set')->getmou('`table`', $mid);
+		if(!isempt($tables)){
+			$allfields = $this->db->getallfields('[Q]'.$tables.'');
+			if(!in_array($fields, $allfields)){
+				$str = "ALTER TABLE [Q]".$tables." ADD $fields ";
+				if($type=='date' || $type=='datetime' || $type=='time'){
+					$str .= ' '.$type.'';
+				}else if($type=='number'){
+					$str .= ' smallint(6)';
+				}else if($type=='checkbox'){
+					$str .= ' tinyint(1)';	
+				}else if($type=='textarea'){
+					$str .= ' varchar(500)';
+				}else{
+					$str .= ' varchar(50)';
+				}
+				if(!isempt($cans['dev']))$str.= " DEFAULT '".$cans['dev']."'";
+				$str.= " COMMENT '$name'";
+				$this->db->query($str);
+			}
+		}
+	}
 }

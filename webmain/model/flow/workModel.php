@@ -32,18 +32,20 @@ class flow_workClassModel extends flowModel
 		if($a['name']=='进度报告'){
 			$state 	= $a['status'];
 			$arr['state'] = $state;
-			if($state=='4'){
-				$state = '0';
-				$arr['state'] 	= $state;
-				$arr['distid'] 	= $this->rock->post('distid');
-				$arr['dist'] 	= $this->rock->post('dist');
-				$this->push($arr['distid'], '任务', ''.$this->adminname.'指派任务【[{type}]{title}】给你');
-			}else{
-				$cont = ''.$this->adminname.'添加【[{type}]{title}】的任务进度,说明:'.$a['explain'].'';
-				if($state=='1')$cont='【[{type}]{title}】任务'.$this->adminname.'已完成';
-				$this->push($this->rs['optid'], '任务', $cont);
-			}
-			m($this->mtable)->update($arr, $this->id);
+			$cont = ''.$this->adminname.'添加【[{type}]{title}】的任务进度,说明:'.$a['explain'].'';
+			if($state=='1')$cont='【[{type}]{title}】任务'.$this->adminname.'已完成';
+			$this->push($this->rs['optid'], '任务', $cont);
+			$this->update($arr, $this->id);
+		}
+		if($a['name']=='指派给'){
+			$cname 	 = $this->rock->post('changename');
+			$cnameid = $this->rock->post('changenameid');
+			$state = '0';
+			$arr['state'] 	= $state;
+			$arr['distid'] 	= $cnameid;
+			$arr['dist'] 	= $cname;
+			$this->update($arr, $this->id);
+			$this->push($cnameid, '任务', ''.$this->adminname.'指派任务[{type}]{title}给你');
 		}
 	}
 }

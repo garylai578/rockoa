@@ -13,21 +13,30 @@ $(document).ready(function(){
 					'num' :'add',
 					'id'  : 0
 				});
+				$('#showlistyingyong').html('');
+				$('#showlistyingyongtt').html('');
 				c.showlist();
 			},'get,json');
 		},
 		showlist:function(){
-			var i=0,len=arr.length,s='',hd;
+			var i=0,len=arr.length,s='',hd,s1='';
 			for(i=0;i<len;i++){
 				hd=1;
 				if(arr[i].valid==0)hd='0.3';
+				s='';
 				s+='<li style="opacity:'+hd+'" onclick="yingyongedit('+i+',0)">';
 				s+='<div><img width="50" height="50" src="'+arr[i].face+'"></div>';
 				s+='<div>'+arr[i].name+'</div>';
 				if(arr[i].id>0)s+='<div style="font-size:10px"><a href="javascript:;" onclick="yingyongedit('+i+',1)">编辑</a> &nbsp; <a href="javascript:;" onclick="yingyongmenu('+i+')">菜单</a></div>';
 				s+='</li>';
+				if(arr[i].valid==0){
+					$('#showlistyingyongtt').append(s);
+				}else{
+					$('#showlistyingyong').append(s);
+				}
+				
 			}
-			$('#showlistyingyong').html(s);
+			
 		},
 		reload:function(){
 			c.loadlist();
@@ -57,6 +66,11 @@ $(document).ready(function(){
 	<h3>已有应用</h3>
 	<div class="blank1"></div>
 	<div class="divlisssa" style="padding:10px"><ul id="showlistyingyong"></ul></div>
-
+	
+	<h3>已停用</h3>
+	<div class="blank1"></div>
+	<div class="divlisssa" style="padding:10px"><ul id="showlistyingyongtt"></ul></div>
+	
+	
 
 </div>

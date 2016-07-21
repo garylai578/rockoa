@@ -17,7 +17,7 @@ class apiAction extends ActionNot
 		$boss = (M == 'login|api');
 		if(!$boss && HOST!='127.0.0.1'){
 			if($this->isempt($this->token))$this->showreturn('','token invalid', 299);
-			$to = m('logintoken')->rows("`token`='$this->token' and `uid`='$this->adminid'");
+			$to = m('logintoken')->rows("`token`='$this->token' and `uid`='$this->adminid' and `online`=1");
 			if($to==0)$this->showreturn('','access invalid', 299);
 		}
 		$this->userrs = m('admin')->getone("`id`='$this->adminid' and `status`=1", '`name`,`user`,`id`,`ranking`,`deptname`,`deptid`');

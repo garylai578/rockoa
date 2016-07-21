@@ -16,11 +16,15 @@ class optionClassModel extends Model
 		return $val;
 	}
 	
-	public function getdata($num)
+	public function getdata($num, $whe='')
 	{
-		$id  = (int)$this->getmou('id', "`num`='$num'");
-		if($id == 0)$id = -1;
-		return $this->getall("`pid`='$id' order by `sort`,`id`");
+		if(!is_numeric($num)){
+			$id  = (int)$this->getmou('id', "`num`='$num'");
+			if($id == 0)$id = -1;
+		}else{
+			$id = $num;
+		}
+		return $this->getall("`pid`='$id' and `valid`=1 $whe order by `sort`,`id`");
 	}
 	
 	public function getmnum($num)

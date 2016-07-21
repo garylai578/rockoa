@@ -8,12 +8,11 @@
 <title><?=$da['title']?></title>
 <link rel="shortcut icon" href="favicon.ico" />
 <link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/cssm.css">
-<link rel="stylesheet" href="mode/kindeditor/themes/default/default.css" />
+<link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
-<script type="text/javascript" src="js/rmb.js"></script>
-<script type="text/javascript" src="mode/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
 
 <script type="text/javascript">
 var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=1,mid='<?=$da['mid']?>';
@@ -25,9 +24,18 @@ function geturlact(act){
 function changesubmit(d){};
 function changesubmitbefore(){};
 function initbody(){
+	c.initdatelx();
 	initbodys();
 }
 var c={
+	initdatelx:function(){
+		var o = $("input[inputtype]").click(function(){
+			$(this).unbind('click');
+			var lx = $(this).attr('inputtype');
+			c.date(this, lx);
+			return false;
+		});
+	},
 	save:function(){
 		if(js.ajaxbool||isedit==0)return;
 		js.setmsg('');
@@ -80,8 +88,7 @@ var c={
 		$('#fileupaddbtn').remove();
 	},
 	date:function(o1,lx){
-		var da={};if(lx=='datetime')lx='Y-m-d H:i:00';if(lx=='date')lx='Y-m-d';if(lx=='time')lx='H:i:s';if(lx=='month')lx='Y-m';if(lx=='year')lx='Y';lx=lx.replace('Y','yyyy');lx=lx.replace('m','MM');lx=lx.replace('d','dd');lx=lx.replace('H','HH');lx=lx.replace('i','mm');lx=lx.replace('s','ss');da.dateFmt = lx;
-		WdatePicker(da);
+		$(o1).rockdatepicker({view:lx,initshow:true});
 	},
 	changeuser:function(na, lx){
 		changeuser(na,lx);

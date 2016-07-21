@@ -65,7 +65,7 @@ var rockmenuobj	= null;
 				va= json[i][can.display];
 				if(i==len-1)ys+='border:none;';
 				col	= '';
-				if(json[i].fontcolor)ys+='color:'+json[i].fontcolor+';';
+				if(json[i].color)ys+='color:'+json[i].color+';';
 				if(va==can.value)col='#e1e1e1';
 				if(json[i].background)col=json[i].background;
 				if(col)ys+='background:'+col+';';

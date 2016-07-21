@@ -49,13 +49,14 @@ function loaddata(){
 }
 function showlistss(pid, oi, shid){
 	var a=deptarrs;
-	var s='',i,len=a.length;
+	var s='',i,len=a.length,type='checkbox';
 	var hw=24;
+	if(changetype.indexOf('check')==-1)type='radio';
 	for(i=0;i<len;i++){
 		if(a[i].pid==pid){
 			s+='<div class="index_list listsss" style="padding-left:'+(hw*oi+10)+'px">';
 			s+='	<div onclick="clickshowna('+i+', '+oi+')"  class="index_title"><img width='+hw+' height='+hw+' src="images/files.png" align="absmiddle">&nbsp;'+a[i].name+'</div>';
-			if(changetype.indexOf('dept')>-1)s+='<span class="right"><input id="box_d_'+a[i].id+'" onclick="xuandeptuser(\''+a[i].id+'\',\''+a[i].name+'\',\'d\', this)" type="checkbox" class="checkbox"></span>';
+			if(changetype.indexOf('dept')>-1)s+='<span class="right"><input id="box_d_'+a[i].id+'" onclick="xuandeptuser(\''+a[i].id+'\',\''+a[i].name+'\',\'d\', this)" type="'+type+'" name="allinptsss" class="checkbox"></span>';
 			s+='</div>';
 			s+='<span show="false" id="dept'+a[i].id+'"></span>';
 		}
@@ -66,7 +67,7 @@ function showlistss(pid, oi, shid){
 		if(a[i].deptid==pid){
 			s+='<div class="index_list listsss" style="padding-left:'+(hw*oi+10)+'px">';
 			s+='	<div class="index_title" onclick="xuanuser('+i+')"><img width='+hw+' height='+hw+' src="'+a[i].face+'" align="absmiddle">&nbsp;'+a[i].name+'('+a[i].ranking+')</div>';
-			if(changetype.indexOf('user')>-1)s+='<span class="right"><input id="box_u_'+a[i].id+'" onclick="xuandeptuser(\''+a[i].id+'\',\''+a[i].name+'\',\'u\', this)"  type="checkbox" class="checkbox"></span>';
+			if(changetype.indexOf('user')>-1)s+='<span class="right"><input id="box_u_'+a[i].id+'" onclick="xuandeptuser(\''+a[i].id+'\',\''+a[i].name+'\',\'u\', this)" name="allinptsss" type="'+type+'" class="checkbox"></span>';
 			s+='</div>';
 		}
 	}

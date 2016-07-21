@@ -129,7 +129,6 @@ $(document).ready(function(){
 	<ul class="floats">
 		<li class="floats50">
 			<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增组</button>
-			双击查看对应人员
 		</li>
 		<li class="floats50" style="text-align:right">
 			<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
@@ -139,6 +138,7 @@ $(document).ready(function(){
 	</div>
 	<div class="blank10"></div>
 	<div id="veiw_{rand}"></div>
+	<div class="tishi">双击查看对应人员</div>
 </td>
 <td width="10"></td>
 <td>

@@ -15,9 +15,19 @@ class adminClassAction extends Action
 
 	public function beforeshow($table)
 	{
-		$fields = 'id,name,user,deptname,type,status,tel,workdate,ranking,superman,loginci,sex,tel,sort,face';
-		return array('fields'=>$fields);
+		$fields = 'id,name,`user`,deptname,`type`,status,tel,workdate,ranking,superman,loginci,sex,tel,sort,face';
+		$s 		= '';
+		$key 	= $this->post('key');
+		if($key!=''){
+			$s = " and (`name` like '%$key%' or `user` like '%$key%' or `ranking` like '%$key%' or `deptname` like '%$key%') ";
+		}
+		return array(
+			'fields'=> $fields,
+			'where'	=> $s
+		);
 	}
+	
+	
 	
 	public function publicbeforesave($table, $cans, $id)
 	{
@@ -42,6 +52,12 @@ class adminClassAction extends Action
 	
 	public function updatedataAjax()
 	{
+		$a = $this->updatess();
+		echo '总'.$a[0].'条记录,更新了'.$a[1].'条';
+	}
+	
+	public function updatess()
+	{
 		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,superman from `[Q]admin` where `status`=1 order by `sort`");
 		$total	= $this->db->count;
 		$cl		= 0;
@@ -53,6 +69,62 @@ class adminClassAction extends Action
 				$cl++;
 			}
 		}
-		echo '总'.$total.'条记录,更新了'.$cl.'条';
+		return array($total, $cl);
+	}
+	
+	
+	//批量导入
+	public function saveadminplAjax()
+	{
+		$val = $this->post('val');
+		if(isempt($val))backmsg('error');
+		
+		$arrs 	= explode("\n", $val);
+		$oi 	= 0;
+		$db 	= m('admin');
+		$sort 	= (int)$db->getmou('max(`sort`)', '`id`>0');
+		$dbs	= m('dept');
+		foreach($arrs as $valss){
+			$user = '';
+			$name = '';
+			if(!isempt($valss)){
+				$a 		= $this->adtewe(explode('	', $valss),10);
+				$user 	= $a[0];
+				$name 	= $a[1];
+			}
+			if(!isempt($user) && !isempt($name)){
+				if($db->rows("`user`='$user'")>0)continue;
+				if($db->rows("`name`='$name'")>0)continue;
+				
+				$oi++;
+				$arr['user'] = $user;
+				$arr['name'] = $name;
+				$arr['sex']  = $a[2];
+				$arr['ranking']  	= $a[3];
+				$arr['deptname']  	= $a[4];
+				$arr['mobile']  	= $a[5];
+				$arr['email']  		= $a[6];
+				$arr['tel']  		= $a[7];
+				$arr['pass']  		= md5('123456');
+				$arr['sort']  		= $sort+$oi;
+				$arr['workdate']  	= $this->date;
+				$arr['adddt']  		= $this->now;
+				
+				$deptid 	= (int)$dbs->getmou('id', "`name`='".$arr['deptname']."'");
+				if($deptid==0)$arr['deptname'] = '';
+				$arr['deptid'] = $deptid;
+				
+				$db->insert($arr);
+			}
+		}
+		if($oi>0)$this->updatess();
+		backmsg('','成功导入'.$oi.'个用户');
+	}
+	
+	private function adtewe($a, $len){
+		for($i=0;$i<$len;$i++){
+			if(!isset($a[$i]))$a[$i] = '';
+		}
+		return $a;
 	}
 }

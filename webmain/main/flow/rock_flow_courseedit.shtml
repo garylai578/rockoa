@@ -54,6 +54,9 @@ $(document).ready(function(){
 				$('#checktext_{rand}').html('请选择人员：');
 				$('#checkname_{rand}').show();
 			}
+		},
+		setwhere:function(){
+			js.setwhere(params.setid);
 		}
 	};
 	js.initbtn(c);
@@ -120,12 +123,12 @@ $(document).ready(function(){
 
 		<tr>
 			<td  align="right" >审核条件：</td>
-			<td class="tdinput" colspan="3"><textarea  name="where" style="height:60px" class="form-control"></textarea><div class="tishi">Sql的条件，为空此步需要审核，不为空时当条件满足了就需要审核</div></td>
+			<td class="tdinput" colspan="3"><textarea  name="where" style="height:60px" class="form-control"></textarea><div class="tishi" style="padding-top:0px">Sql的条件，为空此步需要审核，不为空时当条件满足了就需要审核,<a click="setwhere" href="javascript:;">[设置条件]</a></div></td>
 		</tr>
 		
 		<tr>
 			<td  align="right" >审核动作：</td>
-			<td class="tdinput" colspan="3"><input name="courseact" class="form-control"><div class="tishi">默认是：通过,不通过。多个,分开</div></td>
+			<td class="tdinput" colspan="3"><input name="courseact" class="form-control"><div style="padding-top:0px" class="tishi">默认是：通过,不通过。多个,分开</div></td>
 		</tr>
 		
 		<tr>

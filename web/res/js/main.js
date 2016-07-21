@@ -92,7 +92,7 @@ function bodyunload(){
 function connectserver(){
 	if(otherlogin)return;
 	if(isempt(fromrecid)||fromwshost.indexOf('ws:')!=0){
-		js.msg('msg','暂时无法使用<br>请先设置REIM服务器信息',-1);
+		js.msg('msg','暂时无法使用即时通信功能<br>请先到后台设置服务器信息',-1);
 		return;
 	}
 	setTimeout('linkbooschange()',10*1000);
@@ -826,6 +826,7 @@ var im={
 }
 js.changeok=function(sna,sid, blx,plx){
 	if(blx=='yq')chatobj[plx].yaoqing(sid);
+	if(blx=='yy')agentobj[plx].changeuser(sna,sid);
 }
 var chatclass = function(opts){
 	var me = this;
@@ -1363,10 +1364,8 @@ function agentclass(opts){
 		this.clickmenus(d);
 	};
 	this.clickmenus=function(a){
-		if(a.type==0){
-			this.clickevent(a);
-			return;
-		}
+		if(a.lx){this.showmenuclick(a);return;}
+		if(a.type==0){this.clickevent(a);return;}
 		if(a.type==1){
 			var url=a.url,amod=this.num;
 			if(url.substr(0,3)=='add'){
@@ -1411,7 +1410,9 @@ function agentclass(opts){
 			me.showdata(ret);
 		},'none');
 	};
-	this.xiang=function(ids,nus){
+	this.xiang=function(oi,ids,nus){
+		var d = this.data[oi-1];
+		var ids = d.id,nus=d.modenum,modne=d.modename;
 		if(!ids)return;
 		if(!nus||nus=='undefined')nus = this.num;
 		var url=''+apiurl+'task.php?a=p&num='+nus+'&mid='+ids+'';
@@ -1426,21 +1427,72 @@ function agentclass(opts){
 			o1.html(v);
 		}
 	};
+	this.data=[];
+	this.listright=function(oi,event){
+		var a = this.data[oi-1],subdata=a.menusub,ids = a.id,i;
+		if(!ids)return;
+		var da = [{name:'详情',lx:'xqwea',oi:oi}];
+		if(subdata)for(i=0;i<subdata.length;i++)da.push(subdata[i]);
+		this.tempid = ids;
+		this.submenuobj.setData(da);
+		this.submenuobj.showAt(event.clientX,event.clientY,130);
+	};
+	this.showmenuclick=function(d){
+		d.num=this.num;d.mid=this.tempid;
+		if(!d.lx)d.lx='';
+		if(d.lx=='xqwea'){this.xiang(d.oi);return;}
+		this.changdatsss = d;
+		if(d.lx.substr(0,10)=='log_change'){
+			var clx = d.changetype;if(!clx)clx='changeuser';
+			js.changeuser(clx,'yy', this.num);
+			return;
+		}
+		if(d.lx.substr(0,3)=='log' || d.lx=='del' || d.lx=='check'){
+			js.prompt(d.name,'请输入['+d.name+']说明：',function(index, text){
+				if(index=='yes'){
+					if(!text && !d.notsm){
+						js.msg('msg','没有输入['+d.name+']说明');
+					}else{
+						me.showmenuclicks(d, text);
+					}
+				}
+			});
+			return;
+		}
+		this.showmenuclicks(d,'');
+	};
+	this.changeuser=function(nas,sid){
+		if(!sid)return;
+		var d = this.changdatsss,sm='';
+		d.changename 	= nas; 
+		d.changenameid  = sid; 
+		this.showmenuclicks(d,sm);
+	};
+	this.showmenuclicks=function(d,sm){
+		if(!sm)sm='';
+		d.sm = sm;
+		js.ajax('index','yyoptmenu',d,function(ret){
+			me.getdata(me.nowevent, 1);
+		});	
+	};
 	this.showdata=function(a){
-		var s='',i,len=a.rows.length,d,st='';
+		var s='',i,len=a.rows.length,d,st='',oi;
 		$('#showblank_'+this.rand+'').remove();
 		$('#notrecord_'+this.rand+'').remove();
 		if(typeof(a.stotal)=='object')this._showstotal(a.stotal);
-		if(a.page==1)this.showobj.html('');
+		if(a.page==1){
+			this.showobj.html('');
+		}
 		for(i=0;i<len;i++){
 			d=a.rows[i];
+			oi=this.data.push(d);
 			if(d.showtype=='line' && d.title){
 				s='<div class="contline">'+d.title+'</div>';
 			}else{
 				if(!d.statuscolor)d.statuscolor='';
 				st='';
-				if(d.ishui==1)st='color:#cccccc;';
-				s='<div onclick="agentobj.'+this.num+'.xiang('+d.id+',\''+d.modenum+'\')" style="'+st+'" class="contlist">';
+				if(d.ishui==1)st='color:#aaaaaa;';
+				s='<div oncontextmenu="agentobj.'+this.num+'.listright('+oi+',event)" onclick="agentobj.'+this.num+'.xiang('+oi+')" style="'+st+'" class="contlist">';
 				if(d.title)s+='<div class="tit">'+d.title+'</div>';
 				if(d.optdt)s+='<div class="dt">'+d.optdt+'</div>';
 				if(d.cont)s+='<div class="cont">'+d.cont.replace(/\n/g,'<br>')+'</div>';

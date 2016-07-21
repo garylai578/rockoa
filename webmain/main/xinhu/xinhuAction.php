@@ -36,10 +36,11 @@ class xinhuClassAction extends Action
 	public function chushuaAjax()
 	{
 		$myext		= $this->getsession('adminallmenuid');
+		if(getconfig('systype')=='demo')exit('演示请勿操作');
 		if($myext!='-1'){
 			echo '只有管理员才可以用';
 		}else{
-			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,items,log,logintoken,meet,reads,sjoin,work,xhinfor,todo,flow_bill');
+			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,items,log,logintoken,meet,reads,sjoin,work,xhinfor,todo,flow_bill,goodss,goods,customer,custsale');
 			$alltabls 	= $this->db->getalltable();
 			foreach($tables as $tabs){
 				$_tabs 	= ''.PREFIX.''.$tabs.'';

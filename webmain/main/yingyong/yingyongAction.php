@@ -1,6 +1,22 @@
 <?php
 class yingyongClassAction extends Action
 {
+	public function yingyongdataAjax()
+	{
+		$rows = m('im_group')->getall('`type`=2 and pid=0','*','`sort`');
+		$arrs = array();
+		foreach($rows as $k=>$rs){
+			$sub 	= m('im_group')->getall('`type`=2 and pid='.$rs['id'].'','*','`sort`');
+			$rs['leave'] 	= 1;
+			$arrs[] 		= $rs;
+			foreach($sub as $k1=>$rs1){
+				$rs1['leave'] = 2;
+				$arrs[] 	   = $rs1;
+			}
+		}
+		echo json_encode(array('rows'=>$arrs));
+	}
+	
 	public function getdataAjax()
 	{
 		$rows = m('im_group')->getall('`type`=2','id,name,face,num,valid','`sort`');

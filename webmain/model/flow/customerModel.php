@@ -1,6 +1,24 @@
 <?php
 class flow_customerClassModel extends flowModel
 {
+	protected function flowinit(){
+		$this->statearr		 = c('array')->strtoarray('停用|#888888,启用|green');
+	}
+	
+	protected function flowchangedata(){
+		$this->rs['statusid'] = $this->rs['status'];
+		$zt = $this->statearr[$this->rs['status']];
+		$this->rs['status']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+	}
+	
+	protected function flowprintrows($rows)
+	{
+		foreach($rows as $k=>$rs){
+			$zt = $this->statearr[$rs['status']];
+			$rows[$k]['status']		= '<font color="'.$zt[1].'">'.$zt[0].'</font>';;
+		}
+		return $rows;
+	}
 	
 	//是否有查看权限
 	protected function flowisreadqx()
@@ -24,17 +42,22 @@ class flow_customerClassModel extends flowModel
 	}
 
 	
-	protected function flowaddlog($a)
+	protected function flowoptmenu($ors, $crs)
 	{
-		$actname = $a['name'];
-		$cname 	 = $this->rock->post('changename');
-		$cnameid = $this->rock->post('changenameid');
-		if($actname == '共享给'){
+		$zt  = $ors['statusvalue'];
+		$num = $ors['num'];
+		if($num=='ztqh'){
+			$this->update('`status`='.$zt.'', $this->id);
+		}
+		
+		if($num=='shate'){
+			$cname 	 = $crs['cname'];
+			$cnameid = $crs['cnameid'];
 			$this->update(array(
 				'shateid' 	=> $cnameid,
 				'shate' 	=> $cname,
 			), $this->id);
 			$this->push($cnameid, '客户管理', ''.$this->adminname.'将一个客户【{name}】共享给你');
-		}
+		}	
 	}
 }

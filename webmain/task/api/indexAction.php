@@ -40,11 +40,12 @@ class indexClassAction extends apiAction
 	
 	public function yyoptmenuAction()
 	{
-		$num 	= $this->post('num');
-		$lx 	= $this->post('lx');
+		$num 	= $this->post('modenum');
 		$sm 	= $this->post('sm');
+		$optid 	= (int)$this->post('optmenuid');
+		$zt 	= (int)$this->post('statusvalue');
 		$mid 	= (int)$this->post('mid');
-		$msg 	= m('agent:'.$num.'')->menuopt($this->adminid, $num, $mid, $lx, $sm);
+		$msg 	= m('flow')->opt('optmenu', $num, $mid, $optid, $zt, $sm);
 		if($msg != 'ok')$this->showreturn('', $msg, 201);
 		$this->showreturn('');
 	}

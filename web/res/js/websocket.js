@@ -1,63 +1,8 @@
-function websocketClass(opts){
-	var me 		= this;
-	this.wsobj	= false;
-	this.wshost	= '';
-	this.onopen		= function(){};
-	this.onmessage	= function(){};
-	this.onclose	= function(){};
-	this.onerror	= function(){};
-	this.reimfrom	= 'rockdemo';
-	this.adminid	= '1';
-	this.sendname	= '1';
-	this._init=function(){
-		if(opts)for(var o1 in opts)this[o1]=opts[o1];
-		if(typeof(WebSocket)=='undefined'){
-			WEB_SOCKET_SWF_LOCATION = "res/swf/WebSocketMain.swf";
-			WEB_SOCKET_DEBUG = true;
-			$.getScript('res/js/swfobject.js', function(){
-				me._contect();
-			});
-		}else{
-			this._contect();
-		}
-	};
-	this._contect = function(){
-		this.wsobj=new WebSocket(this.wshost);
-		this.wsobj.onopen=function(evt){me._onopen(evt);}
-		this.wsobj.onmessage=function(evt){me._onmessage(evt);}
-		this.wsobj.onclose=function(evt){me._onclose(evt);}
-		this.wsobj.onerror=function(evt){me._onerror(evt);}
-	};
-	this.connect  = function(){
-		this._contect();
-	};
-	this._onopen = function(evt){
-		this.onopen(this,evt);
-		this.send({atype:'connect'});
-	};
-	this._onmessage = function(evt){
-		var msg = evt.data;
-		this.onmessage(msg,this);
-	};
-	this._onclose = function(evt){
-		this.onclose(this,evt);
-	};
-	this._onerror = function(evt){
-		this.onerror(this,evt);
-	};
-	this.send = function(arr){
-		var str = this.objecttostr(arr);
-		return this.wsobj.send(str);
-	}
-	this.objecttostr = function(a){
-		var a1,s='',v;
-		var arra=js.apply({'from':this.reimfrom,'adminid':this.adminid,'atype':'send','sendname':this.sendname},a);
-		for(a1 in arra){
-			v = arra[a1];
-			s+=',"'+a1+'":"'+v+'"';
-		}
-		if(s!='')s = s.substr(1);
-		return "{"+s+"}";
-	};
-	this._init();
-}
+/**
+*	createname：雨中磐石
+*	homeurl：http://xh829.com/
+*	Copyright (c) 2016 rainrock (xh829.com)
+*	Date:2016-01-01
+*/
+
+function websocketClass(a){var b=this;this.wsobj=!1,this.wshost="",this.onopen=function(){},this.onmessage=function(){},this.onclose=function(){},this.onerror=function(){},this.reimfrom="rockdemo",this.adminid="1",this.sendname="1",this._init=function(){if(a)for(var c in a)this[c]=a[c];"undefined"==typeof WebSocket?(WEB_SOCKET_SWF_LOCATION="res/swf/WebSocketMain.swf",WEB_SOCKET_DEBUG=!0,$.getScript("res/js/swfobject.js",function(){b._contect()})):this._contect()},this._contect=function(){this.wsobj=new WebSocket(this.wshost),this.wsobj.onopen=function(a){b._onopen(a)},this.wsobj.onmessage=function(a){b._onmessage(a)},this.wsobj.onclose=function(a){b._onclose(a)},this.wsobj.onerror=function(a){b._onerror(a)}},this.connect=function(){this._contect()},this._onopen=function(a){this.onopen(this,a),this.send({atype:"connect"})},this._onmessage=function(a){var b=a.data;this.onmessage(b,this)},this._onclose=function(a){this.onclose(this,a)},this._onerror=function(a){this.onerror(this,a)},this.send=function(a){var b=this.objecttostr(a);return this.wsobj.send(b)},this.objecttostr=function(a){var b,d,c="",e=js.apply({from:this.reimfrom,adminid:this.adminid,atype:"send",sendname:this.sendname},a);for(b in e)d=e[b],c+=',"'+b+'":"'+d+'"';return""!=c&&(c=c.substr(1)),"{"+c+"}"},this._init()}

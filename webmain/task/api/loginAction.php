@@ -22,12 +22,7 @@ class loginClassAction extends apiAction
 			$name 	= $arr['name'];
 			$user 	= $arr['user'];
 			$token 	= $arr['token'];
-			$this->rock->savesession(array(
-				QOM.'adminid'	=> $uid,
-				QOM.'adminname'	=> $name,
-				QOM.'adminuser'	=> $user,
-				QOM.'admintoken'=> $token
-			));
+			m('login')->setsession($uid, $name, $token, $user);
 			$this->showreturn($arrs);
 		}else{
 			$this->showreturn('', $arr, 201);

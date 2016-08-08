@@ -130,6 +130,11 @@ input,textarea,select,*{font-size:16px}
 </head>
 
 <body class="mbody">
+<?php 
+if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="header-back"></span>'.$da['title'].'</div><div style="height:46px;overflow:hidden"></div>';
+?>
+
+
 <div>
 	<form name="myform">
 		<input name="id" type="hidden" value="<?=$da['mid']?>">

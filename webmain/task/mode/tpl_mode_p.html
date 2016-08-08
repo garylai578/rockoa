@@ -106,6 +106,7 @@ var c={
 	},
 	close:function(){
 		window.close();
+		try{parent.js.tanclose('winiframe');}catch(e){}
 	},
 	other:function(nae,las){
 		_submitother(nae,'','1',las);
@@ -117,6 +118,7 @@ var c={
 		var lx=$(o1).attr('lx');
 		if(lx=='2')c.delss();
 		if(lx=='3')c.close();
+		if(lx=='4')location.reload();
 		if(lx=='0'){
 			c.hideoth();
 			window.print();
@@ -169,6 +171,7 @@ var c={
 	if($da['arr']['isdel']==1)echo '<li lx="2">删除...</li>';
 	?>
 	<li lx="3">关闭</li>
+	<li lx="4">刷新</li>
 	</ul></div>
 	
 	<?php

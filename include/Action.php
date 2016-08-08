@@ -104,9 +104,11 @@ abstract class mainAction{
 		$this->smartydata['titles']		= $this->titles;
 		$this->smartydata['rewrite']	= REWRITE;
 		$this->smartydata['now']		= $this->now;
+		$this->smartydata['web']		= $this->rock->web;
 		$this->smartydata['ip']			= $this->ip;
 		$this->smartydata['url']		= URL;
 		$this->smartydata['urly']		= URLY;
+		$this->assign('web', $this->rock->web);
 	}
 
 	public function setSmartyData()
@@ -122,7 +124,7 @@ abstract class mainAction{
 
 	public function getsession($name,$dev='')
 	{
-		return $this->rock->session(QOM.''.$name.'', $dev);
+		return $this->rock->session($name, $dev);
 	}
 	
 	public function post($na, $dev='', $lx=0)
@@ -152,7 +154,7 @@ abstract class mainAction{
 	
 	public function getcookie($name, $dev='')
 	{
-		return $this->rock->cookie(QOM.''.$name.'', $dev);
+		return $this->rock->cookie($name, $dev);
 	}
 	
 	public function stringformat($str, $arr=array())

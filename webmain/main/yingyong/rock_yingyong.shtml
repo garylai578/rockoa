@@ -1,76 +1,93 @@
 <script >
 $(document).ready(function(){
-	var arr=[];
-	var c={
-		loadlist:function(){
-			js.setmsg('加载中...','','showlistyingyong');
-			js.ajax(js.getajaxurl('getdata','{mode}','{dir}'),{}, function(a){
-				js.setmsg('nont');
-				arr = a;
-				arr.push({
-					'name':'添加应用',
-					'face':'images/jia.png',
-					'num' :'add',
-					'id'  : 0
-				});
-				$('#showlistyingyong').html('');
-				$('#showlistyingyongtt').html('');
-				c.showlist();
-			},'get,json');
-		},
-		showlist:function(){
-			var i=0,len=arr.length,s='',hd,s1='';
-			for(i=0;i<len;i++){
-				hd=1;
-				if(arr[i].valid==0)hd='0.3';
-				s='';
-				s+='<li style="opacity:'+hd+'" onclick="yingyongedit('+i+',0)">';
-				s+='<div><img width="50" height="50" src="'+arr[i].face+'"></div>';
-				s+='<div>'+arr[i].name+'</div>';
-				if(arr[i].id>0)s+='<div style="font-size:10px"><a href="javascript:;" onclick="yingyongedit('+i+',1)">编辑</a> &nbsp; <a href="javascript:;" onclick="yingyongmenu('+i+')">菜单</a></div>';
-				s+='</li>';
-				if(arr[i].valid==0){
-					$('#showlistyingyongtt').append(s);
+	var a = $('#view_{rand}').bootstable({
+		tablename:'im_group',where:'and type=2',sort:'sort',dir:'asc',celleditor:true,
+		url:js.getajaxurl('yingyongdata','{mode}','{dir}'),
+		columns:[{
+			text:'图标',dataIndex:'face',align:'left',renderer:function(v,d){
+				var s='';
+				if(d.leave==2){
+					s+='<div style="padding-left:24px">';
 				}else{
-					$('#showlistyingyong').append(s);
+					s+='<div>';
 				}
-				
+				s+='<img src="'+v+'" align="absmiddle" width="20" height="20">';
+				s+='&nbsp; '+d.name+'';
+				s+='</div>';
+				return s;
 			}
-			
+		},{
+			text:'编号',dataIndex:'num'
+		},{
+			text:'排序号',dataIndex:'sort',editor:true
+		},{
+			text:'地址',dataIndex:'url'
+		},{
+			text:'上级id',dataIndex:'pid'
+		},{
+			text:'状态',dataIndex:'valid',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'可用人员',dataIndex:'recename',renderer:function(v){
+				if(!v)v='全体人员';
+				return v;
+			}
+		},{
+			text:'操作',dataIndex:'opt',align:'left',renderer:function(v,d){
+				var s='<a href="javascript:;" onclick="yingyongedit('+d.id+',\''+d.name+'\')">编辑</a>';
+				if(d.num)s+='&nbsp;<a href="javascript:;" onclick="yingyongmenu('+d.id+',\''+d.name+'\')">菜单</a>';
+				return s;
+			}
+		},{
+			text:'ID',dataIndex:'id'	
+		}],
+		itemclick:function(){
+			btn(false);
+		}
+	});
+	
+	function btn(bo){
+		get('del_{rand}').disabled = bo;
+		if(!bo && a.changedata.leave!=1)bo=true;
+		get('adds_{rand}').disabled = bo;
+	}
+	
+	var c = {
+		clickwin:function(o1,lx){
+			var pid=0;
+			if(lx==1 && a.changedata.leave==1)pid=a.changeid;
+			addtabs({num:'yingyongedit0',url:'main,yingyong,edit,id=0,pid='+pid+'',name:'新增应用'});
+		},
+		del:function(){
+			a.del({check:function(lx){if(lx=='yes')btn(true)}});
 		},
 		reload:function(){
-			c.loadlist();
+			a.reload();
 		}
 	}
 	
-	yingyongedit=function(i, lx){
-		var a=arr[i];
-		if(lx==0&&a.id>0)return;
-		listyingyongobj = c;
-		addtabs({num:'yingyongedit'+a.id+'',url:'main,yingyong,edit,id='+a.id+'',name:'应用['+a.name+']'});
+	yingyongedit=function(id,name){
+		listyingyongobj = a;
+		addtabs({num:'yingyongedit'+id+'',url:'main,yingyong,edit,id='+id+'',name:'应用['+name+']'});
 	}
-	yingyongmenu=function(i){
-		var a=arr[i];
-		addtabs({num:'yingyongmenu'+a.id+'',url:'main,yingyong,menu,mid='+a.id+'',name:'应用['+a.name+']菜单'});
+	yingyongmenu=function(id,name){
+		addtabs({num:'yingyongmenu'+id+'',url:'main,yingyong,menu,mid='+id+'',name:'应用['+name+']菜单'});
 	}
 	
-	c.loadlist();
+	js.initbtn(c);
 });
 </script>
-<style>
-.divlisssa li{float:left;padding:10px;text-align:center;width:100px;overflow:hidden;cursor:pointer}
-.divlisssa li:hover{ background-color:#f1f1f1}
-.divlisssa ul,.divlisssa{display:inline-block;width:100%}
-</style>
-<div style="padding:0px 10px">
-	<h3>已有应用</h3>
-	<div class="blank1"></div>
-	<div class="divlisssa" style="padding:10px"><ul id="showlistyingyong"></ul></div>
-	
-	<h3>已停用</h3>
-	<div class="blank1"></div>
-	<div class="divlisssa" style="padding:10px"><ul id="showlistyingyongtt"></ul></div>
-	
-	
-
+<div>
+<ul class="floats">
+	<li class="floats50">
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增应用</button> &nbsp; 
+		<button class="btn btn-info" disabled id="adds_{rand}" click="clickwin,1" type="button"><i class="icon-plus"></i> 新增下级应用</button>
+	</li>
+	<li class="floats50" style="text-align:right">
+		
+		<button class="btn btn-default" click="reload" type="button">刷新</button> &nbsp; 
+		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button>
+	</li>
+</ul>
 </div>
+<div class="blank10"></div>
+<div id="view_{rand}"></div>

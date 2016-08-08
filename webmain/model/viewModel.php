@@ -2,6 +2,7 @@
 class viewClassModel extends Model
 {
 	private $modeid = 0;
+	private $isflow = 0;
 	
 	public function initModel()
 	{
@@ -13,19 +14,20 @@ class viewClassModel extends Model
 	{
 		if($uid==0)$uid = $this->adminid;
 		$this->urs 	= $this->db->getone('[Q]admin',$uid, 'id,name,deptpath,deptid,`type`');
-		if(is_numeric($mid)){
-			$this->modeid	= $mid;
+		if(is_array($mid)){
+			$this->modrs = $mid;
 		}else{
-			$this->modrs	= $this->db->getone('[Q]flow_set'," (`id`='$mid' or `num`='$mid')");
-			if($this->modrs)$this->modeid = $this->modrs['id'];
+			$this->modrs = $this->db->getone('[Q]flow_set'," (`id`='$mid' or `num`='$mid')");
+		}
+		if($this->modrs){
+			$this->modeid = $this->modrs['id'];
+			$this->isflow = $this->modrs['isflow'];
 		}
 	}
 	
 	public function viewwhere($mid, $uid=0)
 	{
 		$this->getursss($mid, $uid);
-		//$type = $this->urs['type'];
-		//if($type==1)return 'and 1=1';
 		return $this->getsswhere(0);
 	}
 	
@@ -61,8 +63,12 @@ class viewClassModel extends Model
 		$uid	= $this->urs['id'];
 		$rows 	= $this->getall('`type`='.$type.' and `modeid`='.$mid.' and `status`=1 '.$where.'','wherestr');
 		$wehs	= array();
+		$count  = $this->db->count;
 		if($type==1){
-			return $this->db->count>0;
+			return $count>0;
+		}
+		if($type== 0 && $count==0 && $this->isflow==1){
+			$rows[] = array('wherestr'=>$this->rock->jm->base64encode('uid={uid}'));
 		}
 		foreach($rows as $k=>$rs){
 			$sw = $this->rock->jm->base64decode($rs['wherestr']);

@@ -56,4 +56,11 @@ class indexClassAction extends Action{
 	{
 		
 	}
+	
+	public function getqrcodeAjax()
+	{
+		$url = ''.URL.'?m=login&d=we&token='.$this->admintoken.'&user='.$this->jm->base64encode($this->adminuser).'';
+		$img = c('qrcode')->show($url);
+		echo $img;
+	}
 }

@@ -15,7 +15,7 @@ class agent_flowClassModel extends agentModel
 	
 	public function getwdtotal($uid)
 	{
-		$stotal	= $this->rows("`uid`='$uid' and `nstatus`=2");
+		$stotal	= $this->rows("`uid`='$uid' and `status`=2");
 		return $stotal;
 	}
 	

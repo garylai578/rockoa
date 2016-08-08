@@ -13,13 +13,16 @@ $(document).ready(function(){
 			closenowtabs();
 			try{guanflowcourselist.reload();}catch(e){}
 		},
-		loadafter:function(){
+		loadafter:function(a){
 			c.changetype(0);
+			if(a.data){
+				h.form.where.value=jm.base64decode(a.data.where);
+			}
 		},
 		submitcheck:function(d){
 			if(d.checktype=='user'&&d.checktypeid=='')return '请选择人员';
 			if(d.checktype=='rank'&&d.checktypename=='')return '请输入职位';
-			return '';
+			return {where:jm.base64encode(d.where)};
 		}
 	});
 	h.forminit();
@@ -56,7 +59,7 @@ $(document).ready(function(){
 			}
 		},
 		setwhere:function(){
-			js.setwhere(params.setid);
+			js.setwhere(params.setid,'backsheowe{rand}');
 		}
 	};
 	js.initbtn(c);
@@ -65,7 +68,11 @@ $(document).ready(function(){
 	
 	$(h.form.checktype).change(function(){
 		c.changetype(1);
-	})
+	});
+	backsheowe{rand}=function(s1,s2){
+		h.setValue('where',s1);
+		h.setValue('explain',s2);
+	}
 });
 
 </script>
@@ -81,7 +88,7 @@ $(document).ready(function(){
 		
 		<table cellspacing="0" border="0" width="100%" align="center" cellpadding="0">
 		<tr>
-			<td  align="right"  width="15%"><font color=red>*</font> 进程名称：</td>
+			<td  align="right"  width="15%"><font color=red>*</font> 步骤名称：</td>
 			<td class="tdinput"  width="35%"><input name="name" class="form-control"></td>
 			<td  align="right"   width="15%">编号：</td>
 			<td class="tdinput" width="35%"><input name="num" class="form-control"></td>

@@ -15,6 +15,7 @@ class flowModel extends Model
 	public $uid		= 0;
 	public $isflow	= 0;
 	
+	protected function flowinit(){}
 	protected function flowchangedata(){}
 	protected function flowdeletebill($sm){}
 	protected function flowsubmit($na, $sm){}
@@ -24,22 +25,20 @@ class flowModel extends Model
 	protected function flowcheckafter($zt, $sm){}
 	protected function flowcheckfinsh(){}
 	protected function flowgetfields(){}
+	protected function flowgetoptmenu($opt){}
+	protected function flowoptmenu($ors, $crs){}
 	protected function flowisreadqx(){return false;}
+	protected function flowprintrows($r){return $r;}
 	
 	public function echomsg($msg)
 	{
-		if(isajax()){
-			showreturn('', $msg, 201);
-		}else{
-			echo $msg;
-		}
+		showreturn('', $msg, 201);
 		exit();
 	}
 	
-	public function initdata($num, $id)
+	public function initdata($num, $id=null)
 	{
 		$this->modenum	= $num;
-		$this->id		= (int)$id;
 		$this->moders 	= m('flow_set')->getone("`num`='$num'");
 		if(!$this->moders)$this->echomsg('not found mode['.$num.']');
 		$table 			= $this->moders['table'];
@@ -47,11 +46,14 @@ class flowModel extends Model
 		$this->modename	= $this->moders['name'];
 		$this->isflow	= (int)$this->moders['isflow'];
 		$this->settable($table);
-		$this->mwhere	= "`table`='$table' and `mid`='$id'";
 		$this->mtable	= $table;
+		$this->viewmodel= m('view');
+		$this->flowinit();
+		if($id==null)return;
+		$this->id		= (int)$id;
+		$this->mwhere	= "`table`='$table' and `mid`='$id'";
 		$this->rs 		= $this->getone($id);
 		$this->uname	= '';
-		
 		if(!$this->rs)$this->echomsg('not found record');
 		$this->rs['base_name'] 		= '';
 		$this->rs['base_deptname'] 	= '';
@@ -74,7 +76,7 @@ class flowModel extends Model
 		if($this->billrs){
 			$this->sericnum = $this->billrs['sericnum'];
 		}
-		$this->viewmodel= m('view');
+		
 		$this->isreadqx();
 
 		$this->rssust	= $this->rs;
@@ -100,7 +102,7 @@ class flowModel extends Model
 		}
 		if(!$bo)$bo = $this->flowisreadqx();
 		if(!$bo){
-			$where 	= $this->viewmodel->viewwhere($this->modeid, $this->adminid);
+			$where 	= $this->viewmodel->viewwhere($this->moders, $this->adminid);
 			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=true;
 		}
@@ -118,7 +120,7 @@ class flowModel extends Model
 			}
 		}
 		if($bo==0){
-			$where 	= $this->viewmodel->editwhere($this->modeid, $this->adminid);
+			$where 	= $this->viewmodel->editwhere($this->moders, $this->adminid);
 			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=1;
 		}
@@ -136,7 +138,7 @@ class flowModel extends Model
 			}
 		}
 		if($bo==0){
-			$where 	= $this->viewmodel->deletewhere($this->modeid, $this->adminid);
+			$where 	= $this->viewmodel->deletewhere($this->moders, $this->adminid);
 			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=1;
 		}
@@ -258,7 +260,7 @@ class flowModel extends Model
 		}
 		$sarr['flowcoursestr'] 	= $str;
 		
-		$actstr	= ',通过,不通过';
+		$actstr	= ',通过|green,不通过|red';
 		if(isset($nowcur['courseact']) ){
 			$actstrt = $nowcur['courseact'];
 			if(!isempt($actstrt))$actstr = ','.$actstrt;
@@ -374,6 +376,7 @@ class flowModel extends Model
 			$checkshu 	= $rs['checkshu'];
 			
 			if(!$this->isempt($checkwhere)){
+				$checkwhere = $this->rock->jm->base64decode($checkwhere);
 				$to = $this->rows("`id`='$this->id' and $checkwhere");
 				if($to==0)continue;
 			}
@@ -643,5 +646,128 @@ class flowModel extends Model
 		$this->delete($this->id);
 		$this->flowdeletebill($sm);
 		return 'ok';
+	}
+	
+	
+	/*
+	*	获取操作菜单
+	*/
+	public function getoptmenu($flx=0)
+	{
+		$rows 	= $this->db->getrows('[Q]flow_menu',"`setid`='$this->modeid' and `status`=1",'id,wherestr,name,statuscolor,statusvalue,num,islog,issm,type','`sort`');
+		$arr 	= array();
+		foreach($rows as $k=>$rs){
+			$wherestr 	= $rs['wherestr'];
+			$bo 		= false;
+			if(isempt($wherestr)){
+				$bo = true;
+			}else{
+				$ewet	= m('where')->getstrwhere($this->rock->jm->base64decode($wherestr));
+				$tos 	= $this->rows("`id`='$this->id' and $ewet");
+				if($tos>0)$bo = true;
+			}
+			$rs['lx']	  = $rs['type'];
+			$rs['optnum'] = $rs['num'];
+			if(!isempt($rs['num'])){
+				$glx = $this->flowgetoptmenu($rs['num']);
+				if(is_bool($glx))$bo = $glx;
+			}
+			$rs['optmenuid'] = $rs['id'];
+			if(!isempt($rs['statuscolor']))$rs['color']  = $rs['statuscolor'];
+			unset($rs['id']);unset($rs['num']);unset($rs['wherestr']);unset($rs['type']);unset($rs['statuscolor']);
+			if($bo)$arr[] = $rs;
+		}
+		
+		if($this->isdeleteqx()==1){
+			$arr[] = array('name'=>'删除','color'=>'red','optnum'=>'del','issm'=>1,'islog'=>0,'statusvalue'=>9,'lx'=>'9','optmenuid'=>-9);
+		}
+		
+		if($this->isflow==1){
+			$chearr = $this->getflowinfor();
+			if($chearr['ischeck']==1){
+				foreach($chearr['courseact'] as $zv=>$dz){
+					if($zv>0){
+						$assar =  array('name'=>$dz[0],'color'=>$dz[1],'optnum'=>'check','issm'=>1,'islog'=>0,'statusvalue'=>$zv,'lx'=>'10','optmenuid'=>-10);
+						if($zv==1)$assar['issm'] = 0;
+						$arr[] = $assar;
+					}
+				}
+			}
+		}
+		return $arr;
+	}
+	
+	/**
+	*	操作菜单操作
+	*/
+	public function optmenu($czid, $zt, $sm='')
+	{
+		$msg 	 = '';
+		$cname 	 = $this->rock->post('changename');
+		$cnameid = $this->rock->post('changenameid');
+		$cdate   = $this->rock->post('changedate');
+		if($czid==-9){
+			$msg = $this->deletebill($sm);
+		}else if($czid==-10){
+			$msg 	 = $this->check($zt, $sm);
+			if(contain($msg,'成功'))$msg = 'ok';
+		}else{
+			$ors 	 = m('flow_menu')->getone("`id`='$czid' and `setid`='$this->modeid' and `status`=1");
+			if(!$ors)return '菜单不存在';
+			$name	 = str_replace('.', '', $ors['name']);
+			$actname = $ors['actname'];if(isempt($actname))$actname=$name;
+			if($ors['islog']==1){
+				if(!isempt($cname)){
+					if(!isempt($sm))$sm.=',';
+					$sm.=''.$name.':'.$cname.'';
+				}
+				$this->addlog(array(
+					'explain' 	=> $sm,
+					'name'		=> $actname,
+					'statusname'=> $ors['statusname'],
+					'status'	=> $ors['statusvalue'],
+					'color'		=> $ors['statuscolor']
+				));
+			}
+			$this->flowoptmenu($ors, array(
+				'cname' 	=> $cname,
+				'sm'    	=> $sm,
+				'cnameid' 	=> $cnameid,
+				'cdate' 	=> $cdate
+			));
+		}
+		if($msg=='')$msg='ok';
+		return $msg;
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	*	打印导出
+	*/
+	public function printexecl($event)
+	{
+		$arr['moders'] = $this->moders;
+		$arr['fields'] = $this->getfields();
+		$cell = 1;
+		foreach($arr['fields'] as $k=>$v)$cell++;
+		$arr['cell']	= $cell;
+		
+		$where 			= '1=1';
+		$str1		 	= $this->moders['where'];
+		if(!isempt($str1)){
+			$str1 = $this->rock->covexec($str1);
+			$where = $str1;
+		}
+		
+		$vwhere 		= $this->viewmodel->viewwhere($this->moders, $this->adminid);
+		$rows 			= $this->getrows(''.$where.' '.$vwhere.'', '*', 'id desc', 100);
+		$arr['rows']	= $this->flowprintrows($rows);
+		$arr['count']	= $this->db->count;
+		return $arr;
 	}
 }

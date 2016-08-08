@@ -9,13 +9,13 @@
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="<?=P?>/install/installscript.js"></script>
 <style>
-.input{width:250px;height:30px;line-height:20px}
+.input{width:210px;height:30px;line-height:20px}
 </style>
 </head>
 <body style="padding:10px">
 <center>
 	<div style="padding:10px;font-size:30px;"><b><?=TITLE?>-安装</b></div>
-	<div style="width:550px;padding:10px;border:2px #cccccc solid">
+	<div style="width:500px;padding:10px;border:2px #cccccc solid">
 		<div style="text-align:left;">
 			<div id="step1" style="padding:20px;line-height:35px;font-size:16px;display:">
 				<b>安装使用前必读：</b><br>
@@ -50,7 +50,7 @@
 				<tr><td height="8"></td></tr>
 				
 				<tr>
-					<td align="right" width="160px"><font color=red>*</font>数据库地址：</td>
+					<td align="right" width="150px"><font color=red>*</font>数据库地址：</td>
 					<td><input class="input" name="host" value="localhost"></td>
 				</tr>
 				
@@ -86,7 +86,15 @@
 				
 				<tr><td height="8"></td></tr>
 				
-				<tr><td  colspan="2" height="60" align="left" style="padding-left:80px"><a href="javascript:" onclick="backabc()" class="blue" ><u>&lt;&lt;返回</u></a>&nbsp; &nbsp; <a class="webbtn" style="padding:10px 20px;font-size:16px" onclick="submitla()" href="javascript:">提交安装</a>&nbsp;<span id="msgview"></span></td></tr>
+				<tr><td  colspan="2" height="60" align="left" style="padding-left:80px"><a href="javascript:" onclick="backabc()" class="blue" ><u>&lt;&lt;返回</u></a>&nbsp; &nbsp; 
+				<?php
+				if(version_compare(PHP_VERSION, '5.3.0','<')){
+					echo '<font color=red>您当前php版本太低了，至少需要5.3+以上版本</font>';
+				}else{
+					echo '<a class="webbtn" style="padding:10px 20px;font-size:16px" onclick="submitla()" href="javascript:">提交安装</a>';
+				}
+				?>
+				&nbsp;<span id="msgview"></span></td></tr>
 				
 			</table>
 			</form>

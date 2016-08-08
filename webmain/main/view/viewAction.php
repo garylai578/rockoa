@@ -5,8 +5,8 @@ class viewClassAction extends Action
 	{
 		$id = (int)$this->get('id');
 		
-		$arr['data'] = m('flow_extent')->getone($id);
-		$arr['modearr'] = m('flow_set')->getall('1=1','id,num,name','sort');
+		$arr['data'] 	= m('flow_extent')->getone($id);
+		$arr['modearr'] = m('mode')->getmodearr();
 		echo json_encode($arr);
 	}
 	
@@ -17,7 +17,7 @@ class viewClassAction extends Action
 		}
 		return array(
 			'rows'=>$rows,
-			'modearr' => m('flow_set')->getall('1=1','id,num,name','sort')
+			'modearr' => m('mode')->getmodearr()
 		);
 	}
 }

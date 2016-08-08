@@ -24,11 +24,11 @@ class loginClassAction extends ActionNot{
 			$user 	= $arr['user'];
 			$token 	= $arr['token'];
 			m('login')->setsession($uid, $name, $token, $user);
-			$this->rock->savecookie(QOM.'ca_adminuser', $user);
-			$this->rock->savecookie(QOM.'ca_rempass', $rempass);
+			$this->rock->savecookie('ca_adminuser', $user);
+			$this->rock->savecookie('ca_rempass', $rempass);
 			$ca_adminpass	= $this->jm->encrypt($pass);
 			if($rempass=='0')$ca_adminpass='';
-			$this->rock->savecookie(QOM.'ca_adminpass', $ca_adminpass);
+			$this->rock->savecookie('ca_adminpass', $ca_adminpass);
 			echo 'success';
 		}else{
 			echo $arr;
@@ -37,7 +37,7 @@ class loginClassAction extends ActionNot{
 	
 	public function exitAction()
 	{
-		$this->rock->clearsession(''.QOM.'adminid,'.QOM.'adminname,'.QOM.'adminuser');
+		m('login')->exitlogin('pc');
 		$this->rock->location('?m=login');
 	}
 }

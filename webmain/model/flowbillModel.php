@@ -85,18 +85,6 @@ class flowbillClassModel extends Model
 			if(!isempt($rs['nstatustext']))$cont.='<br>状态：'.$rs['nstatustext'].'';
 			if(!isempt($rs['checksm']))$cont.='<br>处理说明：'.$rs['checksm'].'';
 			
-			$menusub 			= array();
-			if($rs['uid']==$uid && $rs['status']!=1){
-				$menusub[] = array('name'=>'删除','color'=>'red','lx'=>'del', 'modenum'=>$modenum);
-			}
-			
-			$ischeck	= 0;
-			$nowcheckid = ','.$rs['nowcheckid'].',';
-			if(contain($nowcheckid, ','.$uid.','))$ischeck = 1;
-			if($isdb==1 || $ischeck==1){
-				$menusub[] = array('name'=>'通过','color'=>'green','lx'=>'check','status'=>1,'notsm'=>1, 'modenum'=>$modenum);
-				$menusub[] = array('name'=>'不通过','color'=>'red','lx'=>'check','status'=>2, 'modenum'=>$modenum);
-			}
 			
 			$srows[]= array(
 				'title' => $title,
@@ -106,8 +94,7 @@ class flowbillClassModel extends Model
 				'statustext' 	=> $statustext,
 				'statuscolor' 	=> $statuscolor,
 				'modenum'		=> $modenum,
-				'modename'		=> $modename,
-				'menusub'		=> $menusub
+				'modename'		=> $modename
 			);
 		}
 		

@@ -12,7 +12,7 @@ $(document).ready(function(){
 			text:'ID',dataIndex:'id'
 		}],
 		itemdblclick:function(ad,oi,e){
-			$('#downshow_{rand}').html('设置<b>['+ad.id+'.'+ad.name+']</b>的进程管理');
+			$('#downshow_{rand}').html('设置<b>['+ad.id+'.'+ad.name+']</b>的步骤管理');
 			mid=ad.id;
 			a.search("and `setid`="+ad.id+"");
 		}
@@ -61,11 +61,11 @@ $(document).ready(function(){
 			a.del();
 		},
 		clickwin:function(o1,lx){
-			var icon='plus',name='新增进程',id=0;
+			var icon='plus',name='新增步骤',id=0;
 			if(lx==1){
 				id = a.changeid;
 				icon='edit';
-				name='编辑进程';
+				name='编辑步骤';
 			};
 			guanflowcourselist = a;
 			addtabs({num:'flowcourse'+id+'',url:'main,flow,courseedit,id='+id+',setid='+mid+',',icons:icon,name:name});
@@ -82,7 +82,7 @@ $(document).ready(function(){
 <td width="30%">
 	<div class="panel panel-info" style="margin:0px">
 	  <div class="panel-heading">
-		<h3 class="panel-title">流程模块(双击显示进程)</h3>
+		<h3 class="panel-title">流程模块(双击显示步骤)</h3>
 	  </div>
 	  <div id="optionview_{rand}" style="height:400px;overflow:auto"></div>
 	</div>
@@ -92,7 +92,7 @@ $(document).ready(function(){
 	<div>
 	<ul class="floats">
 		<li class="floats70">
-			<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增进程</button>&nbsp;&nbsp;
+			<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增步骤</button>&nbsp;&nbsp;
 			<span id="downshow_{rand}"></span>
 		</li>
 		<li class="floats30" style="text-align:right">

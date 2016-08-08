@@ -22,6 +22,19 @@ class indexreimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	public function mwebinitAction()
+	{
+		$dbs 		= m('reim');
+		$agentarr	= $dbs->getagent($this->adminid);
+		$historyarr	= $dbs->gethistory($this->adminid);
+		
+		$arr['agentjson']	= json_encode($agentarr);
+		$arr['historyjson'] = json_encode($historyarr);
+		$arr['loaddt'] 		= $this->now;
+		m('login')->uplastdt();
+		$this->showreturn($arr);
+	}
+	
 	public function ldataAction()
 	{
 		$loaddt		= $this->rock->jm->base64decode($this->post('loaddt'));

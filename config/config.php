@@ -1,5 +1,6 @@
 <?php
 @session_start();
+if(!ini_get('date.timezone') )date_default_timezone_set('Asia/Shanghai');
 header('Content-Type:text/html;charset=utf-8');
 define('ROOT_PATH',str_replace('\\','/',dirname(dirname(__FILE__))));
 define('DEBUG', true);
@@ -12,7 +13,7 @@ $smarty		= false;
 define('HOST', $rock->host);
 define('REWRITE', 'true');
 if(!defined('PROJECT'))define('PROJECT', $rock->get('p', 'webmain'));
-
+if(!DEBUG)error_reporting(0);
 $config		= array(
 	'title'		=> '信呼',
 	'url'		=> 'http://'.HOST.'/app/xinhu/',

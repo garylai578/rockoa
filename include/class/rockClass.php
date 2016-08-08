@@ -44,9 +44,9 @@ final class rockClass
 	public function initRock()
 	{
 		$this->jm 		= c('jm', true);
-		$this->adminid	= (int)$this->session(QOM.'adminid',0);
-		$this->adminname= $this->session(QOM.'adminname');
-		$this->adminuser= $this->session(QOM.'adminuser');
+		$this->adminid	= (int)$this->session('adminid',0);
+		$this->adminname= $this->session('adminname');
+		$this->adminuser= $this->session('adminuser');
 	}
 	
 	private function unstr($str)
@@ -142,12 +142,13 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	
 	public function setsession($kv,$vv)
 	{
-		$_SESSION[$kv]=$vv;
+		$_SESSION[QOM.$kv]=$vv;
 	}
 	
 	public function session($name,$dev='')
 	{
 		$val	= '';
+		$name 	= QOM.$name;
 		if(isset($_SESSION[$name]))$val=$_SESSION[$name];
 		if($this->isempt($val))$val=$dev;
 		return $val;
@@ -157,7 +158,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	{
 		$arrn=explode(',',$name);
 		for($i=0;$i<count($arrn);$i++){
-			@$_SESSION[$arrn[$i]]='';
+			@$_SESSION[QOM.$arrn[$i]]='';
 		}
 	}
 	
@@ -169,14 +170,14 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	}	
 	
 	//保存cookie，默认是7天
-	public function savecookie($namarr,$valarr,$expire=7,$path='/',$domain='')
+	public function savecookie($namarr,$valarr,$expire=360,$path='/',$domain='')
 	{
-		//$domain=(empty($domain))?$this->host:$domain;
-		$arrn=explode(',',$namarr);
-		$valn=$valarr;
+		$time 	= time()+$expire*3600*24;
+		$arrn	= explode(',',$namarr);
+		$valn	= $valarr;
 		if(!is_array($valarr))$valn=explode(',',$valarr);
 		for($i=0;$i<count($arrn);$i++){
-			setcookie($arrn[$i],$valn[$i],time()+$expire*3600*24,$path,'');
+			setcookie(QOM.$arrn[$i],$valn[$i], $time, $path,'');
 		}
 	}
 	
@@ -184,6 +185,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	public function cookie($name,$dev='')
 	{
 		$val	= '';
+		$name 	= QOM.$name;
 		if(isset($_COOKIE[$name]))$val=$_COOKIE[$name];
 		if($this->isempt($val))$val=$dev;
 		return $val;
@@ -204,7 +206,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		//$domain=(empty($domain))?$this->host:$domain;
 		$arr=explode(',',$name);
 		for($i=0;$i<count($arr);$i++){
-			setcookie($arr[$i],'',time()-1,$path,$domain);
+			setcookie(QOM.$arr[$i],'',time()-1,$path,$domain);
 			@$_COOKIE[$arr[$i]]='';
 		}
 	}
@@ -241,7 +243,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		$web	= $this->web;
 		$val	= 'IE';
 		$parr	= array(
-			array('MSIE 5'),array('MSIE 6'),array('MSIE 7'),array('MSIE 8'),array('MSIE 9'),array('MSIE 10'),array('MSIE 11'),array('rv:11','MSIE 11'),array('MSIE 12'),
+			array('MSIE 5'),array('MSIE 6'),array('MSIE 7'),array('MSIE 8'),array('MSIE 9'),array('MSIE 10'),array('MSIE 11'),array('rv:11','MSIE 11'),array('MSIE 12'),array('MicroMessenger','wxbro'),
 			array('MSIE 13'),array('Firefox'),array('OPR/','Opera'),array('Chrome'),array('Safari'),array('Android'),array('iPhone')
 		);
 		foreach($parr as $wp){

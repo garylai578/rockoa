@@ -57,4 +57,12 @@ class logClassModel extends Model
 		if($sid=='')$sid = '0';
 		return $sid;
 	}
+	
+	public function isread($table, $mid, $uid=0)
+	{
+		if($uid==0)$uid=$this->adminid;
+		$where  = "`table`='$table' and `mid`='$mid' and `optid`=$uid";
+		$to 	= $this->db->rows('[Q]reads', $where);
+		return $to;
+	}
 }

@@ -37,6 +37,9 @@ class modeClassAction extends ActionNot
 		if(!file_exists($spagepath)){
 			$spagepath = '';
 		}
+		$isheader = 0;
+		if($this->web != 'wxbro' && $this->get('show')=='we')$isheader=1;
+		$this->assign('isheader', $isheader);
 		$this->smartydata['spagepath']		= $spagepath;
 	}
 	
@@ -65,5 +68,33 @@ class modeClassAction extends ActionNot
 		$this->display = false;
 		$id  = (int)$this->jm->gettoken('id');
 		m('file')->show($id);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public function eAction()
+	{
+		$num	= $this->get('num');
+		$event	= $this->get('event');
+		$stype	= $this->get('stype');
+		
+		$arr 	= m('flow')->printexecl($num, $event);
+		$this->title = $arr['moders']['name'];
+		$urlstr	= '?a=e&num='.$num.'&event='.$event.'';
+		$this->assign('arr', $arr);
+		$this->assign('urlstr', $urlstr);
+		$this->assign('stype', $stype);
+		if($stype!=''){
+			$filename = $this->title;
+			header('Content-type:application/vnd.ms-excel');
+			header('Content-disposition:attachment;filename='.iconv("utf-8","gb2312",$filename).'.'.$stype.'');
+		}
 	}
 }

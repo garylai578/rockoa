@@ -64,7 +64,6 @@ class agent_meetClassModel extends agentModel
 			'title'		=> ''.$dt.'(周'.$week.')的会议'
 		);
 		foreach($rows as $k=>$rs){
-			$menusub= array();
 			$zt 	= $rs['state'];
 			$nzt 	= $zt;
 			$stime 	= strtotime($rs['startdt']);
@@ -94,20 +93,7 @@ class agent_meetClassModel extends agentModel
 			unset($rows[$k]['optname']);
 			unset($rows[$k]['hyname']);
 			
-			if($nzt < 2){
-				if($rs['optid']==$uid){
-					if($nzt==0){
-						$menusub[] = array('name'=>'删除','color'=>'red','lx'=>'del');
-						$menusub[] = array('name'=>'取消会议','lx'=>'log_cancel','state'=>3);
-					}
-					if($nzt==1){
-						$menusub[] = array('name'=>'结束会议','lx'=>'log_end','state'=>2);
-					}
-				}
-			}
-			$rows[$k]['menusub']= $menusub;
 			$row[] = $rows[$k];
-			
 			if($zt != $nzt)$dbs->update('state='.$nzt.'', $rs['id']);
 		}
 		return $row;

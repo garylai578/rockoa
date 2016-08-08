@@ -575,7 +575,7 @@ class PushPayload {
             }
             return $body;
         } else {
-            throw new APIRequestException($response);
+           // throw new APIRequestException($response);
         }
     }
     private function generateSendno() {

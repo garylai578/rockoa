@@ -37,4 +37,9 @@ class flowClassModel extends Model
 		foreach($barr as $k=>$v)$darr[$k]=$v;
 		return $this->opt('addlog', $num, $mid, $darr);
 	}
+	
+	public function printexecl($num, $event)
+	{
+		return $this->opt('printexecl', $num, null, $event);
+	}
 }

@@ -7,4 +7,5 @@ class flow_goodsClassModel extends flowModel
 		$this->rs['typeid']	 = $this->db->getpval('[Q]option','pid','name', $this->rs['typeid'],'/','id',2);;
 	}
 
+	
 }

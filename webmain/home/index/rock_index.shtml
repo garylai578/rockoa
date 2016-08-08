@@ -127,6 +127,14 @@ $(document).ready(function(){
 	$('#banben').html(VERSION);
 	
 	$('body').append('<div id="tishidivshow" style="display:none" class="box"><div class="title"><ul><li>&nbsp;<i class="icon-bell"></i>&nbsp;系统提醒</li><li style="text-align:right"><a href="javascript:"><img src="images/wclose.png" onclick="return hideTishi()"></a>&nbsp;</li></ul></div><div id="tishicontent" style="height:130px;overflow:auto;padding:10px;text-align:left"></div></div>');
+	
+	openmobile=function(){
+		js.tanbody('loginmobile','登录手机版', 300,200,{
+			html:'<div  style="height:160px;padding:5px" align="center"><div><img id="logeweerew" src="images/logo.png" width="130" height="130"></div><div>直接扫一扫即可登录</div></div>'
+		});
+		var surl = js.getajaxurl('getqrcode','index','home');
+		get('logeweerew').src=surl;
+	}
 });
 </script>
 <style>

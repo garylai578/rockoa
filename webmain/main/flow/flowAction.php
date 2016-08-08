@@ -23,7 +23,6 @@ class flowClassAction extends Action
 	
 	public function elementafter($table, $rows)
 	{
-		$arr = m('flow_set')->getall('id>0','`id`,`num`,`name`,`table`','sort');
 		$moders = m('flow_set')->getone($this->mid);
 		
 		$tass 	= $moders['table'];
@@ -34,7 +33,7 @@ class flowClassAction extends Action
 		}
 		
 		return array(
-			'flowarr'=>$arr,
+			'flowarr'=>$this->getmodearr(),
 			'moders'=>$moders,
 			'fieldsarr' => $farrs,
 			'fieldstypearr'=> $this->option->getdata('flowinputtype')
@@ -49,12 +48,26 @@ class flowClassAction extends Action
 	}
 	
 	
+	public function flowmenubefore($table)
+	{
+		$mid = (int)$this->post('mid');
+		$this->mid = $mid;
+		return 'and `setid`='.$mid.'';
+	}
+	
+	public function flowmenuafter($table, $rows)
+	{
+		
+		return array(
+			'flowarr'=>$this->getmodearr()
+		);
+	}
 	
 	
-	
-	
-	
-	
+	private function getmodearr()
+	{
+		return m('mode')->getmodearr();
+	}
 	
 	
 	
@@ -192,7 +205,7 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 	
 	public function getmodearrAjax()
 	{
-		$arr = m('flow_set')->getall('1=1','id,num,name','sort');
+		$arr = $this->getmodearr();
 		$this->backmsg('','ok', $arr);
 	}
 	

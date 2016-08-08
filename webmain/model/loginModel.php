@@ -49,7 +49,7 @@ class loginClassModel extends Model
 			}
 			if($msg!=''&&strlen($token)>=8){
 				$moddt	= date('Y-m-d H:i:s', time()-10*60*1000);
-				$trs 	= $this->getone("`uid`='$uid' and `token`='$token' and `moddt`>='$moddt'");
+				$trs 	= $this->getone("`uid`='$uid' and `token`='$token' and `online`=1 and `moddt`>='$moddt'");
 				if($trs){
 					$msg	= '';
 					$logins = '快捷登录';	
@@ -140,19 +140,22 @@ class loginClassModel extends Model
 	{
 		$token = $this->rock->request('token', $token);
 		$cfrom = $this->rock->request('cfrom', $cfrom);
+		$this->rock->clearcookie('mo_adminid');
+		$this->rock->clearsession('adminid,adminname,adminuser');
 		$this->update("`online`=0", "`cfrom`='$cfrom' and `token`='$token'");
 	}
 	
 	public function setsession($uid, $name,$token, $user='')
 	{
 		$this->rock->savesession(array(
-			QOM.'adminid'	=> $uid,
-			QOM.'adminname'	=> $name,
-			QOM.'adminuser'	=> $user,
-			QOM.'admintoken'=> $token
+			'adminid'	=> $uid,
+			'adminname'	=> $name,
+			'adminuser'	=> $user,
+			'admintoken'=> $token
 		));
 		$this->rock->adminid	= $uid;
 		$this->rock->adminname	= $name;
+		$this->rock->savecookie('mo_adminid', $uid);
 	}
 	
 	public function autologin($aid=0, $token='')

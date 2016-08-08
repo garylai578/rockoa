@@ -7,4 +7,13 @@ class agentClassAction extends apiAction
 		$arr['agentjson']	= json_encode($agentarr);
 		$this->showreturn($arr);
 	}
+	
+	public function getoptnumAction()
+	{
+		$num  	= $this->post('num');
+		$mid  	= (int)$this->post('mid');
+		
+		$arr 	= m('flow')->opt('getoptmenu', $num, $mid);
+		$this->showreturn($arr);
+	}
 }

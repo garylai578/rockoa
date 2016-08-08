@@ -190,6 +190,9 @@ class inputAction extends ActionNot
 	public function lumAction()
 	{
 		$this->ismobile = 1;
+		$isheader = 0;
+		if($this->web != 'wxbro' && $this->get('show')=='we')$isheader=1;
+		$this->assign('isheader', $isheader);
 		$this->luactions();
 	}
 	

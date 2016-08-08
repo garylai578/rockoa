@@ -21,7 +21,7 @@ $fileext	= trim($rock->post('fileext'));
 $filesize	= $rock->post('filesize');
 $filesizecn	= $rock->post('filesizecn');
 $newfile	= $rock->post('newfile');
-$mkdir		= $rock->post('mkdir');
+$mkdir		= date('Y-m');
 $savepath	= $rock->post('savepath');
 $thumbnail	= $rock->post('thumbnail');
 

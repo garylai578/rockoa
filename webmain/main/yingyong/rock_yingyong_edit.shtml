@@ -1,14 +1,15 @@
 <script >
 $(document).ready(function(){
 	{params};
-	var id = params.id;
+	var id = params.id,pid=params.pid;
 	if(!id)id = 0;
+	if(!pid)pid = '0';
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'im_group',
 		url:publicsave('{mode}','{dir}'),beforesaveaction:'beforesave',
 		params:{int_filestype:'sort',otherfields:'type=2'},
-		submitfields:'sort,name,recename,receid,url,face,valid,num',
-		requiredfields:'name,num',
+		submitfields:'sort,name,recename,receid,url,face,valid,num,pid',
+		requiredfields:'name',
 		success:function(){
 			closenowtabs();
 			try{listyingyongobj.reload();}catch(e){}
@@ -47,7 +48,7 @@ $(document).ready(function(){
 		}
 	};
 	js.initbtn(c);	
-	
+	h.setValue('pid',pid);
 	$(h.form.face).change(c.changeface);
 });
 </script>
@@ -71,7 +72,7 @@ $(document).ready(function(){
 		</tr>
 		
 		<tr>
-			<td  align="right"><font color=red>*</font> 编号：</td>
+			<td  align="right">编号：</td>
 			<td class="tdinput"><input name="num" class="form-control"></td>
 		</tr>
 		
@@ -109,6 +110,11 @@ $(document).ready(function(){
 		<tr>
 			<td align="right">说明：</td>
 			<td class="tdinput" colspan="3"><textarea  name="explain" style="height:80px;" class="form-control"></textarea></td>
+		</tr>
+		
+		<tr>
+			<td align="right">上级ID：</td>
+			<td class="tdinput"><input name="pid" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
 		</tr>
 		
 		<tr>

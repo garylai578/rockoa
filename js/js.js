@@ -1,4 +1,4 @@
-var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='';
+var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='';
 var windows	= null;
 function initbody(){}
 function globalbody(){}
@@ -59,13 +59,14 @@ js.scrolla	= function(){
 	var top	= $(document).scrollTop();
 	js.scroll(top);
 }
-js.request=function(name,url){
-	if(!name)return '';
+js.request=function(name,dev,url){
+	if(!dev)dev='';
+	if(!name)return dev;
 	if(!url)url=location.href;
 	if(url.indexOf('\?')<0)return '';
-	neurl=url.split('\?')[1];
+	var neurl=url.split('\?')[1];
 	neurl=neurl.split('&');
-	var value=''
+	var value='',i,val;
 	for(i=0;i<neurl.length;i++){
 		val=neurl[i].split('=');
 		if(val[0].toLowerCase()==name.toLowerCase()){
@@ -73,7 +74,7 @@ js.request=function(name,url){
 			break;
 		}
 	}
-	if(!value)value='';
+	if(!value)value=dev;
 	return value;
 }
 js.now=function(type,sj){
@@ -602,6 +603,7 @@ js.getparenta=function(o, oi){
 	}
 	this.getparenta(o.parent(), oi+1);
 }
+js.ajaxwurbo = false;
 js.ajaxbool = false;
 js.ajax = function(url,da,fun,type,efun){
 	if(js.ajaxbool)return;
@@ -661,6 +663,12 @@ js.sendevent=function(typ,na,d){
 		extra:d
 	});
 }
+js.isimg = function(lx){
+	var ftype 	= '|png|jpg|bmp|gif|jpeg|';
+	var bo		= false;
+	if(ftype.indexOf('|'+lx+'|')>-1)bo=true;
+	return bo;
+}
 js.changeuser=function(na, lx){
 	this.backnana=na;
 	var h = winHb()-70;
@@ -672,6 +680,9 @@ js.changeuser=function(na, lx){
 	var url='task.php?fn=dept&changetype='+lx+'';
 	winiframe.location.href=url;
 	return false;
+}
+js.back=function(){
+	history.back();
 }
 js.changeclear=function(na){
 	get(na).value='';

@@ -1,12 +1,25 @@
 <?php
 class flow_workClassModel extends flowModel
 {
-	public $statearr = array();
+
+	protected function flowinit()
+	{
+		$this->statearr		 = c('array')->strtoarray('待执行|blue,已完成|green,执行中|#ff6600,中止|#888888');
+	}
+	
 	protected function flowchangedata(){
-		$this->rs['explain'] = str_replace("\n", '<br>', $this->rs['explain']);
-		$this->statearr		 = explode(',','待执行,已完成,执行中,中止');
 		$this->rs['stateid'] = $this->rs['state'];
-		$this->rs['state']	 = $this->statearr[$this->rs['state']];
+		$zt = $this->statearr[$this->rs['state']];
+		$this->rs['state']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+	}
+	
+	protected function flowprintrows($rows)
+	{
+		foreach($rows as $k=>$rs){
+			$zt = $this->statearr[$rs['state']];
+			$rows[$k]['state']		= '<font color="'.$zt[1].'">'.$zt[0].'</font>';;
+		}
+		return $rows;
 	}
 	
 	protected function flowdatalog($arr)

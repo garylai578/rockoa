@@ -31,7 +31,7 @@ class Action extends mainAction
 	protected function logincheck()
 	{
 		if($this->adminid==0){
-			if($this->ajaxbool == 'true'){
+			if(isajax()){
 				echo 'sorry! not sign';
 			}else{
 				$this->rock->location('?m=login');
@@ -129,6 +129,7 @@ class Action extends mainAction
 		$this->iszclogin();
 		$id		= $this->rock->post('id');
 		$table	= $this->rock->post('table','',1);
+		if(getconfig('systype')=='demo')exit('演示数据禁止删除');
 		$msg	= '';
 		if($msg == '' && $table!=''){
 			if(!m($table)->delete("`id` in($id)"))$msg= $this->db->error();
@@ -379,4 +380,30 @@ class ActionNot extends Action
 	public function publicstoreAjax(){}
 	public function publictreestoreAjax(){}
 	protected function logincheck(){}
+	
+	protected function mweblogin()
+	{
+		$uid = $this->adminid;
+		if($uid==0){
+			$uid = (int)$this->getcookie('mo_adminid');
+			if($uid>0){
+				$db   = m('login');
+				$onrs = $db->getone("`uid`=$uid and `cfrom`='mweb' and `online`=1",'`name`,`token`,`id`');
+				if($onrs){
+					$db->setsession($uid, $onrs['name'], $onrs['token']);
+					$db->update("moddt='$this->now'", $onrs['id']);
+				}else{
+					$uid = 0;
+				}
+			}
+		}
+		if($uid==0){
+			if(isajax()){
+				echo 'sorry! not sign';
+			}else{
+				$this->rock->location('index.php?m=login&d=we');
+			}
+			exit();
+		}
+	}
 }

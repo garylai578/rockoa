@@ -16,8 +16,8 @@ class indexClassAction extends Action{
 			$mewhere	= ' and `id` in('.str_replace(array('[',']'), array('',''), $myext).')';
 		}
 		$this->rock->savesession(array(
-			QOM.'adminallmenuid'	=> $allmenuid,
-			QOM.'isadmin'			=> $isadmin
+			'adminallmenuid'	=> $allmenuid,
+			'isadmin'			=> $isadmin
 		));
 		$this->smartydata['topmenu'] 	= m('menu')->getall("`pid`=0 and `status`=1 $mewhere order by `sort`");
 		

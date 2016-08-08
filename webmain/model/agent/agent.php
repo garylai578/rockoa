@@ -1,6 +1,6 @@
 <?php
 /**
-*	应用统计
+*	应用上的接口文件，读取数据显示
 */
 class agentModel extends Model
 {
@@ -14,7 +14,7 @@ class agentModel extends Model
 	public $moders;
 	
 	public function getdatas($uid, $lx, $p){}
-	public function menuopts($uid, $mid, $lx, $sm=''){}
+	
 	
 	public function gettotal()
 	{
@@ -35,44 +35,6 @@ class agentModel extends Model
 		if($this->moders){
 			$this->modeid = $this->moders['id'];
 		}
-	}
-	
-	public function menuopt($uid, $num, $mid, $lx, $sm='')
-	{
-		$this->getagentinfor($num);
-		$modenum = $this->rock->post('modenum', $num);
-		$msg 	 = 'ok';
-		$cname 	 = $this->rock->post('changename');
-		$cnameid = $this->rock->post('changenameid');
-		$cgdate  = $this->rock->post('changedate');
-		if(substr($lx,0,3)=='log'){
-			$statusname	= $this->rock->post('statusname');
-			$name		= str_replace('.','',$this->rock->post('name'));
-			$actname 	= $this->rock->post('actname', $name);
-			$status		= (int)$this->rock->post('status','1');
-			if($status==0)$status=1;
-			if(!isempt($cname)){
-				if(!isempt($sm))$sm.=',';
-				$sm.=''.$name.':'.$cname.'';
-			}
-			m('flow')->addlog($modenum, $mid, $actname, array(
-				'explain' 	=> $sm,
-				'statusname'=> $statusname,
-				'status'	=> $status,
-				'color'		=> $this->rock->post('statuscolor')
-			));
-		}
-		if($lx=='del'){
-			$msg 	= m('flow')->opt('deletebill', $modenum, $mid, $sm);
-		}
-		if($lx=='check'){
-			$status	 = (int)$this->rock->post('status');
-			$msg 	 = m('flow')->opt('check', $modenum, $mid, $status, $sm);
-			if(contain($msg,'成功'))$msg = 'ok';
-		}
-		$gmsg = $this->menuopts($uid, $mid, $lx, $sm);
-		if(!isempt($gmsg))$msg = $gmsg;
-		return $msg;
 	}
 	
 	
@@ -97,6 +59,4 @@ class agentModel extends Model
 		if(is_array($narr))foreach($narr as $k=>$v)$arr[$k]=$v;
 		return $arr;
 	}
-	
-	
 }

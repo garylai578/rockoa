@@ -48,10 +48,11 @@ js.initedit = function(id,can){
 	return editorobj;
 }
 
-js.setwhere	= function(mid){
-	var url =js.getajaxurl('@setwhere','where','flow',{modeid:mid});
-	js.tanbody('setwherewin','设置条件',500,300,{
-		html:'<div style="height:280px;overflow:hidden"><iframe src="" name="winiframese" width="100%" height="100%" frameborder="0"></iframe></div>',
+js.setwhere	= function(mid,call){
+	if(!call)call='';
+	var url =js.getajaxurl('@setwhere','where','flow',{modeid:mid,callback:call});
+	js.tanbody('setwherewin','设置条件',500,330,{
+		html:'<div style="height:320px;overflow:hidden"><iframe src="" name="winiframese" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
 	});
 	winiframese.location.href=url;

@@ -286,23 +286,41 @@ class reimClassModel extends Model
 	/**
 	*	获取应用
 	*/
-	public function getagent($uid=0)
+	public function getagent($uid=0, $whe='', $pid=0)
 	{
 		if($uid==0)$uid = $this->adminid;
 		$where	= m('admin')->getjoinstr('receid', $this->adminid);
-		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where",'`id`,`name`,`url`,`face`,`num`','`sort`');
+		if($whe=='')$whe=' and `pid`='.$pid.'';
+		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where $whe",'`id`,`name`,`url`,`face`,`num`,`pid`','`sort`');
 		$dbs 	= m('im_menu');
+		$barr	= array();
 		foreach($rows as $k=>$rs){
-			$rows[$k]['face'] 		= $this->getface($rs['face']);
-			$btosr = m('agent:'.$rs['num'].'')->gettotal();
-			$rows[$k]['stotal'] 	= $btosr['stotal'];
-			$rows[$k]['titles'] 	= $btosr['titles'];
-			
-			$menu	= $dbs->getall("mid='".$rs['id']."' and `pid`=0",'`id`,`name`,`type`,`url`,`num`,`color`','`sort`', 3);
-			foreach($menu as $k1=>$rs1)$menu[$k1]['submenu'] = $dbs->getall("pid='".$rs1['id']."'",'`id`,`name`,`type`,`url`,`num`,`color`','`sort`');
-			$rows[$k]['menu'] 	= $menu;
+			$rs['face'] 	= $this->getface($rs['face']);
+			$stotal			= $totals= 0;
+			if(!isempt($rs['num'])){
+				$btosr = m('agent:'.$rs['num'].'')->gettotal();
+				$stotal			= $btosr['stotal'];
+				$rs['titles'] 	= $btosr['titles'];
+			}
+			if($pid==0){
+				$submenu = $this->getagent($uid, '', $rs['id']);
+				$totals	 = count($submenu);
+				$rs['subagent'] = $submenu;
+				if($totals>0){
+					$stotal = 0;
+					foreach($submenu as $k1=>$rs1)$stotal+=$rs1['stotal'];
+				}
+			}
+			if($totals == 0){
+				$menu	= $dbs->getall("mid='".$rs['id']."' and `pid`=0",'`id`,`name`,`type`,`url`,`num`,`color`','`sort`', 3);
+				foreach($menu as $k1=>$rs1)$menu[$k1]['submenu'] = $dbs->getall("pid='".$rs1['id']."'",'`id`,`name`,`type`,`url`,`num`,`color`','`sort`');
+				$rs['menu'] 	= $menu;
+			}
+			$rs['totals'] 	= $totals;
+			$rs['stotal'] 	= $stotal;
+			if(!isempt($rs['num']) || $totals>0)$barr[] = $rs;
 		}
-		return $rows;
+		return $barr;
 	}
 	
 	/**
@@ -400,6 +418,8 @@ class reimClassModel extends Model
 		if($type=='group'){
 			$info = $this->getgroupxinxi($gid);
 		}
+		$info['type'] = $type;
+		$info['gid']  = $gid;
 		return $info;
 	}
 	private function replacefileid($rows)

@@ -117,11 +117,16 @@ function _getaolvw(na){
 </script>
 </head>
 <body style="background-color:#fefefe">
+
+
 <?php
-if($da['arr']['isflow']==1)echo '<div class="status"><img src="images/status'.$da['arr']['flowinfor']['nowstatus'].'.png"></div>';
+if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="header-back"></span>'.$da['title'].'</div><div style="height:46px;overflow:hidden"></div>';
 ?>
-<div class="padding10">
-	<?=$da['arr']['contview']?>
+<div class="padding10" style="position:relative">
+	<?php
+	if($da['arr']['isflow']==1)echo '<div class="status"><img src="images/status'.$da['arr']['flowinfor']['nowstatus'].'.png"></div>';
+	echo $da['arr']['contview']
+	?>
 </div>
 
 <div class="padding10">

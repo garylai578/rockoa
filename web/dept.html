@@ -130,6 +130,10 @@ function okla(){
 	try{parent.js.changeok(sna,sid, js.request('btype'), js.request('params'));}catch(e){}
 	cancel();
 }
+function shuaxinda(){
+	js.setoption('deptjson','');
+	location.reload();
+}
 </script>
 <style>
 *{font-size:14px;padding:0px;margin:0px}
@@ -158,7 +162,7 @@ function okla(){
 	
 	<div id="bottombtns"></div>
 	<div id="bottombtn">
-		<button onclick="location.reload();return;loaddata()" style="background-color:#888888" class="btns" type="button">刷新数据</button>&nbsp; &nbsp; 
+		<button onclick="shuaxinda();" style="background-color:#888888" class="btns" type="button">刷新数据</button>&nbsp; &nbsp; 
 		<button onclick="cancel()" class="btns" type="button">取消</button>&nbsp; &nbsp; 
 		<button onclick="okla()" class="btns" type="button">确定</button>&nbsp; &nbsp; 
 	</div>

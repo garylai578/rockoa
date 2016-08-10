@@ -4,19 +4,24 @@
 */
 include_once('config/config.php');
 $_paths = '';
-if(isset($_SERVER['PHP_SELF']))$_paths=$_SERVER['PHP_SELF'];
-if($_paths==''&&isset($_SERVER['ORIG_PATH_INFO']))$_paths=$_SERVER['ORIG_PATH_INFO'];
-$_patha = explode('api.php', $_paths);
-$_paths = '/index/index';
-if(isset($_patha[1])){
-	$_paths = $_patha[1];
+$d		= 'task';$m	= 'index';$a = 'index';
+if(isset($_GET['m']) && isset($_GET['a'])){
+	$m  = $rock->get('m');
+	$a  = $rock->get('a');
 }else{
-	if(isset($_SERVER['PATH_INFO']))$_paths=$_SERVER['PATH_INFO'];
+	if(isset($_SERVER['PHP_SELF']))$_paths=$_SERVER['PHP_SELF'];
+	if($_paths==''&&isset($_SERVER['ORIG_PATH_INFO']))$_paths=$_SERVER['ORIG_PATH_INFO'];
+	$_patha = explode('api.php', $_paths);
+	$_paths = '/index/index';
+	if(isset($_patha[1])){
+		$_paths = $_patha[1];
+	}else{
+		if(isset($_SERVER['PATH_INFO']))$_paths=$_SERVER['PATH_INFO'];
+	}
 }
 unset($_GET['d']);
 unset($_GET['m']);
 unset($_GET['a']);
-$d	= 'task';$m	= 'index';$a = 'index';
 if($_paths){
 	$_pa = explode('/', $_paths);
 	if(isset($_pa[1])&&$_pa[1])$m=$_pa[1];

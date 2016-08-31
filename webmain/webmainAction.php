@@ -298,9 +298,13 @@ class Action extends mainAction
 				if(!$this->isempt($beforesavea)){
 					if(method_exists($this, $beforesavea)){
 						$befa = $this->$beforesavea($table, $uaarr, $id);
-						if(isset($befa['msg']))$ss=$befa['msg'];
-						if(isset($befa['rows'])){
-							foreach($befa['rows'] as $bk=>$bv)$uaarr[$bk]=$bv;
+						if(is_string($befa)){
+							$ss = $befa;
+						}else{
+							if(isset($befa['msg']))$ss=$befa['msg'];
+							if(isset($befa['rows'])){
+								foreach($befa['rows'] as $bk=>$bv)$uaarr[$bk]=$bv;
+							}
 						}
 					}	
 				}

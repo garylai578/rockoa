@@ -26,6 +26,13 @@ class deptClassAction extends Action
 		}
 	}
 	
+	public function publicbeforesave($table, $cans, $id)
+	{
+		$pid = (int)$cans['pid'];
+		if($pid>0 && m($table)->rows($pid)==0)return '上级ID不存在';
+		return '';
+	}
+	
 	public function publicaftersave($table, $cans, $id)
 	{
 		$name 	= $cans['name'];

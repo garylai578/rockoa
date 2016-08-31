@@ -8,8 +8,9 @@ $(document).ready(function(){
 		url:js.getajaxurl('publicsave','admin','system'),
 		params:{int_filestype:'status,type,sort',add_otherfields:'adddt={now}',md5_filestype:'pass'},
 		submitfields:'status,type,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate,weixinid',
-		requiredfields:'name,user,ranking,deptname',
+		requiredfields:'name,user,ranking,deptname,email',
 		success:function(){
+			if(id==0)js.msg('success','成功添加帐号：'+h.form.user.value+'');
 			closenowtabs();
 			try{adminusermanage.reload();}catch(e){}
 		}
@@ -61,16 +62,16 @@ $(document).ready(function(){
        
 		<tr>
 			<td align="right" width="15%"><font color="red">*</font> 姓名：</td>
-			<td class="tdinput" width="35%"><input name="name" class="form-control"></td>
+			<td class="tdinput" width="35%"><input name="name" maxlength="10" class="form-control"></td>
 			<td align="right" width="15%"><font color="red">*</font> 用户名：</td>
-			<td class="tdinput" width="35%"><input name="user" class="form-control"></td>
+			<td class="tdinput" width="35%"><input name="user" placeholder="字母+数字" onblur="this.value=strreplace(this.value)" maxlength="20" class="form-control"></td>
 		</tr>
 		
 	
         
 		<tr>
 			<td align="right">密码：</td>
-			<td class="tdinput"><input name="pass" value="123456" class="form-control"></td>
+			<td class="tdinput"><input name="pass" value="123456" maxlength="20" class="form-control"></td>
 			
 			<td align="right">性别：</td>
 			<td class="tdinput"><select name="sex" class="form-control"><option value="男">男</option><option value="女">女</option></select></select>
@@ -92,7 +93,7 @@ $(document).ready(function(){
 			</td>
 			
 			<td align="right"><font color="red">*</font> 职位：</td>
-			<td class="tdinput"><input name="ranking" class="form-control"></select>
+			<td class="tdinput"><input name="ranking" maxlength="20" class="form-control"></select>
 		</tr>
 		
 		<tr>
@@ -128,7 +129,7 @@ $(document).ready(function(){
 		</tr>
 		
 		<tr>
-			<td align="right">邮箱：</td>
+			<td align="right"><font color="red">*</font> 邮箱：</td>
 			<td class="tdinput"><input name="email" class="form-control"></td>
 			<td align="right">电话：</td>
 			<td class="tdinput"><input name="tel" class="form-control"></td>
@@ -139,12 +140,12 @@ $(document).ready(function(){
 			<td class="tdinput"><input name="sort" onfocus="js.focusval=this.value" onblur="js.number(this)" type="number" value="0" class="form-control"
 ></td>
 			<td align="right">手机号：</td>
-			<td class="tdinput"><input name="mobile" class="form-control"></td>
+			<td class="tdinput"><input name="mobile"  maxlength="11" class="form-control"></td>
 		</tr>
 		
 	<tr>
 			<td align="right">微信号：</td>
-			<td class="tdinput"><input name="weixinid" class="form-control"></td>
+			<td class="tdinput"><input placeholder="手机号不能作为微信号" name="weixinid" class="form-control"></td>
 			
 		</tr>
 		

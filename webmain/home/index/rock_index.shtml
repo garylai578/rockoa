@@ -206,6 +206,33 @@ $(document).ready(function(){
 			
 			<td style="padding-left:20px">
 			
+				<div class="panel panel-danger">
+				  <div class="panel-heading">
+					<h3 class="panel-title">微信企业号办公</h3>
+				  </div>
+				  <div class="panel-body">
+						<table><tr valign="top">
+						<td align="center"><img src="images/wxqcode.jpg" height="150">
+						<div style="color:#888888">扫一扫体验微信办公</div></td>
+						<td>
+							<div style="line-height:25px;padding:10px;width:250px">
+							<b>微信办公</b>：结合了信呼上IM无缝隙的对接交流，单据待办推送提醒，<a href="http://xh829.com/view_weixin.html" target="_blank">[详情介绍]</a>。<br>
+							1、请先申请添加帐号才可以体验，去<a href="http://xh829.com/view_weixinty.html" target="_blank">[添加]</a>。<br>
+							2、扫一扫验证帐号即可使用。
+							</div>
+						</td>
+						</tr></table>
+					
+					
+				  </div>
+				</div>
+				
+				
+			
+			</td>
+			
+			<td style="padding-left:20px">
+			
 				<div class="panel panel-info" style="display:none">
 				  <div class="panel-heading">
 					<h3 class="panel-title">今日考勤</h3>
@@ -235,6 +262,6 @@ $(document).ready(function(){
 		</table>
 	</div>
 	
-	<div style="padding:10px 10px" id="view_{rand}"></div>
+	<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.shtml</div>
 	
 </div>

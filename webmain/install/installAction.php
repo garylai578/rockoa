@@ -93,6 +93,7 @@ class installClassAction extends ActionNot{
 				exit('导入失败:'.$db->error().'');
 			}
 		}
+		$db->query("delete from `".$perfix."option` where `name` is null");
 		$rand	= $this->rock->jm->getRandkey();
 		$txt 	= "<?php
 //系统配置文件		

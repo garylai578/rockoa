@@ -2,7 +2,7 @@
 $(document).ready(function(){
 	var a = $('#view_{rand}').bootstable({
 		tablename:'im_group',where:'and type=2',sort:'sort',dir:'asc',celleditor:true,
-		url:js.getajaxurl('yingyongdata','{mode}','{dir}'),
+		url:js.getajaxurl('yingyongdata','{mode}','{dir}'),modenum:'yingyong',
 		columns:[{
 			text:'图标',dataIndex:'face',align:'left',renderer:function(v,d){
 				var s='';

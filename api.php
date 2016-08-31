@@ -5,9 +5,9 @@
 include_once('config/config.php');
 $_paths = '';
 $d		= 'task';$m	= 'index';$a = 'index';
-if(isset($_GET['m']) && isset($_GET['a'])){
+if(isset($_GET['m'])){
 	$m  = $rock->get('m');
-	$a  = $rock->get('a');
+	$a  = $rock->get('a', $a);
 }else{
 	if(isset($_SERVER['PHP_SELF']))$_paths=$_SERVER['PHP_SELF'];
 	if($_paths==''&&isset($_SERVER['ORIG_PATH_INFO']))$_paths=$_SERVER['ORIG_PATH_INFO'];

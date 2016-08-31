@@ -24,6 +24,7 @@ class indexClassAction extends Action{
 		if($loadci==0){
 			$arr['showkey'] = $this->jm->base64encode($this->jm->getkeyshow());
 			$arr['menuarr'] = $this->homeicons();
+			$arr['token']	= $this->admintoken;
 		}
 		$s = $s1 = '';
 		if($loadci==0){
@@ -43,19 +44,10 @@ class indexClassAction extends Action{
 		$msgar[0] = $s;
 		$msgar[1] = $s1;
 		$arr['msgar']	= $msgar;
-		
-	
-		$arr['total']	= array(
-			
-		);
-		
-		echo json_encode($arr);
+		$arr['total']	= m('totals')->gettotals($uid);
+		$this->returnjson($arr);
 	}
 	
-	public function todoAction()
-	{
-		
-	}
 	
 	public function getqrcodeAjax()
 	{

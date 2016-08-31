@@ -1,6 +1,11 @@
 <?php 
 class indexClassAction extends apiAction
 {
+	public function indexAction()
+	{
+		$this->showreturn('','error', 203);
+	}
+	
 	public function indexinitAction()
 	{
 		$dbs 			= m('reim');

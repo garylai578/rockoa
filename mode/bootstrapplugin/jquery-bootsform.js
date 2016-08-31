@@ -13,16 +13,14 @@
 		this.editdata = {};
 		this.itemsdata = {};
 		
-		//初始化
 		this.init	= function(){
 			if(rand=='')rand=js.getrand();
 			if(!can.window)return;
 			can.windowid = 'window_'+rand+'';
-			js.tanbody(can.windowid, can.title, can.width, can.height,{bbar:'none',titlecls:can.saveCls});
-			can.render	= ''+can.windowid+'_body';
 			var s = this._create();
+			js.tanbody(can.windowid, can.title, can.width, can.height,{bbar:'none',html:s,titlecls:can.saveCls});
+			can.render	= ''+can.windowid+'_body';
 			obj = $('#'+can.render+'');
-			obj.html(s);
 			this.createafter();
 			$('#cancel_'+rand+'').focus();
 		};
@@ -392,7 +390,7 @@
 			render:'',saveText:'确定',window:true,windowid:'',editrecord:'false',
 			defaultfields:{type:'text',blankText:'',labelText:'',required:false,readOnly:false,labelBox:'',attr:'',value:''},
 			success:function(){},loadafter:function(){},
-			load:function(){},aftersaveaction:'',beforesaveaction:'',requiredfields:'',//必填字段
+			load:function(){},aftersaveaction:'',beforesaveaction:'',requiredfields:'',
 			error:function(){},saveid:'',msgviewid:'',rand:'',
 			pdedit:true,
 			submitcheck:function(){return ''}

@@ -45,7 +45,7 @@ class upfileChajian extends Chajian{
 		$file_img		= false;
 		$file_kup		= false;
 		$jpgallext		= '|jpg|png|gif|bmp|jpeg|';//图片格式
-		$upallfile		= $jpgallext.'doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|wma|chm|';
+		$upallfile		= $jpgallext.'doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|wma|chm|apk|';
 		
 		if($this->contain($jpgallext, '|'.$file_ext.'|'))$file_img = true;	
 		if($this->contain($upallfile, '|'.$file_ext.'|'))$file_kup = true;	

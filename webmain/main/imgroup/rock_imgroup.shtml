@@ -2,7 +2,7 @@
 $(document).ready(function(){
 	var gid = 0;
 	var a = $('#veiw_{rand}').bootstable({
-		tablename:'im_group',celleditor:false,url:publicstore('{mode}','{dir}'),storeafteraction:'groupafter',keywhere:'and type<>2',defaultorder:'type,sort',
+		tablename:'im_group',celleditor:false,url:publicstore('{mode}','{dir}'),storeafteraction:'groupafter',keywhere:'and type<>2',defaultorder:'type,sort',modenum:'huihua',
 		columns:[{
 			text:'头像',dataIndex:'face',renderer:function(v, d){
 				return '<img src="images/group.png" height="24" width="24">';

@@ -6,6 +6,7 @@ class reimClassModel extends Model
 	public $serverpushurl 	= '';
 	public $serverhosturl 	= '';
 	public $servertitle		= '';
+	public $wxchattb		= 0;//聊天是否同步到微信
 	
 	public function initModel()
 	{
@@ -21,15 +22,7 @@ class reimClassModel extends Model
 		$this->serverpushurl	= $dbs->getval('reimpushurlsystem');
 		$this->serverhosturl	= $dbs->getval('reimhostsystem');
 		$this->servertitle		= $dbs->getval('reimtitlesystem');
-		if($this->isempt($this->serverpushurl)){
-			$bstest = $dbs->getval('reimmiyuesystem');
-			if(strlen($bstest)<150)return;
-			$oi 	= $this->rock->jm->getint($this->serverrecid);
-			$strss 	= $this->rock->jm->uncrypt($bstest, $oi);
-			$asss	= explode('@', $strss);
-			$this->serverpushurl=$asss[0];
-			$this->serverhosturl=$asss[1];
-		}
+		$this->wxchattb			= (int)$dbs->getval('weixin_chattb','0');
 		if(getconfig('systype')=='demo')$this->serverhosturl = $this->rock->jm->base64decode('d3M6Ly8yMTEuMTQ5LjIzNC45Mzo2NTUyLw::');
 		if($this->isempt($this->servertitle))$this->servertitle='信呼';
 	}
@@ -384,9 +377,10 @@ class reimClassModel extends Model
 		}
 	}
 	
-	public function delhistory($type, $receid, $uid)
+	public function delhistory($type, $receid, $uid=0)
 	{
-		$where  = "`type`='$type' and `receid`='$receid' and `uid`='$uid'"; 
+		$where  = "`type`='$type' and `receid`='$receid'"; 
+		if($uid>0)$where.=" and `uid`='$uid'";
 		if($type=='all'){
 			$where  = "`uid`='$uid'"; 
 		}
@@ -580,9 +574,11 @@ class reimClassModel extends Model
 		if(isset($cans['cont']))$cont=$cans['cont'];
 		$optdt		= $this->rock->now;
 		$fileid		= 0;
+		$msgid		= '';
 		if(isset($cans['optdt']))$optdt=$cans['optdt'];
 		if(isset($cans['sendid']))$sendid=$cans['sendid'];
 		if(isset($cans['fileid']))$fileid=$cans['fileid'];
+		if(isset($cans['msgid']))$msgid=$cans['msgid'];
 		$arr = array(
 			'cont'		=> $cont,
 			'sendid'	=> $sendid,
@@ -590,7 +586,8 @@ class reimClassModel extends Model
 			'type'		=> 'user',
 			'optdt'		=> $optdt,
 			'zt'		=> '0',
-			'fileid'	=> $fileid
+			'fileid'	=> $fileid,
+			'msgid'		=> $msgid
 		);
 		$arr['receuid'] = $arr['sendid'].','.$arr['receid'];
 		$bo = $this->insert($arr);
@@ -644,12 +641,13 @@ class reimClassModel extends Model
 		$gname		= m('im_group')->getmou('name', $gid);
 		$type		= 'group';
 		$fileid		= 0;
+		$msgid		= '';
 		$optdt		= $this->rock->now;
 		if(isset($cans['optdt']))$optdt=$cans['optdt'];
 		if(isset($cans['type']))$type=$cans['type'];
 		if(isset($cans['sendid']))$sendid=$cans['sendid'];
 		if(isset($cans['fileid']))$fileid=$cans['fileid'];
-		
+		if(isset($cans['msgid']))$msgid=$cans['msgid'];
 		$aors		= m('im_groupuser')->getall("`gid`='$receid'",'uid');
 		$asid		= $asids =  '';
 		foreach($aors as $k=>$rs){
@@ -667,7 +665,8 @@ class reimClassModel extends Model
 			'type'		=> $type,
 			'optdt'		=> $optdt,
 			'zt'		=> '1',
-			'fileid'	=> $fileid
+			'fileid'	=> $fileid,
+			'msgid'		=> $msgid
 		);
 		$bo = $this->insert($arr);
 		$arr['id'] 		= $this->db->insert_id();
@@ -726,6 +725,12 @@ class reimClassModel extends Model
 		if($type == 'group'){
 			$arr 	= $this->sendgroup($sendid, $gid, $cans, $lx);
 		}
+		if($this->wxchattb==1 && isset($arr['id'])){
+			$msgid 	= $arr['msgid'];
+			if(isempt($msgid))$this->asynurl('asynrun','wxchattb', array(
+				'id' => $arr['id']
+			));
+		}
 		return $arr;
 	}
 	
@@ -734,28 +739,51 @@ class reimClassModel extends Model
 	*/
 	public function sendpush($sendid, $receid, $conarr=array())
 	{
-		$bsarr 	= array('msg'=>'nothost','code'=>2);
+		$bsarr 	= array('msg'=>'notpushurl','code'=>2);
 		$bstt	= json_encode($bsarr);
-		if($this->serverpushurl=='')return $bstt;
-		$url 	= $this->serverpushurl.'?reimrecid='.$this->serverrecid.'';
 		$sers 	= $this->db->getone('[Q]admin',"`id`='$sendid'", "`name`,`face`");
 		if(!$sers)return $bstt;
 		$face 	= $sers['face']; 
-		$conarr['from'] 	= $this->serverrecid;
 		$carr['adminid'] 	= $sendid;
 		$carr['optdt'] 		= $this->rock->now;
 		$carr['sendname'] 	= $sers['name'];
 		$carr['face'] 		= $this->getface($face);
 		$carr['receid'] 	= $receid;
-		$carr['atype'] 		= 'send';
 		foreach($conarr as $k=>$v)$carr[$k]=$v;
-		$str 				= json_encode($carr);
-		return c('curl')->postcurl($url, $str);
+		return $this->pushserver('send', $carr);
 	}
 	
 	/**
-	*	系统提醒推送
+	*	向服务端发送异步任务
+	*	$runtime 运行的时间贞
 	*/
+	public function asynurl($m, $a,$can=array(), $runtime=0)
+	{
+		$runurl	= getconfig('localurl');
+		if($runurl=='')$runurl = URL;
+		$runurl .= 'api.php?m='.$m.'&a='.$a.'&adminid='.$this->adminid.'';
+		if(is_array($can))foreach($can as $k=>$v)$runurl.='&'.$k.'='.$v.'';
+		return $this->pushserver('runurl', array(
+			'url' => $runurl,
+			'runtime' => $runtime
+		));
+	}
+	
+	public function pushserver($atype, $cans=array())
+	{
+		$bsarr 	= array('msg'=>'notpushurl','code'=>2);
+		$bstt	= json_encode($bsarr);
+		if($this->serverpushurl=='')return $bstt;
+		$url 	= $this->serverpushurl.'?reimrecid='.$this->serverrecid.'';
+		$carr['from'] 	= $this->serverrecid;
+		$carr['adminid']= $this->adminid;
+		$carr['atype'] 	= $atype;
+		foreach($cans as $k=>$v)$carr[$k]=$v;
+		$str 			= json_encode($carr);
+		return c('curl')->postcurl($url, $str);
+	}
+	
+	
 	
 	//创建群等
 	public function creategroup($name, $receid, $type=1, $explain='')
@@ -856,5 +884,148 @@ class reimClassModel extends Model
 		}
 		if($xids!='0')$this->delete("`id` in($xids)");
 		if($ids=='' && $day==0)$this->delhistory($type,$gid, $uid);
+	}
+	
+	/**
+	*	转发
+	*/
+	public function forward($tuid, $type, $cont, $fid=0)
+	{
+		$uid 	= $this->adminid;
+		if($fid>0){
+			$frs	= m('file')->getone($fid, '`filepath`,`filename`,`filesizecn`,`fileext`');
+			$msg 	= '文件不存在了';
+			if(!$frs)return $msg;
+			if(!file_exists($frs['filepath']))return $msg;
+			$cont 	= '';$jpgallext	= '|jpg|png|gif|bmp|jpeg|';
+			if(contain($jpgallext,'|'.$frs['fileext'].'|')){
+				$cont = '[图片 '.$frs['filesizecn'].']';
+			}else{
+				$cont = '['.$frs['filename'].' '.$frs['filesizecn'].']';
+			}
+			$cont	  = $this->rock->jm->base64encode($cont);
+		}
+		$tuids	= explode(',', $tuid);
+		foreach($tuids as $gid)$this->sendinfor($type, $uid, $gid, array(
+			'optdt' => $this->rock->now,
+			'cont'  => $cont,
+			'fileid'=> $fid
+		));
+		return 'ok';
+	}
+	
+	//会话管理的
+	public function createchat($name, $aid, $uids='', $na='', $optdt='')
+	{
+		if($optdt=='')$optdt=$this->rock->now;
+		if($na=='')$na = $this->adminname;
+		if($uids=='')$uids = $aid;
+		$this->db->record('[Q]im_group', array(
+			'type'			=> 1,
+			'name'			=> $name,
+			'createid'		=> $aid,
+			'createname'	=> $na,
+			'createdt'		=> $optdt,
+			'valid'			=> '1'
+		));
+		$gid	= $this->db->insert_id();
+		$this->adduserchat($gid, $uids);
+		return $gid;
+	}
+	public function adduserchat($gid, $uids)
+	{
+		if(isempt($uids))return;
+		$uidss	= explode(',', $uids);
+		$db		= m('im_groupuser');
+		foreach($uidss as $aid){
+			if($db->rows("gid='$gid' and `uid`='$aid'")==0){
+				$db->insert(array('gid' => $gid,'uid' => $aid));
+			}
+		}
+	}
+	public function deluserchat($gid, $uids)
+	{
+		if(isempt($uids))return;
+		m('im_groupuser')->delete("`gid`='$gid' and `uid` in($uids)");
+	}
+	public function deletechat($gid)
+	{
+		m('im_group')->delete($gid);
+		m('im_groupuser')->delete("`gid`='$gid'");
+		m('im_messzt')->delete("`gid`='$gid'");
+		$this->delhistory('group',$gid, 0);
+	}
+	public function exitchat($gid, $aid)
+	{
+		m('im_groupuser')->delete("`gid`='$gid' and `uid`='$aid'");
+		m('im_messzt')->delete("`gid`='$gid' and `uid`='$aid'");
+		$this->delhistory('group',$gid, $aid);
+	}
+	
+	
+	
+	
+	
+	
+	
+	//
+	public function getwxchat($arr)
+	{
+		$this->rock->debugs(json_encode($arr),'cccc');if(!isset($arr['MsgType']))return;
+		$MsgType		= $arr['MsgType'];
+		$FromUserName	= $arr['FromUserName'];
+		$user 			= $FromUserName;
+		$urs		 	= m('admin')->getone("`user`='$FromUserName'",'id,name');
+		if(!$urs)return;
+		$sendid			= $urs['id'];
+		$sendname		= $urs['name'];
+		if($MsgType == 'event'){
+			$event	= $arr['Event'];
+			if($event=='create_chat')m('weixin:chat')->addchat($sendid, $sendname,$arr);
+			if($event=='update_chat')m('weixin:chat')->updatechat($arr);
+			if($event=='quit_chat')m('weixin:chat')->quitchat($arr);
+			if($event=='subscribe')m('weixin:user')->subscribe($user,1);
+			if($event=='unsubscribe')m('weixin:user')->subscribe($user,4);
+			return;
+		}
+		if(!isset($arr['Type']))return;
+		$Type			= $arr['Type'];
+		$gid 			= 0;
+		$optdt 			= date('Y-m-d H:i:s', $arr['CreateTime']);
+		$cont 			= '';
+		if($Type=='single'){
+			$gid = (int)m('admin')->getmou('id', "`user`='".$arr['Id']."'");
+			$type= 'user';
+		}
+		if($Type=='group'){
+			$gid = m('weixin:chat')->getchatid($arr['Id'], $sendid, $sendname);
+			$type= 'group';
+		}
+		if($gid==0)return;
+		
+		@$msgid	= $arr['MsgId'];if(isempt($msgid))return;
+		if($this->rows("`msgid`='$msgid'")>0)return;
+		
+		if($MsgType=='text'){
+			$cont = $arr['Content'];
+		}
+		if($MsgType=='location'){
+			$cont = '位置：'.$arr['Label'];
+		}
+		if($MsgType=='voice'){
+			$cont = '语音,请用微信收听';
+		}
+		if($MsgType=='image'){
+			$cont = '[图片]';
+		}
+		if($MsgType=='link'){
+			if(isempt($arr['Title']))$arr['Title']='链接';
+			$cont = '[A]'.$arr['Title'].'|'.$arr['Url'].'[/A]';
+		}
+		if($cont!='')$this->sendinfor($type,$sendid, $gid, array(
+			'cont'  => $this->rock->jm->base64encode($cont),
+			'optdt' => $optdt,
+			'msgid' => $msgid
+		));
 	}
 }

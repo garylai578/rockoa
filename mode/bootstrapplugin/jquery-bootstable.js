@@ -132,7 +132,8 @@
 			s3 	= can.rendertr(ov, this, j);
 			s4  = can.rowsbody(ov, this, j);
 			if(s4)s5='rowspan="2"';
-			s='<tr  oi="'+j+'" dataid="'+ov.id+'" '+s3+'>';
+			if(!s3 && can.statuschange && ov.status==0)s3='style="color:#aaaaaa"';
+			s='<tr oi="'+j+'" dataid="'+ov.id+'" '+s3+'>';
 			s+='<td '+s5+' align="right" width="40">'+(j+1+can.pageSize*(this.page-1))+'</td>';
 			if(can.checked){
 				dis = '';
@@ -235,11 +236,15 @@
 			s+='<div style="border:1px #cccccc solid;background:white;padding:10px;box-shadow:0px 0px 10px rgba(0,0,0,0.3); border-radius:10px">';
 			s+='	<div>&nbsp;<b>'+b.text+'</b>：&nbsp;<span id="msgteita_'+rand+'"></span></div>';
 			s+='	<div class="blank10"></div>';
+			var wss = 200;
+			if(b.editorwidth)wss=b.editorwidth;
 			if(b.type=='checkbox'){
 				if(v=='1')at='checked';
 				s+='<div><label><input type="checkbox" id="inputedit_'+rand+'" '+at+' value="1"> '+b.text+'</label></div>';
+			}else if(b.type=='textarea'){
+				s+='<div><textarea type="text" style="width:'+wss+'px;height:100px" id="inputedit_'+rand+'" class="input">'+v+'</textarea></div>';
 			}else{
-				s+='<div><input type="text" style="width:200px" id="inputedit_'+rand+'" class="input" value="'+v+'"></div>';
+				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" class="input" value="'+v+'"></div>';
 			}
 			s+='	<div class="blank10"></div>';
 			if(!can.cellautosave)s+='	<div><a  id="inputeditsave_'+rand+'" href="javascript:"><i class="icon-ok"></i> 确定</a >&nbsp;  &nbsp; <a href="javascript:" class="hui" onclick="$(\'#edittable_'+rand+'\').remove()"><i class="icon-remove"></i> 取消</a></div>';
@@ -281,7 +286,7 @@
 			this.bool = true;
 			
 			var data = {tablename:can.tablename,id:a.id,fieldname:a.fields,value:v};
-			$.post(js.getajaxurl('publicsavevalue','index'),data,function(){
+			$.post(can.cellurl,data,function(){
 				js.setmsg('处理完成','green',vid);
 				$('#edittable_'+rand+'').remove();
 				me.bool = false;
@@ -314,11 +319,10 @@
 			this.loadci++;
 			this.changedata = {};
 			var url = can.url;
-			var das	= {tablename_abc:can.tablename,defaultorder:can.defaultorder,storefields:can.storefields,keywhere:can.keywhere,where:this.where,sort:can.sort,dir:can.dir,highorder:this.highorderstr,loadci:this.loadci,storebeforeaction:can.storebeforeaction,storeafteraction:can.storeafteraction},
+			var das	= {tablename_abc:can.tablename,defaultorder:can.defaultorder,keywhere:can.keywhere,where:this.where,sort:can.sort,dir:can.dir,loadci:this.loadci,storebeforeaction:can.storebeforeaction,storeafteraction:can.storeafteraction},
 			s='',of=obj.offset();
 			das.keywhere=jm.encrypt(das.keywhere.replace(/\'/g, '[F]'));
 			das.where = jm.encrypt(das.where.replace(/\'/g, '[F]'));
-			das.storefields = jm.encrypt(das.storefields);
 			das.start = can.pageSize*(p-1);
 			das.limit = can.pageSize;
 			if(!can.fanye)das.limit = 0;
@@ -333,13 +337,12 @@
 			can.beforeload();
 			this.bool = true;
 			$.ajax({
-				url:url,type:'POST',
-				data:das,
+				url:url,type:'POST',data:das,
 				success:function(da){
-					js.msg();
 					if(!get('tablebody_'+rand+''))return;
 					var a = js.decode(da);
 					if(!a.rows){
+						if(a.msg)da=a.msg;
 						js.msg('msg',da);
 					}else{
 						me._loaddataback(a);
@@ -347,8 +350,9 @@
 					$('#modeshow_'+rand+'').remove();
 					me.bool = false;
 				},
-				error: function(){
+				error: function(e){
 					$('#modeshow_'+rand+'').remove();
+					js.msg('msg',e.responseText);
 					me.bool = false;
 				}
 			});
@@ -370,15 +374,21 @@
 			}
 			das.excelfields = jm.encrypt(excelfields.substr(1));
 			das.excelheader = jm.encrypt(excelheader.substr(1));
-			$.post(can.url, das, function(da){
-				var a1 = js.decode(da);
-				js.msg('success', '处理成功，共有记录'+a1.totalCount+'条/导出'+a1.downCount+'条，点我直接<a class="a" href="'+a1.url+'" target="_blank">[下载]</a>', 60);
-				me.bool=false;
+			$.ajax({
+				url:can.url,type:'POST',data:das,dataType:'json',
+				success:function(a1){
+					js.msg('success', '处理成功，共有记录'+a1.totalCount+'条/导出'+a1.downCount+'条，点我直接<a class="a" href="'+a1.url+'" target="_blank">[下载]</a>', 60);
+					me.bool=false;
+				},
+				error:function(e){
+					js.msg('msg','err:'+e.responseText);
+					me.bool = false;
+				}
 			});
 		};
 		this.setparams = function(cans, relo){
 			if(!cans)cans={};
-			this.otherparams = js.apply({},cans);
+			this.otherparams = js.apply(this.otherparams,cans);
 			this.page = 1;
 			if(relo)this.reload();
 		};
@@ -436,7 +446,7 @@
 			this._loaddata(this.page);
 		};
 		this.del	= function(csa){
-			var a 	= js.apply({msg:'确定要删除选中的{s}条记录吗？',checked:false,check:function(){}},csa);
+			var a 	= js.apply({msg:'确定要删除选中的{s}条记录吗？',success:function(){},checked:false,check:function(){}},csa);
 			var s	= ''+this.changeid+'',xz;
 			if(a.checked)s=this.getchecked();
 			if(s=='0'||s==''){
@@ -472,15 +482,16 @@
 		this._delok	= function(sid, ds){
 			js.msg('wait','删除'+sid+'中...');
 			var url = ds.url;if(!url)url=js.getajaxurl('publicdel','index');
-			var ss 	= js.apply({table:can.tablename,id:sid},ds.params);
-			$.post(url,ss,function(da){
-				if(da=='success' || da=='ok'){
+			var ss 	= js.apply({modenum:can.modenum,table:can.tablename,id:sid},ds.params);
+			$.post(url,ss,function(a){
+				if(a.code==200){
 					js.msg('success','删除成功');
+					ds.success();
 					me.reload();
 				}else{
-					js.msg('msg',da);
+					js.msg('msg',a.msg);
 				}
-			});
+			},'json');
 		};
 		
 		this._fanye	= function(){
@@ -522,7 +533,6 @@
 			var o1 = $('#pagesize_'+rand+'');
 			o1.blur(function(){me.setpageSize(this.value);});
 			o1.keyup(function(e){if(e.keyCode==13)this.blur()});
-			//obj.find("[data-toggle='tooltip']").tooltip();
 		};
 		this._getpaged = function(){
 			var a = [],i=1,j=1,b,bg;
@@ -600,9 +610,9 @@
 			pageSize:15,bodyStyle:'',height:0,
 			url:js.getajaxurl('publicstore','index'),celleditor:false,cellautosave:true,celledittype:'dblclick',
 			data:[],autoLoad:true,tree:false,itemdblclick:function(){},searchwidth:500,
-			defaultorder:'',where:'',hideHeaders:false,
-			storefields:'*',checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',
-			keywhere:'',params:{},
+			defaultorder:'',where:'',hideHeaders:false,modenum:'',statuschange:true,
+			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',
+			keywhere:'',params:{},cellurl:js.getajaxurl('publicsavevalue','index'),
 			tablename:'',selectcls:'success',itemclick:function(da, index, e){},beforeload:function(){},load:function(){},
 			outsearch:function(){return  ''},searchview:'',
 			rendertr:function(){return  ''},rowsbody:function(){return ''},

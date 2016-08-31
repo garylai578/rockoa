@@ -4,7 +4,6 @@
 	* 联系QQ： 290802026/1073744729									*
 	* 版  本： V2.0													*
 	* 开发者：雨中磐石工作室										*
-	* 邮  箱： qqqq2900@126.com										*
 	* 网  址： http://www.xh829.com/								*
 	* 说  明: 数据库核心类											*
 	* 备  注: 未经允许不得商业出售，代码欢迎参考纠正				*
@@ -134,6 +133,13 @@ abstract class mysql{
 	public function getLastSql()
 	{
 		return $this->nowsql;
+	}
+	
+	public function found_rows()
+	{
+		$rsa	= $this->getall('SELECT FOUND_ROWS() as total');
+		$to 	= $rsa[0]['total'];
+		return $to;
 	}
 	
 	public function getsql($arr=array())
@@ -505,7 +511,7 @@ abstract class mysql{
 	public function gettablefields($table, $base='')
 	{
 		if($base=='')$base = $this->db_base;
-		$sql	= "select COLUMN_NAME as `name`,DATA_TYPE as `type`,COLUMN_COMMENT as `explain`,COLUMN_TYPE as `types`,`COLUMN_DEFAULT` as dev from information_schema.COLUMNS where `TABLE_NAME`='$table' and `TABLE_SCHEMA` ='$base' order by `ORDINAL_POSITION`";
+		$sql	= "select COLUMN_NAME as `name`,DATA_TYPE as `type`,COLUMN_COMMENT as `explain`,COLUMN_TYPE as `types`,`COLUMN_DEFAULT` as dev,`IS_NULLABLE` as isnull from information_schema.COLUMNS where `TABLE_NAME`='$table' and `TABLE_SCHEMA` ='$base' order by `ORDINAL_POSITION`";
 		return $this->getall($sql);
 	}
 	
@@ -590,10 +596,14 @@ abstract class mysql{
 	*/		
 	public function sericnum($num, $table,$fields='sericnum', $ws=4, $whe='')
 	{
-		$ymd 	= date('Ymd');
-		$ym 	= date('Ym');
+		$dts 	= explode('-', date('Y-m-d'));
+		$ymd 	= $dts[0].$dts[1].$dts[2];
+		$ym 	= $dts[0].$dts[1];
 		$num	= str_replace('Ymd', $ymd, $num);
 		$num	= str_replace('Ym', $ym, $num);
+		$num	= str_replace('Year', $dts[0], $num);
+		$num	= str_replace('Day', $dts[2], $num);
+		$num	= str_replace('Month', $dts[1], $num);
 		$where 	= "`$fields` like '".$num."%' $whe";
 		$max	= (int)$this->getmou($table, "max(cast(replace(`$fields`,'$num','') as decimal(10)))", $where);
 		$max++;

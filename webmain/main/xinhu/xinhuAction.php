@@ -22,42 +22,16 @@ class xinhuClassAction extends Action
 	
 	public function testsendAjax()
 	{
-		$msg =  m('reim')->sendpush($this->adminid, $this->adminid,array(
+		$obj = m('reim');
+		$str = $obj->sendpush($this->adminid, $this->adminid,array(
 			'cont' 	=> $this->jm->base64encode('测试内容:'.$this->now.''),
 			'type' 	=> 'user',
 			'optdt' => $this->now,
 			'messid' => 0
 		));
-		if(!$msg)$msg='测试发送失败';
+		$msg 	= '';
+		if(!contain($str,'ok'))$msg='<font color=red>服务端推送地址不能使用</font>';
+		if($msg=='')$msg='服务端推送地址可以使用';
 		echo $msg;
-	}
-	
-	
-	public function chushuaAjax()
-	{
-		$myext		= $this->getsession('adminallmenuid');
-		if(getconfig('systype')=='demo')exit('演示请勿操作');
-		if($myext!='-1'){
-			echo '只有管理员才可以用';
-		}else{
-			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,items,log,logintoken,meet,reads,sjoin,work,xhinfor,todo,flow_bill,goodss,goods,customer,custsale');
-			$alltabls 	= $this->db->getalltable();
-			foreach($tables as $tabs){
-				$_tabs 	= ''.PREFIX.''.$tabs.'';
-				if(in_array($_tabs, $alltabls)){
-					$sql1 = "delete from `$_tabs`";
-					$sql2 = "alter table `$_tabs` AUTO_INCREMENT=1";
-					$this->db->query($sql1, false);
-					$this->db->query($sql2, false);
-				}
-			}
-			echo 'ok';
-		}
-	}
-	
-	public function beifenAjax()
-	{
-		m('beifen')->start();
-		echo 'ok';
 	}
 }

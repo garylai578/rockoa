@@ -142,7 +142,7 @@ var im={
 		}
 		var url = d.url;
 		if(isempt(url))return;
-		var url = 'we_ying.html?num='+d.num+'';
+		var url = '?m=ying&d=we&num='+d.num+'';
 		$('#agentstotal_'+id+'').html('');
 		this.changestotl('agentstotal_',1);
 		js.location(url);
@@ -196,7 +196,7 @@ var im={
 		});
 	},
 	openguser:function(ty,id){
-		js.location('index.php?m=chat&d=we&type='+ty+'&uid='+id+'');
+		js.location('?m=chat&d=we&type='+ty+'&uid='+id+'');
 	},
 	loginout:function(){
 		js.wx.confirm('确定要退出系统吗？',function(lx){
@@ -206,7 +206,7 @@ var im={
 	loginouts:function(){
 		js.ajax('login','loginexit',false,function(){
 			js.wx.msgok('已成功退出',function(){
-				js.location('index.php?m=login&d=we');
+				js.location('?m=login&d=we');
 			},1);
 		});
 	},

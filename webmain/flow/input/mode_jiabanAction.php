@@ -7,7 +7,7 @@ class mode_jiabanClassAction extends inputAction{
 		$end	= $this->post('etime');
 		$date	= c('date', true);
 		$sj		= $date->datediff('H', $start, $end);
-		echo json_encode(array($sj, ''));
+		$this->returnjson(array($sj, ''));
 	}
 }	
 			

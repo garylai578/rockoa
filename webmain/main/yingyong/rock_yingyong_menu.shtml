@@ -3,7 +3,7 @@ $(document).ready(function(){
 	{params}
 	var mid = params.mid;
 	var a = $('#menu_{rand}').bootstable({
-		tablename:'im_menu',
+		tablename:'im_menu',modenum:'yymenu',
 		url:js.getajaxurl('menudata','{mode}','{dir}',{mid:mid}),
 		tree:true,celleditor:true,
 		columns:[{

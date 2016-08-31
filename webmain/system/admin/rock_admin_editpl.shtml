@@ -60,7 +60,7 @@ $(document).ready(function(){
 </script>
 
 <div align="left">
-<div>请根据Excel格式添加数据，用户名和姓名不能重复，并复制到下面文本框中，<a click="downss" href="javascript:;">下载Excel表格</a><br>也可以手动输入，多行代表多记录，整行字段用	分开，<a click="insrtss" href="javascript:;">插入间隔符</a></div>
+<div>请根据Excel格式添加数据，用户名和姓名不能重复，并复制到下面文本框中，<a click="downss" href="javascript:;">下载导入Excel表格格式</a><br>也可以手动输入，多行代表多记录，整行字段用	分开，<a click="insrtss" href="javascript:;">插入间隔符</a></div>
 <div><textarea style="height:250px;" onpaste="onpasteuserman(event)" id="maincont_{rand}" class="form-control"></textarea></div>
 <div id="showview_{rand}"></div>
 <div style="padding:10px 0px"><a click="yulan" href="javascript:;">[预览]</a>&nbsp; &nbsp; <button class="btn btn-success"click="saveadd" type="button">提交添加</button>&nbsp; <span id="msgview_{rand}"></span></div>

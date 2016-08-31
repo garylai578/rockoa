@@ -29,7 +29,7 @@ class flowClassAction extends Action
 		$farr	= $this->db->gettablefields('[Q]'.$tass.'');
 		$farrs[]= array('id'=>'','name'=>'————↓以下表('.$tass.')的字段————');
 		foreach($farr as $k=>$rs){
-			$farrs[]= array('id'=>$rs['name'],'name'=>''.$rs['explain'].'('.$rs['name'].')');
+			$farrs[]= array('id'=>$rs['name'],'name'=>'['.$rs['name'].']'.$rs['explain'].'');
 		}
 		
 		return array(

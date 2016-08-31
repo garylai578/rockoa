@@ -28,15 +28,16 @@ js.wx.alert=function(msg,fun,tit, cof1){
 js.wx.confirm=function(msg,fun,tit){
 	this.alert(msg,fun,tit, 1);
 }
-js.wx.prompt=function(tit,msg,fun){
-	var msg = '<div align="left">'+msg+'</div><div align="left"><input class="r-input" id="prompttxt" type="text"></div>';
+js.wx.prompt=function(tit,msg,fun,nr){
+	if(!nr)nr='';
+	var msg = '<div align="left">'+msg+'</div><div align="left"><input value="'+nr+'" class="r-input" id="prompttxt" type="text"></div>';
 	function func(lx){
 		if(lx=='yes')fun(get('prompttxt').value);
 	}
 	this.alert(msg,func,tit, 1);
 }
 js.apiurl = function(m,a,cans){
-	var url=''+apiurl+'api.php/'+m+'/'+a+'?adminid='+adminid+'';
+	var url=''+apiurl+'api.php?m='+m+'&a='+a+'&adminid='+adminid+'';
 	var cfrom='mweb';
 	url+='&device='+device+'';
 	url+='&cfrom='+cfrom+'';

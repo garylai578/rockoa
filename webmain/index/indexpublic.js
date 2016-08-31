@@ -7,7 +7,7 @@ js.getuser = function(cans){
 	s+='	<button type="button" class="btn btn-primary" id="ok_'+rand+'"><i class="icon-ok"></i>&nbsp;确定</button>';
 	s+='&nbsp; <button type="button" onclick="js.tanclose(\''+can.windowid+'\');" class="btn btn-default" ><i class="icon-remove"></i>&nbsp;取消</button>';
 	s+='</div>';
-	$('#'+can.windowid+'_body').html(s);
+	js.tanbody(can.windowid, can.title, 300, 400,{bbar:'none',html:s});
 	var ctype=can.type;
 	var a = $('#view_'+rand+'').bootstree({
 		storefields:'id,name',url:js.getajaxurl('deptuserdata','dept','system',{changetype:ctype}),
@@ -62,64 +62,3 @@ js.getuser = function(cans){
 		js.tanclose(can.windowid);
 	}).focus();
 }
-
-//读取客户
-js.getcustomer = function(cans){
-	var rand = js.getrand(),s='';
-	var can = js.apply({windowid:'getcustomer_'+rand+'',gtype:'unit',keys:'',title:'读取客户',idobj:false,nameobj:false,value:'',callback:function(){}}, cans);
-	js.tanbody(can.windowid, can.title, 700, 430,{btn:[{text:'确定',icons:'ok'}]});
-	s+='<div style="padding:10px"><div class="input-group" style="width:300px"><input id="keys_'+rand+'" value="'+can.keys+'" class="form-control" placeholder="编号/名称"><span class="input-group-btn"><button class="btn btn-default" id="search_'+rand+'" type="button"><i class="icon-search"></i></button></span></div></div>';
-	s+='<div style="padding-bottom:5px" id="view_'+rand+'"></div>';
-	$('#'+can.windowid+'_body').html(s);
-	var where = '';
-	if(!isempt(can.keys)){
-		where= "and `name` like '%"+can.keys+"%'";
-	}
-	var a = $('#view_'+rand+'').bootstable({
-		tablename:'customer',fanye:true,where:where,height:250,
-		url:js.getajaxurl('publicstore','guan','customer'),storebeforeaction:'readcustbefore',params:{gtype:can.gtype},
-		columns:[{
-			text:'名称',dataIndex:'name',sortable:true
-		},{
-			text:'编号',dataIndex:'num'	,sortable:true
-		},{
-			text:'等级',dataIndex:'grade',sortable:true
-		},{
-			text:'操作',dataIndex:'opt',renderer:function(v, d, oi){
-				return '<a oi="'+oi+'" tempa="read_'+rand+'" href="javascript:">读取</a>';
-			}
-		}],
-		load:function(){
-			$("a[tempa='read_"+rand+"']").click(function(){
-				var coi = parseInt($(this).attr('oi'));
-				backfun(a.getData()[coi]);
-			});
-		}
-	});
-	
-	var backfun = function(d){
-		var s1='',s2 = '';
-		if(d.id)s1=d.id;
-		if(d.name)s2=d.name;
-		if(can.idobj)can.idobj.value = s1;
-		if(can.nameobj){
-			can.nameobj.value = s2;
-			can.nameobj.focus();
-		}
-		can.callback(d);
-		js.tanclose(can.windowid);
-	}
-	
-	$('#'+can.windowid+'_btn0').click(function(){
-		backfun(a.changedata);
-	}).focus();
-	
-	$('#search_'+rand+'').click(function(){
-		var v = get('keys_'+rand+'').value;
-		var s= '';
-		if(v!='')s="and `name` like '%"+v+"%'";
-		a.search(s);
-	});
-}
-var statearr = '待执行,已完成,执行中'.split(',');
-var statecolor = 'blue,green,#ff6600'.split(',');

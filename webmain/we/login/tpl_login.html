@@ -62,7 +62,11 @@ function loginsuccess(d){
 	js.setoption('adminface', d.face);
 	js.setoption('adminame',d.name);
 	js.setoption('adminid',d.uid);
-	js.location('we_index.html');
+	if(js.request('ltype')=='1'){
+		history.back();
+	}else{
+		js.location('?m=index&d=we');
+	}
 }
 </script>
 </head>

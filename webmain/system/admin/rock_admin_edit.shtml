@@ -7,7 +7,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'admin',
 		url:js.getajaxurl('publicsave','admin','system'),
 		params:{int_filestype:'status,type,sort',add_otherfields:'adddt={now}',md5_filestype:'pass'},
-		submitfields:'status,type,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate',
+		submitfields:'status,type,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate,weixinid',
 		requiredfields:'name,user,ranking,deptname',
 		success:function(){
 			closenowtabs();
@@ -142,7 +142,11 @@ $(document).ready(function(){
 			<td class="tdinput"><input name="mobile" class="form-control"></td>
 		</tr>
 		
-	
+	<tr>
+			<td align="right">微信号：</td>
+			<td class="tdinput"><input name="weixinid" class="form-control"></td>
+			
+		</tr>
 		
 		
 		<tr>

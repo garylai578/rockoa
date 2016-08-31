@@ -23,13 +23,6 @@
 <script type="text/javascript" src="res/js/nwjs.js"></script>
 <script type="text/javascript" src="res/js/jquery-imgview.js"></script>
 <script type="text/javascript" src="res/mode/menu/jquery-rockmenu.js"></script>
-<script>
-function initbody(){
-	im.init();
-	$('#headercenter').perfectScrollbar();
-	$('#tabslist').perfectScrollbar();
-}
-</script>
 </head>
 
 <body style="background:#66A8E5 url(images/loginbg.jpg) top center no-repeat;overflow:hidden" oncontextmenu="return false" scroll="no" >
@@ -45,6 +38,7 @@ function initbody(){
 		<td ><img src="images/logos.png" height="40"></td>
 		<td width="100%"></td>
 		<td align="right"><input placeholder="搜索联系人/会话/应用" class="msousou"></td>
+		<td class="topbtn" title="添加打卡" onclick="im.adddaka()" align="center" style="font-size:20px"><i class="icon-map-marker"></i></td>
 		</tr></table>
 		</div>
 		<table cellspacing="0" cellpadding="0" width="100%">
@@ -84,7 +78,8 @@ function initbody(){
 			</div>
 			<div style="height:30px;overflow:hidden; background-color:#eeeeee">
 				<div class="toolsliao">
-					<a href="javascript:;" id="setbtns" title="设置"><img height="20" src="images/im/shezhi.png"></a>
+					<span id="setbtns" title="设置"><i class="icon-cog"></i></span>
+					<span id="addbtns" title="单据添加"><i class="icon-plus"></i></span>
 				</div>
 			</div>
 		</div>

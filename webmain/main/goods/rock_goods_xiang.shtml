@@ -30,7 +30,7 @@ $(document).ready(function(){
 			$(o1).rockdatepicker({initshow:true,view:'month',inputid:'dt'+lx+'_{rand}'});
 		},
 		daochu:function(){
-			
+			a.exceldown('物品出入库详情');
 		}
 	};
 	

@@ -89,11 +89,11 @@ function import($name, $inbo=true)
 /**
 	读取配置
 */
-function getconfig($key)
+function getconfig($key, $dev='')
 {
 	$a = array();
 	if(isset($GLOBALS['config']))$a = $GLOBALS['config'];
-	$s = '';
+	$s = $dev;
 	if(isset($a[$key]))$s = $a[$key];
 	return $s;
 }

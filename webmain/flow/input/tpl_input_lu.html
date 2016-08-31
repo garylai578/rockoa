@@ -14,7 +14,7 @@
 <script type="text/javascript" src="mode/kindeditor/kindeditor-min.js"></script>
 <script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
 <script type="text/javascript">
-var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=0,mid='<?=$da['mid']?>';
+var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=0,mid='<?=$da['mid']?>',data={};
 function initbodys(){};
 function geturlact(act){
 	var url=js.getajaxurl(act,'mode_'+moders.num+'|input','flow');
@@ -88,6 +88,7 @@ var c={
 		js.ajax(geturlact('save'),d,function(str){
 			c.backsave(js.decode(str));
 		}, 'post', function(){
+			get('AltS').disabled=false;
 			js.setmsg('error:内部错误,可F12调试');
 		});
 	},
@@ -120,6 +121,7 @@ var c={
 			var da = a.data;
 			js.setmsg();
 			var len = arr.length,i,fid,val,flx,ojb,j;
+			data=da.data;
 			for(i=0;i<len;i++){
 				fid=arr[i].fields;
 				flx=arr[i].fieldstype;
@@ -379,7 +381,7 @@ var c={
 	<div class="blank10"></div>
 	<div style="width:650px; position:relative">
 		<div class="status"><img id="statusimg" src="images/status1.png"></div>
-		<div onclick="location.reload()" style="padding-bottom:15px;font-size:24px"><?=$da['title']?></div>
+		<div style="padding-bottom:15px;font-size:24px"><?=$da['title']?></div>
 		<div class="tdcont" align="left">
 			<form name="myform">
 			<input name="id" type="hidden" value="<?=$da['mid']?>">

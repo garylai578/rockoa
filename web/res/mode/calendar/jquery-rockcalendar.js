@@ -8,8 +8,8 @@
 		var can = options;
 		var me  = this,
 			rand= js.getrand();
-		
-		
+		jierixiuxi=can.jierixiuxi;jierishangban=can.jierishangban;
+		this.onclick = can.onclick;
 		this.mid	= '';
 		this.week	= ['日','一','二','三','四','五','六'];
 		this.obj	= [];
@@ -23,6 +23,7 @@
 		this.w		= 0;
 		this.nobj	= null;
 		this.sterma	= {};
+		this.dayobj	= [];
 		this.feastarr	= {'0101':'元旦','0214':'情人节','正月初一':'春节','正月十五':'元宵节','七月初七':'七夕','五月初五':'端午节','0501':'劳动节','0601':'儿童节','1001':'国庆节','1111':'光棍日','八月十五':'中秋节','腊月三十':'除夕','腊月初八':'腊八','0801':'建军节','0701':'建党日','0401':'愚人节','0504':'五四青年节','0308':'妇女节','1225':'圣诞节','1224':'平安夜','1031':'万圣节','九月初九':'重阳节','0910':'教师节','0504':'青年节','0312':'植树节','0314':'白色情人节','0315':'消费者权益日','腊月廿三':'小年','0305':'学雷锋日','0422':'世界地球日','0920':'国际爱牙日','0918':'九一八事变','1213':'南京大屠杀日','1201':'世界艾滋病日','1203':'国际残疾人日','0815':'日本投降日'};
 		this.tsarr	= {'1144':'感恩节','0520':'母亲节','0630':'父亲节'};
 		
@@ -63,11 +64,11 @@
 			s+='<table width="100%" border="0" style="border-collapse:collapse" height="100%" cellspacing="0"  cellpadding="0">';
 			s+='<tr>';
 			for(var i=0;i<7;i++){
-				s+='<td class="thtext" align="center">'+this.week[i]+'</td>';
+				s+='<td class="thtext" style="background-color:'+can.headerbgcolor+'" align="center">'+this.week[i]+'</td>';
 			}
 			s+='</tr>';
 			var x	= 0,w = 100/7;
-			var h   = can.height-34;
+			var h   = can.height-26;
 			for(var j=1;j<=6;j++){
 				s+='<tr>';
 				for(var i=0;i<7;i++){
@@ -185,7 +186,7 @@
 				}
 				if(i1%7==0)col1='#ff6600';
 				if((i1-1)%7==0)col1='#ff6600';
-				this.obj[i1].innerHTML=this.getSpanAcc(j1,s2,col1,col2,day);
+				this.obj[i1].innerHTML=this.getSpanAcc(j1,s2,col1,col2,day, i1);
 				
 				//是不是休息的
 				var xiuval = '';
@@ -194,7 +195,7 @@
 				if(xiuval!=''){
 					var coac = '#419900';
 					if(xiuval=='班')coac='#888888';
-					var nest = '<span temp="showcaentt5eaee'+this.mid+'" style="left:1px;top:1px;background-color:'+coac+';filter:Alpha(Opacity=100);opacity:1;padding:3px;border-radius:3px;color:#ffffff;position:absolute">'+xiuval+'</span>';
+					var nest = '<span temp="showcaentt5eaee'+this.mid+'" style="font-size:12px;left:1px;top:1px;background-color:'+coac+';filter:Alpha(Opacity=100);opacity:1;padding:2px;color:#ffffff;position:absolute">'+xiuval+'</span>';
 					$(this.obj[i1]).append(nest);
 				}
 				oci++;
@@ -218,7 +219,7 @@
 				
 				var lun	= lunar.iconv(lY,lm,lx);
 				var s2	= lun[2];
-				this.obj[i].innerHTML=this.getSpanAcc(lx,s2,'#dddddd','#dddddd', day);	
+				this.obj[i].innerHTML=this.getSpanAcc(lx,s2,'#cccccc','#cccccc', day,i);	
 				this.obj[i].style.backgroundColor='';
 				
 				//是不是休息的
@@ -228,7 +229,7 @@
 				if(xiuval!=''){
 					var coac = '#419900';
 					if(xiuval=='班')coac='#888888';
-					var nest = '<span temp="showcaentt5eaee'+this.mid+'" style="left:1px;top:1px;background-color:'+coac+';filter:Alpha(Opacity=50);opacity:0.5;padding:3px;border-radius:3px;color:#ffffff;position:absolute">'+xiuval+'</span>';
+					var nest = '<span temp="showcaentt5eaee'+this.mid+'" style="font-size:12px;left:1px;top:1px;background-color:'+coac+';filter:Alpha(Opacity=50);opacity:0.5;padding:2px;color:#ffffff;position:absolute">'+xiuval+'</span>';
 					$(this.obj[i]).append(nest);
 				}
 				lx--;
@@ -244,7 +245,7 @@
 				var day	= ''+lY+'-'+this.sa(lm)+'-'+this.sa(lxu)+'';
 				var lun	= lunar.iconv(lY,lm,lxu);
 				var s2	= lun[2];
-				this.obj[i].innerHTML=this.getSpanAcc(lxu,s2,'#dddddd','#dddddd', day);	
+				this.obj[i].innerHTML=this.getSpanAcc(lxu,s2,'#cccccc','#cccccc', day,i);	
 				this.obj[i].style.backgroundColor='';
 				
 				//是不是休息的
@@ -254,7 +255,7 @@
 				if(xiuval!=''){
 					var coac = '#419900';
 					if(xiuval=='班')coac='#888888';
-					var nest = '<span temp="showcaentt5eaee'+this.mid+'" style="left:1px;top:1px;background-color:'+coac+';filter:Alpha(Opacity=50);opacity:0.5;padding:3px;border-radius:3px;color:#ffffff;position:absolute">'+xiuval+'</span>';
+					var nest = '<span temp="showcaentt5eaee'+this.mid+'" style="font-size:12px;position:absolute;left:1px;top:1px;background-color:'+coac+';filter:Alpha(Opacity=50);opacity:0.5;padding:2px;color:#ffffff;">'+xiuval+'</span>';
 					$(this.obj[i]).append(nest);
 				}
 			}
@@ -285,6 +286,7 @@
 			if(jie!=''){
 				jie	= jie.substr(1);
 			}else{jie='&nbsp;'}
+			this.onclick(gY,gm,d, day, lun, jie);
 		};
 
 		this.click=function(o1)
@@ -308,22 +310,24 @@
 			this.changetoday(dc);
 		};
 
-		this.getSpanAcc=function(s1,s2,col1,col2, day)
+		this.getSpanAcc=function(s1,s2,col1,col2, day, oi)
 		{
 			if(s2.indexOf('国际')==0 || s2.indexOf('世界')==0)col2='#419900';
 			var s = '<div><font color='+col1+'>'+s1+'</font><font style="font-size:11px" color='+col2+'>,'+s2+'</font></div>';
-			var sq 	= can.renderer(day, s, s1,s2,col1,col2, this);
+			var sq 	= can.renderer(day, s, s1,s2,col1,col2, oi,this);
 			if(sq)s = sq;
 				  s+= '<span style="display:none" dt="'+s1+'">'+s1+','+day+'</span>';
+			this.dayobj[oi]={day:day,d:s1}; 
 			return s;
 		};
-		
 		this.getFistdt	= function(){
-			var da	= $(this.obj[0]).find('span[dt]:eq(0)').html();
-				da 	= da.split(',');
-			return da[1];	
+			var d = this.dayobj[1];
+			return d.day;	
 		};
-		
+		this.getLastdt	= function(){
+			var d = this.dayobj[42];
+			return d.day;	
+		};
 		this.fanyear = function(oi)
 		{
 			this.Y=this.Y+oi;
@@ -368,7 +372,7 @@
 			var s	= '';
 			if(a[s1]){
 				var s3	= a[s1];
-				if(y<1949&&m==10&&d==1)s3='';//1949年之前不是国庆噢
+				if(y<1949&&m==10&&d==1)s3='';
 				if(s3)s+=','+s3+'';
 			}
 			if(a[s2]){
@@ -386,9 +390,18 @@
 		this.changemonth	= function(y1,m1)
 		{
 			this.Y = parseFloat(y1);
-			this.m = parseFloat(n1);
+			this.m = parseFloat(m1);
 			this.setcalend();
 			return false;
+		};
+		this.setbgcolor		= function(oi, col){
+			if(!col)col='';
+			this.obj[oi].style.backgroundColor=col;
+		};
+		this.setMonth		= function(mon)
+		{
+			var a = mon.split('-');
+			this.changemonth(a[0], a[1]);
 		}
 	}
 
@@ -396,7 +409,7 @@
 		var defaultVal = {
 			height:400,selbgcolor:'#D3FFF6',
 			fillot:true,renderer:function(){return ''},align:'left',valign:'top',
-			changemonth:function(){},boofan:true,
+			changemonth:function(){},boofan:true,onclick:function(){},jierixiuxi:'',jierishangban:'',headerbgcolor:'',
 			changemonthbefore:function(){}
 		};
 		var can		= $.extend({}, defaultVal, options);

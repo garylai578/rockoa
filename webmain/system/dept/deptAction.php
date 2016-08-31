@@ -26,6 +26,14 @@ class deptClassAction extends Action
 		}
 	}
 	
+	public function publicaftersave($table, $cans, $id)
+	{
+		$name 	= $cans['name'];
+		$db 	= m('admin');
+		$db->update("deptname='$name'", "`deptid`=$id");
+		$db->updateinfo();
+	}
+	
 	public function deptuserdataAjax()
 	{
 		$type 	= $this->request('changetype');

@@ -127,7 +127,9 @@ function okla(){
 		sid=sid.substr(1);
 		sna=sna.substr(1);
 	}
-	try{parent.js.changeok(sna,sid, js.request('btype'), js.request('params'));}catch(e){}
+	var btype = js.request('btype');
+	try{parent.js.changeok(sna,sid, btype, js.request('params'));}catch(e){}
+	try{if(btype!='')parent[btype](sna,sid, btype, js.request('params'));}catch(e){}
 	cancel();
 }
 function shuaxinda(){

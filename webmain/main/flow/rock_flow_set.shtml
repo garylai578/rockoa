@@ -2,13 +2,13 @@
 $(document).ready(function(){
 	var a = $('#view_{rand}').bootstable({
 		tablename:'flow_set',dir:'asc',sort:'sort',celleditor:true,
-		url:publicstore('{mode}','{dir}'),
+		url:publicstore('{mode}','{dir}'),fanye:true,pageSize:10,
 		columns:[{
 			text:'类型',dataIndex:'type',sortable:true,editor:true
 		},{
 			text:'编号',dataIndex:'num'
 		},{
-			text:'模块名',dataIndex:'name'
+			text:'模块名',dataIndex:'name',editor:true
 		},{
 			text:'对应表',dataIndex:'table'
 		},{
@@ -20,7 +20,11 @@ $(document).ready(function(){
 		},{
 			text:'PC端提醒',dataIndex:'pctx',type:'checkbox',editor:true,sortable:true
 		},{
-			text:'移动端提醒',dataIndex:'mctx',type:'checkbox',editor:true,sortable:true
+			text:'APP提醒',dataIndex:'mctx',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'微信提醒',dataIndex:'wxtx',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'录入',dataIndex:'islu',type:'checkbox',editor:true,sortable:true
 		},{
 			text:'编号规则',dataIndex:'sericnum'
 		},{

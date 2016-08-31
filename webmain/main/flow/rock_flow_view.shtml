@@ -44,8 +44,7 @@ $(document).ready(function(){
 		},
 		view:function(){
 			var d=a.changedata;
-			var url='task.php?a=p&modenum='+d.modenum+'&mid='+d.id+'';
-			js.open(url, 750,500);
+			openxiang(d.modenum,d.id);
 		}
 	};
 	$('#mode_{rand}').change(c.changemode);

@@ -1,0 +1,32 @@
+<script >
+$(document).ready(function(){
+	
+	var c={
+		showdata:function(a){
+			var s='<table  border="0" cellspacing="0" cellpadding="0"><tr valign="top">';
+			var j=0,lx,d;
+			for(lx in a){
+				d=a[lx];
+				j++;
+				s+='<td>';
+				s+='<div align="left" style="margin:20px;width:230px" class="list-group">';
+				s+='<div class="list-group-item  list-group-item-success"><i class="icon-plus"></i> '+lx+'</div>';
+				for(var i=0;i<d.length;i++){
+					s+='<a onclick="openinput(\''+d[i].name+'\',\''+d[i].num+'\',0)" class="list-group-item">'+d[i].name+'</a>';
+				}
+				s+='</div>';
+				s+='</td>';
+				if(j%3==0)s+='</tr><tr valign="top">';
+			}
+			s+='</tr></table>';
+			$('#view_{rand}').html(s);
+		}
+	}
+	
+	js.ajax(js.getajaxurl('getmodearr','{mode}','{dir}'),{},function(a){
+		c.showdata(a.rows);
+	},'get,json');
+});
+</script>
+
+<div id="view_{rand}"></div>

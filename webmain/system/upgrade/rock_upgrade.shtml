@@ -1,7 +1,7 @@
 <script >
 $(document).ready(function(){
 	var a = $('#view_{rand}').bootstable({
-		tablename:'admin',url:js.getajaxurl('data','{mode}','{dir}'),
+		tablename:'chargems',url:js.getajaxurl('data','{mode}','{dir}'),
 		columns:[{
 			text:'名称',dataIndex:'name'
 		},{
@@ -9,29 +9,63 @@ $(document).ready(function(){
 		},{
 			text:'更新时间',dataIndex:'updatedt'
 		},{
+			text:'价格',dataIndex:'price',renderer:function(v){
+				var s='<font color=#ff6600>免费</font>';
+				if(v>0)s=v+'元';
+				return s;
+			}
+		},{
 			text:'详情',dataIndex:'view'
 		},{
-			text:'操作',dataIndex:'opt',renderer:function(v){
-				return '<font color=green>已安装</font> ';
-				return '<button class="btn btn-danger btn-sm" type="button">升级</button> ';
-				//return '<button class="btn btn-info btn-sm"  type="button">安装</button> ';
+			text:'操作',dataIndex:'opt',renderer:function(v,d){
+				var s='';
+				if(v==1)s='<font color=green>已安装</font> ';
+				if(v==2)s='<button onclick="upsho{rand}(2,'+d.id+',\''+d.key+'\')" class="btn btn-danger btn-sm" type="button">升级</button>';
+				if(v==0)s='<button onclick="upsho{rand}(0,'+d.id+',\''+d.key+'\')" class="btn btn-info btn-sm"  type="button">安装</button>';
+				if(v==0||v==2)$('#shiw_{rand}').html('有系统模块需要升级/安装！');
+				return '<span id="msg'+d.id+'_{rand}">'+s+'</span>';
 			}
 		}],
-		itemclick:function(){
-			btn(false);
+		beforeload:function(){
+			$('#shiw_{rand}').html('');
 		}
 	});
 	
 	var c={
 		reloads:function(){
 			a.reload();
+		},
+		upsho:function(lx,id,key){
+			var msgid='msg'+id+'_{rand}',lxs='安装';
+			if(lx==2)lxs='升级';
+			js.setmsg(''+lxs+'中...','', msgid);
+			js.ajax(js.getajaxurl('shengjian','{mode}','{dir}'),{id:id,key:key},function(s){
+				if(s=='ok'){
+					js.setmsg(''+lxs+'成功','green', msgid);
+					a.reload();
+				}else{
+					js.setmsg(s,'red', msgid);
+				}
+			},'post');
+		},
+		upshos:function(lx,id,kes){
+			js.prompt('模块安装','请输入安装key',function(lxbd,msg){
+				if(lxbd=='yes'){
+					if(lx==2&&msg)msg=jm.uncrypt(msg);
+					c.upsho(lx,id,msg);
+				}
+			},kes);
 		}
 	};
+	upsho{rand}=function(lx,id,kes){
+		c.upshos(lx,id,kes);
+	}
 	js.initbtn(c);
 });
 </script>
 <div>
 	<button class="btn btn-default" click="reloads"  type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp; 
+	<font color="red" id="shiw_{rand}"></font>
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>

@@ -333,116 +333,107 @@ class inputAction extends ActionNot
 			$str='<a href="javascript:;" onclick="c.addrow(this,'.$xu0.')">＋新增</a>';
 		}
 		if($str!='')return $str;
-		if(isset($this->fieldarr[$fid])){
-			$a 		= $this->fieldarr[$fid];
-			$fname 	= $fid.$leox;
-			$type 	= $a['fieldstype'];
-			$data 	= $a['data'];
-			$val 	= $a['dev'];
-			$attr 	= $a['attr'];
-			$fnams 	= $a['name'];
-			if($a['isbt']==1)$fnams='*'.$fnams.'';
-			if($this->isempt($val))$val='';
-			if($this->isempt($attr))$attr='';
-			if($ism==1)$attr.=' placeholder="'.$fnams.'"';
-			if($val!='')$val = str_replace(array('{now}','{date}','{admin}','{adminid}','{deptname}','{ranking}'),array($this->now,$this->date,$this->adminname,$this->adminid, $this->urs['deptname'], $this->urs['ranking']),$val);
-			
-			$str 	= '<input class="inputs" value="'.$val.'" '.$attr.' name="'.$fname.'">';
-			if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
-			
-			if($type=='fixed'||$type=='hidden'){
-				$str = '<input value="'.$val.'" '.$attr.' type="hidden" name="'.$fname.'">';
-			}
-			if($type=='textarea'){
-				$str = '<textarea class="textarea" style="height:100px" '.$attr.' name="'.$fname.'">'.$val.'</textarea>';
-				if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
-			}
-			if($type=='rockcombo' || $type=='select'){
-				$str ='<select style="width:99%" '.$attr.' name="'.$fname.'" class="inputs">';
-				$str.='<option value="">-请选择'.$a['name'].'-</option>';
-				$datanum = $data;
-				if(!$this->isempt($datanum)){
-					$fopt	= array();
-					if(method_exists($objs, $datanum)){
-						$fopt	= $objs->$datanum($fid,$this->mid);
-						foreach($fopt as $k=>$rs){
-							$sel = ($rs['value']==$val)?'selected':'';
-							$str.='<option value="'.$rs['value'].'" '.$sel.'>'.$rs['name'].'</option>';
-						}
-						$fopt = true;
+		if(!isset($this->fieldarr[$fid]))return '';
+		
+		$isasm 	= 1;
+		$a 		= $this->fieldarr[$fid];
+		$fname 	= $fid.$leox;
+		$type 	= $a['fieldstype'];
+		$data 	= $a['data'];
+		$val 	= $a['dev'];
+		$attr 	= $a['attr'];
+		$fnams 	= $a['name'];
+		if($a['isbt']==1)$fnams='*'.$fnams.'';
+		if($this->isempt($val))$val='';
+		if($this->isempt($attr))$attr='';
+		//if($ism==1)$attr.=' placeholder="'.$fnams.'"';
+		if($val!='')$val = str_replace(array('{now}','{date}','{admin}','{adminid}','{deptname}','{ranking}'),array($this->now,$this->date,$this->adminname,$this->adminid, $this->urs['deptname'], $this->urs['ranking']),$val);
+		
+		$str 	= '<input class="inputs" value="'.$val.'" '.$attr.' name="'.$fname.'">';
+		
+		
+		if($type=='fixed'||$type=='hidden'){
+			$str  = '<input value="'.$val.'" '.$attr.' type="hidden" name="'.$fname.'">';
+			$isasm=0;
+		}
+		if($type=='textarea'){
+			$str = '<textarea class="textarea" style="height:100px" '.$attr.' name="'.$fname.'">'.$val.'</textarea>';
+		}
+		if($type=='rockcombo' || $type=='select' || $type=='checkboxall'){
+			$str ='<select style="width:99%" '.$attr.' name="'.$fname.'" class="inputs">';
+			$str.='<option value="">-请选择'.$a['name'].'-</option>';
+			$str1= '';
+			$datanum = $data;
+			if(!$this->isempt($datanum)){
+				$fopt	= array();
+				if(method_exists($objs, $datanum)){
+					$fopt	= $objs->$datanum($fid,$this->mid);
+					foreach($fopt as $k=>$rs){
+						$sel = ($rs['value']==$val)?'selected':'';
+						$str.='<option value="'.$rs['value'].'" '.$sel.'>'.$rs['name'].'</option>';
+						$str1.='<label><input name="'.$fname.'[]" value="'.$rs['value'].'" type="checkbox">'.$rs['name'].'</label>&nbsp;&nbsp;';
 					}
-					if($type=='rockcombo' && !$fopt){
-						$_ars= explode(',', $datanum);
-						$fopt= $this->option->getmnum($_ars[0]);
-						$fvad= 'name';
-						if(isset($_ars[1])&&($_ars[1]=='value'||$_ars[1]=='id'||$_ars[1]=='num'))$fvad=$_ars[1];
-						foreach($fopt as $k=>$rs){
-							$cb  = $rs[$fvad];
-							$sel = ($cb==$val)?'selected':'';
-							$str.='<option value="'.$cb.'" '.$sel.'>'.$rs['name'].'</option>';
-						}
-					}
-					if($type=='select' && !$fopt){
-						$fopt= c('array')->strtoarray($datanum);
-						foreach($fopt as $k=>$rs){
-							$sel = ($rs[0]==$val)?'selected':'';
-							$str.='<option value="'.$rs[0].'" '.$sel.'>'.$rs[1].'</option>';
-						}
-					}
+					$fopt = true;
 				}
-				$str.='</select>';
-				
-				if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
-			}
-			if($type=='checkboxall'){
-				if(!$this->isempt($data)){
-					$str = '';
-					$_ars= explode(',', $data);
+				if(($type=='rockcombo' ||$type=='checkboxall') && !$fopt){
+					$_ars= explode(',', $datanum);
 					$fopt= $this->option->getmnum($_ars[0]);
 					$fvad= 'name';
 					if(isset($_ars[1])&&($_ars[1]=='value'||$_ars[1]=='id'||$_ars[1]=='num'))$fvad=$_ars[1];
 					foreach($fopt as $k=>$rs){
 						$cb  = $rs[$fvad];
-						$str.='<label><input name="'.$fname.'[]" value="'.$cb.'" type="checkbox"> '.$rs['name'].'</label>&nbsp; &nbsp; ';
+						$sel = ($cb==$val)?'selected':'';
+						$str.='<option value="'.$cb.'" '.$sel.'>'.$rs['name'].'</option>';
+						$str1.='<label><input name="'.$fname.'[]" value="'.$cb.'" type="checkbox">'.$rs['name'].'</label>&nbsp;&nbsp;';
+					}
+				}
+				if(($type=='select' ||$type=='checkboxall') && !$fopt){
+					$fopt= c('array')->strtoarray($datanum);
+					foreach($fopt as $k=>$rs){
+						$sel = ($rs[0]==$val)?'selected':'';
+						$str.='<option value="'.$rs[0].'" '.$sel.'>'.$rs[1].'</option>';
+						$str1.='<label><input name="'.$fname.'[]" value="'.$rs[0].'" type="checkbox">'.$rs[1].'</label>&nbsp;&nbsp;';
 					}
 				}
 			}
-			
-			if($type=='datetime'||$type=='date'||$type=='time'){
-				$str = '<input value="'.$val.'" '.$attr.' class="inputs datesss" inputtype="'.$type.'" readonly name="'.$fname.'">';
-				if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
-			}
-			if($type=='number'||$type=='xuhao'){
-				$str = '<input class="inputs" '.$attr.' value="'.$val.'" type="number" onfocus="js.focusval=this.value" onblur="js.number(this)" name="'.$fname.'">';
-				if($type=='xuhao')$str.='<input value="0" type="hidden" name="'.$a['fieldss'].$leox.'">';
-				
-				if($ism==1 && $type=='number')$str = '<div class="divinput">'.$str.'</div>';
-			}
-			if($type=='changeusercheck'||$type=='changeuser'||$type=='changedept'||$type=='changedeptusercheck'){
-				
-				$str = '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:98%" id="change'.$fname.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" id="change'.$fname.'_id" type="hidden"></td>';
-				$str .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="c.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="c.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
-				
-				if($ism==1)$str = '<div style="background:white;padding:10px 0px 10px 10px">'.$str.'</div>';
-			}
-			if($type=='htmlediter'){
-				$str = '<textarea class="textarea" style="height:130px" '.$attr.' name="'.$fname.'">'.$val.'</textarea>';
-				if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
-			}
-			if($type=='checkbox'){
-				$chk = '';
-				if($val=='1'||$val=='true')$chk='checked';
-				$str = '<input name="'.$fname.'" '.$chk.' '.$attr.' type="checkbox" value="1"> ';
-				if($ism==1)$str = '<div class="divinput">'.$str.'</div>';
-			}
-			//自定义
-			if($type=='auto'){
-				$datanum = $data;
-				if(!$this->isempt($datanum)){
-					if(method_exists($objs, $datanum)){
-						$str = $objs->$datanum($fid, $this->mid);
-					}
+			$str.='</select>';
+			if($type=='checkboxall')$str = $str1;
+		}
+		
+		if($type=='datetime'||$type=='date'||$type=='time'){
+			$str = '<input value="'.$val.'" '.$attr.' class="inputs datesss" inputtype="'.$type.'" readonly name="'.$fname.'">';
+		}
+		if($type=='number'||$type=='xuhao'){
+			$str = '<input class="inputs" '.$attr.' value="'.$val.'" type="number" onfocus="js.focusval=this.value" onblur="js.number(this)" name="'.$fname.'">';
+			if($type=='xuhao')$str.='<input value="0" type="hidden" name="'.$a['fieldss'].$leox.'">';
+		}
+		if($type=='changeusercheck'||$type=='changeuser'||$type=='changedept'||$type=='changedeptusercheck'){
+			$str = '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:98%" id="change'.$fname.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" id="change'.$fname.'_id" type="hidden"></td>';
+			$str .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="c.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="c.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
+		}
+		if($type=='htmlediter'){
+			$str = '<textarea class="textarea" style="height:130px" '.$attr.' name="'.$fname.'">'.$val.'</textarea>';
+		}
+		if($type=='checkbox'){
+			$chk = '';
+			if($val=='1'||$val=='true')$chk='checked';
+			$str = '<input name="'.$fname.'" '.$chk.' '.$attr.' type="checkbox" value="1"> ';
+		}
+		if($type=='auto'){
+			$datanum = $data;
+			if(!$this->isempt($datanum)){
+				if(method_exists($objs, $datanum)){
+					$str = $objs->$datanum($fid, $this->mid);
 				}
+			}
+		}
+		
+		if($isasm==1){
+			$lx  = 'span';if($ism==1)$lx='div';
+			$str = '<'.$lx.' id="div_'.$fname.'" class="divinput">'.$str.'</'.$lx.'>';
+			if($ism==1){
+				$fnams = str_replace('*','<font color=red>*</font>', $fnams);
+				$str = '<tr><td class="lurim" nowrap>'.$fnams.':</td><td width="90%">'.$str.'</td></tr>';
 			}
 		}
 		return $str;

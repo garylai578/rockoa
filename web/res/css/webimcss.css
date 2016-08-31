@@ -1,4 +1,4 @@
-*{font-family:微软雅黑,Verdana, Geneva, sans-serif;}
+*{font-family:微软雅黑,Verdana, Geneva, sans-serif;list-style-type:none;padding:0px;margin:0px;word-wrap:break-word;word-break:break-all;}
 body{color:#000000;margin:0px;border:0;font-size:14px}
 a,.cursor{cursor:pointer;}
 p{text-indent:24pt; margin:5px 0px}
@@ -92,8 +92,8 @@ input.checkbox,input.radio{ border:none;padding:0;margin-right:5px; width:16px; 
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#666666', centerColorstr='#585858',endColorstr='#454545', GradientType='0'); /* IE8以下*/
 }
 
-.main{width:900px;min-width:850px;text-align:left;border-radius:0px; background:white;box-shadow:0px 0px 10px rgba(0,0,0,0.3);margin-top:3%;height:550px;min-height:500px;overflow:hidden;position:relative;z-index:0;}
-.mainnw{width:100%;height:100%;text-align:left;border-radius:0px; background:white;box-shadow:0px 0px 10px rgba(0,0,0,0.3);overflow:hidden;position:relative;z-index:0}
+.main{width:950px;min-width:850px;text-align:left;border-radius:0px; background:white;box-shadow:0px 0px 5px rgba(0,0,0,0.3);margin-top:3%;height:550px;min-height:500px;overflow:hidden;position:relative;z-index:0;}
+.mainnw{width:100%;height:100%;text-align:left;border-radius:0px; background:white;box-shadow:0px 0px 5px rgba(0,0,0,0.3);overflow:hidden;position:relative;z-index:0;min-height:500px;min-width:850px}
 .header{height:50px;
 -moz-user-select: none;
 -o-user-select:none;
@@ -107,7 +107,7 @@ user-select:none;}
 #showdept_0 font{color:#888888;font-size:12px}
 
 @keyframes mymove{0%{width:140px;}100%{width:170px;}} 
-.msousou{ background-color:#08a182;height:26px;border:0px;border-radius:15px;margin-right:15px;padding:0px 20px;color:#eeeeee;width:140px;}
+.msousou{ background-color:#08a182;height:26px;border:0px;border-radius:15px;padding:0px 20px;color:#eeeeee;width:140px;margin-right:5px}
 .msousou::-webkit-input-placeholder{color:#dddddd}
 .msousou::-moz-input-placeholder{color:#dddddd}
 .msousou:focus{background-color:white;color:#333333;-webkit-animation:mymove 0.3s;-moz-animation:mymove 0.3s;width:170px;}
@@ -162,9 +162,10 @@ user-select:none;}
 .content{width:100%;height:100%;border:none;overflow:auto;padding:0px;font-size:14px;}
 .content:focus{border:0px #dddddd solid}
 
-.toolsliao{height:24px;overflow:hidden;margin-top:3px}
-.toolsliao a{margin:0px 4px;height:20px;border:1px #eeeeee solid; background-color:eeeeee;display:block;float:left;padding:1px;font-size:12px;color:#555555}
-.toolsliao a:hover{border:1px #cccccc solid; background-color:#ffffff;border-radius:2px;box-shadow:0px 0px 5px rgba(0,0,0,0.3);}
+.toolsliao{height:30px;overflow:hidden;}
+.toolsliao span,.toolsliao a{height:30px; background-color:eeeeee;display:block;float:left;width:30px;font-size:16px;color:#aaaaaa;cursor:pointer;text-align:center;line-height:28px}
+.toolsliao a{padding-top:5px}
+.toolsliao span:hover,.toolsliao a:hover{background-color:rgba(0,0,0,0.1);color:#555555}
 
 
 .progresscls{height:12px;overflow:hidden;line-height:12px;border:0px #eeeeee solid; position:relative;;width:99%;background-color:#f1f1f1;margin-top:3px}
@@ -191,9 +192,9 @@ user-select:none;}
   display: none;
 }
 
-.jquery-calendar .tdtext{border:1px #eeeeee solid;padding:3px}
+.jquery-calendar .tdtext{border:1px #eeeeee solid;padding:3px;position:relative}
 .jquery-calendar .tdtext:hover{background-color:#f5f5f5}
-.jquery-calendar .thtext{border:1px #eeeeee solid; color:#26AA05; background-color:#EBF7D9;height:34px}
+.jquery-calendar .thtext{border:1px #eeeeee solid; color:#26AA05; background-color:#EBF7D9;height:26px}
 
 
 
@@ -221,3 +222,12 @@ user-select:none;}
 .agenttds:hover{background:#f1f1f1}
 .agenttd span{position:absolute;top:3px;left:3px;}
 .agenttd font{position:absolute;right:0px;bottom:0px;font-size:12px;color:#cccccc;height:10px;width:10px;display:block; background:url(../../images/rboot.png)}
+
+
+.wordlist td{padding:5px;border-bottom:1px #eeeeee solid;cursor:pointer;}
+.wordlist tr:hover{ background-color:#E8F2EF}
+.workheader span{float:left;display:block;padding:0px 10px; border-right:1px #dddddd solid;cursor:pointer;}
+.workheader span:hover{background:#e1e1e1}
+
+.topbtn{cursor:pointer;padding:0px 10px}
+.topbtn:hover{background-color:rgba(0,0,0,0.2);}

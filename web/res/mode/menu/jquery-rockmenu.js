@@ -87,6 +87,12 @@ var rockmenuobj	= null;
 			if(w)this.setWidth(w);
 			this._reshewhere(l,t);
 		};
+		this.offset=function(l,t){
+			this._reshewhere(l,t);
+		};
+		this.getHeight = function(){
+			return get('rockmenu_'+rand+'').scrollHeight;
+		};
 		this._reshewhere=function(l,t){
 			var oac	= this.mdivobj;
 			var jg	= (l+oac.width()+5 - winWb()),jg1=0;	

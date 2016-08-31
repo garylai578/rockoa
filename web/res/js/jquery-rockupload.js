@@ -13,11 +13,9 @@
 		var opts=js.apply({inputfile:'',uptype:'*',maxsize:50,onchange:function(){},onprogress:function(){},onsuccess:function(){},onerror:function(){},onabort:function(){}},opts);
 		this._init=function(){
 			for(var a in opts)this[a]=opts[a];
-			this.uploadarr = [];
-			if(!document.getElementById(this.inputfile)){
-				var s='<form style="display:none;height:0px;width:0px" name="form_'+this.inputfile+'"><input type="file" id="'+this.inputfile+'"></form>';
-				$('body').append(s);
-			}
+			$('#'+this.inputfile+'').parent().remove();
+			var s='<form style="display:none;height:0px;width:0px" name="form_'+this.inputfile+'"><input type="file" id="'+this.inputfile+'"></form>';
+			$('body').append(s);
 			$('#'+this.inputfile+'').change(function(){
 				me._change(this);
 			});
@@ -28,7 +26,7 @@
 		this.click=function(lx){
 			if(this.upbool)return;
 			if(lx)this.uptype=lx;
-			document.getElementById(this.inputfile).click();
+			get(this.inputfile).click();
 		};
 		this._change=function(o1){
 			if(!o1.files){
@@ -114,9 +112,8 @@
 	}
 	
 	
-	$.rockupload	  = function(options){
-		var cls = new rockupload(options,false);
-		cls.init();
+	$.rockupload = function(options){
+		var cls  = new rockupload(options,false);
 		return cls;
 	}
 	

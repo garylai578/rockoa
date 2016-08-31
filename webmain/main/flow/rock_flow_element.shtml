@@ -35,7 +35,10 @@ $(document).ready(function(){
 		load:function(a){
 			if(!bools){
 				js.setselectdata(get('mode_{rand}'),a.flowarr,'id');
-				if(modeid>0)get('mode_{rand}').value=modeid;
+				if(modeid>0){
+					get('mode_{rand}').value=modeid;
+					btnsss(false);
+				}
 			}
 			bools=true;
 			if(!a.moders)return;
@@ -48,7 +51,12 @@ $(document).ready(function(){
 	function btn(bo, d){
 		get('edit_{rand}').disabled = bo;
 		get('del_{rand}').disabled = bo;
-		
+	}
+	function btnsss(bo){
+		get('add_{rand}').disabled = bo;
+		get('lu_{rand}').disabled = bo;
+		get('lum_{rand}').disabled = bo;
+		get('luc_{rand}').disabled = bo;
 	}
 	var c = {
 		del:function(){
@@ -72,10 +80,7 @@ $(document).ready(function(){
 			modeid=this.value;
 			a.setparams({mid:modeid},true);
 			var bo = (modeid==0);
-			get('add_{rand}').disabled = bo;
-			get('lu_{rand}').disabled = bo;
-			get('lum_{rand}').disabled = bo;
-			get('luc_{rand}').disabled = bo;
+			btnsss(bo);
 		},
 		lulu:function(o1,lx){
 			if(lx==1){

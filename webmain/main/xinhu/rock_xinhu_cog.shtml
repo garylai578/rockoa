@@ -25,6 +25,12 @@ $(document).ready(function(){
 			$.get(js.getajaxurl('testsend','{mode}','{dir}'), function(s){
 				js.msg('success',s);
 			});
+		},
+		testsss:function(){
+			var url= get('host_{rand}').value.replace('ws','http');
+			if(url=='')return;
+			js.open(url,500,300);
+			js.confirm('如出现《<b>400 Bad Request</b>》说明成功，否则失败，打不开地址也是失败！');
 		}
 	};
 	
@@ -60,12 +66,16 @@ $(document).ready(function(){
 		
 		<tr>
 			<td></td>
-			<td class="tdinput"><font color="#888888">不知道地址？请先安装并运行服务端，</font><a href="http://xinhu.pw/view_server.html" target="_blank">[帮助?]</a></td>
+			<td class="tdinput"><font color="#888888">不知道地址？请先安装并运行服务端，</font><a href="http://xh829.com/view_server.html" target="_blank">[帮助?]</a></td>
 		</tr>
 		
 		<tr>
 			<td  align="right"></td>
-			<td style="padding:15px 0px" colspan="3" align="left"><button click="save" class="btn btn-success" type="button"><i class="icon-save"></i>&nbsp;保存</button>&nbsp; <button click="testss" class="btn btn-primary" type="button">测试发送</button>&nbsp; <span id="msgview_{rand}"></span>
+			<td style="padding:15px 0px" colspan="3" align="left"
+			><button click="save" class="btn btn-success" type="button"><i class="icon-save"></i>&nbsp;保存</button>&nbsp; 
+			<button click="testsss" class="btn btn-primary" type="button">测试通信地址</button>&nbsp; 
+			<button click="testss" class="btn btn-primary" type="button">测试推送地址</button>&nbsp; 
+			<span id="msgview_{rand}"></span>
 		</td>
 		</tr>
 		

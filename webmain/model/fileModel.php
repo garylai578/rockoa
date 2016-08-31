@@ -16,7 +16,7 @@ class fileClassModel extends Model
 	public function addfile($fileid, $mtype, $mid)
 	{
 		if(!$this->isempt($fileid)){
-			$this->update("`mtype`='$mtype',`mid`='$mid'", "`id` in($fileid)");
+			$this->update("`mtype`='$mtype',`mid`='$mid'", "`id` in($fileid) and `mid`=0");
 		}
 	}
 	

@@ -21,7 +21,7 @@ function initbody(){
 	resize();
 	$(window).resize(resize);
 	js.splittime=0;
-	var us=js.request('adminuser',js.getoption('adminuser')),murl=js.request('murl');
+	var us=js.request('user',js.getoption('adminuser')),murl=js.request('murl');
 	temp_token=js.request('token');
 	if(murl){
 		murl=jm.base64decode(murl);
@@ -89,22 +89,13 @@ function loginsuccess(a){
 	}
 }
 function loginset(){
-	js.tanbody('closea','设置',250,150,{
-		html:'<div style="margin:15px"><div>您系统地址</div><div><input id="apiurlstr" class="inputs" value="'+apiurl+'" style="width:98%"></div></div>',btn:[{
-			text:'确定'
-		}]
-	});
-	$('#closea_btn0').click(function(){
-		var url=get('apiurlstr').value;
-		if(url){
-			if(url.substr(url.length-1,1)!='/')url=url+'/';
-		}
-		get('apiurlstr').value=url;
+	js.prompt('设置', '您系统地址', function(lx,url){
+		if(lx!='yes'||!url)return;
+		if(url.substr(url.length-1,1)!='/')url=url+'/';
 		js.setoption('apiurl', url);
-		if(url)apiurl=url;
+		apiurl=url;
 		js.msg('success','设置成功');
-		js.tanclose('closea');
-	});	
+	}, apiurl);
 }
 </script>
 </head>
@@ -132,7 +123,7 @@ function loginset(){
 			
 			<div class="blank10"></div>
 			<div>
-				<span style="color:#888888;font-size:12px">&nbsp;没有帐号?请联系管理员 &nbsp;<a onclick="return loginset()" href="javascript:">[设置]</a> &nbsp;查看<a target="_blank" href="http://xinhu.pw/help.html">[帮助?]</a></span>
+				<span style="color:#888888;font-size:12px">&nbsp;没有帐号?请联系管理员 &nbsp;<a onclick="return loginset()" href="javascript:">[设置]</a> &nbsp;查看<a target="_blank" href="http://xh829.com/help.html">[帮助?]</a></span>
 			</div>
 			
 			<div class="blank20"></div>

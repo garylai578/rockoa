@@ -5,7 +5,6 @@
 	* 版  本： V2.0													*
 	* 开发者：雨中磐石工作室										*
 	* 邮  箱： qqqq2900@126.com										*
-	* 网  址： http://www.xh829.com/								*
 	* 说  明: 基础操作类方法										*
 	* 备  注: 未经允许不得商业出售，代码欢迎参考纠正				*
 	*****************************************************************
@@ -39,6 +38,9 @@ final class rockClass
 		$this->now		= $this->now();
 		$this->date		= date('Y-m-d');
 		$this->lvlaras  = explode(',','select ,alter table,delete ,drop ,update ,insert into,load_file,outfile');
+		$this->lvlaraa  = explode(',','select,alter,delete,drop,update,insert,from,time_so_sec,convert,from_unixtime,unix_timestamp,curtime,time_format,union,concat,information_schema,group_concat,length,load_file,outfile,where,database,system_user,current_user,user(),found_rows,declare,master,exec');
+		$this->lvlarab	= array();
+		foreach($this->lvlaraa as $_i)$this->lvlarab[]='';
 	}
 	
 	public function initRock()
@@ -47,6 +49,15 @@ final class rockClass
 		$this->adminid	= (int)$this->session('adminid',0);
 		$this->adminname= $this->session('adminname');
 		$this->adminuser= $this->session('adminuser');
+	}
+	
+	public function iconvsql($str,$lx=0)
+	{
+		$str = strtolower($str);
+		$str = str_replace($this->lvlaraa,$this->lvlarab,$str);
+		$str = str_replace("\n",'', $str);
+		if($lx==1)$str = str_replace(array(' ',' ','	'),array('','',''),$str);
+		return $str;
 	}
 	
 	private function unstr($str)
@@ -103,7 +114,6 @@ final class rockClass
 		foreach($this->lvlaras as $v1)if($this->contain($str, $v1)){
 			$this->debug(''.$na.'《'.$s.'》error:包含非法字符《'.$v1.'》','params');
 			$s = str_replace($v1,'', $str);
-			//exit(''.$na.' invalid params');
 		}
 		return $s;
 	}
@@ -472,7 +482,9 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	public function debugs($str, $lxs='')
 	{
 		if(!DEBUG)return;
-		$msg = '['.$this->now.']:'.$str.'';
-		$this->createtxt('upload/'.$lxs.''.time().'.log', $msg);
+		$msg 	= '['.$this->now.']:'.$str.'';
+		$mkdir 	= 'upload/'.date('Y-m').'';
+		if(!is_dir($mkdir))mkdir($mkdir);
+		$this->createtxt(''.$mkdir.'/'.$lxs.''.time().'_'.rand(100,999).'.log', $msg);
 	}
 }

@@ -37,7 +37,7 @@ class loginClassAction extends ActionNot{
 	
 	public function exitAction()
 	{
-		m('login')->exitlogin('pc');
+		m('login')->exitlogin('pc',$this->admintoken);
 		$this->rock->location('?m=login');
 	}
 }

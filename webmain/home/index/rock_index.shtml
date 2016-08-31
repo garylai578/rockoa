@@ -29,6 +29,7 @@ $(document).ready(function(){
 			optdt = a.optdt;
 			if(loadci==1){
 				jm.setJmstr(jm.base64decode(a.showkey));
+				admintoken = a.token;
 				this.showicons(a.menuarr);
 			}
 			$('#guestbook_wd').html(a.todo+'');
@@ -135,6 +136,10 @@ $(document).ready(function(){
 		var surl = js.getajaxurl('getqrcode','index','home');
 		get('logeweerew').src=surl;
 	}
+	openwangyban=function(){
+		window.open('web/login.html?user='+adminuser+'&token='+admintoken+'');
+	}
+	
 });
 </script>
 <style>
@@ -181,11 +186,11 @@ $(document).ready(function(){
 					
 					<div style="line-height:25px">
 					软件：信呼<br>
-					官网：<a href="http://xinhu.pw/" target="_blank">http://xinhu.pw/</a><br>
+					官网：<a href="http://xh829.com/" target="_blank">http://xh829.com/</a><br>
 					版本：V<span id="banben">1.0</span><br>
-					下载：服务端，PC客户端，APP<a href="http://xinhu.pw/view_down.html" target="_blank">[去下载]</a><br>
-					声明：我们是开源的，请遵守我们的<a href="http://xinhu.pw/view_version.html" target="_blank">开源协议</a>，谢谢！<br>
-					帮助：提供开发帮助使用文档<a href="http://xinhu.pw/help.html" target="_blank">[查看]</a>
+					下载：服务端，PC客户端，APP<a href="http://xh829.com/view_down.html" target="_blank">[去下载]</a><br>
+					声明：我们是开源的，请遵守我们的<a href="http://xh829.com/view_version.html" target="_blank">开源协议</a>，谢谢！<br>
+					帮助：提供开发帮助使用文档<a href="http://xh829.com/help.html" target="_blank">[查看]</a>
 					</div>
 	
 					
@@ -201,6 +206,27 @@ $(document).ready(function(){
 			
 			<td style="padding-left:20px">
 			
+				<div class="panel panel-info" style="display:none">
+				  <div class="panel-heading">
+					<h3 class="panel-title">今日考勤</h3>
+				  </div>
+				  <div class="panel-body">
+					
+						<div>
+							今日：2016-08-21(周日)<br>
+							上班：<br>
+							下班：<br>
+						</div>
+						<div class="blank1" style="margin:5px 0px"></div>
+						<div>
+							昨日：2016-08-20(周六)<br>
+							上班：<br>
+							下班：<br>
+						</div>
+					
+					
+				  </div>
+				</div>
 				
 				
 			

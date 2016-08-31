@@ -78,8 +78,9 @@ class loginClassModel extends Model
 			'device'	=> $device
 		));
 		if($msg==''){
-			$token 		= $this->db->ranknum('[Q]logintoken','token', 8);
-			$this->update("`online`=0", "`uid`='$uid' and `cfrom`='$cfrom'");
+			$moddt	= date('Y-m-d H:i:s', time()-10*3600);
+			$this->delete("`uid`='$uid' and `cfrom`='$cfrom' and `moddt`<'$moddt'");
+			$token 	= $this->db->ranknum('[Q]logintoken','token', 8);
 			$larr	= array(
 				'token'	=> $token,
 				'uid'	=> $uid,
@@ -94,13 +95,13 @@ class loginClassModel extends Model
 			);
 			$this->insert($larr);
 			return array(
-				'uid' => $uid,
-				'name' => $name,
-				'user' => $user,
+				'uid' 	=> $uid,
+				'name' 	=> $name,
+				'user' 	=> $user,
 				'token' => $token,
 				'ranking' => $ranking,
 				'apptx' => $apptx,
-				'face' => $face,
+				'face' 	=> $face,
 				'deptname' => $deptname,
 				'device' => $this->rock->request('device')
 			);
@@ -158,8 +159,9 @@ class loginClassModel extends Model
 		$this->rock->savecookie('mo_adminid', $uid);
 	}
 	
-	public function autologin($aid=0, $token='')
+	public function autologin($aid=0, $token='', $ism=0)
 	{
+		$baid  = $this->adminid;
 		if($aid>0 && $token!=''){
 			if($this->adminid>0){
 				if($aid != $this->adminid)exit('访问与当前用户冲突;');
@@ -172,9 +174,9 @@ class loginClassModel extends Model
 				$this->rock->adminid			= $this->adminid;
 				$this->rock->adminname			= $this->adminname;
 				$this->setsession($this->adminid, $this->adminname, $token);
+				$baid				= $aid;
 			}
-		}else{
-			if($this->adminid==0)exit('sorry,请先<a href="index.php?m=login&ltype=1">[登录]</a>系统...');
 		}
+		return $baid;
 	}
 }

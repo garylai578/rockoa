@@ -55,7 +55,7 @@ class Action extends mainAction
 		if($this->isempt($token))exit('sorry1');
 		$lastt = date('Y-m-d H:i:s',time()-24*3600);
 		$rs = m('logintoken')->getone("`uid`='$this->adminid' and `token`='$token' and `cfrom` in('pc','reim') and `moddt`>='$lastt'",'`moddt`');
-		if(!$rs)$this->backmsg('登录失效');
+		if(!$rs)$this->backmsg('登录失效，请重新登录');
 	}
 	
 	public function backmsg($msg='', $demsg='保存成功', $da=array())
@@ -67,8 +67,8 @@ class Action extends mainAction
 	{
 		$where		= $this->request('where');
 		$keywhere	= $this->request('keywhere');
-		$where 		= $this->jm->uncrypt($where);
-		$keywhere 	= $this->jm->uncrypt($keywhere);
+		$where 		= $this->jm->uncrypt($this->rock->iconvsql($where));
+		$keywhere 	= $this->jm->uncrypt($this->rock->iconvsql($keywhere));
 		$where  	= $this->rock->covexec($where);
 		$keywhere  	= $this->rock->covexec($keywhere);
 		
@@ -79,23 +79,21 @@ class Action extends mainAction
 		if(isset($arr['group']))$group=" group by ".$arr['group']." ";
 		
 		$limitall	= false;
-		if(isset($arr['all']))$limitall= $arr['all'];//判断是不是要全部数据
+		if(isset($arr['all']))$limitall= $arr['all'];
 		
 		if(isset($arr['sou'])){
 			$wherea		= str_replace($arr['sou'],$arr['rep'],$wherea);
 			$order		= str_replace($arr['sou'],$arr['rep'],$order);
 		}
-		$total		= $this->db->rows($table,$wherea);
-		$fields		= str_replace(array('\'',' ','(',')','"'),array('','','','',''), $fields);
-		$sql		= "select $fields from $table where $wherea $group $order ";
-		
+		$sql		= "select SQL_CALC_FOUND_ROWS $fields from $table where $wherea $group $order ";
 		if(!$limitall)$sql.=' '.$this->getLimit();
-		
 		$rows		= $this->db->getall($sql);
+		$total		= $this->db->found_rows();
 		if(!is_array($rows))$rows = array();
 		return array(
 			'total'	=> $total,
-			'rows'	=> $rows
+			'rows'	=> $rows,
+			'sql'	=> $sql
 		);
 	}
 	
@@ -110,11 +108,12 @@ class Action extends mainAction
 	
 	public function getOrder($order='')
 	{
-		$sort  		= $this->rock->post('sort');		//排序字段
-		$dir  		= $this->rock->post('dir');			//ASC、DESC
-		$highorder	= $this->rock->post('highorder');	//高级排序
+		$sort  		= $this->rock->iconvsql($this->post('sort'),1);
+		$dir  		= strtolower($this->post('dir'));
+		$highorder	= $this->rock->iconvsql($this->post('highorder'));
 		$asort		= '';
 		if($sort != '' && $dir !=''){
+			if(!contain('ascdesc',$dir))$dir='desc';
 			$sorta	= $sort;
 			$asort=' '.$sorta.' '.$dir.'';
 		}
@@ -128,24 +127,35 @@ class Action extends mainAction
 	{
 		$this->iszclogin();
 		$id		= $this->rock->post('id');
-		$table	= $this->rock->post('table','',1);
-		if(getconfig('systype')=='demo')exit('演示数据禁止删除');
-		$msg	= '';
-		if($msg == '' && $table!=''){
-			if(!m($table)->delete("`id` in($id)"))$msg= $this->db->error();
+		$table	= $this->rock->iconvsql($this->rock->post('table','',1),1);
+		$modenum= $this->rock->post('modenum');
+		if(getconfig('systype')=='demo')$this->showreturn('', '演示数据禁止删除', 201);
+		if($id=='')$this->showreturn('', 'sorry', 201);
+		$isadmin= (int)$this->getsession('isadmin');
+		if($modenum==''){
+			if($isadmin!=1)$this->showreturn('','只有管理员才能操作' , 201);
+			if(substr($table,0,5)=='flow_'||$table=='todo'){
+				m($table)->delete("`id` in($id)");
+			}else{
+				$this->showreturn('','未设置删除权限' , 201);
+			}
+		}else{
+			$aid	= explode(',', $id);
+			foreach($aid as $mid){
+				$msg 	= m('flow')->opt('deletebill', $modenum, $mid, '');
+				if($msg != 'ok')$this->showreturn('', $msg, 201);
+			}
 		}
-		if($msg=='')$msg='success';
-		echo $msg;
+		$this->showreturn('');
 	}	
 	
 	public function publicstoreAjax()
 	{
 		$this->iszclogin();
-		$table			= $this->request('tablename_abc','',1);
-		$fields			= $this->jm->uncrypt($this->request('storefields'));
-		$order			= $this->request('defaultorder');
+		$table			= $this->rock->iconvsql($this->request('tablename_abc','',1),1);
+		$fields			= '*';
+		$order			= $this->rock->iconvsql($this->request('defaultorder'));
 		$aftera			= $this->request('storeafteraction');
-		if($fields=='')$fields='*';
 		$execldown		= $this->request('execldown');
 		$this->loadci	= (int)$this->request('loadci');
 		$where			= '1=1 ';
@@ -188,8 +198,8 @@ class Action extends mainAction
 	
 	public function publictreestoreAjax()
 	{
-		$table	= $this->rock->post('tablename_abc');
-		$order	= $this->rock->get('order');
+		$table	= $this->rock->iconvsql($this->rock->post('tablename_abc'),1);
+		$order	= $this->rock->iconvsql($this->rock->get('order'));
 		$fistid	= $this->rock->get('fistid','0');
 		$rows	= $this->publictreestore($fistid, $table, $order);
 		echo json_encode(Array(
@@ -201,7 +211,7 @@ class Action extends mainAction
 		$expandall	= $this->rock->get('expandall');
 		$pidfields	= $this->rock->get('pidfields','pid');
 		$idfields	= $this->rock->get('idfields','id');
-		$wheres		= $this->rock->post('where');
+		$wheres		= $this->rock->iconvsql($this->rock->post('where'));
 		
 		$where	= "`$pidfields`='$pid' $wheres";
 		if($order!='')$where.=" order by `$order`";
@@ -230,7 +240,7 @@ class Action extends mainAction
 		$this->iszclogin();
 		$msg	= '';
 		$success= false;
-		$table	= $this->post('tablename_postabc');
+		$table	= $this->rock->iconvsql($this->post('tablename_postabc'),1);
 		$id		= (int)$this->post('id');
 		$oldrs  = false;
 		if($table !='' ){
@@ -305,7 +315,7 @@ class Action extends mainAction
 							$id = $this->db->insert_id();
 							$idadd = true;
 						}
-						if($fileid !='0')m('file')->update("`mtype`='$table',`mid`='$id'", "`id` in($fileid)");//文件
+						if($fileid !='0')m('file')->addfile($fileid,$table,$id);
 						if(!$this->isempt($aftersavea)){
 							if(method_exists($this, $aftersavea)){
 								$this->$aftersavea($table, $uaarr, $id, $idadd);
@@ -316,7 +326,7 @@ class Action extends mainAction
 							//c('edit')->record($table,$id, $oldrs, $newrs, 2);
 						}
 					}else{
-						$msg = 'Error:'.mysql_error();
+						$msg = 'Error:'.$this->db->error();
 					}
 				}
 			}
@@ -331,7 +341,7 @@ class Action extends mainAction
 	public function publicsavevalueAjax()
 	{
 		$this->iszclogin();
-		$table	= $this->rock->post('tablename','',1);
+		$table	= $this->rock->iconvsql($this->rock->post('tablename','',1),1);
 		$id		= $this->rock->post('id', '0');
 		$fields	= $this->rock->post('fieldname');
 		$value	= $this->rock->post('value');
@@ -345,20 +355,14 @@ class Action extends mainAction
 		$fields = explode(',', $this->post('excelfields','',1));
 		$header = explode(',', $this->post('excelheader','',1));
 		$title	= $this->post('exceltitle','',1);
-		
+		$rows	= $arr['rows'];
 		$headArr	= array();
-		$rows		= $arr['rows'];
 		for($i=0; $i<count($fields); $i++){
 			$headArr[$fields[$i]] = $header[$i];
 		}
-		$excel	= c('PHPExcel', true);
-		$excel->title = $title;
-		$excel->headArr = $headArr;
-		$excel->rows = $rows;
-		$url = $excel->display('xls', 'back');
-		
-		echo json_encode(array(
-			'url'	=> $url, 
+		$url 		= c('html')->execltable($title, $headArr, $rows);
+		$this->returnjson(array(
+			'url'		=> $url, 
 			'totalCount'=> $arr['totalCount'],
 			'downCount' => count($rows)
 		));
@@ -381,7 +385,7 @@ class ActionNot extends Action
 	public function publictreestoreAjax(){}
 	protected function logincheck(){}
 	
-	protected function mweblogin()
+	protected function mweblogin($lx=0)
 	{
 		$uid = $this->adminid;
 		if($uid==0){
@@ -401,7 +405,7 @@ class ActionNot extends Action
 			if(isajax()){
 				echo 'sorry! not sign';
 			}else{
-				$this->rock->location('index.php?m=login&d=we');
+				$this->rock->location('index.php?m=login&d=we&ltype='.$lx.'');
 			}
 			exit();
 		}

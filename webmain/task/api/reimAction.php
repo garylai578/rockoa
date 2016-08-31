@@ -36,7 +36,6 @@ class reimClassAction extends apiAction
 		$arr 		= m('reim')->sendinfor($type, $uid, $gid, array(
 			'optdt' => $this->now,
 			'cont'  => $this->post('cont'),
-			'optdt' => $this->post('optdt'),
 			'fileid'=> (int)$this->post('fileid')
 		), $lx);
 		$this->showreturn($arr);
@@ -118,30 +117,14 @@ class reimClassAction extends apiAction
 	{
 		$aid	= $this->adminid;
 		$gid	= (int)$this->post('gid');
-		m('im_groupuser')->delete("`gid`='$gid' and `uid`='$aid'");
-		m('im_messzt')->delete("`gid`='$gid' and `uid`='$aid'");
-		m('reim')->delhistory('group',$gid, $aid);
+		m('reim')->exitchat($gid, $aid);
 		$this->showreturn('success');
 	}
 	
 	public function createlunAction()
 	{
 		$val	= $this->getvals('val');
-		$aid	= $this->adminid;
-		$now 	= $this->rock->now;
-		$this->db->record('[Q]im_group', array(
-			'type'			=> 1,
-			'name'			=> $val,
-			'createid'		=> $aid,
-			'createname'	=> $this->adminname,
-			'createdt'		=> $now,
-			'valid'			=> '1'
-		));
-		$gid	= $this->db->insert_id();
-		m('im_groupuser')->insert(array(
-			'gid' => $gid,
-			'uid' => $aid
-		));
+		m('reim')->createchat($val, $this->adminid);
 		$this->showreturn('success');
 	}
 	
@@ -176,5 +159,14 @@ class reimClassAction extends apiAction
 	{
 		$id 	= (int)$this->post('id');
 		m('file')->download($id);
+	}
+	
+	public function forwardAction()
+	{
+		$fid = (int)$this->post('fileid');
+		$tuid= $this->post('tuid');
+		$msg = m('reim')->forward($tuid, 'user', $this->post('cont'), $fid);
+		if($msg!='ok')$this->showreturn('', $msg, 201);
+		$this->showreturn('');
 	}
 }

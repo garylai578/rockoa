@@ -1,4 +1,12 @@
 <?php
+/**
+*	接口文件
+*	createname：雨中磐石
+*	homeurl：http://xh829.com/
+*	Copyright (c) 2016 rainrock (xh829.com)
+*	Date:2016-01-01
+*	explain：返回200为正常
+*/
 class apiAction extends ActionNot
 {
 
@@ -18,11 +26,11 @@ class apiAction extends ActionNot
 		if(!$boss && HOST!='127.0.0.1'){
 			if($this->isempt($this->token))$this->showreturn('','token invalid', 299);
 			$to = m('logintoken')->rows("`token`='$this->token' and `uid`='$this->adminid' and `online`=1");
-			if($to==0)$this->showreturn('','access invalid', 299);
+			if($to==0)$this->showreturn('','access invalid', 199);
 		}
 		$this->userrs = m('admin')->getone("`id`='$this->adminid' and `status`=1", '`name`,`user`,`id`,`ranking`,`deptname`,`deptid`');
 		if(!$this->userrs && !$boss){
-			$this->showreturn('', 'not found user', 203);
+			$this->showreturn('', 'not found user', 199);
 		}
 		$this->adminname 	= $this->userrs['name'];
 		$this->rock->adminid	= $this->adminid;

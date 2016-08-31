@@ -188,7 +188,7 @@ js.apply=function(a,b){
 	return a;
 }
 js.apiurl=function(m,a){
-	var url='api.php/'+m+'/'+a+'?adminid='+adminid+'';
+	var url='api.php?m='+m+'&a='+a+'&adminid='+adminid+'';
 	var cfrom='app'+api.systemType+'';
 	url+='&device='+api.deviceId+'';
 	url+='&cfrom='+cfrom+'';
@@ -219,10 +219,7 @@ js.ajax=function(m,a,d,fun1,mod,checs,errf){
 	}
 	var url=js.apiurl(m,a);if(m.indexOf('?')>0)url=m;
 	$.ajax({
-		url: url,
-		method: 'post',
-		dataType:'json',
-		data: d,
+		url: url,method: 'post',dataType:'json',data: d,
 		success:function(ret){
 			js.ajaxbool=false;
 			clearTimeout(js.ajaxrequestime);
@@ -240,7 +237,7 @@ js.ajax=function(m,a,d,fun1,mod,checs,errf){
 			}
 		},
 		error:function(){
-			js.msg('msg', 'err:内部请求错误');
+			js.msg('msg','内部错误：'+e.responseText);
 			errf();
 		}
 	});

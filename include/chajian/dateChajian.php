@@ -160,7 +160,13 @@ class dateChajian extends Chajian
 		if($this->isempt($dt))return $bo;
 		$arr	= explode('-', $dt);
 		if(count($arr)>2)$bo = true;
-		//preg_match("/^[0-9]{4}(-|/)[0-9]{1,2}(1)[0-9]{1,2}(|s+[0-9]{1,2}(:[0-9]{1,2}){0,2})$/", $dt);
+		$len 	= strlen($dt);
+		if($len>10){
+			$sfm = explode(' ', $dt);
+			if(!isset($sfm[1]))return false;
+			$arr = explode(':', $sfm[1]);
+			if(count($arr)<2)return false;
+		}
 		return $bo;
 	}
 	
@@ -235,4 +241,4 @@ class dateChajian extends Chajian
 		$type);
 		return $str;
 	}
-}                                                                                                                                                            
+}                                    

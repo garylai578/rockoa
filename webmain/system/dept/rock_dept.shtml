@@ -1,11 +1,11 @@
 <script >
 $(document).ready(function(){
 	var a = $('#veiw_{rand}').bootstable({
-		tablename:'dept',
+		tablename:'dept',modenum:'dept',celleditor:true,
 		url:js.getajaxurl('data','dept','system'),
 		tree:true,
 		columns:[{
-			text:'名称',dataIndex:'name',editor:true,align:'left'
+			text:'名称',dataIndex:'name',align:'left'
 		},{
 			text:'编号',dataIndex:'num',editor:true
 		},{

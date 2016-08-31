@@ -104,8 +104,9 @@ function openinput(name,num, id,cbal){
 	if(!id)id=0;
 	if(!cbal)cbal='';
 	if(id==0){name='[新增]'+name+'';}else{name='[编辑]'+name+'';}
-	js.tanbody('openinput',name,720,410,{
-		html:'<div style="height:420px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
+	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
+	js.tanbody('openinput',name,820,410,{
+		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
 	});
 	var url='?a=lu&m=input&d=flow&num='+num+'&mid='+id+'&callback='+cbal+'';
@@ -114,7 +115,7 @@ function openinput(name,num, id,cbal){
 }
 function openxiang(num,id){
 	var url = 'task.php?a=p&num='+num+'&mid='+id+'';
-	js.open(url, 740,500);
+	js.open(url, 800,500);
 }
 function opentixiang(){
 	addtabs({num:'todo',url:'system,geren,todo',icons:'bell',name:'提醒信息'});

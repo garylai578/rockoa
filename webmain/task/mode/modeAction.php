@@ -5,7 +5,14 @@ class modeClassAction extends ActionNot
 	{
 		$aid 	= (int)$this->get('adminid');
 		$token 	= $this->get('token');
-		m('login')->autologin($aid, $token);
+		$aid 	= m('login')->autologin($aid, $token);
+		if($aid==0){
+			if(A=='x'){
+				$this->mweblogin(1);
+			}else{
+				exit('sorry,请先<a href="index.php?m=login&ltype=1">[登录]</a>系统...');
+			}
+		}
 		$this->getlogin(1);
 	}
 

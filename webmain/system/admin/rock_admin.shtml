@@ -1,7 +1,7 @@
 <script >
 $(document).ready(function(){
 	var a = $('#admin_{rand}').bootstable({
-		tablename:'admin',celleditor:true,sort:'sort',dir:'asc',fanye:true,
+		tablename:'admin',modenum:'user',celleditor:true,sort:'sort',dir:'asc',fanye:true,
 		storebeforeaction:'beforeshow',url:publicstore('{mode}','{dir}'),
 		columns:[{
 			text:'头像',dataIndex:'face',renderer:function(v){
@@ -9,7 +9,7 @@ $(document).ready(function(){
 				return '<img src="'+v+'" height="24" width="24">';
 			}
 		},{
-			text:'用户名',dataIndex:'user',sortable:true
+			text:'用户名',dataIndex:'user'
 		},{
 			text:'姓名',dataIndex:'name',sortable:true
 		},{
@@ -37,6 +37,9 @@ $(document).ready(function(){
 		}],
 		itemclick:function(){
 			btn(false);
+		},
+		beforeload:function(){
+			btn(true);
 		}
 	});
 	
@@ -78,26 +81,36 @@ $(document).ready(function(){
 	js.initbtn(c);
 });
 </script>
+
+
+
 <div>
-<ul class="floats">
-	<li class="floats50">
-		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增用户</button> &nbsp; 
-		<button class="btn btn-primary" click="piliang,0" type="button"><i class="icon-plus"></i> 批量添加用户</button> &nbsp; 
-		<button class="btn btn-success" click="refresh" type="button"><i class="icon-refresh"></i> 更新数据</button>
-	</li>
-	<li class="floats30">
+
+<table width="100%"><tr>
+	<td nowrap>
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增用户</button>
+	</td>
+	
+	<td  style="padding-left:10px">
+		<button class="btn btn-primary" click="piliang,0" type="button"><i class="icon-plus"></i> 批量添加用户</button>
+	</td>
+	<td  style="padding-left:10px">
 		<div class="input-group" style="width:250px">
 			<input class="form-control" id="key_{rand}"   placeholder="姓名/部门/职位/用户名">
 			<span class="input-group-btn">
 				<button class="btn btn-default" click="search" type="button"><i class="icon-search"></i></button>
 			</span>
 		</div>
-	</li>
-	<li class="floats20" style="text-align:right">
+	</td>
+	
+	<td width="80%"></td>
+	<td align="right" nowrap>
+		<button class="btn btn-success" click="refresh" type="button"><i class="icon-refresh"></i> 更新数据</button> &nbsp; 
 		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>
-	</li>
-</ul>
+	</td>
+</tr>
+</table>
 </div>
 <div class="blank10"></div>
 <div id="admin_{rand}"></div>

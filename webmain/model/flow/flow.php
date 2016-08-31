@@ -30,6 +30,8 @@ class flowModel extends Model
 	protected function flowisreadqx(){return false;}
 	protected function flowprintrows($r){return $r;}
 	
+	protected $flowweixinarr	= array();
+	
 	public function echomsg($msg)
 	{
 		showreturn('', $msg, 201);
@@ -106,7 +108,7 @@ class flowModel extends Model
 			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=true;
 		}
-		if(!$bo)$this->echomsg('not permissions showdata, mode['.$this->modenum.'.'.$this->modename.']');
+		if(!$bo)$this->echomsg('无权限查看模块['.$this->modenum.'.'.$this->modename.']的数据');
 	}
 	
 	public function iseditqx()
@@ -626,13 +628,28 @@ class flowModel extends Model
 		if($this->isempt($receid))return false;
 		$reim	= m('reim');
 		$url 	= ''.URL.'task.php?a=p&num='.$this->modenum.'&mid='.$this->id.'';
+		$wxurl 	= ''.URL.'task.php?a=x&num='.$this->modenum.'&mid='.$this->id.'';
 		$slx	= 0;
-		$pctx	= $this->moders['pctx']; $mctx	= $this->moders['pctx'];
+		$pctx	= $this->moders['pctx'];
+		$mctx	= $this->moders['mctx'];
+		$wxtx	= $this->moders['wxtx'];
 		if($pctx==0 && $mctx==1)$slx=2;
 		if($pctx==1 && $mctx==0)$slx=1;
 		if($pctx==0 && $mctx==0)$slx=3;
 		$cont	= $this->rock->reparr($cont, $this->rs);
 		$reim->pushagent($receid, $gname, $cont, $title, $url, $slx);
+		if($wxtx==1){
+			if($title=='')$title = $this->modename;
+			$wxarra  = $this->flowweixinarr;
+			$wxarr	 = array(
+				'title' 		=> $title,
+				'description' 	=> $cont,
+				'url' 			=> $wxurl
+			);
+			foreach($wxarra as $k=>$v)$wxarr[$k]=$v;
+			m('weixin:index')->sendnews($receid, ''.$gname.',0', $wxarr);
+			$this->flowweixinarr=array();
+		}
 	}
 	
 	public function deletebill($sm='')

@@ -9,14 +9,19 @@ class indexreimClassAction extends apiAction
 		$grouparr 	= $dbs->getgroup($this->adminid);
 		$agentarr	= $dbs->getagent($this->adminid);
 		$historyarr	= $dbs->gethistory($this->adminid);
+		$applyarr	= m('mode')->getmoderows($this->adminid,'and islu=1');
+		$modearr	= array();
+		foreach($applyarr as $k=>$rs)$modearr[]=array('type'=>$rs['type'],'num'=>$rs['num'],'name'=>$rs['name']);
 		
 		$arr['deptjson']	= json_encode($deptarr);
 		$arr['userjson']	= json_encode($userarr);
 		$arr['groupjson']	= json_encode($grouparr);
 		$arr['agentjson']	= json_encode($agentarr);
 		$arr['historyjson'] = json_encode($historyarr);
+		$arr['modearr'] 	= $modearr;
 		$arr['config'] 		= $dbs->getreims();
 		$arr['loaddt'] 		= $this->now;
+		$arr['ip'] 			= $this->ip;
 		m('login')->uplastdt();
 		
 		$this->showreturn($arr);

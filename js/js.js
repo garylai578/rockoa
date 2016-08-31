@@ -63,10 +63,10 @@ js.request=function(name,dev,url){
 	if(!dev)dev='';
 	if(!name)return dev;
 	if(!url)url=location.href;
-	if(url.indexOf('\?')<0)return '';
-	var neurl=url.split('\?')[1];
+	if(url.indexOf('\?')<0)return dev;
+	neurl=url.split('\?')[1];
 	neurl=neurl.split('&');
-	var value='',i,val;
+	var value=dev;
 	for(i=0;i<neurl.length;i++){
 		val=neurl[i].split('=');
 		if(val[0].toLowerCase()==name.toLowerCase()){
@@ -74,7 +74,7 @@ js.request=function(name,dev,url){
 			break;
 		}
 	}
-	if(!value)value=dev;
+	if(!value)value='';
 	return value;
 }
 js.now=function(type,sj){
@@ -114,10 +114,6 @@ js.float=function(num,w){
 	if(!w&&w!=0)w=2;
 	var m=num.toFixed(w);
 	return m;	
-}
-js.email=function(str){
-	var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
- 	return myreg.test(str);
 }
 js.splittime=0;
 js.getsplit=function(){
@@ -298,17 +294,29 @@ js.formatsize=function(size){
 	return js.float(fs)+' '+arr[e];
 }
 js.getformdata=function(na){
-	var da	={};
+	var da	={},ona='',o,type,val,na,i,obj;
 	if(!na)na='myform';
-	var obj	= document[na];
-	for(var i=0;i<obj.length;i++){
-		var type	= obj[i].type;
-		var val		= obj[i].value;
+	obj	= document[na];
+	for(i=0;i<obj.length;i++){
+		o 	 = obj[i];type = o.type,val = o.value,na = o.name;
 		if(type=='checkbox'){
 			val	= '0';
-			if(obj[i].checked)val='1';
+			if(o.checked)val='1';
+			da[na]	= val;
+		}else if(type=='radio'){
+			if(o.checked)da[na]	= val;					
+		}else{
+			da[na] = val;
 		}
-		da[obj[i].name]	= val;
+		if(na.indexOf('[]')>-1){
+			if(ona.indexOf(na)<0)ona+=','+na+'';
+		}
+	}
+	if(ona != ''){
+		var onas = ona.split(',');
+		for(i=1; i<onas.length; i++){
+			da[onas[i].replace('[]','')] = js.getchecked(onas[i]);
+		}
 	}
 	return da;
 }
@@ -355,8 +363,7 @@ js.getchecked=function(na,bh){
 	return s;
 }
 js.cookie=function(name){
-	var str=document.cookie;
-	var val='';
+	var str=document.cookie,cda,val='',arr,i;
 	if(str.length<=0)return '';
 	arr=str.split('; ');
 	for(i=0;i<arr.length;i++){
@@ -411,7 +418,7 @@ js.tanbody=function(act,title,w,h,can1){
 	var posta= 'fixed';
 	if(js.path == 'admin')posta='absolute';
 	s+='<div id="'+mid+'" style="position:'+posta+';background-color:#ffffff;left:'+l+'px;width:'+w+'px;top:'+t+'px;z-index:'+this.tanbodyindex+';box-shadow:0px 0px 10px rgba(0,0,0,0.3);">';
-	s+='	<div class="title '+can.titlecls+'" style="-moz-user-select:none;">';
+	s+='	<div class="title '+can.titlecls+'" style="-moz-user-select:none;-webkit-user-select:none;user-select:none;">';
 	s+='		<table border="0"  width="100%" cellspacing="0" cellpadding="0"><tr>';
 	s+='			<td height="34" style="font-size:16px; font-weight:bold;color:white; padding-left:8px" width="100%" onmousedown="js.move(\''+mid+'\')" id="'+act+'_title">'+title+'</td>';
 	s+='			<td><div onmouseover="this.style.backgroundColor=\'#C64343\'" onmouseout="this.style.backgroundColor=\'\'" style="padding:0px 8px;height:40px;overflow:hidden;cursor:pointer;" onclick="js.tanclose(\''+act+'\',\''+can.guanact+'\')"><div id="'+act+'_spancancel" style="height:16px;overflow:hidden;width:16px;background:url(images/wclose.png);margin-top:12px"></div></div></td>';
@@ -437,6 +444,9 @@ js.tanbody=function(act,title,w,h,can1){
 		$('#'+act+'_spancancel').parent().remove();
 	}
 	if(can.bbar=='none')$('#'+act+'_bbar').remove();
+	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight;
+	l=(winWb()-lw)*0.5;t=(winHb()-lh-20)*0.5;
+	$('#'+mid+'').css({'left':''+l+'px','top':''+t+'px'});
 	can.showfun(act);
 }
 js.tanclose=function(act, guan){
@@ -444,9 +454,8 @@ js.tanclose=function(act, guan){
 		var s= guan.split(',');
 		for(var i=0;i<s.length;i++)$('#'+s[i]+'_main').remove();
 	}
-	var mid	= ''+act+'_main';
-	var t	= parseInt(get(mid).style.top);
-	$('#'+mid+'').animate({top:t+100,opacity:0},200,function(){$(this).remove();js.xpbody(act,'none');});
+	$('#'+act+'_main').remove();
+	js.xpbody(act,'none');
 	return false;
 }
 js.xpbody=function(act,type){
@@ -514,24 +523,42 @@ js.chao=function(obj,shuzi,span,guo){
 	if(guo)obj.value=cont;
 	if(span)get(span).innerHTML=obj.value.length;
 }
-js.confirm	= function(txt,fun, tcls){
-	var h = '<div style="padding:20px;line-height:30px" align="center"><img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'</div>';
-	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" id="confirm_btn" href="javascript:"><i class="icon-remove"></i>&nbsp;取消</a></div>';
+js.debug	= function(s){
+	if(!DEBUG)return;
+	if(typeof(console)!='object')return;
+	console.log(s);
+}
+
+js.confirm	= function(txt,fun, tcls, tis, lx){
+	if(!lx)lx=0;
+	var h = '<div style="padding:20px;line-height:30px" align="center">';
+	if(lx==1){
+		if(!tcls)tcls='';
+		h='<div style="padding:10px;" align="center">';
+		h+='<div align="left" style="padding-left:10px">'+txt+'</div>';
+		h+='<div ><textarea class="input" id="confirm_input" style="width:260px;height:60px">'+tcls+'</textarea></div>';
+	}else{
+		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
+	}
+	h+='</div>';
+	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
 	h+='<div class="blank10"></div>';
-	if(!tcls)tcls='danger';
-	js.tanbody('confirm', '<i class="icon-question-sign"></i>&nbsp;系统提示', 300, 200,{closed:'none',html:h,titlecls:tcls});
+	if(!tcls)tcls='danger';if(lx==1)tcls='info';
+	if(!tis)tis='<i class="icon-question-sign"></i>&nbsp;系统提示';
+	js.tanbody('confirm', tis, 300, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
 	function backl(e){
-		var jg	= $(this).attr('sattr');
-		js.tanclose('confirm');
-		if(typeof(fun)=='function')fun(jg,this);
+		var jg	= $(this).attr('sattr'),val=$('#confirm_input').val();
+		js.tanclose('confirm');if(val==null)val='';
+		if(typeof(fun)=='function')fun(jg, val);
 		return false;
 	}
 	$('#confirm_btn1').click(backl);
 	$('#confirm_btn').click(backl);
 	get('confirm_btn').focus();
+	if(lx==1)get('confirm_input').focus();
 }
-js.alert	= function(txt){
-	
+js.prompt = function(tit,txt,fun, msg){
+	js.confirm(txt, fun, msg, tit, 1);
 }
 js.msg = function(lx, txt,sj){
 	clearTimeout(this.msgshowtime);
@@ -590,6 +617,7 @@ js.downbody=function(o1, e){
 			}
 		}
 	}
+	return true;
 }
 js.addbody = function(num, type,objid){
 	js._bodyclick[num] = {type:type,objid:objid};
@@ -619,9 +647,9 @@ js.ajax = function(url,da,fun,type,efun){
 		success:function(str){
 			js.ajaxbool=false
 			fun(str);
-		},error:function(){
+		},error:function(e){
 			js.ajaxbool=false
-			js.msg('msg','处理出错');
+			js.msg('msg','处理出错:'+e.responseText+'');
 			efun();
 		}
 	};
@@ -636,13 +664,15 @@ js.setoption=function(k,v){
 		}else{
 			localStorage.setItem(k, v);
 		}
-		return true;
-	}catch(e){return false}
+	}catch(e){
+		js.savecookie(k,v);
+	}
+	return true;
 }
 js.getoption=function(k,dev){
 	var s = '';
 	k=QOM+k;
-	try{s = localStorage.getItem(k);}catch(e){}
+	try{s = localStorage.getItem(k);}catch(e){s=js.cookie(k);}
 	if(isempt(dev))dev='';
 	if(isempt(s))s=dev;
 	return s;
@@ -697,4 +727,13 @@ function changeok(na,naid){
 }
 function changecancel(){
 	js.tanclose('changeaction');
+}
+js.changedate=function(o1,id,v){
+	if(!v)v='date';
+	$(o1).rockdatepicker({initshow:true,view:v,inputid:id});
+}
+js.fileall=',aac,ace,ai,ain,amr,app,arj,asf,asp,aspx,av,avi,bin,bmp,cab,cad,cat,cdr,chm,com,css,cur,dat,db,dll,dmv,doc,docx,dot,dps,dpt,dwg,dxf,emf,eps,et,ett,exe,fla,ftp,gif,hlp,htm,html,icl,ico,img,inf,ini,iso,jpeg,jpg,js,m3u,max,mdb,mde,mht,mid,midi,mov,mp3,mp4,mpeg,mpg,msi,nrg,ocx,ogg,ogm,pdf,php,png,pot,ppt,pptx,psd,pub,qt,ra,ram,rar,rm,rmvb,rtf,swf,tar,tif,tiff,txt,url,vbs,vsd,vss,vst,wav,wave,wm,wma,wmd,wmf,wmv,wps,wpt,wz,xls,xlsx,xlt,xml,zip,';
+js.filelxext = function(lx){
+	if(js.fileall.indexOf(','+lx+',')<0)lx='wz';
+	return lx;
 }

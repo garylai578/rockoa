@@ -3,6 +3,9 @@ class indexClassAction extends Action{
 	
 	public function defaultAction()
 	{
+		//$this->getFilodes('./');
+		//exit;
+		
 		$this->tpltype	= 'html';
 		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`type`');
 		$allmenuid	= '-1';
@@ -25,7 +28,6 @@ class indexClassAction extends Action{
 		
 		$this->smartydata['my']			= $my;
 		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.jpg');
-		$this->smartydata['wdtotal']	= m('todo')->rows("`uid`='$this->adminid' and `status`=0");
 	}
 	
 	
@@ -103,7 +105,15 @@ class indexClassAction extends Action{
 		$this->display = false;
 		//echo m('view')->viewwhere(3,3);
 		//m('beifen')->start();
-		m('flow')->submit('leave', '1', '提交');
+		//m('flow')->submit('leave', '1', '提交');
+		//$a = m('reim')->asynurl('asynrun','index', false, time()+12);
+		//$body = c('curl')->getcurl('http://www.rockoa.com/images/web/weblogo1.png');
+		//file_put_contents('we.png',$body);
+		//echo m('weixin:media')->upload('we.png');
+		
+		//$mid = m('kaoqin')->kqanay($this->adminid, '2016-08-03');
+		m('beifen')->updatefabricfile();
+		//print_r($mid);
 	}
 	
 	public function downAction()
@@ -111,5 +121,48 @@ class indexClassAction extends Action{
 		$this->display = false;
 		$id  = (int)$this->jm->gettoken('id');
 		m('file')->show($id);
+	}
+	
+	public function getFilodes($path, $lx=0)
+	{
+		$arr	= array();
+		$paths	= $path;
+		if(!is_dir($paths))return ;
+		$d 		= opendir($paths);
+		$farrs	= array();
+		$farra	= array();
+		$str 	= '';
+		for($i=0;$i<$lx;$i++)$str.='&nbsp;├ ';
+		
+		while( false !== ($file = readdir($d))){
+			if($file != '.'  &&  $file!='..'){//遍历目录下文件夹
+				$pafile	= $paths.'\\'.$file;
+				
+				//echo $file;
+				//echo '<br>';
+				if(is_dir($pafile)){
+					$farrs[] = $file;
+					
+				}
+				if(is_file($pafile)){	
+					$farra[] = $file;
+				}
+			}
+		}
+		
+		foreach($farrs as $f){
+			echo $str;
+			echo $f;
+			echo '<br>';
+			$apath   = $path.''.$f.'/';
+			$this->getFilodes($apath, $lx+1);
+		}
+		
+		foreach($farra as $f){
+			echo $str;
+			echo $f;
+			echo '<br>';
+		}
+		
 	}
 }

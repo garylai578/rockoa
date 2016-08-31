@@ -3,6 +3,7 @@ $(document).ready(function(){
 	var gid = 0;
 	var a = $('#veiw_{rand}').bootstable({
 		tablename:'group',celleditor:false,url:publicstore('{mode}','{dir}'),storeafteraction:'groupafter',
+		modenum:'group',
 		columns:[{
 			text:'组名',dataIndex:'name',editor:true
 		},{

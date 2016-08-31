@@ -32,7 +32,7 @@
 			s+='</div>';
 			s+='<div style="position:fixed;z-index:2;left:0px;bottom:0px;text-align:center;color:white;width:100%;font-size:20px;background-color:rgba(0,0,0,0.2);height:40px;line-height:40px;overflow:hidden"><i style="cursor:pointer" id="imgview_zoom-out" class="icon-zoom-out" title="缩小"></i> &nbsp; <span id="imgview_nowbili" style="font-size:14px">100%</span> &nbsp; <i style="cursor:pointer" class="icon-zoom-in" title="放大" id="imgview_zoom-in"></i>';
 			s+='  &nbsp; <i style="cursor:pointer" class="icon-move" title="原始大小" id="imgview_zoom-move"></i>';
-			if(!this.ismobile)s+='  &nbsp; <i style="cursor:pointer" class="icon-download-alt" title="下载" id="imgview_zoom-download"></i>';
+			if(!this.ismobile)s+='  &nbsp; <a target="_blank" download="" style="color:white" href="'+this.url+'"><i style="cursor:pointer" class="icon-download-alt" title="下载"></i></a>';
 			s+='  &nbsp; <i style="cursor:pointer" class="icon-refresh" title="旋转90度" id="imgview_zoom-refresh"></i>';
 			s+='</div>';
 			s+='</div>';
@@ -63,9 +63,6 @@
 			});
 			$('#imgview_zoom-refresh').click(function(){
 				me.clickrotate();
-			});
-			$('#imgview_zoom-download').click(function(){
-				js.open(me.url);
 			});
 			$('#imgview_zoom-move').click(function(){
 				me.bl=1;

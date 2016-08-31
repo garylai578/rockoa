@@ -1,5 +1,5 @@
 *{font-family:微软雅黑,Verdana, Geneva, sans-serif;padding:0px;margin:0px;}
-body{color:#333333;margin:0px;border:0;font-size:14px;}
+body{color:#222222;margin:0px;border:0;font-size:14px;}
 td,button{ font-size:14px}
 a,c,.cursor{cursor:pointer;}
 p{text-indent:24pt;margin:10px 0px}
@@ -114,10 +114,10 @@ input.checkbox,input.radio{ border:none;padding:0;margin-right:5px; width:14px; 
 .tabsindex div:hover{color:#000000}
 .tabsindex div span{font-size:12px;color:#888888;position:absolute;top:3px;right:5px}
 
-.homeiconss{margin:15px 10px;padding:10px;color:white;width:160px;height:110px;overflow:hidden;cursor:pointer;font-size:14px;position:relative;}
+.homeiconss{margin:10px 10px;padding:10px;color:white;width:150px;height:110px;overflow:hidden;cursor:pointer;font-size:14px;position:relative;}
 .homeiconss i{font-size:40px}
 .homeiconss:hover{opacity:0.8}
-.homeiconss2{width:130px;height:90px;overflow:hidden;border-radius:0px}
+.homeiconss2{width:120px;height:90px;overflow:hidden;border-radius:0px}
 .homeiconss .div01{margin-top:15px}
 .homeiconss .div00{position:absolute;right:10px;top:2px}
 

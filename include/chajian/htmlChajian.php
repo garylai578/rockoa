@@ -105,4 +105,42 @@ class htmlChajian extends Chajian{
 		$txt	.= '</table>';
 		return $txt;
 	}
+	
+	/**
+	*	创建excel导出表格
+	*/
+	public function execltable($title, $headArr, $rows, $lx='')
+	{
+		if($lx=='')$lx='xls';
+		$sty 	= 'style="white-space:nowrap;border:.5pt solid #000000;font-size:12px;"';
+		$s 		= '';
+		$s 	   .= '<table border="0" style="border-collapse:collapse;">';
+		$hlen 	= 1;
+		$s1='<tr height="30"><td '.$sty.'>序号</td>';
+		foreach($headArr as $na){
+			$hlen++;
+			$s1.='<td '.$sty.'>'.$na.'</td>';
+		}
+		$s1.='</tr>';
+		$s.='<tr height="40"><td '.$sty.' colspan="'.$hlen.'">'.$title.'</td></tr>';
+		$s.=$s1;
+		foreach($rows as $k=>$rs){
+			$s.='<tr height="26">';
+			$s.='<td align="center" '.$sty.'>'.($k+1).'</td>';
+			foreach($headArr as $kf=>$na){
+				$val = '';
+				if(isset($rs[$kf]))$val=$rs[$kf];
+				$s.='<td '.$sty.'>'.$val.'</td>';
+			}
+			$s.='</tr>';
+		}
+		$s.='</table>';
+		$mkdir 	= 'upload/'.date('Y-m').'';
+		if(!is_dir($mkdir))mkdir($mkdir);
+		
+		$filename 	= ''.$title.'_'.time().'.'.$lx.'';
+		$url 		= ''.$mkdir.'/'.$filename.'';
+		file_put_contents(iconv('utf-8','gb2312',$url), $s);
+		return $url;
+	}
 }                                  

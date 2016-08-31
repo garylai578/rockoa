@@ -69,13 +69,14 @@ class curlChajian extends Chajian{
 		return $output;
 	}
 	
-	public function postcurl($url, $data=array())
+	public function postcurl($url, $data=array(), $lx=0)
 	{
 		if(!function_exists('curl_init')){
 			return $this->postfilecont($url, $data);
 		}
 		$url	= $this->strurl($url);
-		$cont 	= $this->getdatastr($data);
+		$cont 	= $data;
+		if($lx==0)$cont = $this->getdatastr($data);
 		$ishttps = 0;
 		if(substr($url,0, 5)=='https')$ishttps=1;
 		$ch = curl_init();

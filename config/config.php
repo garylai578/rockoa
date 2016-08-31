@@ -17,7 +17,7 @@ if(!DEBUG)error_reporting(0);
 $config		= array(
 	'title'		=> '信呼',
 	'url'		=> 'http://'.HOST.'/app/xinhu/',
-	'urly'		=> 'http://xinhu.pw/',
+	'urly'		=> 'http://xh829.com/',
 	'db_host'	=> '',
 	'db_user'	=> '',
 	'db_pass'	=> '',

@@ -1,11 +1,19 @@
 <?php
 class taskClassAction extends Action
 {
-
-	public function creaefileAjax()
+	
+	public function getrunlistAjax()
 	{
-		$rows 	= m('task')->getrows('`status`=1 order by `sort`','`id`,`url`,`type`,`time`,`startdt`');
-		$cont 	= json_encode($rows);
-		//$this->rock->createtxt(''.PROJECT.'/task/runt/taskconfig.json', $cont);
+		$barr = m('task')->getlistrun($this->date);
+		$this->returnjson($barr);
+	}
+	public function starttaskAjax()
+	{
+		$msg = m('task')->starttask();
+		if(contain($msg, 'ok')){
+			echo 'ok';
+		}else{
+			echo '无法启动';
+		}
 	}
 }

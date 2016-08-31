@@ -47,10 +47,10 @@ ul,li,a{ list-style-type:none}
 .h1{ font-size:24px;font-weight:bold;}
 .h2{ font-size:20px;font-weight:bold;}
 
-.input,.inputs,.textarea{height:30px;line-height:25px;background-color:white;padding:2px;width:100%;border:none; border-bottom:0px #dddddd solid}
+.input,.inputs,.textarea{height:30px;line-height:25px;background-color:white;padding:2px;width:95%; border:1px #dddddd solid}
 
 .inputb{height:30px;line-height:20px;background-color:white;padding:2px;border:1px #cccccc solid}
-.inputb:focus{border:1px #1abc9c solid}
+.inputb:focus,.inputs:focus,.textarea:focus{border:1px #1abc9c solid}
 
 
 .btn{width:100%;height:44px;line-height:44px; background-color:#1abc9c;border:none;color:white;font-size:16px}
@@ -61,7 +61,7 @@ ul,li,a{ list-style-type:none}
 .header .back img{height:24px;width:24px}
 .header-back{width:46px;height:46px;display:block; background:url(../../images/back.png) no-repeat 7px 7px;position:absolute;left:0px;top:0px; cursor:pointer}
 .header-back:active{opacity:0.5}
-.divinput{padding:10px; background-color:white;margin:15px 0px}
+.divinput{padding:8px; background-color:white;}
 .padding10{padding:10px;}
 
 .imgbtn{padding:0px 5px}

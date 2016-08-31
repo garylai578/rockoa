@@ -32,14 +32,20 @@ class optionClassModel extends Model
 		return $this->getdata($num);
 	}
 	
-	public function setval($num, $val='')
+	public function setval($num, $val='', $name=null)
 	{
-		$where = "`num`='$num'";
-		if($this->rows($where)==0)$where='';
-		$this->record(array(
+		$where  = "`num`='$num'";
+		$id 	= (int)$this->getmou('id', $where);
+		if($id==0)$where='';
+		$arr 	= array(
 			'num'	=> $num,
 			'value'	=> $val,
+			'optid'	=> $this->adminid,
 			'optdt'	=> $this->rock->now
-		), $where);
+		);
+		if($name!=null)$arr['name'] = $name;
+		$this->record($arr, $where);
+		if($id==0)$id = $this->db->insert_id();
+		return $id;
 	}
 }

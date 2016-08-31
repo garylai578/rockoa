@@ -15,7 +15,7 @@ class adminClassAction extends Action
 
 	public function beforeshow($table)
 	{
-		$fields = 'id,name,`user`,deptname,`type`,status,tel,workdate,ranking,superman,loginci,sex,tel,sort,face';
+		$fields = 'id,name,`user`,deptname,`type`,status,tel,workdate,ranking,superman,loginci,sex,sort,face';
 		$s 		= '';
 		$key 	= $this->post('key');
 		if($key!=''){
@@ -32,8 +32,10 @@ class adminClassAction extends Action
 	public function publicbeforesave($table, $cans, $id)
 	{
 		$user = $cans['user'];
+		$name = $cans['name'];
 		$msg  = '';	
 		if(m($table)->rows("`user`='$user' and `id`<>'$id'")>0)$msg ='用户名['.$user.']已存在';
+		if(m($table)->rows("`name`='$name' and `id`<>'$id'")>0)$msg ='姓名['.$name.']已存在';
 		$rows = array();
 		if($msg == ''){
 			$did  = $cans['deptid'];
@@ -58,18 +60,7 @@ class adminClassAction extends Action
 	
 	public function updatess()
 	{
-		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,superman from `[Q]admin` where `status`=1 order by `sort`");
-		$total	= $this->db->count;
-		$cl		= 0;
-		$db     = m('admin');
-		foreach($rows as $k=>$rs){
-			$nrs	= $db->getpath($rs['deptid'], $rs['superid']);
-			if($nrs['deptpath'] != $rs['deptpath'] || $nrs['deptname'] != $rs['deptname'] || $nrs['superpath'] != $rs['superpath'] || $nrs['superman'] != $rs['superman']){
-				$db->record($nrs, "`id`='".$rs['id']."'");
-				$cl++;
-			}
-		}
-		return array($total, $cl);
+		return m('admin')->updateinfo();
 	}
 	
 	

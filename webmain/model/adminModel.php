@@ -1,6 +1,8 @@
 <?php
 class adminClassModel extends Model
 {
+	private $_getjoinstr = array();
+	
 	public function gjoin($joinid, $glx='ud', $blx='bxl')
 	{
 		$uid 	= $did = '0';
@@ -52,9 +54,15 @@ class adminClassModel extends Model
 	public function getjoinstr($fids, $us, $lx=0)
 	{
 		$s 		= '';
-		if(is_numeric($us))$us	= $this->getone($us,'id,`name`,`deptid`,`deptpath`');
+		if(is_numeric($us)){
+			$key= 'a'.$fids.''.$us.'_'.$lx.'';
+			if(isset($this->_getjoinstr[$key]))return $this->_getjoinstr[$key];
+			$us	= $this->getone($us,'id,`name`,`deptid`,`deptpath`');
+		}
 		if(!$us)return '';
 		$uid	= $us['id'];
+		$key 	= 'a'.$fids.''.$uid.'_'.$lx.'';
+		if(isset($this->_getjoinstr[$key]))return $this->_getjoinstr[$key];
 		$tj[]	= "ifnull($fids,'')=''";
 		$tj[]	= $this->rock->dbinstr($fids, 'all');
 		$tj[]	= $this->rock->dbinstr($fids, 'u'.$uid);
@@ -67,6 +75,7 @@ class adminClassModel extends Model
 		}
 		$s	= join(' or ', $tj);
 		if($s != '' && $lx==0)$s = ' and ('.$s.')';
+		$this->_getjoinstr[$key] = $s;
 		return $s;
 	}
 	
@@ -216,5 +225,65 @@ class adminClassModel extends Model
 			$rows[$k]['face'] = $this->getface($face);
 		}
 		return $rows;
+	}
+	
+	public function getusinfo($uid, $fields='id')
+	{
+		$urs = $this->db->getone('[Q]userinfo', $uid, $fields);
+		if(!$urs){
+			$urs = array();
+			$far = explode(',', str_replace('`','',$fields));
+			foreach($far as $f)$urs[$f]='';
+			$urs['id'] = $uid;
+		}
+		return $urs;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	*	更新信息
+	*/
+	public function updateinfo()
+	{
+		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,superman from `[Q]admin` where id>0 order by `sort`");
+		$total	= $this->db->count;
+		$cl		= 0;
+		foreach($rows as $k=>$rs){
+			$nrs	= $this->getpath($rs['deptid'], $rs['superid']);
+			if($nrs['deptpath'] != $rs['deptpath'] || $nrs['deptname'] != $rs['deptname'] || $nrs['superpath'] != $rs['superpath'] || $nrs['superman'] != $rs['superman']){
+				$this->record($nrs, "`id`='".$rs['id']."'");
+				$cl++;
+			}
+		}
+		$this->updateuserinfo();
+		return array($total, $cl);
+	}
+	public function updateuserinfo()
+	{
+		$db 	= m('userinfo');
+		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id');
+		foreach($rows as $k=>$rs){
+			$uparr = array(
+				'id' 		=> $rs['id'],
+				'name' 		=> $rs['name'],
+				'deptname' 	=> $rs['deptname'],
+				'ranking' 	=> $rs['ranking'],
+			);
+			if(isempt($rs['ids'])){
+				$db->insert($uparr);
+			}else{
+				if($rs['name'] != $rs['names'] || $rs['deptname'] != $rs['deptnames'] || $rs['ranking'] != $rs['rankings']){
+					unset($uparr['id']);
+					$db->update($uparr, $rs['ids']);
+				}
+			}
+		}
 	}
 }

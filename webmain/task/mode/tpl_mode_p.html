@@ -67,7 +67,7 @@ function check(o1){
 	js.ajax(url,da,function(a){
 		if(a.success){
 			js.setmsg(a.msg,'green');
-			//if(get('autocheckbox').checked)c.close();
+			if(get('autocheckbox'))if(get('autocheckbox').checked)c.close();
 		}else{
 			js.setmsg(a.msg);
 			o1.disabled = false;

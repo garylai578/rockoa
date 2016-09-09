@@ -1,12 +1,16 @@
 <?php
 class scheduleClassModel extends Model
 {
-	public function getlistdata($uid, $startdt, $enddt)
+	private $datarows = array();
+	
+	public function getlistdata($uid, $startdt, $enddt, $whe='')
 	{
 		$arr 		= array();
 		$dtobj		= c('date');
 		$jg			= $dtobj->datediff('d', $startdt, $enddt)+1;
-		$sql 		= "select id,title,enddt,startdt,rate,rateval from `[Q]schedule` where `uid`='$uid' and `status`=1 and `startdt`<'$enddt 23:59:59' and (`enddt` is null or `enddt`>'$startdt')";
+		$where 		= '';
+		if($uid>0)$where = 'and `uid`='.$uid.'';
+		$sql 		= "select id,title,enddt,startdt,rate,rateval,`uid` from `[Q]schedule` where `status`=1 $where $whe and `startdt`<'$enddt 23:59:59' and (`enddt` is null or `enddt`>'$startdt')";
 		$rows 		= $this->db->getall($sql);
 		foreach($rows as $k=>$rs){
 			$endtime = 2999999999;
@@ -25,6 +29,7 @@ class scheduleClassModel extends Model
 			$row 	= array();
 			foreach($rows as $k=>$rs){
 				$rate = $rs['rate'];
+				$uid  = $rs['uid'];
 				$ratev= ','.$rs['rateval'].',';
 				if($rs['endtime']<$dttime)continue;
 				$dts  = $rs['time'];
@@ -43,7 +48,10 @@ class scheduleClassModel extends Model
 					if(contain($rs['startdt'], $dt))$time=$rs['startdt'];
 				}
 				if($time!=''){
-					$row[]=array('id'=>$rs['id'],'title'=>$rs['title'],'time'=>$time);
+					$barsa = array('id'=>$rs['id'],'title'=>$rs['title'],'time'=>$time);
+					$row[] = $barsa;
+					if(!isset($this->datarows[$uid]))$this->datarows[$uid] = array();
+					$this->datarows[$uid][] = $barsa;
 				}
 			}
 			$arr[$dt] = $row;
@@ -51,4 +59,29 @@ class scheduleClassModel extends Model
 		return $arr;
 	}
 	
+	public function gettododata($dt='')
+	{
+		if($dt=='')$dt=$this->rock->date;
+		$this->datarows = array();
+		$this->getlistdata(0, $dt, $dt,'and txsj=1');
+		$barr = $this->datarows;
+		$time = time();
+		$flow = m('flow')->initflow('schedule');
+		foreach($barr as $uid=>$rows){
+			$str ='';
+			$sid = 0;
+			foreach($rows as $k=>$rs){
+				$txsj 	= strtotime($rs['time']);
+				$jg 	= $txsj-$time;
+				if($jg <= 6*60 && $jg>0){
+					$str   .= ','.$rs['title'];
+					$sid 	= $rs['id'];
+				}
+			}
+			if($str!=''){
+				$flow->id = $sid;
+				$flow->push($uid, '', substr($str, 1));
+			}
+		}
+	}
 }

@@ -5,10 +5,10 @@ $(document).ready(function(){
 	if(!id)id = 0;
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'flow_set',
-		url:publicsave('{mode}','{dir}'),
-		params:{otherfields:'optdt={now}'},
-		submitfields:'name,type,num,table,sort,status,where,summary,pctx,mctx,isflow,sericnum,receid,recename',
-		requiredfields:'name,type,num',
+		url:publicsave('{mode}','{dir}'),url:publicsave('{mode}','{dir}'),
+		params:{otherfields:'optdt={now}'},aftersaveaction:'flowsetsaveafter',beforesaveaction:'flowsetsavebefore',
+		submitfields:'name,tables,type,num,table,sort,status,where,summary,pctx,mctx,isflow,sericnum,receid,recename,names',
+		requiredfields:'name,type,num,table',
 		success:function(){
 			closenowtabs();
 			try{guanflowsetlist.reload();}catch(e){}
@@ -54,19 +54,24 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right" width="15%" nowrap ><font color=red>*</font> 编号：</td>
-			<td width="35%"  class="tdinput"><input name="num" class="form-control"></td>
+			<td width="35%"  class="tdinput"><input name="num" maxlength="20" class="form-control"></td>
 			
-			<td  width="15%" align="right" nowrap>对应表：</td>
-			<td width="35%"  class="tdinput"><input name="table" class="form-control"></td>
+			<td  width="15%" align="right" nowrap><font color=red>*</font> 对应表：</td>
+			<td width="35%"  class="tdinput"><input name="table" maxlength="20" class="form-control"></td>
 		</tr>
 		
 		<tr>
 			<td align="right">单号规则：</td>
 			<td class="tdinput"><input name="sericnum" class="form-control"></td>
-			<td align="right">排序号：</td>
-			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
+			<td align="right">多行子表：</td>
+			<td class="tdinput"><input name="tables" maxlength="20" class="form-control"></td>
 		</tr>
-		
+		<tr>
+			<td align="right"></td>
+			<td class="tdinput"></td>
+			<td align="right">多行子表名称：</td>
+			<td class="tdinput"><input name="names" class="form-control"></td>
+		</tr>
 		<tr>
 			<td  align="right" >针对人员：</td>
 			<td class="tdinput" colspan="3">
@@ -102,6 +107,11 @@ $(document).ready(function(){
 				<label><input name="mctx" value="1" type="checkbox"> 移动端提醒</label>&nbsp; &nbsp; 
 				<label><input name="status" value="1" checked type="checkbox"> 启用</label>&nbsp; &nbsp; 
 			</td>
+		</tr>
+		
+		<tr>
+			<td align="right">排序号：</td>
+			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
 		</tr>
 
 		

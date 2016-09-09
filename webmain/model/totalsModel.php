@@ -6,10 +6,12 @@ class totalsClassModel extends Model
 	{
 		$optdt 	= $this->rock->now;
 		$arr 	= array();
+		$bidb	= m('flowbill');
 		
 		$todo			= m('todo')->rows("uid='$uid' and `status`=0 and `tododt`<='$optdt'");
 		$arr['todo']	= $todo;
-		$arr['daiban']	= m('flowbill')->daibanshu($uid);
+		$arr['daiban']	= $bidb->daibanshu($uid);
+		$arr['applymy']	= $bidb->applymywgt($uid);
 		return $arr;
 	}
 }

@@ -61,7 +61,11 @@ var c={
 		nr = nr.replace(/[	]/gi,'');
 		var d = {content:nr,num:modenum,atype:atype};
 		$.post(js.getajaxurl('pagesave','flow','main'),d,function(da){
-			js.msg('success','保存成功');
+			if(da=='success'){
+				js.msg('success','保存成功');
+			}else{
+				js.msg('msg', da);
+			}
 		});
 		return false;
 	},
@@ -99,8 +103,8 @@ var c={
 	instesdsa:function(){
 		var iszb=$('#sss1ds').val();
 		js.msg('wait','获取表格中...');
-		js.tanclose('charusss');
 		var d={iszb:iszb,hang:$('#hangshu').val(),modeid:id};
+		js.tanclose('charusss');
 		var url=js.getajaxurl('getsubtable','flow','main');
 		js.ajax(url,d,function(s){
 			js.msg('none');

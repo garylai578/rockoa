@@ -71,13 +71,13 @@ $(document).ready(function(){
 	<td align="left">
 		<button class="btn btn-warning" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
 	</td>
-	<td>
-		<select id="mode_{rand}" class="form-control" ><option value="0">-选择模块-</option></select>
+	<td style="padding-left:10px">
+		<select style="width:230px" id="mode_{rand}" class="form-control" ><option value="0">-选择模块-</option></select>
 	</td>
-	<td align="left"  style="padding:0px 10px;">
+	<td width="90%">
 		
 	</td>
-	<td align="right">
+	<td nowrap>
 		
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>&nbsp; 
 		<button class="btn btn-danger" click="del" disabled id="del_{rand}" type="button"><i class="icon-trash"></i> 删除</button>

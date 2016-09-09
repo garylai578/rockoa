@@ -13,90 +13,18 @@
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
 <script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
-
+<script type="text/javascript" src="web/res/js/jquery-rockupload.js"></script>
+<script type="text/javascript" src="<?=$da['p']?>/flow/input/inputjs/input.js"></script>
 <script type="text/javascript">
-var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=1,mid='<?=$da['mid']?>',data={};
-function initbodys(){};
-function geturlact(act){
-	var url=js.getajaxurl(act,'mode_'+moders.num+'|input','flow');
-	return url;
+var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,isedit=0,mid='<?=$da['mid']?>',data={};
+ismobile=1;
+
+c.changeuser=function(na, lx){
+	changeuser(na,lx);
+	return false;
 }
-function changesubmit(d){};
-function changesubmitbefore(){};
-function initbody(){
-	c.initdatelx();
-	initbodys();
-}
-var c={
-	initdatelx:function(){
-		var o = $("input[inputtype]").click(function(){
-			$(this).unbind('click');
-			var lx = $(this).attr('inputtype');
-			c.date(this, lx);
-			return false;
-		});
-	},
-	save:function(){
-		if(js.ajaxbool||isedit==0)return;
-		js.setmsg('');
-		var len = arr.length,i,val,fid;
-		changesubmitbefore();
-		var d = js.getformdata();
-		for(i=0;i<len;i++){
-			fid=arr[i].fields;
-			if(arr[i].isbt=='1'){
-				val=d[fid];
-				if(isempt(val)){
-					if(form(fid))form(fid).focus();
-					js.msg('msg',''+arr[i].name+'不能为空');
-					return;
-				}
-			}
-		}
-		var s=changesubmit(d);
-		if(typeof(s)=='string'&&s!=''){
-			js.msg('msg',s);
-			return false;
-		}
-		if(typeof(s)=='object')d=js.apply(d,s);
-		d.modeid=moders.id;
-		d.modenum=moders.num;
-		js.msg('wait','保存中...');
-		get('AltS').disabled=true;
-		js.ajax(geturlact('save'),d,function(str){
-			c.backsave(js.decode(str));
-		}, 'post', function(){
-			js.setmsg('error:内部错误,可F12调试');
-		});
-	},
-	backsave:function(a){
-		if(a.success){
-			js.msg('success','提交成功');
-			this.formdisabled();
-			$('#AltS').hide();
-			form('id').value=a.data;
-			isedit=0;
-			js.sendevent('reload', 'yingyong_mode_'+moders.num+'');
-			js.backla();
-		}else{
-			get('AltS').disabled=false;
-			js.msg('msg',a.msg);
-		}
-	},
-	formdisabled:function(){
-		$('form').find('*').attr('disabled', true);
-		$('#fileupaddbtn').remove();
-	},
-	date:function(o1,lx){
-		$(o1).rockdatepicker({view:lx,initshow:true});
-	},
-	changeuser:function(na, lx){
-		changeuser(na,lx);
-		return false;
-	},
-	changeclear:function(na){
-		clearuser(na);
-	}
+c.changeclear=function(na){
+	clearuser(na);
 }
 var changename_uuusw;
 function changeuser(na,lx){
@@ -104,7 +32,7 @@ function changeuser(na,lx){
 	if(!lx)lx='';
 	var url='task.php?fn=dept&adminid='+adminid+'&token='+token+'&changetype='+lx+'';
 	var s='<div style="height:100%;width:100%;position:fixed;top:0px;left:0px;z-index:99; background:rgba(0,0,0,0.2)"  align="center" id="changmodddid">';
-	s+='<div style="max-width:300px;height:100%;max-height:450px;margin-top:5%; background:while;border:1px #dddddd solid">';
+	s+='<div style="max-width:300px;height:100%;-webkit-overflow-scrolling:touch; overflow:auto; ;max-height:450px;margin-top:5%; background:while;border:1px #dddddd solid">';
 	s+='<iframe style="background:white" name="changdept" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0" width="100%" src="'+url+'"></iframe>';
 	s+='</div>';
 	s+='</div>';
@@ -127,6 +55,9 @@ function clearuser(na){
 .datesss{background:url(mode/icons/date.png) no-repeat right;cursor:pointer}
 input,textarea,select,*{font-size:16px}
 .lurim{text-align:right;padding:0px 5px}
+.tablesub td{height:25px;text-align:center;border:1px #888888 solid;}
+.tablesub .inputs{border:none;padding:0px;margin:0px;width:100%}
+.status{position: absolute;right:0px;top:0px;display:none}
 </style>
 </head>
 
@@ -134,14 +65,25 @@ input,textarea,select,*{font-size:16px}
 <?php 
 if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="header-back"></span>'.$da['title'].'</div><div style="height:46px;overflow:hidden"></div>';
 ?>
-
+<div class="status"><img id="statusimg" src="images/status1.png"></div>
 
 <div>
+	
 	<form name="myform">
 		<input name="id" type="hidden" value="<?=$da['mid']?>">
+		<input value="0" type="hidden" name="sub_totals0">
+		<input value="0" type="hidden" name="sub_totals1">
 		<div  style="background:white;padding-top:10px">
-		<table width="100%">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<?=$da['content']?>
+		<tr>
+		<td class="lurim" nowrap>相关文件</td>
+		<td><div class="divinput">
+			<input name="fileid" type="hidden">
+			<div id="filedivview" style="height:60px;overflow:auto" class="inputs"></div>
+			<div><input style="width:150px" onchange="f.change(this)" type="file"></div>
+		</div></td>
+		</tr>
 		</table>
 		</div>
 	</form>

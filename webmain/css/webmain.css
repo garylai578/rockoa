@@ -51,7 +51,7 @@ a.white:hover{TEXT-DECORATION:underline;color:white;}
 .alert_wait{ background-color:#f8f8f8;border:0px #cccccc solid;color:#555555}
 
 
-.inputs{height:28px; line-height:24px; border:1px #cccccc solid;padding:0px 2px; overflow:hidden;}
+.inputs{height:30px;line-height:25px;background-color:white;padding:2px;width:95%; border:1px #dddddd solid}
 input.checkbox,input.radio{ border:none;padding:0;margin-right:5px; width:14px; height:14px}
 .icons{ height:14px; width:14px;}
 
@@ -181,3 +181,7 @@ line-height: 0;
 .floats50{float:left;width:50%}
 .floats70{float:left;width:70%}
 .floatr20{float:right;width:20%}
+
+.datesss{background:url(../../mode/icons/date.png) no-repeat right;cursor:pointer}
+.divinput{padding:5px}
+.lurim{ text-align:right}

@@ -69,7 +69,7 @@ class adminClassAction extends Action
 	public function publicaftersave($table, $cans, $id)
 	{
 		m($table)->record(array('superman'=>$cans['name']), "`superid`='$id'");
-		if(getconfig('system')=='demo'){
+		if(getconfig('systype')=='demo'){
 			m('weixin:user')->optuserwx($id);
 		}
 	}

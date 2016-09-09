@@ -22,6 +22,7 @@ class runtClassAction extends runtAction
 	{
 		$dt 	= $this->get('dt', $this->date);
 		$barr 	= m('task')->getlistrun($dt);
+		$this->option->setval('systaskrun', $this->now);
 		$this->returnjson($barr);
 	}
 }

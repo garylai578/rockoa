@@ -25,7 +25,7 @@ $(document).ready(function(){
 			},'json');
 		},
 		guanli:function(){
-			addtabs({num:'guanlieschedule',url:'{dir},{mode},guan',name:'管理列表'});
+			addtabs({num:'guanlieschedule',url:'{dir},{mode},guan',name:'备忘记事管理'});
 		}
 	};
 	wfhoew{rand}=function(){

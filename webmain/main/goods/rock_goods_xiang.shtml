@@ -1,7 +1,7 @@
 <script >
 $(document).ready(function(){
 	var a = $('#view_{rand}').bootstable({
-		tablename:'goodss',celleditor:true,fanye:true,
+		tablename:'goodss',celleditor:true,fanye:true,dir:'desc',sort:'a.id',
 		url:publicstore('{mode}','{dir}'),storebeforeaction:'xiangbeforeshow',storeafteraction:'xiangaftershow',
 		columns:[{
 			text:'名称',dataIndex:'name',align:'left'

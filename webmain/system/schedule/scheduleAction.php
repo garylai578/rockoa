@@ -24,14 +24,12 @@ class scheduleClassAction extends Action
 	{
 		foreach($rows as $k=>$rs){
 			$rate = $rs['rate'];
-			$txsj = $rs['txsj'];
 			if($rate=='w')$rate='每周'.$rs['rateval'].'';
 			if($rate=='d')$rate='每天';
 			if($rate=='m')$rate='每月'.$rs['rateval'].'号';
 			$rows[$k]['rate'] = $rate;
-			if($txsj==0)$txsj='';
-			if($txsj==1)$txsj='准点';
-			if($txsj>1)$txsj='提前'.$txsj.'分钟';
+			$txsj='不提醒';
+			if($rs['txsj']==1)$txsj='提醒';
 			$rows[$k]['txsj'] = $txsj;
 		}
 		return array('rows'=>$rows);

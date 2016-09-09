@@ -27,7 +27,7 @@ class indexClassAction extends Action{
 		
 		
 		$this->smartydata['my']			= $my;
-		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.jpg');
+		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.png');
 	}
 	
 	
@@ -112,7 +112,7 @@ class indexClassAction extends Action{
 		//echo m('weixin:media')->upload('we.png');
 		
 		//$mid = m('kaoqin')->kqanay($this->adminid, '2016-08-03');
-		m('beifen')->updatefabricfile();
+		//m('schedule')->getdtdata();
 		//print_r($mid);
 	}
 	

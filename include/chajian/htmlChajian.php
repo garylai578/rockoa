@@ -74,8 +74,8 @@ class htmlChajian extends Chajian{
 			if(count(explode(',', $te_str)) < 3)$te_str.=',center';
 			$head[]	= explode(',', $te_str);
 		}
-		$txt	 = '';	//DBE6E3
-		$style	 = "padding:5px;border:1px ".$bor." solid";
+		$txt	 = '';
+		$style	 = "padding:3px;border:1px ".$bor." solid";
 		$txt	.= '<table width="100%" class="createrows" border="0" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse;" >';
 		$txt	.= '<tr>';
 		for($h=0; $h<$thead; $h++){
@@ -140,7 +140,7 @@ class htmlChajian extends Chajian{
 		
 		$filename 	= ''.$title.'_'.time().'.'.$lx.'';
 		$url 		= ''.$mkdir.'/'.$filename.'';
-		file_put_contents(iconv('utf-8','gb2312',$url), $s);
+		$bo 		= file_put_contents(iconv('utf-8','gb2312',$url), $s);
 		return $url;
 	}
 }                                  

@@ -3,7 +3,7 @@ $(document).ready(function(){
 
 	var modeid = 0;
 	var a = $('#view_{rand}').bootstable({
-		tablename:'flow_set',celleditor:true,fanye:true,params:{modeid:0},autoLoad:false,dir:'desc',sort:'optdt',
+		tablename:'flow_set',celleditor:true,fanye:true,params:{modeid:0},autoLoad:false,dir:'desc',sort:'optdt',statuschange:false,
 		url:publicstore('{mode}','{dir}'),storebeforeaction:'viewshowbefore',storeafteraction:'viewshowafter',
 		columns:[{
 			text:'操作人',dataIndex:'optname',sortable:true
@@ -44,7 +44,7 @@ $(document).ready(function(){
 		},
 		view:function(){
 			var d=a.changedata;
-			openxiang(d.modenum,d.id);
+			openxiangs(d.modename,d.modenum,d.id);
 		}
 	};
 	$('#mode_{rand}').change(c.changemode);

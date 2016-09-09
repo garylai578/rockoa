@@ -65,7 +65,11 @@ function initbody(){
 	$('body').keydown(function(e){
 		var code	= e.keyCode;
 		if(code==27){
-			closenowtabs();
+			if(get('xpbg_bodydds')){
+				js.tanclose($('#xpbg_bodydds').attr('xpbody'));
+			}else{
+				closenowtabs();
+			}
 			return false;
 		}
 	});
@@ -105,11 +109,23 @@ function openinput(name,num, id,cbal){
 	if(!cbal)cbal='';
 	if(id==0){name='[新增]'+name+'';}else{name='[编辑]'+name+'';}
 	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
-	js.tanbody('openinput',name,820,410,{
+	js.tanbody('winiframe',name,820,410,{
 		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
 	});
 	var url='?a=lu&m=input&d=flow&num='+num+'&mid='+id+'&callback='+cbal+'';
+	openinputiframe.location.href=url;
+	return false;
+}
+function openxiangs(name,num, id,cbal){
+	if(!id)id=0;
+	if(!cbal)cbal='';
+	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
+	js.tanbody('winiframe',name,820,410,{
+		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
+		bbar:'none'
+	});
+	var url = 'task.php?a=p&num='+num+'&mid='+id+'&callback='+cbal+'';
 	openinputiframe.location.href=url;
 	return false;
 }
@@ -274,4 +290,118 @@ function addtabs(a){
 	});
 	tabsarr[num] = a;
 	return false;
+}
+
+var optmenudatas=[];
+function optmenuclass(o1,num,id,obj,mname,oi){
+	this.modenum = num;
+	this.modename = mname;
+	this.id 	 = id;
+	this.mid 	 = id;
+	this.tableobj=obj;
+	this.oi 	= oi;
+	this.obj 	= o1;
+	var me 		= this;
+	this._init=function(){
+		if(typeof(optmenuobj)=='object')optmenuobj.remove();
+		optmenuobj=$.rockmenu({
+			data:[],
+			itemsclick:function(d){me.showmenuclick(d);},
+			width:150
+		});
+		var da = [{name:'详情',lx:998,nbo:false},{name:'详情(新窗口)',lx:998,nbo:true}];
+		var off=$(this.obj).offset();
+		var subdata = optmenudatas[''+this.modenum+'_'+this.id+''];
+		if(!subdata){
+			da.push({name:'<img src="images/loadings.gif" align="absmiddle"> 加载菜单中...',lx:999});
+			this.loadoptnum();
+		}else{
+			for(i=0;i<subdata.length;i++)da.push(subdata[i]);
+		}
+		optmenuobj.setData(da);
+		optmenuobj.showAt(off.left,off.top+20);
+	};
+	this.xiang=function(oi,nbo){
+		var mnem=this.modename;
+		if(!nbo){
+			if(!mnem)mnem='详情';
+			openxiangs(mnem,this.modenum,this.mid);
+		}else{
+			openxiang(this.modenum,this.mid);
+		}
+	};
+	this.showmenuclick=function(d){
+		d.num=this.modenum;d.mid=this.id;
+		d.modenum = this.modenum;
+		var lx = d.lx;if(!lx)lx=0;
+		if(lx==999)return;
+		if(lx==998){this.xiang(d.oi, d.nbo);return;}
+		if(lx==997){this.printexcel(d.oi);return;}
+		if(lx==996){this.xiang(d.oi, d.nbo);return;}
+		this.changdatsss = d;
+		if(lx==2 || lx==3){
+			var clx='user';if(lx==3)clx='usercheck';
+			js.getuser({type:clx,title:d.name,callback:function(na,nid){me.changeuser(na,nid);}});
+			return;
+		}
+		var bts = (d.issm==1)?'必填':'选填';
+		if(lx==1 || lx==9 || lx==10){
+			js.prompt(d.name,'请输入['+d.name+']说明('+bts+')：',function(index, text){
+				if(index=='yes'){
+					if(!text && d.issm==1){
+						js.msg('msg','没有输入['+d.name+']说明');
+					}else{
+						me.showmenuclicks(d, text);
+					}
+				}
+			});
+			return;
+		}
+		if(lx==4){
+			js.prompt(d.name, '说明('+bts+')：', function(index, text){
+				if(index=='yes'){
+					var ad=js.getformdata('myformsbc');
+					for(var i in ad)d['fields_'+i+'']=ad[i];
+					me.showmenuclicks(d, text);
+				}
+			},'', '<div align="left" id="showmenusss" style="padding:10px">加载中...</div>');
+			var url='index.php?a=lus&m=input&d=flow&num='+d.modenum+'&menuid='+d.optmenuid+'&mid='+d.mid+'';
+			$.get(url, function(s){
+				var s='<form name="myformsbc">'+s+'</form>';
+				$('#showmenusss').html(s);
+				js.tanoffset('confirm');
+			});
+			return;
+		}
+		this.showmenuclicks(d,'');
+	};
+	this.changeuser=function(nas,sid){
+		if(!sid)return;
+		var d = this.changdatsss,sm='';
+		d.changename 	= nas; 
+		d.changenameid  = sid; 
+		this.showmenuclicks(d,sm);
+	};
+	this.showmenuclicks=function(d,sm){
+		if(!sm)sm='';
+		d.sm = sm;
+		for(var i in d)if(d[i]==null)d[i]='';
+		js.msg('wait','处理中...');
+		js.ajax(js.getajaxurl('yyoptmenu','flowopt','flow'),d,function(ret){
+			if(ret.code==200){
+				optmenudatas[''+d.modenum+'_'+d.mid+'']=false;
+				me.tableobj.reload();
+				js.msg('success','处理成功');
+			}else{
+				js.msg('msg',ret.msg);
+			}
+		},'post,json');	
+	};
+	this.loadoptnum=function(){
+		js.ajax(js.getajaxurl('getoptnum','flowopt','flow'),{num:this.modenum,mid:this.id},function(ret){
+			optmenudatas[''+me.modenum+'_'+me.id+''] = ret.data;
+			me._init();
+		},'get,json');
+	};
+	this._init();
 }

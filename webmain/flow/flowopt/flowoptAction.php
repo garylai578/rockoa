@@ -37,4 +37,25 @@ class flowoptClassAction extends Action
 		
 		backmsg('', $msg);
 	}
+	
+	public function getoptnumAjax()
+	{
+		$mid 	= (int)$this->post('mid');
+		$num	= $this->post('num');
+		
+		$arr 	= m('flow')->opt('getoptmenu', $num, $mid);
+		$this->showreturn($arr);
+	}
+	
+	public function yyoptmenuAjax()
+	{
+		$num 	= $this->post('modenum');
+		$sm 	= $this->post('sm');
+		$optid 	= (int)$this->post('optmenuid');
+		$zt 	= (int)$this->post('statusvalue');
+		$mid 	= (int)$this->post('mid');
+		$msg 	= m('flow')->opt('optmenu', $num, $mid, $optid, $zt, $sm);
+		if($msg != 'ok')$this->showreturn('', $msg, 201);
+		$this->showreturn('');
+	}
 }

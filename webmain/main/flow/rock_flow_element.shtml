@@ -12,6 +12,12 @@ $(document).ready(function(){
 		},{
 			text:'对应字段',dataIndex:'fields'
 		},{
+			text:'分类',dataIndex:'iszb',renderer:function(v){
+				var s='<font color=#ff6600>主表</font>';
+				if(v==1)s='多行子表';
+				return s;
+			}
+		},{
 			text:'元素类型',dataIndex:'fieldstype'
 		},{
 			text:'默认值',dataIndex:'dev'
@@ -105,19 +111,20 @@ $(document).ready(function(){
 <div>
 	<table width="100%">
 	<tr>
-	<td align="left" width="150">
-		<select id="mode_{rand}" class="form-control" ><option value="0">-选择模块-</option></select>
-		
-		
+	<td align="left">
+		<select id="mode_{rand}" style="width:180px" class="form-control" ><option value="0">-选择模块-</option></select>
 	</td>
-	<td align="left"  style="padding:0px 10px;">
+	<td align="left" style="padding-left:10px;">
+		<button class="btn btn-default" click="reload" type="button">刷新</button>
+	</td>
+	<td width="80%" align="left" nowrap style="padding-left:10px;">
 		<div class="btn-group">
 		<button class="btn btn-default" id="luc_{rand}" disabled click="inputs" type="button">PC端录入页面布局</button>
 		<button class="btn btn-default" id="lu_{rand}" disabled click="lulu,0" type="button"><i class="icon-desktop"></i> PC录入页面</button>
 		<button class="btn btn-default" id="lum_{rand}" disabled click="lulu,1" type="button"><i class="icon-tablet"></i> 手机录入页面</button>
 		</div>
 	</td>
-	<td align="right">
+	<td align="right" nowrap>
 		<button class="btn btn-warning" id="add_{rand}" disabled click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>&nbsp; 
 		<button class="btn btn-danger" click="del" disabled id="del_{rand}" type="button"><i class="icon-trash"></i> 删除</button>

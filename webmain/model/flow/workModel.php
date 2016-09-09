@@ -4,7 +4,7 @@ class flow_workClassModel extends flowModel
 
 	protected function flowinit()
 	{
-		$this->statearr		 = c('array')->strtoarray('待执行|blue,已完成|green,执行中|#ff6600,中止|#888888');
+		$this->statearr		 = c('array')->strtoarray('待执行|blue,已完成|green,执行中|#ff6600,终止|#888888');
 	}
 	
 	protected function flowchangedata(){

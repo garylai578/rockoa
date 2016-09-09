@@ -152,7 +152,7 @@ var rockmenuobj	= null;
 			itemsclick:function(){},
 			beforeshow:function(){},
 			aftershow:function(){},
-			autoremove:false,//自动删除
+			autoremove:true,
 			trigger:'click',
 			autohide:true,
 			arrowup:false,	//是否有箭头

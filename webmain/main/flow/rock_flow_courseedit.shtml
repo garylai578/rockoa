@@ -7,7 +7,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_course',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'optdt={now}'},
-		submitfields:'setid,name,num,checktype,checktypeid,checktypename,sort,where,explain,status,courseact',
+		submitfields:'setid,name,num,checktype,checktypeid,checktypename,sort,where,explain,status,courseact,checkshu',
 		requiredfields:'name',
 		success:function(){
 			closenowtabs();
@@ -96,7 +96,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right" nowrap >审核人员类型：</td>
-			<td class="tdinput"><select class="form-control" name="checktype"><option value="">-类型-</option><option value="super">直属上级</option><option value="rank">职位</option><option value="user">指定人员</option><option value="dept">部门负责人</option><option value="auto">自定义</option></select></td>
+			<td class="tdinput"><select class="form-control" name="checktype"><option value="">-类型-</option><option value="super">直属上级</option><option value="rank">职位</option><option value="user">指定人员</option><option value="dept">部门负责人</option><option value="auto">自定义(写代码上)</option><option value="apply">申请人</option><option value="opt">操作人</option><option value="change">由上步指定</option></select></td>
 			
 			<td align="right" id="checktext_{rand}" nowrap></td>
 			<td class="tdinput" id="checkname_{rand}" style="display:none">
@@ -147,6 +147,11 @@ $(document).ready(function(){
 		<tr>
 			<td align="right">排序号：</td>
 			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
+			
+			<td  align="right" nowrap >审核人数：</td>
+			<td class="tdinput"><select class="form-control" name="checkshu"><option value="0">需全部审核</option><option value="1" selected>至少一人</option><option value="2">至少2人</option></select></td>
+			
+			
 		</tr>
 		
 		<tr>

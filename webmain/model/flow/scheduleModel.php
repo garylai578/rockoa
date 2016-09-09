@@ -13,8 +13,7 @@ class flow_scheduleClassModel extends flowModel
 		}
 		$txsj = (int)$this->rs['txsj'];
 		$str  = '不提醒';
-		if($txsj==1)$str  = '准点提醒';
-		if($txsj>1)$str  = '提前'.$txsj.'分钟提醒';
+		if($txsj==1)$str  = '提醒';
 		$this->rs['txsj']= $str;
 	}
 	

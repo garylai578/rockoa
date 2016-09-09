@@ -20,6 +20,7 @@
 		this.otherparams = {};
 		this.loadci = 0;
 		this.init	= function(){
+			this.tablename=can.tablename;
 			can.tablename=jm.encrypt(can.tablename);
 			this._init();
 			this._create();
@@ -45,6 +46,7 @@
 			for(i=0; i<can.columns.length; i++){
 				a = can.columns[i];
 				if(typeof(a.align)=='undefined')can.columns[i].align='center';
+				if(a.dataIndex=='caozuo')can.columns[i] = this._caozuochengs(a);
 			}
 			s='<div style="position:relative;'+can.bodyStyle+'" id="tablebody_'+rand+'"></div><div id="tablefanye_'+rand+'"></div>';
 			obj.html(s);
@@ -112,6 +114,10 @@
 			}
 			obj.find('i[tempsort]').click(function(){
 				me._clickorder(this);
+			});
+			obj.find("a[temp='caozuomenu_"+rand+"']").click(function(){
+				me._caozuochengss(this);
+				return false;
 			});
 		};
 		this.insert=function(d, funs){
@@ -601,6 +607,24 @@
 			this.page	 = 1;
 			this.reload();
 		};
+		
+		this._caozuochengs=function(a){
+			a.renderer=function(v,d,oi){
+				var s='<a oi="'+oi+'" temp="caozuomenu_'+rand+'">操作<i class="icon-angle-down"></i></a>';
+				if(!d.id)s='&nbsp;';
+				return s;
+			};
+			a.notexcel=true;
+			return a;
+		};
+		this._caozuochengss=function(o1){
+			var oi= parseFloat($(o1).attr('oi'));
+			var d=this.getData(oi);
+			var num=can.modenum;if(num=='')num=this.tablename;
+			var mid = d.id;if(d.modenum)num=d.modenum;
+			var modename=can.modename;if(d.modename)modename=d.modename;
+			new optmenuclass(o1,num,mid,this,modename,oi);
+		};
 	};
 	
 	
@@ -610,7 +634,7 @@
 			pageSize:15,bodyStyle:'',height:0,
 			url:js.getajaxurl('publicstore','index'),celleditor:false,cellautosave:true,celledittype:'dblclick',
 			data:[],autoLoad:true,tree:false,itemdblclick:function(){},searchwidth:500,
-			defaultorder:'',where:'',hideHeaders:false,modenum:'',statuschange:true,
+			defaultorder:'',where:'',hideHeaders:false,modename:'',modenum:'',statuschange:true,
 			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',
 			keywhere:'',params:{},cellurl:js.getajaxurl('publicsavevalue','index'),
 			tablename:'',selectcls:'success',itemclick:function(da, index, e){},beforeload:function(){},load:function(){},

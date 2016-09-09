@@ -58,7 +58,7 @@ js.getuser = function(cans){
 			can.nameobj.value = s2;
 			can.nameobj.focus();
 		}	
-		can.callback(d);
+		can.callback(s2,s1,d);
 		js.tanclose(can.windowid);
 	}).focus();
 }

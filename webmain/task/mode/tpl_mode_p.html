@@ -7,11 +7,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
 <title><?=$da['title']?></title>
 <link rel="shortcut icon" href="favicon.ico" />
-<link rel="stylesheet" type="text/css" href="webmain/css/css.css">
+<link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
-
-
+<script type="text/javascript" src="<?=$da['p']?>/task/mode/modeview.js"></script>
+<script>
+var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>',ismobile=0;
+</script>
 <style>
 .stitle{padding:5px;border-bottom:1px #dddddd solid;font-size:14px;}
 .ydullist{display:inline-block;width:100%;}
@@ -33,132 +35,6 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 .pcont p{text-indent:24pt;margin:10px 0px}
 .status{position: absolute;right:20px;top:10px;display:}
 </style>
-<script>
-var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>';
-function othercheck(){}
-function initbody(){
-	$('body').click(function(){
-		$('.menullss').hide();
-	});
-	$('body').keydown(c.onkeydown);
-	$('#showmenu').click(function(){
-		$('.menullss').toggle();
-		return false;
-	});
-	$('.menullss li').click(function(){
-		c.mencc(this);
-	});
-}
-
-function check(o1){
-	var da = {'sm':form('check_explain').value,'mid':mid,'modenum':modenum,'zt':_getaolvw('check_status')};
-	if(da.zt==''){js.setmsg('请选择处理动作');return;}if(da.zt=='2'&&isempt(da.sm)){js.setmsg('此动作必须填写说明');return;}
-	if(form('zhuangyi_name')){
-		da.zyname 	= form('zhuangyi_name').value;
-		da.zynameid = form('zhuangyi_name_id').value;
-	}
-	var ostr=othercheck();
-	if(typeof(ostr)=='string'&&ostr!=''){js.setmsg(ostr);return;}
-	if(typeof(ostr)=='object')for(var csa in ostr)da[csa]=ostr[csa];
-	js.setmsg('处理中...');
-	o1.disabled = true;
-	//da.fileid = form('fileid').value;
-	var url = c.gurl('check');
-	js.ajax(url,da,function(a){
-		if(a.success){
-			js.setmsg(a.msg,'green');
-			if(get('autocheckbox'))if(get('autocheckbox').checked)c.close();
-		}else{
-			js.setmsg(a.msg);
-			o1.disabled = false;
-		}
-	},'post,json',function(){
-		js.setmsg('处理失败请重试');o1.disabled = false;
-	});
-}
-function _getaolvw(na){
-	var v = '',i,o=$("input[name='"+na+"']");
-	for(i=0;i<o.length;i++)if(o[i].checked)v=o[i].value;
-	return v;
-}
-
-function _submitother(nae,zt,ztid,ocan,las){
-	if(!las)las='other_explain';
-	if(!nae||!get(las)){js.setmsg('sorry;不允许操作','','msgview_spage');return;}
-	var sm=$('#'+las+'').val();
-	if(!zt)zt='';if(!ocan)ocan={};
-	if(!ztid){js.setmsg('没有选择状态','','msgview_spage');return;}
-	if(!sm){js.setmsg('没有输入备注/说明','','msgview_spage');return;}
-	var da = js.apply({'name':nae,'mid':mid,'modenum':modenum,'zt':zt,'ztid':ztid,'sm':sm},ocan);
-	js.setmsg('处理中...','','msgview_spage');
-	js.ajax(c.gurl('addlog'),da,function(s){
-		js.setmsg('处理成功','green', 'msgview_spage');
-		$('#spage_btn').hide();
-	},'post',function(s){
-		js.setmsg(s,'','msgview_spage');
-	});
-	return false;
-}
-var c={
-	gurl:function(a){
-		var url=js.getajaxurl(a,'flowopt','flow');
-		return url;
-	},
-	close:function(){
-		window.close();
-		try{parent.js.tanclose('winiframe');}catch(e){}
-	},
-	other:function(nae,las){
-		_submitother(nae,'','1',las);
-	},
-	others:function(nae,zt,ztid,ocan,las){
-		_submitother(nae,zt,ztid,ocan,las);
-	},
-	mencc:function(o1){
-		var lx=$(o1).attr('lx');
-		if(lx=='2')c.delss();
-		if(lx=='3')c.close();
-		if(lx=='4')location.reload();
-		if(lx=='0'){
-			c.hideoth();
-			window.print();
-		}
-		if(lx=='1'){
-			var url='index.php?a=lu&m=input&d=flow&num='+modenum+'&mid='+mid+'';
-			location.href=url;
-		}
-	},
-	hideoth:function(){
-		$('.menulls').hide();
-		$('.menullss').hide();
-		$('a[temp]').remove();
-	},
-	delss:function(){
-		if(!confirm('慎用，删除将不能恢复，确定要删除吗？'))return;
-		var da = {'mid':mid,'modenum':modenum,'sm':''};
-		js.ajax(c.gurl('delflow'),da,function(a){
-			js.msg('success','单据已删除,3秒后自动关闭页面,<a href="javascript:;" onclick="c.close()">[关闭]</a>');
-			setTimeout('c.close()',3000);
-		},'post');
-	},
-	onkeydown:function(e){
-		var code	= event.keyCode;
-		if(code==27){
-			c.close();
-			return false;
-		}
-		if(event.altKey){
-			if(code == 67){
-				c.close();
-				return false;
-			}
-		}
-	},
-	changeshow:function(lx){
-		$('#showrecord'+lx+'').toggle();
-	}
-};
-</script>
 </head>
 <body style="background:white">
 <div align="center">
@@ -210,7 +86,7 @@ var c={
 					<td><?=$rs['actname']?></td>
 					<td><?=$rs['name']?></td>
 					<td style="color:<?=$rs['color']?>"><?=$rs['statusname']?></td>
-					<td><?=$rs['explain']?></td>
+					<td><div  align="left"><?=$rs['explain']?></div></td>
 					<td><?=$rs['optdt']?></td>
 				</tr>
 				<?php }?>
@@ -240,14 +116,14 @@ var c={
 			<?php if($flowinfor['ischeck']==1){?>
 			<tr height="40">
 				<td class="tdys1"><div align="right" style="color:#555555"><font color=red>*</font>处理人：</div></td>
-				<td class="tdys1"><div align="left"><?=$flowinfor['nowcourse']['nowcheckname']?></div></td>
+				<td class="tdys1"><div align="left"><?=$flowinfor['nowcourse']['name']?>(<?=$flowinfor['nowcourse']['nowcheckname']?>)</div></td>
 			</tr>
 			
 			<tr height="40">
 				<td class="tdys1"><div align="right" style="color:#555555"><font color=red>*</font>处理动作：</div></td>
 				<td class="tdys1"><div align="left">
 				<?php
-				$s = '';	
+				$s = '';
 				foreach($flowinfor['courseact'] as $k=>$act){
 					if($k>0)$s.='<label><input name="check_status"  type="radio" value="'.$k.'">'.$act[0].'</label> &nbsp; ';
 				}
@@ -257,7 +133,23 @@ var c={
 			</tr>
 			
 			<tr>
-				<td class="tdys1"><div  align="right" style="color:#555555">说明:</div></td>
+				<td class="tdys1"><div  align="right" style="color:#555555">转给：</div></td>
+				<td class="tdys1" style="padding:5px"><div align="left">
+				<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input placeholder="" class="inputs" style="width:98%" id="zhuanbanname" readonly type="text" name="zhuanbanname"><input name="zhuanbannameid" id="zhuanbanname_id" type="hidden"></td><td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear('zhuanbanname')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser('zhuanbanname','changeuser')" class="webbtn">选择</a></td></tr></table>
+				</div></td>
+			</tr>
+			
+			<?php if($flowinfor['ischange']==1){?>
+			<tr>
+				<td class="tdys1"><div  align="right" style="color:#555555"><font color=red>*</font>下一步处理人：</div></td>
+				<td class="tdys1" style="padding:5px"><div align="left">
+				<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input placeholder="选择下一步[<?=$flowinfor['nextcourse']['name']?>]处理人" class="inputs" style="width:98%" id="nextname" readonly type="text" name="nextname"><input name="nextnameid" id="nextname_id" type="hidden"></td><td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear('nextname')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser('nextname','changeusercheck')" class="webbtn">选择</a></td></tr></table>
+				</div></td>
+			</tr>
+			<?php }?>
+			
+			<tr>
+				<td class="tdys1"><div  align="right" style="color:#555555">说明：</div></td>
 				<td class="tdys1" style="padding:5px"><div align="left"><textarea class="textarea" name="check_explain" style="width:95%;height:60px"></textarea></div></td>
 			</tr>
 			

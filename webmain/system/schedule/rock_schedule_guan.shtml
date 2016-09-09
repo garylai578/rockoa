@@ -13,7 +13,7 @@ $(document).ready(function(){
 		},{
 			text:'重复',dataIndex:'rate'
 		},{
-			text:'提醒',dataIndex:'txsj'
+			text:'是否提醒',dataIndex:'txsj'
 		},{
 			text:'添加人',dataIndex:'optname'
 		},{

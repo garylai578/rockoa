@@ -8,12 +8,26 @@ class taskClassModel extends Model
 		$sdts	= strtotime($dt);
 		$edts	= strtotime($dt.' 23:59:59');
 		$ntime 	= time();
+		$brows	= array();
 		foreach($rows as $k=>$rs){
-			$type 	= $rs['type'];
-			$atime  = $rs['time'];
+			$ate = explode(',', $rs['type']);
+			$ati = explode(',', $rs['time']);
+			if(count($ate)!=count($ati))continue;
+			$len = count($ate);
 			$rs['adminid'] 	= 1;
 			$rs['atype'] 	= 'runurl';
 			$rs['url'] 		= $this->getyunurl($rs['id']);
+			for($i=0;$i<$len;$i++){
+				$rs['type'] = $ate[$i];
+				$rs['time'] = $ati[$i];
+				$brows[] = $rs;
+			}
+		}
+		
+		foreach($brows as $k=>$rs){
+			$type 	= $rs['type'];
+			$atime  = $rs['time'];
+			
 			$jg		= (int)str_replace(array('d','i','h'),array('',''), $type);
 			if($jg==0)$jg=1;
 			$type 	= str_replace($jg,'', $type);

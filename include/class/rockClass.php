@@ -487,4 +487,11 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		if(!is_dir($mkdir))mkdir($mkdir);
 		$this->createtxt(''.$mkdir.'/'.$lxs.''.time().'_'.rand(100,999).'.log', $msg);
 	}
+	
+	public function arrvalue($arr, $k, $dev='')
+	{
+		$val  = $dev;
+		if(isset($arr[$k]))$val= $arr[$k];
+		return $val;
+	}
 }

@@ -39,6 +39,7 @@ function getlistla(s){
 	s= js.getoption('xinhusystemuser');
 	if(s!='')userarr=js.decode(s);
 	showlistss(0,0,'maindiv');
+	showlistss(1,1,'dept1');
 }
 function loaddata(){
 	js.ajax('dept','data',{},function(ret){
@@ -136,6 +137,8 @@ function okla(){
 		sid=sid.substr(1);
 		sna=sna.substr(1);
 	}
+	var calb = js.request('callback');
+	try{if(calb!='')parent[calb](sna,sid);}catch(e){}
 	try{parent.changeok(sna,sid);}catch(e){}
 	var evst=js.request('event');
 	if(evst!='')js.sendevent('changeuser', evst, {name:sna,nameid:sid});

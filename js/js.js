@@ -293,10 +293,10 @@ js.formatsize=function(size){
 	var fs	= size/Math.pow(1024,Math.floor(e));
 	return js.float(fs)+' '+arr[e];
 }
-js.getformdata=function(na){
+js.getformdata=function(nas){
 	var da	={},ona='',o,type,val,na,i,obj;
-	if(!na)na='myform';
-	obj	= document[na];
+	if(!nas)nas='myform';
+	obj	= document[nas];
 	for(i=0;i<obj.length;i++){
 		o 	 = obj[i];type = o.type,val = o.value,na = o.name;
 		if(type=='checkbox'){
@@ -444,10 +444,14 @@ js.tanbody=function(act,title,w,h,can1){
 		$('#'+act+'_spancancel').parent().remove();
 	}
 	if(can.bbar=='none')$('#'+act+'_bbar').remove();
-	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight;
+	this.tanoffset(act);
+	can.showfun(act);
+}
+js.tanoffset=function(act){
+	var mid=''+act+'_main';
+	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight,l,t;
 	l=(winWb()-lw)*0.5;t=(winHb()-lh-20)*0.5;
 	$('#'+mid+'').css({'left':''+l+'px','top':''+t+'px'});
-	can.showfun(act);
 }
 js.tanclose=function(act, guan){
 	if(!isempt(guan)){
@@ -529,27 +533,28 @@ js.debug	= function(s){
 	console.log(s);
 }
 
-js.confirm	= function(txt,fun, tcls, tis, lx){
+js.confirm	= function(txt,fun, tcls, tis, lx,ostr){
 	if(!lx)lx=0;
 	var h = '<div style="padding:20px;line-height:30px" align="center">';
 	if(lx==1){
-		if(!tcls)tcls='';
-		h='<div style="padding:10px;" align="center">';
+		if(!tcls)tcls='';if(!ostr)ostr='';
+		h='<div style="padding:10px;" align="center">'+ostr+'';
 		h+='<div align="left" style="padding-left:10px">'+txt+'</div>';
-		h+='<div ><textarea class="input" id="confirm_input" style="width:260px;height:60px">'+tcls+'</textarea></div>';
+		h+='<div ><textarea class="input" id="confirm_input" style="width:280px;height:60px">'+tcls+'</textarea></div>';
 	}else{
 		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
 	}
 	h+='</div>';
-	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
+	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp;  &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
 	h+='<div class="blank10"></div>';
 	if(!tcls)tcls='danger';if(lx==1)tcls='info';
 	if(!tis)tis='<i class="icon-question-sign"></i>&nbsp;系统提示';
-	js.tanbody('confirm', tis, 300, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
+	js.tanbody('confirm', tis, 320, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
 	function backl(e){
 		var jg	= $(this).attr('sattr'),val=$('#confirm_input').val();
-		js.tanclose('confirm');if(val==null)val='';
+		if(val==null)val='';
 		if(typeof(fun)=='function')fun(jg, val);
+		js.tanclose('confirm');
 		return false;
 	}
 	$('#confirm_btn1').click(backl);
@@ -557,8 +562,8 @@ js.confirm	= function(txt,fun, tcls, tis, lx){
 	get('confirm_btn').focus();
 	if(lx==1)get('confirm_input').focus();
 }
-js.prompt = function(tit,txt,fun, msg){
-	js.confirm(txt, fun, msg, tit, 1);
+js.prompt = function(tit,txt,fun, msg, ostr){
+	js.confirm(txt, fun, msg, tit, 1, ostr);
 }
 js.msg = function(lx, txt,sj){
 	clearTimeout(this.msgshowtime);
@@ -633,22 +638,27 @@ js.getparenta=function(o, oi){
 }
 js.ajaxwurbo = false;
 js.ajaxbool = false;
-js.ajax = function(url,da,fun,type,efun){
+js.ajax = function(url,da,fun,type,efun, tsar){
 	if(js.ajaxbool)return;
-	if(!da)da={};if(!type)type='get';
+	if(!da)da={};if(!type)type='get';if(!tsar)tsar='';tsar=tsar.split(',');
 	if(typeof(fun)!='function')fun=function(){};
 	if(typeof(efun)!='function')efun=function(){};
 	var atyp = type.split(','),dtyp='';type=atyp[0];
 	if(atyp[1])dtyp=atyp[1];
-	js.ajaxbool=true;
+	js.ajaxbool=true;if(tsar[0])js.msg('wait', tsar[0]);
 	var ajaxcan={
 		type:type,
 		data:da,url:url,
 		success:function(str){
-			js.ajaxbool=false
-			fun(str);
+			js.ajaxbool=false;
+			try{
+				if(tsar[1])js.msg('success', tsar[1]);
+				fun(str);
+			}catch(e){
+				js.msg('msg', str);
+			}
 		},error:function(e){
-			js.ajaxbool=false
+			js.ajaxbool=false;
 			js.msg('msg','处理出错:'+e.responseText+'');
 			efun();
 		}
@@ -736,4 +746,7 @@ js.fileall=',aac,ace,ai,ain,amr,app,arj,asf,asp,aspx,av,avi,bin,bmp,cab,cad,cat,
 js.filelxext = function(lx){
 	if(js.fileall.indexOf(','+lx+',')<0)lx='wz';
 	return lx;
+}
+js.datechange=function(o1,lx){
+	$(o1).rockdatepicker({view:lx,initshow:true});
 }

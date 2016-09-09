@@ -101,7 +101,7 @@
 			var oac	= $('#rockdatepicker_'+rand+'');
 			oac.show();
 			this.setweizhi();
-			js.addbody(rand, 'remove', 'rockdatepicker_'+rand+''); 
+			setTimeout(function(){js.addbody(rand, 'remove', 'rockdatepicker_'+rand+''); },100);
 			return oac;
 		};
 		this.setView	= function(vis){
@@ -316,17 +316,17 @@
 			me.hidefudong();
 		};
 		this.setweizhi = function(){
-			var off		= obj.offset();
+			var off		= obj.offset();;
 			if(can.inputid != '')off = $('#'+can.inputid+'').offset();
 			var o		= $('#rockdatepicker_'+rand+'');
 			var nh		= get('rockdatepicker_'+rand+'').clientHeight,
 				nw		= get('rockdatepicker_'+rand+'').clientWidth,
 				t		= off.top+can.top,
-				dy		= t+nh-winHb(),
+				dy		= t+nh-winHb()-$('body,html').scrollTop(),
 				l		= off.left+can.left,
 				jl		= l+nw-winWb(),
 				jl1		= 5;
-			if($('body').height()>winHb())jl1=22;
+			if($('body,html').height()>winHb())jl1=22;
 			if(dy>0)t=t-dy-5;
 			if(jl>0)l=l-jl-jl1;
 			this.mleft	= l;

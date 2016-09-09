@@ -16,7 +16,7 @@ $(document).ready(function(){
 		},{
 			text:'针对人员',dataIndex:'recename'
 		},{
-			text:'有流程',dataIndex:'isflow',type:'checkbox',editor:true,sortable:true
+			text:'有流程',dataIndex:'isflow',type:'checkbox',sortable:true
 		},{
 			text:'PC端提醒',dataIndex:'pctx',type:'checkbox',editor:true,sortable:true
 		},{
@@ -69,6 +69,11 @@ $(document).ready(function(){
 			var name='['+a.changedata.name+']表单元素';
 			var id = a.changeid;
 			addtabs({num:'flowelements'+id+'',url:'main,flow,element,mid='+id+'',name:name});
+		},
+		pipei:function(){
+			js.ajax(js.getajaxurl('reloadpipei','{mode}','{dir}'),{},function(s){
+				js.msg('success', s);
+			},'get',false,'匹配中...,匹配完成');
 		}
 	};
 	js.initbtn(c);
@@ -93,14 +98,18 @@ $(document).ready(function(){
 <div>
 	<table width="100%">
 	<tr>
-	<td align="left">
+	<td align="left" nowrap>
 		<button class="btn btn-warning" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
 		<button class="btn btn-primary" disabled id="downbtn_{rand}" type="button">模块开发管理 <i class="icon-angle-down"></i></button>&nbsp; 
+		<button class="btn btn-default" click="pipei" type="button">重新匹配流程</button>&nbsp; 
 	</td>
 	<td align="left"  style="padding:0px 10px;">
 		
 	</td>
-	<td align="right">
+	<td width="90%">
+		
+	</td>
+	<td align="right" nowrap>
 		
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>&nbsp; 
 		<button class="btn btn-danger" click="del" disabled id="del_{rand}" type="button"><i class="icon-trash"></i> 删除</button>

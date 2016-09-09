@@ -19,7 +19,7 @@ class agent_workClassModel extends agentModel
 	
 	public function getdatas($uid, $lx, $page)
 	{
-		$statearr		 = explode(',','待执行,已完成,执行中,中止');
+		$statearr		 = explode(',','待执行,已完成,执行中,终止');
 		$statearrs		 = explode(',','blue,green,#ff6600,#888888');
 		
 		$where 	= $this->rock->dbinstr('distid', $uid);

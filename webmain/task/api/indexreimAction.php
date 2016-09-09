@@ -3,6 +3,7 @@ class indexreimClassAction extends apiAction
 {
 	public function indexinitAction()
 	{
+		$viewobj 	= m('view');
 		$dbs 		= m('reim');
 		$deptarr 	= m('dept')->getdata();
 		$userarr 	= m('admin')->getuser(1);
@@ -11,7 +12,10 @@ class indexreimClassAction extends apiAction
 		$historyarr	= $dbs->gethistory($this->adminid);
 		$applyarr	= m('mode')->getmoderows($this->adminid,'and islu=1');
 		$modearr	= array();
-		foreach($applyarr as $k=>$rs)$modearr[]=array('type'=>$rs['type'],'num'=>$rs['num'],'name'=>$rs['name']);
+		foreach($applyarr as $k=>$rs){
+			if(!$viewobj->isadd($rs['id'], $this->adminid))continue;
+			$modearr[]=array('type'=>$rs['type'],'num'=>$rs['num'],'name'=>$rs['name']);
+		}
 		
 		$arr['deptjson']	= json_encode($deptarr);
 		$arr['userjson']	= json_encode($userarr);

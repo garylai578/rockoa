@@ -111,6 +111,14 @@ class flowbillClassModel extends Model
 		return $to;
 	}
 	
+	//未通过的
+	public function applymywgt($uid)
+	{
+		$where	= '`status`=2 and isdel=0 and `uid`='.$uid.'';
+		$to 	= $this->rows($where);
+		return $to;
+	}
+	
 	//单据数据
 	public function getbilldata($rows)
 	{
@@ -130,6 +138,7 @@ class flowbillClassModel extends Model
 			$modenum 	= '';
 			$statustext	= '记录不存在';
 			$statuscolor= '#888888';
+			$wdst 		= 0;
 			if(isset($modearr[$rs['modeid']])){
 				$mors 	= $modearr[$rs['modeid']];
 				$modename 	= $mors['name'];
@@ -138,8 +147,9 @@ class flowbillClassModel extends Model
 				$rers 		= $this->db->getone('[Q]'.$rs['table'].'', $rs['mid']);
 				$summary	= $this->rock->reparr($summary, $rers);
 				if($rers){
-					$statustext  = $statsss[$rers['status']];
-					$statuscolor = $statsss1[$rers['status']];
+					$wdst		 = $rers['status'];
+					$statustext  = $statsss[$wdst];
+					$statuscolor = $statsss1[$wdst];
 					if($rers['isturn']==0){
 						$statustext  = '待提交';
 						$statuscolor = '#ff6600';
@@ -149,7 +159,7 @@ class flowbillClassModel extends Model
 				}
 			}
 			$status = '<font color="'.$statuscolor.'">'.$statustext.'</font>';
-			if($rs['status']==0)$status='待<font color="blue">'.$rs['nowcheckname'].'</font>处理';
+			if($wdst==0)$status='待<font color="blue">'.$rs['nowcheckname'].'</font>处理';
 			
 			$srows[]= array(
 				'id' 		=> $rs['mid'],

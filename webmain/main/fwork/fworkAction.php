@@ -6,8 +6,10 @@ class fworkClassAction extends Action
 	{
 		$rows = m('mode')->getmoderows($this->adminid,'and islu=1');
 		$row  = array();
+		$viewobj = m('view');
 		foreach($rows as $k=>$rs){
 			$lx = $rs['type'];
+			if(!$viewobj->isadd($rs['id'], $this->adminid))continue;
 			if(!isset($row[$lx]))$row[$lx]=array();
 			$row[$lx][] = $rs;
 		}
@@ -51,7 +53,7 @@ class fworkClassAction extends Action
 			'table' => '`[Q]flow_bill` a left join `[Q]admin` b on a.uid=b.id',
 			'where' => " and a.isdel=0 $where",
 			'fields'=> 'a.*,b.name,b.deptname',
-			'order' => 'a.id desc'
+			'order' => 'a.optdt desc'
 		);
 	}
 	

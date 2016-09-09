@@ -135,11 +135,24 @@ abstract class mysql{
 		return $this->nowsql;
 	}
 	
-	public function found_rows()
+	public function getsyscount($lx='')
 	{
-		$rsa	= $this->getall('SELECT FOUND_ROWS() as total');
+		$to 	= 0;
+		if($lx=='')return $to;
+		$lx		= strtoupper($lx);
+		$rsa	= $this->getall('SELECT '.$lx.'() as total');
 		$to 	= $rsa[0]['total'];
 		return $to;
+	}
+	
+	public function found_rows()
+	{
+		return $this->getsyscount('found_rows');
+	}
+	
+	public function row_count()
+	{
+		return $this->getsyscount('row_count');
 	}
 	
 	public function getsql($arr=array())

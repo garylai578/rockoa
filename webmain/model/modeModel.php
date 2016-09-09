@@ -7,7 +7,7 @@ class modeClassModel extends Model
 	}
 	public function getmodearr()
 	{
-		$arr = $this->getall('status=1','`id`,`num`,`name`,`table`,`type`','sort');
+		$arr = $this->getall('status=1','`id`,`num`,`name`,`table`,`type`,`isflow`','sort');
 		foreach($arr as $k=>$rs){
 			$arr[$k]['name'] = ''.$rs['id'].'.'.$rs['name'].'('.$rs['num'].')';
 		}
@@ -17,7 +17,7 @@ class modeClassModel extends Model
 	public function getmoderows($uid, $sww='')
 	{
 		$where	= m('admin')->getjoinstr('receid', $uid);
-		$arr 	= $this->getall("`status`=1 and `type`<>'系统' $sww $where",'`id`,`num`,`name`,`table`,`type`','`sort`');
+		$arr 	= $this->getall("`status`=1 and `type`<>'系统' $sww $where",'`id`,`num`,`name`,`table`,`type`,`isflow`','`sort`');
 		return $arr;
 	}
 	

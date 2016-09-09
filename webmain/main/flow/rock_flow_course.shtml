@@ -3,7 +3,7 @@ $(document).ready(function(){
 	{params};
 	var num = params.num,mid,optlx=0;
 	var at = $('#optionview_{rand}').bootstable({
-		tablename:'flow_set',defaultorder:'`type`,`sort`',where:'and isflow=1',
+		tablename:'flow_set',defaultorder:'`sort`',where:'and isflow=1 and status=1',
 		columns:[{
 			text:'名称',dataIndex:'name'
 		},{
@@ -45,6 +45,7 @@ $(document).ready(function(){
 		}],
 		load:function(){
 			get('add_{rand}').disabled=false;
+			get('addp_{rand}').disabled=false;
 		},
 		itemclick:function(){
 			btn(false);
@@ -69,6 +70,11 @@ $(document).ready(function(){
 			};
 			guanflowcourselist = a;
 			addtabs({num:'flowcourse'+id+'',url:'main,flow,courseedit,id='+id+',setid='+mid+',',icons:icon,name:name});
+		},
+		pipei:function(){
+			js.ajax(js.getajaxurl('reloadpipei','{mode}','{dir}'),{mid:mid},function(s){
+				js.msg('success', s);
+			},'get',false,'匹配中...,匹配完成');
 		}
 	};
 	js.initbtn(c);
@@ -93,6 +99,7 @@ $(document).ready(function(){
 	<ul class="floats">
 		<li class="floats70">
 			<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增步骤</button>&nbsp;&nbsp;
+			<button class="btn btn-default" click="pipei" id="addp_{rand}" disabled type="button">匹配流程</button>&nbsp;&nbsp;
 			<span id="downshow_{rand}"></span>
 		</li>
 		<li class="floats30" style="text-align:right">

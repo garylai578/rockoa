@@ -107,6 +107,7 @@ var yy={
 		var lx = d.lx;if(!lx)lx=0;
 		if(lx==999)return;
 		if(lx==998){this.xiang(d.oi);return;}
+		if(lx==996){this.xiang(this.temparr.oi);return;}
 		this.changdatsss = d;
 		if(lx==2 || lx==3){
 			var clx='changeuser';if(lx==3)clx='changeusercheck';

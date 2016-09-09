@@ -10,8 +10,30 @@
 <link rel="stylesheet" type="text/css" href="webmain/css/cssm.css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
+<script type="text/javascript" src="<?=$da['p']?>/task/mode/modeview.js"></script>
+<script>
+var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>',ismobile=1;
 
-
+var changename_uuusw;
+js.changeuser=function(na,lx){
+	changename_uuusw=na;
+	if(!lx)lx='';
+	var url='task.php?fn=dept&adminid='+adminid+'&token='+token+'&changetype='+lx+'';
+	var s='<div style="height:100%;width:100%;position:fixed;top:0px;left:0px;z-index:99; background:rgba(0,0,0,0.2)"  align="center" id="changmodddid">';
+	s+='<div style="max-width:300px;height:100%;-webkit-overflow-scrolling:touch; overflow:auto; ;max-height:450px;margin-top:5%; background:while;border:1px #dddddd solid">';
+	s+='<iframe style="background:white" name="changdept" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0" width="100%" src="'+url+'"></iframe>';
+	s+='</div>';
+	s+='</div>';
+	$('body').append(s);
+}
+function changecancel(){
+	$('#changmodddid').remove();
+}
+function changeok(sna,sid){
+	get(changename_uuusw).value=sna;
+	get(changename_uuusw+'_id').value=sid;
+}
+</script>
 <style>
 .stitle{padding:10px;border-bottom:1px #dddddd solid;font-size:16px;}
 .ydullist{display:inline-block;width:100%;}
@@ -27,94 +49,10 @@
 .pinglun .sm{padding-top:8px;font-size:14px}
 .faces{margin-right:10px}
 .createtable{width:98%}
-.status{position: absolute;right:5px;top:5px;display:}
+.status{position: absolute;left:5px;top:5px;display:}
 td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 </style>
-<script>
-var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>';
-function showchayue(opt, st){
-	alert('总查阅:'+st+'次\n最后查阅：'+opt+'');
-}
-function othercheck(){}
-function _submitother(nae,zt,ztid,ocan,las){
-	if(!las)las='other_explain';
-	if(!nae||!get(las)){js.setmsg('sorry;不允许操作','','msgview_spage');return;}
-	var sm=$('#'+las+'').val();
-	if(!zt)zt='';if(!ocan)ocan={};
-	if(!ztid){js.setmsg('没有选择状态','','msgview_spage');return;}
-	if(!sm){js.setmsg('没有输入备注/说明','','msgview_spage');return;}
-	var da = js.apply({'name':nae,'mid':mid,'modenum':modenum,'zt':zt,'ztid':ztid,'sm':sm},ocan);
-	js.setmsg('处理中...','','msgview_spage');
-	js.ajax(c.gurl('addlog'),da,function(s){
-		js.setmsg('处理成功','green', 'msgview_spage');
-		$('#spage_btn').hide();
-	},'post',function(s){
-		js.setmsg(s,'','msgview_spage');
-	});
-	return false;
-}
-var c={
-	gurl:function(a){
-		var url=js.getajaxurl(a,'flowopt','flow');
-		return url;
-	},
-	close:function(){
-		js.backla();
-	},
-	other:function(nae,las){
-		_submitother(nae,'','1',las);
-	},
-	others:function(nae,zt,ztid,ocan,las){
-		_submitother(nae,zt,ztid,ocan,las);
-	}
-}
-js.changeuser=function(na,lx){
-	this.backnana=na;
-	if(!lx)lx='';
-	var url='task.php?fn=dept&adminid='+adminid+'&token='+token+'&changetype='+lx+'';
-	var s='<div style="height:100%;width:100%;position:fixed;top:0px;left:0px;z-index:99; background:rgba(0,0,0,0.2)"  align="center" id="changmodddid">';
-	s+='<div style="max-width:300px;height:100%;max-height:450px;margin-top:5%; background:while;border:1px #dddddd solid">';
-	s+='<iframe style="background:white" name="changdept" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0" width="100%" src="'+url+'"></iframe>';
-	s+='</div>';
-	s+='</div>';
-	$('body').append(s);
-}
-function changecancel(){
-	$('#changmodddid').remove();
-}
 
-function check(o1){
-	var da = {'sm':form('check_explain').value,'mid':mid,'modenum':modenum,'zt':_getaolvw('check_status')};
-	if(da.zt==''){js.msg('msg','请选择处理动作');return;}if(da.zt=='2'&&isempt(da.sm)){js.msg('msg','此动作必须填写说明');return;}
-	if(form('zhuangyi_name')){
-		da.zyname 	= form('zhuangyi_name').value;
-		da.zynameid = form('zhuangyi_name_id').value;
-	}
-	var ostr=othercheck();
-	if(typeof(ostr)=='string'&&ostr!=''){js.msg('msg',ostr);return;}
-	if(typeof(ostr)=='object')for(var csa in ostr)da[csa]=ostr[csa];
-	js.msg('wait','处理中...');
-	o1.disabled = true;
-	da.fileid = '';
-	var url = c.gurl('check');
-	js.ajax(url,da,function(a){
-		if(a.success){
-			js.msg('success',a.msg);
-			if(get('autocheckbox').checked)c.close();
-		}else{
-			js.msg('msg',a.msg);
-			o1.disabled = false;
-		}
-	},'post,json',function(){
-		js.msg('msg','处理失败请重试');o1.disabled = false;
-	});
-}
-function _getaolvw(na){
-	var v = '',i,o=$("input[name='"+na+"']");
-	for(i=0;i<o.length;i++)if(o[i].checked)v=o[i].value;
-	return v;
-}
-</script>
 </head>
 <body style="background-color:#fefefe">
 
@@ -152,14 +90,14 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 		<?php if($flowinfor['ischeck']==1){?>
 		<tr height="40">
 			<td class="tdys1"><div align="right" style="color:#555555"><font color=red>*</font>处理人：</div></td>
-			<td class="tdys1"><div align="left"><?=$flowinfor['nowcourse']['nowcheckname']?></div></td>
+			<td class="tdys1"><div align="left"><?=$flowinfor['nowcourse']['name']?>(<?=$flowinfor['nowcourse']['nowcheckname']?>)</div></td>
 		</tr>
 		
 		<tr height="40">
 			<td class="tdys1" nowrap><div align="right" style="color:#555555"><font color=red>*</font>处理动作：</div></td>
 			<td class="tdys1"><div align="left">
 			<?php
-			$s = '';	
+			$s = '';
 			foreach($flowinfor['courseact'] as $k=>$act){
 				if($k>0)$s.='<label><input name="check_status"  type="radio" value="'.$k.'">'.$act[0].'</label> &nbsp; ';
 			}
@@ -169,13 +107,29 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 		</tr>
 		
 		<tr>
+			<td class="tdys1"><div  align="right" style="color:#555555">转给：</div></td>
+			<td class="tdys1" style="padding:5px"><div align="left">
+			<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input placeholder="" class="inputs" style="width:98%" id="zhuanbanname" readonly type="text" name="zhuanbanname"><input name="zhuanbannameid" id="zhuanbanname_id" type="hidden"></td><td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear('zhuanbanname')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser('zhuanbanname','changeuser')" class="webbtn">选择</a></td></tr></table>
+			</div></td>
+		</tr>
+		
+		<?php if($flowinfor['ischange']==1){?>
+		<tr>
+			<td class="tdys1"><div  align="right" style="color:#555555"><font color=red>*</font>下一步处理人：</div></td>
+			<td class="tdys1" style="padding:5px"><div align="left">
+			<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input placeholder="选择下一步[<?=$flowinfor['nextcourse']['name']?>]处理人" class="inputs" style="width:98%" id="nextname" readonly type="text" name="nextname"><input name="nextnameid" id="nextname_id" type="hidden"></td><td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear('nextname')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser('nextname','changeusercheck')" class="webbtn">选择</a></td></tr></table>
+			</div></td>
+		</tr>
+		<?php }?>
+		
+		<tr>
 			<td class="tdys1"><div  align="right" style="color:#555555">说明:</div></td>
 			<td class="tdys1" style="padding:5px"><div align="left"><textarea class="inputb" name="check_explain" style="width:95%;height:60px;"></textarea></div></td>
 		</tr>
 		
 		<tr>
 			<td class="tdys1">&nbsp;</td>
-			<td class="tdys1" style="padding:5px"><div align="left"><input class="webbtn" onclick="check(this)"  value="提交处理" type="button">&nbsp;<span id="msgview"></span>&nbsp; &nbsp; <label style="color:#888888"><input id="autocheckbox" checked type="checkbox">处理完自动关闭</label></div></td>
+			<td class="tdys1" style="padding:5px"><div align="left"><input class="webbtn" onclick="check(this)"  value="提交处理" type="button">&nbsp;<span id="msgview"></span></div></td>
 		</tr>
 		
 		<?php }?>
@@ -191,13 +145,14 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 
 	<?php
 	}
-	if($da['arr']['logarr']){
+	$logarr = $da['arr']['logarr'];
+	if($logarr){
 	?>
-	<div onclick="location.reload()" class="stitle zhu">处理记录</div>
-	<div class="pinglun">
+	<div onclick="c.changeshow(0)" class="stitle zhu">处理记录(<?=count($logarr)?>) <img align="absmiddle" height="16" width="16" src="images/xiangyou1.png"> </div>
+	<div id="showrecord0" class="pinglun" style="display:none">
 	<table width="100%">
 	<?php 
-	foreach($da['arr']['logarr'] as $k=>$rs){
+	foreach($logarr as $k=>$rs){
 		$s = '<tr valign="top">';
 		$s.= '<td align="center" width="45"><img src="'.$rs['face'].'" class="faces"></td>';
 		$s.= '<td>';
@@ -213,7 +168,7 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 	</div>
 	<div class="blank10"></div>
 	<?php }?>
-	<div class="stitle zhu aui-border-b">查阅记录</div>
+	<div onclick="location.reload()"  class="stitle zhu aui-border-b">查阅记录</div>
 	<div><ul class="ydullist"><?php
 		foreach($da['arr']['readarr'] as $k=>$rs){
 			echo '<li onclick="showchayue(\''.$rs['optdt'].'\',\''.$rs['stotal'].'\')"><img src="'.$rs['face'].'" align="absmiddle"><br><span>'.$rs['name'].'</span></li>';

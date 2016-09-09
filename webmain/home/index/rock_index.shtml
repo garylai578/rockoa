@@ -171,12 +171,21 @@ $(document).ready(function(){
 	<div align="left" style="padding:0px 10px">
 		<table  border="0" cellspacing="0" cellpadding="0">
 		<tr valign="top">
-			<td>
-				<div align="left" id="worklist_{rand}" style="width:500px;display:none" class="list-group">
-				<div class="list-group-item  list-group-item-success"><i class="icon-edit"></i> 我待办任务 <a href="javascript:" click="opentabs,0" style="float:right"></a></div>
-				<span  class="list-group-item">任务1</span>
-				<span  class="list-group-item">任务2</span>
+			<td style="padding-right:20px;display:none">
+				<div align="left" id="worklist_{rand}" style="min-width:200px" class="list-group">
+				<div class="list-group-item  list-group-item-success"><i class="icon-bar-chart"></i> 个人统计</div>
+				<a class="list-group-item">1. 未完成任务<font color=red>(2)</font></a>
+				<a class="list-group-item">2. 执行中项目<font color=red>(2)</font></a>
+				<a class="list-group-item">3. 我申请未通过<font color=red>(2)</font></a>
 				</div>
+			</td>
+			<td>
+				<div align="left" style="display:none" class="list-group">
+				<div class="list-group-item  list-group-item-info"><i class="icon-volume-up"></i> 通知公告</div>
+				<a class="list-group-item">1. [企业文化]关于信呼的使用！[2016-09-08]</a>
+				<a class="list-group-item">2. [规章制度]关于员工写日报制度！[2016-09-08]</a>
+				</div>
+			
 				
 				<div class="panel panel-success">
 				  <div class="panel-heading">
@@ -212,13 +221,14 @@ $(document).ready(function(){
 				  </div>
 				  <div class="panel-body">
 						<table><tr valign="top">
-						<td align="center"><img src="images/wxqcode.jpg" height="150">
+						<td align="center"><img src="images/wxqcode.jpg" height="140">
 						<div style="color:#888888">扫一扫体验微信办公</div></td>
 						<td>
-							<div style="line-height:25px;padding:10px;width:250px">
-							<b>微信办公</b>：结合了信呼上IM无缝隙的对接交流，单据待办推送提醒，<a href="http://xh829.com/view_weixin.html" target="_blank">[详情介绍]</a>。<br>
-							1、请先申请添加帐号才可以体验，去<a href="http://xh829.com/view_weixinty.html" target="_blank">[添加]</a>。<br>
-							2、扫一扫验证帐号即可使用。
+							<div style="line-height:26px;padding:5px;width:300px">
+							<b>微信办公</b><br>&nbsp; &nbsp; 结合了信呼上IM无缝隙的对接交流，单据待办推送提醒，<a href="http://xh829.com/view_weixin.html" target="_blank">[详情介绍]</a>。<br>
+							1、请先申请添加帐号才可以体验，去<a href="http://xh829.com/view_weixinty.html" target="_blank">[申请]</a>。<br>
+							2、扫一扫验证帐号即可使用。<br>
+							3、可到【系统→系统工具→升级系统】下安装，有问题？<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=290802026&site=qq&menu=yes"><img border="0" align="absmiddle" src="http://xh829.com/images/qquser.png" height="22" title="在线交流"/></a>
 							</div>
 						</td>
 						</tr></table>

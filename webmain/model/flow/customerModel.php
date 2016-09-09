@@ -29,7 +29,7 @@ class flow_customerClassModel extends flowModel
 		return $bo;
 	}
 	
-	protected function flowgetfields()
+	protected function flowgetfields($lx)
 	{
 		$arr = array();
 		if($this->uid==$this->adminid){

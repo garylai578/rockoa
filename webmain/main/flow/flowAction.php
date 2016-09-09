@@ -21,15 +21,95 @@ class flowClassAction extends Action
 		echo json_encode($arr);
 	}
 	
+	public function flowsetsavebefore($table, $cans)
+	{
+		$tab = $cans['table'];
+		if(!c('check')->iszgen($tab))return '表名格式不对';
+		if($cans['isflow']==1 && isempt($cans['sericnum'])) return '有流程必须有写编号规则，请参考其他模块填写';
+	}
+	
+	public function flowsetsaveafter($table, $cans)
+	{
+		$isflow = $cans['isflow'];
+		$tab  	= $cans['table'];
+		$tabs  	= $cans['tables'];
+		$alltabls = array();
+		if(!isempt($tabs)){
+			$alltabls 	= $this->db->getalltable();
+			if(!in_array(''.PREFIX.''.$tabs.'', $alltabls)){
+				$sql = "CREATE TABLE `[Q]".$tabs."` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mid` smallint(6) DEFAULT '0' COMMENT '对应主表".$tab.".id',
+  `sort` smallint(6) DEFAULT '0' COMMENT '排序号',
+  PRIMARY KEY (`id`),KEY `mid` (`mid`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+				$bo = $this->db->query($sql);
+			}else{
+				$fields = $this->db->getallfields(''.PREFIX.''.$tabs.'');
+				$str 	= '';
+				if(!in_array('mid', $fields))$str.=",add `mid` smallint(6) DEFAULT '0' COMMENT '对应主表".$tab.".id";
+				if(!in_array('sort', $fields))$str.=",add `sort` smallint(6) DEFAULT '0' COMMENT '排序号'";
+				if($str!=''){
+					$sql = 'alter table `'.PREFIX.''.$tabs.'` '.substr($str,1).'';
+					$this->db->query($sql);
+				}
+			}
+		}
+		
+		if($isflow==0 || isempt($tab))return;
+		if(!$alltabls)$alltabls 	= $this->db->getalltable();
+		if(!in_array(''.PREFIX.''.$tab.'', $alltabls)){
+			$sql = "CREATE TABLE `[Q]".$tab."` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` smallint(6) DEFAULT '0',
+  `optdt` datetime DEFAULT NULL COMMENT '操作时间',
+  `optid`  smallint(6) DEFAULT '0',
+  `optname` varchar(20) DEFAULT NULL COMMENT '操作人',
+  `applydt` date DEFAULT NULL COMMENT '申请日期',
+  `explain` varchar(500) DEFAULT NULL COMMENT '说明',
+  `status` tinyint(1) DEFAULT '1' COMMENT '状态',
+  `isturn` tinyint(1) DEFAULT '1' COMMENT '是否提交',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+			$bo = $this->db->query($sql);
+		}else{
+			$fields = $this->db->getallfields(''.PREFIX.''.$tab.'');
+			$str 	= '';
+			if(!in_array('uid', $fields))$str.=",add `uid` smallint(6) DEFAULT '0'";
+			if(!in_array('optdt', $fields))$str.=",add `optdt` datetime DEFAULT NULL COMMENT '操作时间'";
+			if(!in_array('optid', $fields))$str.=",add `optid` smallint(6) DEFAULT '0'";
+			if(!in_array('optname', $fields))$str.=",add `optname` varchar(20) DEFAULT NULL COMMENT '操作人'";
+			if(!in_array('applydt', $fields))$str.=",add `applydt` date DEFAULT NULL COMMENT '申请日期'";
+			if(!in_array('explain', $fields))$str.=",add `explain` varchar(500) DEFAULT NULL COMMENT '说明'";
+			if(!in_array('status', $fields))$str.=",add `status` tinyint(1) DEFAULT '1' COMMENT '状态'";
+			if(!in_array('isturn', $fields))$str.=",add `isturn` tinyint(1) DEFAULT '1' COMMENT '是否提交'";
+			if($str!=''){
+				$sql = 'alter table `'.PREFIX.''.$tab.'` '.substr($str,1).'';
+				$this->db->query($sql);
+			}
+		}
+	}
+	
 	public function elementafter($table, $rows)
 	{
 		$moders = m('flow_set')->getone($this->mid);
 		
 		$tass 	= $moders['table'];
+		$tasss 	= $moders['tables'];
+		
 		$farr	= $this->db->gettablefields('[Q]'.$tass.'');
+		
 		$farrs[]= array('id'=>'','name'=>'————↓以下表('.$tass.')的字段————');
 		foreach($farr as $k=>$rs){
 			$farrs[]= array('id'=>$rs['name'],'name'=>'['.$rs['name'].']'.$rs['explain'].'');
+		}
+		if(!isempt($tasss)){
+			$farr	= $this->db->gettablefields('[Q]'.$tasss.'');
+			
+			$farrs[]= array('id'=>'','name'=>'————↓以下多行子表('.$tasss.')的字段————');
+			foreach($farr as $k=>$rs){
+				$farrs[]= array('id'=>$rs['name'],'name'=>'['.$rs['name'].']'.$rs['explain'].'');
+			}
 		}
 		
 		return array(
@@ -156,8 +236,12 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$content = $this->post('content');
 		$num 	 = $this->post('num');
 		$path 	 = ''.P.'/flow/page/input_'.$num.'.html';
-		$this->rock->createtxt($path, $content);
-		echo 'success';
+		$bo 	 = $this->rock->createtxt($path, $content);
+		if(!$bo){
+			echo '无法写入文件:'.$path.'';
+		}else{
+			echo 'success';
+		}
 	}
 	
 	
@@ -167,33 +251,8 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$iszb 	= (int)$this->post('iszb');
 		$hang 	= (int)$this->post('hang');
 		$modeid = (int)$this->post('modeid');
-		if($iszb<=0)$iszb=1;
-		if($hang<=0)$hang=1;
-		
-		$rows 	= m('flow_element')->getall("`mid`='$modeid' and `iszb`=$iszb and `islu`=1",'`isbt`,`fields`,`name`','`sort`');
-		if(!$rows)$this->backmsg('没有设置第'.$iszb.'个多行子表');
-		$xu	 = $iszb-1;
-		$str = '<table class="tablesub" id="tablesub'.$xu.'" style="width:100%;" border="0" cellspacing="0" cellpadding="0">';
-		$str.='<tr>';
-		$str.='<td width="10%">序号</td>';
-		foreach($rows as $k=>$rs){
-			$xh = '';
-			if($rs['isbt']==1)$xh='*';
-			$str.='<td>'.$xh.''.$rs['name'].'</td>';
-		}
-		$str.='<td width="5%">操作</td>';
-		$str.='</tr>';
-		for($j=0;$j<$hang;$j++){
-			$str.='<tr>';
-			$str.='<td >[xuhao'.$xu.','.$j.']</td>';
-			foreach($rows as $k=>$rs){
-				$str.='<td>['.$rs['fields'].''.$xu.','.$j.']</td>';
-			}
-			$str.='<td >{删,'.$xu.'}</td>';
-			$str.='</tr>';
-		}
-		$str.='</table>';
-		$str.='<div style="background-color:#F1F1F1;">{新增,'.$xu.'}</div>';
+		$str 	= m('input')->getsubtable($modeid, $iszb, $hang);
+		if($str=='')$this->backmsg('没有设置第'.$iszb.'个多行子表');
 		$this->backmsg('','ok', $str);
 	}
 	
@@ -271,7 +330,7 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$mid 	= $cans['mid'];
 		$type 	= $cans['fieldstype'];
 		$tables = m('flow_set')->getmou('`table`', $mid);
-		if(!isempt($tables)){
+		if(!isempt($tables) && $cans['iszb']==0 && substr($fields,0,5)!='temp_'){
 			$allfields = $this->db->getallfields('[Q]'.$tables.'');
 			if(!in_array($fields, $allfields)){
 				$str = "ALTER TABLE [Q]".$tables." ADD $fields ";
@@ -291,5 +350,18 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 				$this->db->query($str);
 			}
 		}
+	}
+	
+	
+	
+	
+	
+	
+	public function reloadpipeiAjax()
+	{
+		$mid 	= (int)$this->post('mid');
+		$whe	= '';
+		if($mid>0)$whe=' and id='.$mid.'';
+		echo m('flow')->repipei($whe);
 	}
 }

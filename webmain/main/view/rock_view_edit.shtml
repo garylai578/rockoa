@@ -46,6 +46,7 @@ $(document).ready(function(){
 			if(lx==0)h.form.wherestr.value='{receid}';
 			if(lx==1)h.form.wherestr.value='{allsuper}';
 			if(lx==2)h.form.wherestr.value='{super}';
+			if(lx==3)h.form.wherestr.value='all';
 		}
 	};
 	js.initbtn(c);
@@ -89,7 +90,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right" >相应条件：</td>
-			<td class="tdinput" colspan="3"><textarea  name="wherestr" style="height:100px" class="form-control"></textarea><br><a href="javascript:;">[设置条件]</a>,如:<a click="hanrenss,0" href="javascript:;">[receid中包含我]</a>,<a click="hanrenss,1" href="javascript:;">[所有下属人员]</a>,<a click="hanrenss,2" href="javascript:;">[直属下属人员]</a></td>
+			<td class="tdinput" colspan="3"><textarea  name="wherestr" style="height:100px" class="form-control"></textarea><br><a href="javascript:;">[设置条件]</a>,如:<a click="hanrenss,0" href="javascript:;">[receid中包含我]</a>,<a click="hanrenss,1" href="javascript:;">[所有下属人员]</a>,<a click="hanrenss,2" href="javascript:;">[直属下属人员]</a>,<a click="hanrenss,3" href="javascript:;">[所有数据]</a></td>
 		</tr>
 		
 		<tr>

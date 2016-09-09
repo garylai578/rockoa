@@ -1,6 +1,7 @@
 <?php
 class inputAction extends ActionNot
 {
+	public $mid = 0;
 	
 	public function initAction()
 	{
@@ -28,14 +29,14 @@ class inputAction extends ActionNot
 		$id				= (int)$this->request('id');
 		$modenum		= $this->request('modenum');
 		$uid			= $this->adminid;
-		$this->moders 	= m('flow_set')->getone("`num`='$modenum'",'`num`,`name`,`id`,`table`,`isflow`');
+		$this->moders 	= m('flow_set')->getone("`num`='$modenum'",'`num`,`name`,`id`,`table`,`tables`,`isflow`');
 		if(!$this->moders)$this->backmsg('流程模块不存在');
 		$modeid			= $this->moders['id'];
 		$isflow			= $this->moders['isflow'];
 		$flownum		= $this->moders['num'];
 		$table			= $this->moders['table'];
 		if($this->isempt($table))$this->backmsg('模块未设置表名');
-		$fieldsarr		= m('flow_element')->getrows("`mid`='$modeid' and `islu`=1 and `iszb`=0",'`name`,`fields`,`isbt`,`fieldstype`,`data`','`sort`');
+		$fieldsarr		= m('flow_element')->getrows("`mid`='$modeid' and `islu`=1 and `iszb`=0",'`name`,`fields`,`isbt`,`fieldstype`,`data`,`iszb`','`sort`');
 		if(!$fieldsarr)$this->backmsg('没有录入元素');
 		$db	   = m($table);$subna = '提交';$addbo = false;$where = "`id`='$id'"; $oldrs = false;
 		if($id==0){
@@ -106,69 +107,73 @@ class inputAction extends ActionNot
 		if($id==0)$id = $this->db->insert_id();
 		m('file')->addfile($this->post('fileid'), $table, $id);
 		
-		$this->savesubtable($id,'0');//保存子表
-		$this->savesubtable($id,'1');
+		$this->savesubtable($id,'0', $addbo);//保存子表
 		
 		$this->saveafter($table,$uaarr, $id, $addbo);
 		$msg 	= '';
-		/*
-		$isturn = (int)$this->post('isturn','1');
-		$flow 	= f($flownum);
-		$flow->initrecord($id);
-		$msg 	= $flow->submit($isturn);
-		
-		m('todo')->setyidu($table, $id);
-		if($oldrs){
-			$newrs = $db->getone($id);
-			c('edit')->records($farrs,$table, $id, $oldrs, $newrs);
-		}*/
 		m('flow')->submit($modenum, $id, $subna);
 		$this->backmsg('', $msg, $id);
 	}
 	
-	private function savesubtable($mid, $xu)
+	public function getsubtabledata($xu)
 	{
-		$oi = (int)$this->post('sub_totals'.$xu.'');
-		if($oi<=0)return;
+		$arr 	= array();
+		$oi 	= (int)$this->post('sub_totals'.$xu.'');
+		if($oi<=0)return $arr;
 		$modeid		= $this->moders['id'];
-		$table		= $this->moders['table'];
-		$tables		= 'items';
 		$iszb		= $xu+1;
 		$farr		= m('flow_element')->getrows("`mid`='$modeid' and `islu`=1 and `iszb`=$iszb",'`name`,`fields`,`isbt`,`dev`','`sort`');
-		$idss		= '0';
-		$dbs 		= m($tables);
-		$uaarr		= array();
-		$uaarr['optdt'] = $this->now;
-		$uaarr['optid'] = $this->adminid;
-		$atype 		= '';
 		$sort 		= 0;
 		for($i=0; $i<$oi; $i++){
 			$sid  = (int)$this->post('sid'.$xu.'_'.$i.'');
-			$where= "`id`='$sid'";
 			$bos  = true;
-			$uaarr['table'] = $table;
-			$uaarr['mid'] 	= $mid;
-			$uaarr['valid'] = 1;
-
+			$uaarr['id'] = $sid;
 			foreach($farr as $k=>$rs){
 				$fid= $rs['fields'];
 				$na = ''.$fid.''.$xu.'_'.$i.'';
 				$val= $this->post($na);
 				if($rs['isbt']==1&&$this->isempt($val))$bos=false;
 				$uaarr[$fid] = $val;
-				if($fid=='atype')$atype=$rs['dev'];
 			}
-			$uaarr['atype'] = $atype;
 			if(!$bos)continue;
-			if($sid==0)$where = '';
 			$uaarr['sort'] 	= $sort;
 			$sort++;
+			$arr[] = $uaarr;
+		}
+		return $arr;
+	}
+	
+	private function savesubtable($mid, $xu, $addbo)
+	{
+		$data 	= $this->getsubtabledata($xu);
+		$len 	= count($data);
+		if($len<=0)return;
+		$table		= $this->moders['table'];
+		$tables		= $this->moders['tables'];if(isempt($tables))$tables='items';
+		$idss		= '0';
+		$dbs 		= m($tables);
+		
+		$allfields 	= $this->db->getallfields('[Q]'.$tables.'');
+		$oarray 	= array();
+		if(in_array('optdt', $allfields))$oarray['optdt'] 		= $this->now;
+		if(in_array('optid', $allfields))$oarray['optid'] 		= $this->adminid;
+		if(in_array('optname', $allfields))$oarray['optname'] 	= $this->adminname;
+		if(in_array('uid', $allfields))$oarray['uid'] 			= $this->post('uid', $this->adminid);
+		if(in_array('applydt', $allfields) && $addbo)$oarray['applydt']	= $this->post('applydt', $this->date);
+		if(in_array('status', $allfields))$oarray['status']		= 0;
+		
+		foreach($data as $k=>$uaarr){
+			$sid 			= $uaarr['id'];
+			$where			= "`id`='$sid'";
+			$uaarr['mid'] 	= $mid;
+			if($sid==0)$where = '';
+			foreach($oarray as $k1=>$v1)$uaarr[$k1]=$v1;
+			
 			$dbs->record($uaarr, $where);
 			if($sid==0)$sid = $this->db->insert_id();
 			$idss.=','.$sid.'';
 		}
-		$delwhere = "`table`='$table' and `mid`='$mid' and `id` not in($idss)";
-		if(!$this->isempt($atype))$delwhere.=" and `atype`='$atype'";
+		$delwhere = "`mid`='$mid' and `id` not in($idss)";
 		$dbs->delete($delwhere);
 	}
 	
@@ -178,11 +183,15 @@ class inputAction extends ActionNot
 		$flownum = $this->request('flownum');
 		$id		 = (int)$this->request('mid');
 		$arr 	 = m('flow')->getdataedit($flownum, $id);
-		$table	 = $arr['table'];
+		$tables	 = $arr['tables'];
 		$modeid	 = $arr['modeid'];
-		//读取子表数据
-		$subarr	 = m('items')->getitemsdata($modeid, $table, $id);
-		$arr['subdata'] = $subarr;
+		$subdata0	 = array();
+		if(!isempt($tables)){
+			$subdata0 = m($tables)->getall('mid='.$id.'','*','`sort`');
+		}
+		$arr['subdata'] = array(
+			'subdata0'	=> $subdata0
+		);
 		$this->backmsg('', '', $arr);
 	}
 	
@@ -200,16 +209,27 @@ class inputAction extends ActionNot
 	{
 		$this->ismobile = 0;
 		$this->luactions();
-	}		
+	}
+
+	public function lusAction()
+	{
+		$this->ismobile = 1;
+		$menuid	= (int)$this->get('menuid');
+		$fields 	= m('flow_menu')->getmou('fields', $menuid);
+		if(isempt($fields))exit('sorry;');
+		$fields	= str_replace(',',"','", $fields);
+		$stwhe	= "and `fields` in('$fields')";
+		$this->luactions(1, $stwhe);
+	}	
 	
-	private function luactions()
+	private function luactions($slx=0, $stwhe='')
 	{
 		$this->tpltype = 'html';
 		$uid		= $this->adminid;
 		$num		= $this->jm->gettoken('num');
 		$mid		= (int)$this->jm->gettoken('mid');
 		$this->mid  = $mid;
-		$moders 	= m('flow_set')->getone("`num`='$num'",'`id`,`num`,`name`,`table`,`isflow`');
+		$moders 	= m('flow_set')->getone("`num`='$num'",'`id`,`num`,`name`,`names`,`table`,`isflow`');
 		if(!$moders)exit('流程不存在!');
 		$this->smartydata['moders']	= $moders;
 		$modeid 	= $moders['id'];
@@ -220,10 +240,15 @@ class inputAction extends ActionNot
 		
 		$content 	= '';
 		$this->urs  = m('admin')->getone($this->adminid, '`name`,`deptname`,`ranking`,`deptid`');
-		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`=0",'fields,fieldstype,name,dev,data,isbt,islu,attr','`sort`');
+		
+		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`=0 $stwhe",'fields,fieldstype,name,dev,data,isbt,islu,attr,iszb','`sort`');
 		
 		$modelu		= '';
+		$oldrs 		= m($moders['table'])->getone($mid);
 		foreach($fieldarr as $k=>$rs){
+			if($slx==1 && $oldrs){
+				$rs['value'] = $oldrs[$rs['fields']];
+			}
 			$this->fieldarr[$rs['fields']] = $rs;
 			if($rs['islu'])$modelu.='{'.$rs['fields'].'}';
 		}
@@ -237,6 +262,8 @@ class inputAction extends ActionNot
 			}
 		}else{
 			$content = $modelu;
+			$zbstr 	 = m('input')->getsubtable($modeid,1,1,1);
+			if($zbstr!='')$content.='<tr><td  style="padding:5px;" colspan="2"><div><b>'.$moders['names'].'</b></div><div>'.$zbstr.'</div></td></tr>';
 		}
 		
 		if($content=='')exit('未设置录入页面');
@@ -258,10 +285,9 @@ class inputAction extends ActionNot
 			$content	= str_replace('{'.$nrs.'}', $str, $content);
 		}
 		
-		if($this->ismobile==0){	
-			$content 	 	= $this->pisubduolie($content, $modeid, 1);//多列子表匹配的是[]
-			$content		= str_replace('*','<font color=red>*</font>', $content);
-		}
+		$content 	 	= $this->pisubduolie($content, $modeid, 1);//多列子表匹配的是[]
+		$content		= str_replace('*','<font color=red>*</font>', $content);
+		
 		$course			= array();
 		if($moders['isflow']==1){
 			$course[]= array('name'=>'提交','id'=>0);
@@ -284,6 +310,7 @@ class inputAction extends ActionNot
 	{
 		$oi 		= $xu-1;
 		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`='$xu'",'fields,fieldstype,name,dev,data,isbt,islu,attr','`sort`');
+		if(!$fieldarr)return $content;
 		$this->fieldarr = array();
 		$this->fieldarr['xuhao'.$oi.''] = array(
 			'fields' 	=> 'xuhao'.$oi.'',
@@ -303,14 +330,14 @@ class inputAction extends ActionNot
 				$fida= explode(',', $nrs);$xu0='0';
 				if(isset($fida[1]))$xu0=$fida[1];
 				
-				$str		= $this->getfieldcont($fida[0], $this->actclss,'_'.$xu0.'');
+				$str		= $this->getfieldcont($fida[0], $this->actclss,'_'.$xu0.'', $xu);
 				$content	= str_replace('['.$nrs.']', $str, $content);
 			}
 		}
 		return $content;
 	}
 	
-	private function getfieldcont($fid, $objs, $leox='')
+	private function getfieldcont($fid, $objs, $leox='', $iszb=0)
 	{
 		$fida= explode(',', $fid);$xu0='0';
 		$ism = $this->ismobile;
@@ -341,12 +368,12 @@ class inputAction extends ActionNot
 		$type 	= $a['fieldstype'];
 		$data 	= $a['data'];
 		$val 	= $a['dev'];
+		if(isset($a['value']))$val=$a['value'];
 		$attr 	= $a['attr'];
-		$fnams 	= $a['name'];
+		$fnams 	= @$a['name'];
 		if($a['isbt']==1)$fnams='*'.$fnams.'';
 		if($this->isempt($val))$val='';
 		if($this->isempt($attr))$attr='';
-		//if($ism==1)$attr.=' placeholder="'.$fnams.'"';
 		if($val!='')$val = str_replace(array('{now}','{date}','{admin}','{adminid}','{deptname}','{ranking}'),array($this->now,$this->date,$this->adminname,$this->adminid, $this->urs['deptname'], $this->urs['ranking']),$val);
 		
 		$str 	= '<input class="inputs" value="'.$val.'" '.$attr.' name="'.$fname.'">';
@@ -361,7 +388,7 @@ class inputAction extends ActionNot
 		}
 		if($type=='rockcombo' || $type=='select' || $type=='checkboxall'){
 			$str ='<select style="width:99%" '.$attr.' name="'.$fname.'" class="inputs">';
-			$str.='<option value="">-请选择'.$a['name'].'-</option>';
+			$str.='<option value="">-请选择-</option>';
 			$str1= '';
 			$datanum = $data;
 			if(!$this->isempt($datanum)){
@@ -401,7 +428,7 @@ class inputAction extends ActionNot
 		}
 		
 		if($type=='datetime'||$type=='date'||$type=='time'){
-			$str = '<input value="'.$val.'" '.$attr.' class="inputs datesss" inputtype="'.$type.'" readonly name="'.$fname.'">';
+			$str = '<input onclick="js.datechange(this,\''.$type.'\')" value="'.$val.'" '.$attr.' class="inputs datesss" inputtype="'.$type.'" readonly name="'.$fname.'">';
 		}
 		if($type=='number'||$type=='xuhao'){
 			$str = '<input class="inputs" '.$attr.' value="'.$val.'" type="number" onfocus="js.focusval=this.value" onblur="js.number(this)" name="'.$fname.'">';
@@ -427,12 +454,11 @@ class inputAction extends ActionNot
 				}
 			}
 		}
-		
+		if($iszb>0)return $str;
 		if($isasm==1){
 			$lx  = 'span';if($ism==1)$lx='div';
 			$str = '<'.$lx.' id="div_'.$fname.'" class="divinput">'.$str.'</'.$lx.'>';
-			if($ism==1){
-				$fnams = str_replace('*','<font color=red>*</font>', $fnams);
+			if($ism==1 && $iszb==0){
 				$str = '<tr><td class="lurim" nowrap>'.$fnams.':</td><td width="90%">'.$str.'</td></tr>';
 			}
 		}

@@ -10,6 +10,7 @@ class upgradeClassAction extends Action
 			$this->keyss = $rnd;
 		}
 	}
+	
 	public function dataAjax()
 	{
 		$xinhu	= c('xinhu');
@@ -28,6 +29,8 @@ class upgradeClassAction extends Action
 				if($rs['updatedt']>$ors['updatedt'])$state=2;
 				$key= $ors['key'];
 			}
+			$view = '<a href="'.$wet.'view_'.$rs['num'].'.html" target="_blank" class="a">介绍</a>';
+			if($state==0 && $rs['price']>0)$view.=',<a href="http://www.rockoa.com/view_xinhu'.$rs['num'].'.html" target="_blank" style="color:red">去购买</a>';
 			$rows[] = array(
 				'id' 	=> $id,
 				'name' 	=> $rs['name'],
@@ -35,7 +38,7 @@ class upgradeClassAction extends Action
 				'explain' 	=> $rs['explain'],
 				'updatedt' 	=> $rs['updatedt'],
 				'key'		=> $key,
-				'view' 	=> '<a href="'.$wet.'view_'.$rs['num'].'.html" target="_blank" class="a">介绍</a>',
+				'view' 	=> $view,
 				'opt'	=> $state
 			);
 		}
@@ -88,6 +91,7 @@ class upgradeClassAction extends Action
 			$filemy = $mkdir.'/install'.time().rand(1000,9999).'.zip';
 			file_put_contents($filemy, $fcont);
 			$bmsg = c('zip')->unzip($filemy,'./');
+			unlink($filemy);
 			if($bmsg != 'ok')exit($bmsg);
 		}
 		if($frs['type']==1){

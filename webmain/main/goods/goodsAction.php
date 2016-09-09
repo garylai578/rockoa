@@ -92,6 +92,7 @@ class goodsClassAction extends Action
 		$arr['kind'] 	= $kind;
 		$arr['explain'] = $sm;
 		$arr['uid'] 	= $this->adminid;
+		$arr['optid'] 	= $this->adminid;
 		$arr['optdt'] 	= $this->now;
 		$arr['optname'] = $this->adminname;
 		$arr['status'] 	= 1;

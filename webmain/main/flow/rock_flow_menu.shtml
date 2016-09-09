@@ -82,15 +82,17 @@ $(document).ready(function(){
 
 <table width="100%">
 <tr>
-<td align="left" width="150">
-	
-	<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增操作菜单</button>&nbsp;&nbsp;
-	
+<td align="left">
+	<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增操作菜单</button>
 </td>
-<td align="left"  style="padding:0px 10px;">
-	<select id="mode_{rand}" class="form-control" ><option value="0">-选择模块-</option></select>
+<td  style="padding-left:10px;">
+	<button class="btn btn-default" click="reload" type="button">刷新</button>
 </td>
-<td align="right">
+<td style="padding-left:10px;">
+	<select style="width:200px" id="mode_{rand}" class="form-control" ><option value="0">-选择模块-</option></select>
+</td>
+<td width="80%"></td>
+<td align="right" nowrap>
 	<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button> &nbsp; 
 			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>
 </td>

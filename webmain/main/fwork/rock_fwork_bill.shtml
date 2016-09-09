@@ -8,9 +8,7 @@ $(document).ready(function(){
 		url:publicstore('{mode}','{dir}'),
 		storeafteraction:'flowbillafter',storebeforeaction:'flowbillbefore',
 		columns:[{
-			text:'',dataIndex:'opt',renderer:function(v,d){
-				return '<a href="javascript:;" onclick="openxiang(\''+d.modenum+'\','+d.id+')">详</a>';
-			}
+			text:'',dataIndex:'caozuo'
 		},{
 			text:'模块',dataIndex:'modename'
 		},{
@@ -36,15 +34,28 @@ $(document).ready(function(){
 				js.setselectdata(get('mode_{rand}'),a.flowarr,'id');
 			}
 			bools=true;
+		},
+		itemclick:function(){
+			btn(false);
+		},
+		beforeload:function(){
+			btn(true);
 		}
 	});
+	function btn(bo){
+		get('xiang_{rand}').disabled = bo;
+	}
+	xing{rand}=function(oi){
+		a.changedata = a.getData(oi);
+		c.view();
+	}
 	var c = {
 		reload:function(){
 			a.reload();
 		},
 		view:function(){
 			var d=a.changedata;
-			openxiang(d.modenum,d.id);
+			openxiangs(d.modename,d.modenum,d.id,'opegs{rand}');
 		},
 		search:function(){
 			var s=get('key_{rand}').value;
@@ -57,13 +68,18 @@ $(document).ready(function(){
 			$(o1).rockdatepicker({initshow:true,view:'date',inputid:'dt'+lx+'_{rand}'});
 		},
 		daochu:function(){
-			
+			a.exceldown(nowtabs.name);
 		}
 	};
 	js.initbtn(c);
+	$('#mode_{rand}').change(function(){
+		c.search();
+	});
+	opegs{rand}=function(){
+		c.reload();
+	}
 });
 </script>
-<div>
 <div>
 	<table width="100%">
 	<tr>
@@ -89,6 +105,7 @@ $(document).ready(function(){
 	</td>
 	<td width="80%"></td>
 	<td align="right" nowrap>
+		<button class="btn btn-default" id="xiang_{rand}" click="view" disabled type="button">详情</button> &nbsp; 
 		<button class="btn btn-default" click="daochu,1" type="button">导出</button>
 	</td>
 	</tr>

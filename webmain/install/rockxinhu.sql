@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50610
 File Encoding         : 65001
 
-Date: 2016-09-09 12:26:23
+Date: 2016-09-09 12:55:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -54,7 +54,7 @@ CREATE TABLE `xinhu_admin` (
 -- ----------------------------
 -- Records of xinhu_admin
 -- ----------------------------
-INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '608', '1', '1', '男', '0592-1234567', 'upload/face/1.jpg', '2', '开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-01', 'admin@rockoa.com', '2016-08-02 11:40:42', null, null, null);
+INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '609', '1', '1', '男', '0592-1234567', 'upload/face/1.jpg', '2', '开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-01', 'admin@rockoa.com', '2016-08-02 11:40:42', null, null, null);
 INSERT INTO `xinhu_admin` VALUES ('2', null, 'diaochan', '貂蝉', 'e10adc3949ba59abbe56e057f20f883e', '52', '1', '0', '女', null, 'upload/face/2.jpg', '3', '财务部', '5', '磐石', '财务总监', '0', '[1],[3]', '[5]', null, '15800000007', '1', null, null, null, null, null, null);
 INSERT INTO `xinhu_admin` VALUES ('3', null, 'xiaoqiao', '小乔', 'e10adc3949ba59abbe56e057f20f883e', '54', '1', '0', '女', null, 'upload/face/3.jpg', '3', '财务部', '2', '貂蝉', '出纳', '0', '[1],[3]', '[5],[2]', null, '15800000001', '1', null, null, '2016-08-30 20:34:23', null, null, null);
 INSERT INTO `xinhu_admin` VALUES ('4', null, 'daqiao', '大乔', 'e10adc3949ba59abbe56e057f20f883e', '52', '1', '0', '女', null, 'upload/face/4.jpg', '4', '行政人事部', '5', '磐石', '人事主管', '0', '[1],[4]', '[5]', null, '15800000002', '1', null, null, null, null, null, null);
@@ -84,10 +84,6 @@ CREATE TABLE `xinhu_chargems` (
 -- ----------------------------
 INSERT INTO `xinhu_chargems` VALUES ('1', '1', '1', '2016-09-06 11:44:26', '2016-09-06 11:35:26', null);
 INSERT INTO `xinhu_chargems` VALUES ('2', '0', '1', '2016-09-06 13:00:33', '2016-09-06 12:59:17', 'oe0oo0tff0at0ef0oo0tff0tfo013');
-INSERT INTO `xinhu_chargems` VALUES ('5', '1', '2', '2016-09-01 15:10:31', '2016-09-01 14:38:14', null);
-INSERT INTO `xinhu_chargems` VALUES ('6', '0', '2', '2016-09-06 13:14:29', '2016-09-06 13:11:17', 'pw0hr0qt0rrt0pq0fr0rww0rwq0ph0qq0rws0rrl0pq0rwm0fq0fq08');
-INSERT INTO `xinhu_chargems` VALUES ('7', '1', '3', '2016-09-06 13:14:29', '2016-09-06 13:11:17', null);
-INSERT INTO `xinhu_chargems` VALUES ('8', '1', '4', '2016-09-06 13:08:47', '2016-09-06 13:02:09', null);
 
 -- ----------------------------
 -- Table structure for `xinhu_customer`
@@ -1974,7 +1970,7 @@ CREATE TABLE `xinhu_option` (
   `optdt` datetime DEFAULT NULL,
   `optid` smallint(6) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=143 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=144 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_option

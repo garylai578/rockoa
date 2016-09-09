@@ -1,0 +1,103 @@
+<script >
+$(document).ready(function(){
+	{params}
+	var atype=params.atype;
+	var a = $('#view_{rand}').bootstable({
+		tablename:'project',params:{'atype':atype},fanye:true,modenum:'project',modename:'项目',
+		url:publicstore('{mode}','{dir}'),celleditor:true,
+		storeafteraction:'projectafter',storebeforeaction:'projectbefore',
+		columns:[{
+			text:'操作',dataIndex:'caozuo'
+		},{
+			text:'名称',dataIndex:'title',align:'left'
+		},{
+			text:'类型',dataIndex:'type'
+		},{
+			text:'负责人',dataIndex:'fuze'
+		},{
+			text:'执行人',dataIndex:'runuser'
+		},{
+			text:'开始时间',dataIndex:'startdt'
+		},{
+			text:'截止时间',dataIndex:'enddt'
+		},{
+			text:'状态',dataIndex:'state'
+		},{
+			text:'进度',dataIndex:'progress',renderer:function(v){
+				return '<div class="progress" style="margin:0;width:120px;"><div class="progress-bar progress-bar-success" style="width:'+v+'%;color:#000000;">'+v+'%</div></div>';
+			}
+		},{
+			text:'创建人',dataIndex:'optname'
+		}],
+		itemdblclick:function(){
+			c.view();
+		},
+		itemclick:function(){
+			btn(false);
+		},
+		beforeload:function(){
+			btn(true);
+		}
+	});
+
+	function btn(bo){
+		get('xiang_{rand}').disabled = bo;
+	}
+	
+	var c = {
+		del:function(){
+			a.del();
+		},
+		reload:function(){
+			a.reload();
+		},
+		view:function(){
+			var d=a.changedata;
+			openxiangs('项目','project',d.id);
+		},
+		search:function(){
+			var s=get('key_{rand}').value;
+			a.setparams({key:s,zt:get('status_{rand}').value},true);
+		},
+		daochu:function(){
+			a.exceldown(nowtabs.name);
+		},
+		clickwin:function(o1,lx){
+			var id=0;
+			if(lx==1)id=a.changeid;
+			openinput('项目', 'project',id);
+		}
+	};
+	js.initbtn(c);
+	if(atype=='wwc')$('#wense_{rand}').remove();
+});
+</script>
+<div>
+	<table width="100%">
+	<tr>
+	<td id="wense_{rand}" style="padding-right:10px">
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+	</td>
+	<td>
+		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="名称/负责人">
+	</td>
+	<td  style="padding-left:10px">
+		<select id="status_{rand}" style="width:100px" class="form-control" ><option value="">-状态-</option><option value="0">待执行</option><option value="1" style="color:green">已完成</option><option value="2">执行中</option><option value="3">终止</option></select>	
+	</td>
+	<td style="padding-left:10px">
+		<button class="btn btn-default" click="search" type="button">搜索</button> 
+	</td>
+	<td style="padding-left:10px">
+		
+	</td>
+	<td width="80%"></td>
+	<td align="right" nowrap>
+		<button class="btn btn-default" id="xiang_{rand}" click="view" disabled type="button">详情</button> &nbsp; 
+		<button class="btn btn-default" click="daochu,1" type="button">导出</button> 
+	</td>
+	</tr>
+	</table>
+	
+</div>
+<div class="blank10"></div>
+<div id="view_{rand}"></div>

@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : 本地
 Source Server Version : 50610
 Source Host           : localhost:3306
-Source Database       : rockxinhu
+Source Database       : rockxinhu_fabu
 
 Target Server Type    : MYSQL
 Target Server Version : 50610
 File Encoding         : 65001
 
-Date: 2016-09-09 12:23:26
+Date: 2016-09-09 12:26:23
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -54,7 +54,7 @@ CREATE TABLE `xinhu_admin` (
 -- ----------------------------
 -- Records of xinhu_admin
 -- ----------------------------
-INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '607', '1', '1', '男', '0592-1234567', 'upload/face/1.jpg', '2', '开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-01', 'admin@rockoa.com', '2016-08-02 11:40:42', null, null, null);
+INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '608', '1', '1', '男', '0592-1234567', 'upload/face/1.jpg', '2', '开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-01', 'admin@rockoa.com', '2016-08-02 11:40:42', null, null, null);
 INSERT INTO `xinhu_admin` VALUES ('2', null, 'diaochan', '貂蝉', 'e10adc3949ba59abbe56e057f20f883e', '52', '1', '0', '女', null, 'upload/face/2.jpg', '3', '财务部', '5', '磐石', '财务总监', '0', '[1],[3]', '[5]', null, '15800000007', '1', null, null, null, null, null, null);
 INSERT INTO `xinhu_admin` VALUES ('3', null, 'xiaoqiao', '小乔', 'e10adc3949ba59abbe56e057f20f883e', '54', '1', '0', '女', null, 'upload/face/3.jpg', '3', '财务部', '2', '貂蝉', '出纳', '0', '[1],[3]', '[5],[2]', null, '15800000001', '1', null, null, '2016-08-30 20:34:23', null, null, null);
 INSERT INTO `xinhu_admin` VALUES ('4', null, 'daqiao', '大乔', 'e10adc3949ba59abbe56e057f20f883e', '52', '1', '0', '女', null, 'upload/face/4.jpg', '4', '行政人事部', '5', '磐石', '人事主管', '0', '[1],[4]', '[5]', null, '15800000002', '1', null, null, null, null, null, null);
@@ -1062,18 +1062,18 @@ CREATE TABLE `xinhu_flow_set` (
 -- ----------------------------
 -- Records of xinhu_flow_set
 -- ----------------------------
-INSERT INTO `xinhu_flow_set` VALUES ('1', '通知公告', 'gong', '1', 'infor', null, '[{typename}]{title}', null, '行政', '1', '1', '1', 'XA-Ymd-', '0', 'all', '全体人员', '2016-09-01 21:04:57', '1', '1', null, null);
-INSERT INTO `xinhu_flow_set` VALUES ('2', '会议', 'meet', '2', 'meet', null, '[{hyname}]{title},{startdt}→{enddt}', null, '行政', '1', '1', '1', 'XB-Ymd-', '0', 'all', '全体人员', '2016-09-01 21:13:43', '1', '1', null, null);
+INSERT INTO `xinhu_flow_set` VALUES ('1', '通知公告', 'gong', '1', 'infor', null, '[{typename}]{title}', null, '行政', '1', '1', '0', 'XA-Ymd-', '0', 'all', '全体人员', '2016-09-01 21:04:57', '1', '1', null, null);
+INSERT INTO `xinhu_flow_set` VALUES ('2', '会议', 'meet', '2', 'meet', null, '[{hyname}]{title},{startdt}→{enddt}', null, '行政', '1', '1', '0', 'XB-Ymd-', '0', 'all', '全体人员', '2016-09-01 21:13:43', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('3', '工作日报', 'daily', '10', 'daily', null, '[{optname}]{content}', null, '基础', '1', '1', '0', 'XC-Ymd-', '0', 'all', '全体人员', '2016-06-17 21:20:27', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('4', '任务', 'work', '12', 'work', null, '[{type}]{title},分配给:{dist}', null, '基础', '1', '1', '0', null, '0', 'all', '全体人员', '2016-08-13 21:23:42', '1', '1', null, null);
-INSERT INTO `xinhu_flow_set` VALUES ('5', '请假条', 'leave', '30', 'kqinfo', 'kind=[F]请假[F]', '[{qjkind}]{stime}→{etime}共{totals}小时,{explain}', null, '考勤', '1', '1', '1', 'KA-Ymd-', '1', 'all', '全体人员', '2016-08-26 23:26:09', '1', '1', null, null);
-INSERT INTO `xinhu_flow_set` VALUES ('6', '加班单', 'jiaban', '31', 'kqinfo', 'kind=[F]加班[F]', '{stime}→{stime}共加班{totals}小时,{explain}', null, '考勤', '1', '1', '1', 'KB-Ymd-', '1', 'all', '全体人员', '2016-07-02 22:14:08', '1', '1', null, null);
+INSERT INTO `xinhu_flow_set` VALUES ('5', '请假条', 'leave', '30', 'kqinfo', 'kind=[F]请假[F]', '[{qjkind}]{stime}→{etime}共{totals}小时,{explain}', null, '考勤', '1', '1', '0', 'KA-Ymd-', '1', 'all', '全体人员', '2016-08-26 23:26:09', '1', '1', null, null);
+INSERT INTO `xinhu_flow_set` VALUES ('6', '加班单', 'jiaban', '31', 'kqinfo', 'kind=[F]加班[F]', '{stime}→{stime}共加班{totals}小时,{explain}', null, '考勤', '1', '1', '0', 'KB-Ymd-', '1', 'all', '全体人员', '2016-07-02 22:14:08', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('7', '客户', 'customer', '50', 'customer', null, '{name}', null, 'CRM', '1', '1', '0', 'CA-Ymd-', '0', 'all', '全体人员', '2016-09-03 22:41:24', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('8', '销售', 'custsale', '51', 'custsale', null, null, null, 'CRM', '1', '1', '0', 'CB-Ymd-', '0', 'all', '全体人员', '2016-07-18 10:09:29', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('9', '物品产品', 'goods', '4', 'goods', null, null, null, '行政', '0', '0', '0', 'CC-Ymd-', '0', 'all', '全体人员', '2016-09-01 20:51:47', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('11', '费用报销', 'finfybx', '90', 'fininfom', 'type=0', '报销：{money},收款人：{fullname}', null, '财务', '1', '1', '0', 'FA-Ymd-', '1', 'all', '全体人员', '2016-09-03 09:38:39', '1', '1', 'fininfos', '报销明细');
 INSERT INTO `xinhu_flow_set` VALUES ('10', '用户', 'user', '101', 'admin', null, null, null, '系统', '0', '0', '0', null, '0', 'u1', '管理员', '2016-08-02 16:42:25', '1', '1', null, null);
-INSERT INTO `xinhu_flow_set` VALUES ('12', '备忘记事', 'schedule', '13', 'schedule', null, '{title}', null, '基础', '1', '1', '1', null, '0', 'all', '全体人员', '2016-08-13 16:40:25', '1', '1', null, null);
+INSERT INTO `xinhu_flow_set` VALUES ('12', '备忘记事', 'schedule', '13', 'schedule', null, '{title}', null, '基础', '1', '1', '0', null, '0', 'all', '全体人员', '2016-08-13 16:40:25', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('13', '部门', 'dept', '102', 'dept', null, '{name}', null, '系统', '0', '0', '0', null, '0', 'u1', '管理员', '2016-08-13 16:44:30', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('14', '系统组', 'group', '103', 'group', null, null, null, '系统', '0', '0', '0', null, '0', 'u1', '管理员', '2016-08-13 17:47:58', '1', '1', null, null);
 INSERT INTO `xinhu_flow_set` VALUES ('15', '计划任务', 'task', '104', 'task', null, null, null, '系统', '0', '0', '0', null, '0', 'u1', '管理员', '2016-08-13 17:23:01', '1', '1', null, null);
@@ -1495,523 +1495,11 @@ CREATE TABLE `xinhu_kqanay` (
   `remark` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `dt` (`dt`,`uid`)
-) ENGINE=MyISAM AUTO_INCREMENT=513 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_kqanay
 -- ----------------------------
-INSERT INTO `xinhu_kqanay` VALUES ('1', '2016-08-01', '1', '上班', '2016-08-01 08:55:10', '迟到', null, '0', '1', '3309', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('2', '2016-08-01', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('3', '2016-08-02', '1', '上班', '2016-08-02 08:05:38', '迟到', null, '0', '1', '337', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('4', '2016-08-02', '1', '下班', '2016-08-02 17:54:38', '早退', null, '1', '1', '321', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('5', '2016-08-03', '1', '上班', '2016-08-03 07:54:38', '正常', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('6', '2016-08-03', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('7', '2016-08-04', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('8', '2016-08-04', '1', '下班', '2016-08-04 18:46:32', '正常', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('9', '2016-08-05', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('10', '2016-08-05', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('11', '2016-08-06', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('12', '2016-08-06', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('13', '2016-08-07', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('14', '2016-08-07', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('15', '2016-08-08', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('16', '2016-08-08', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('17', '2016-08-09', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('18', '2016-08-09', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('19', '2016-08-10', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('20', '2016-08-10', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('21', '2016-08-11', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('22', '2016-08-11', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('23', '2016-08-12', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('24', '2016-08-12', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('25', '2016-08-13', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('26', '2016-08-13', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('27', '2016-08-14', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('28', '2016-08-14', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('29', '2016-08-15', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('30', '2016-08-15', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('31', '2016-08-16', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('32', '2016-08-16', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('33', '2016-08-17', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('34', '2016-08-17', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('35', '2016-08-18', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('36', '2016-08-18', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('37', '2016-08-19', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('38', '2016-08-19', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('39', '2016-08-20', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('40', '2016-08-20', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('41', '2016-08-21', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('42', '2016-08-21', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('43', '2016-08-22', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('44', '2016-08-22', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('45', '2016-08-23', '1', '上班', '2016-08-23 07:37:28', '正常', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('46', '2016-08-23', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('47', '2016-08-24', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('48', '2016-08-24', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('49', '2016-08-25', '1', '上班', null, '未打卡', '事假', '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('50', '2016-08-25', '1', '下班', null, '未打卡', '事假', '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('51', '2016-08-26', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('52', '2016-08-26', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('53', '2016-08-27', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('54', '2016-08-27', '1', '下班', '2016-08-27 22:45:06', '正常', null, '1', '0', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('55', '2016-08-28', '1', '上班', '2016-08-28 09:36:29', '迟到', null, '0', '0', '5788', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('56', '2016-08-28', '1', '下班', '2016-08-28 17:28:19', '早退', null, '1', '0', '1900', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('57', '2016-08-29', '1', '上班', null, '未打卡', '外出', '0', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('58', '2016-08-29', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 22:12:55', null);
-INSERT INTO `xinhu_kqanay` VALUES ('59', '2016-08-30', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 22:33:01', null);
-INSERT INTO `xinhu_kqanay` VALUES ('60', '2016-08-30', '1', '下班', '2016-08-30 22:33:01', '正常', null, '1', '1', '0', '2016-08-30 22:33:01', null);
-INSERT INTO `xinhu_kqanay` VALUES ('61', '2016-08-01', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('62', '2016-08-01', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('63', '2016-08-02', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('64', '2016-08-02', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('65', '2016-08-03', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('66', '2016-08-03', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('67', '2016-08-04', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('68', '2016-08-04', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('69', '2016-08-05', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('70', '2016-08-05', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('71', '2016-08-06', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('72', '2016-08-06', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('73', '2016-08-07', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('74', '2016-08-07', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('75', '2016-08-08', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('76', '2016-08-08', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('77', '2016-08-09', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('78', '2016-08-09', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('79', '2016-08-10', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('80', '2016-08-10', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('81', '2016-08-11', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('82', '2016-08-11', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('83', '2016-08-12', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('84', '2016-08-12', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('85', '2016-08-13', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('86', '2016-08-13', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('87', '2016-08-14', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('88', '2016-08-14', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('89', '2016-08-15', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('90', '2016-08-15', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('91', '2016-08-16', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('92', '2016-08-16', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('93', '2016-08-17', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('94', '2016-08-17', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('95', '2016-08-18', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('96', '2016-08-18', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('97', '2016-08-19', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('98', '2016-08-19', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('99', '2016-08-20', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('100', '2016-08-20', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('101', '2016-08-21', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('102', '2016-08-21', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('103', '2016-08-22', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('104', '2016-08-22', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('105', '2016-08-23', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('106', '2016-08-23', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('107', '2016-08-24', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('108', '2016-08-24', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('109', '2016-08-25', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('110', '2016-08-25', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('111', '2016-08-26', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('112', '2016-08-26', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('113', '2016-08-27', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('114', '2016-08-27', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('115', '2016-08-28', '2', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('116', '2016-08-28', '2', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('117', '2016-08-29', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('118', '2016-08-29', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('119', '2016-08-30', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('120', '2016-08-30', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('121', '2016-08-01', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('122', '2016-08-01', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('123', '2016-08-02', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('124', '2016-08-02', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('125', '2016-08-03', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('126', '2016-08-03', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('127', '2016-08-04', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('128', '2016-08-04', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('129', '2016-08-05', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('130', '2016-08-05', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('131', '2016-08-06', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('132', '2016-08-06', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('133', '2016-08-07', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('134', '2016-08-07', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('135', '2016-08-08', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('136', '2016-08-08', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('137', '2016-08-09', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('138', '2016-08-09', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('139', '2016-08-10', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('140', '2016-08-10', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('141', '2016-08-11', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('142', '2016-08-11', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('143', '2016-08-12', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('144', '2016-08-12', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('145', '2016-08-13', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('146', '2016-08-13', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('147', '2016-08-14', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('148', '2016-08-14', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('149', '2016-08-15', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('150', '2016-08-15', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('151', '2016-08-16', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('152', '2016-08-16', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('153', '2016-08-17', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('154', '2016-08-17', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('155', '2016-08-18', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('156', '2016-08-18', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('157', '2016-08-19', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('158', '2016-08-19', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('159', '2016-08-20', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('160', '2016-08-20', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('161', '2016-08-21', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('162', '2016-08-21', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('163', '2016-08-22', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('164', '2016-08-22', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('165', '2016-08-23', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('166', '2016-08-23', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('167', '2016-08-24', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('168', '2016-08-24', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('169', '2016-08-25', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('170', '2016-08-25', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('171', '2016-08-26', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('172', '2016-08-26', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('173', '2016-08-27', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('174', '2016-08-27', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('175', '2016-08-28', '3', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('176', '2016-08-28', '3', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('177', '2016-08-29', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('178', '2016-08-29', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('179', '2016-08-30', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('180', '2016-08-30', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('181', '2016-08-01', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('182', '2016-08-01', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('183', '2016-08-02', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('184', '2016-08-02', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('185', '2016-08-03', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('186', '2016-08-03', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('187', '2016-08-04', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('188', '2016-08-04', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('189', '2016-08-05', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('190', '2016-08-05', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('191', '2016-08-06', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('192', '2016-08-06', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('193', '2016-08-07', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('194', '2016-08-07', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('195', '2016-08-08', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('196', '2016-08-08', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('197', '2016-08-09', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('198', '2016-08-09', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('199', '2016-08-10', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('200', '2016-08-10', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('201', '2016-08-11', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('202', '2016-08-11', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('203', '2016-08-12', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('204', '2016-08-12', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('205', '2016-08-13', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('206', '2016-08-13', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('207', '2016-08-14', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('208', '2016-08-14', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('209', '2016-08-15', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('210', '2016-08-15', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('211', '2016-08-16', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('212', '2016-08-16', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('213', '2016-08-17', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('214', '2016-08-17', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('215', '2016-08-18', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('216', '2016-08-18', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('217', '2016-08-19', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('218', '2016-08-19', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('219', '2016-08-20', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('220', '2016-08-20', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('221', '2016-08-21', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('222', '2016-08-21', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('223', '2016-08-22', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('224', '2016-08-22', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('225', '2016-08-23', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('226', '2016-08-23', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('227', '2016-08-24', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('228', '2016-08-24', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('229', '2016-08-25', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('230', '2016-08-25', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('231', '2016-08-26', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('232', '2016-08-26', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('233', '2016-08-27', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('234', '2016-08-27', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('235', '2016-08-28', '4', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('236', '2016-08-28', '4', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('237', '2016-08-29', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('238', '2016-08-29', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('239', '2016-08-30', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('240', '2016-08-30', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('241', '2016-08-01', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('242', '2016-08-01', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('243', '2016-08-02', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('244', '2016-08-02', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('245', '2016-08-03', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('246', '2016-08-03', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('247', '2016-08-04', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('248', '2016-08-04', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('249', '2016-08-05', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('250', '2016-08-05', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('251', '2016-08-06', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('252', '2016-08-06', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('253', '2016-08-07', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('254', '2016-08-07', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('255', '2016-08-08', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('256', '2016-08-08', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('257', '2016-08-09', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('258', '2016-08-09', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('259', '2016-08-10', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('260', '2016-08-10', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('261', '2016-08-11', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('262', '2016-08-11', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('263', '2016-08-12', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('264', '2016-08-12', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('265', '2016-08-13', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('266', '2016-08-13', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('267', '2016-08-14', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('268', '2016-08-14', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('269', '2016-08-15', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('270', '2016-08-15', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('271', '2016-08-16', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('272', '2016-08-16', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('273', '2016-08-17', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('274', '2016-08-17', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('275', '2016-08-18', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('276', '2016-08-18', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('277', '2016-08-19', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('278', '2016-08-19', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('279', '2016-08-20', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('280', '2016-08-20', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('281', '2016-08-21', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('282', '2016-08-21', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('283', '2016-08-22', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('284', '2016-08-22', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('285', '2016-08-23', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('286', '2016-08-23', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('287', '2016-08-24', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('288', '2016-08-24', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('289', '2016-08-25', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('290', '2016-08-25', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('291', '2016-08-26', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('292', '2016-08-26', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('293', '2016-08-27', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('294', '2016-08-27', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('295', '2016-08-28', '5', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('296', '2016-08-28', '5', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('297', '2016-08-29', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('298', '2016-08-29', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('299', '2016-08-30', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('300', '2016-08-30', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('301', '2016-08-01', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('302', '2016-08-01', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('303', '2016-08-02', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('304', '2016-08-02', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('305', '2016-08-03', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('306', '2016-08-03', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('307', '2016-08-04', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('308', '2016-08-04', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('309', '2016-08-05', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('310', '2016-08-05', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('311', '2016-08-06', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('312', '2016-08-06', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('313', '2016-08-07', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('314', '2016-08-07', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('315', '2016-08-08', '6', '上班', null, '未打卡', '年假', '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('316', '2016-08-08', '6', '下班', null, '未打卡', '年假', '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('317', '2016-08-09', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('318', '2016-08-09', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('319', '2016-08-10', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('320', '2016-08-10', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('321', '2016-08-11', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('322', '2016-08-11', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('323', '2016-08-12', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('324', '2016-08-12', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('325', '2016-08-13', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('326', '2016-08-13', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('327', '2016-08-14', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('328', '2016-08-14', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('329', '2016-08-15', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('330', '2016-08-15', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('331', '2016-08-16', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('332', '2016-08-16', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('333', '2016-08-17', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('334', '2016-08-17', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('335', '2016-08-18', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('336', '2016-08-18', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('337', '2016-08-19', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('338', '2016-08-19', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('339', '2016-08-20', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('340', '2016-08-20', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('341', '2016-08-21', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('342', '2016-08-21', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('343', '2016-08-22', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('344', '2016-08-22', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('345', '2016-08-23', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('346', '2016-08-23', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('347', '2016-08-24', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('348', '2016-08-24', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('349', '2016-08-25', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('350', '2016-08-25', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('351', '2016-08-26', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('352', '2016-08-26', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('353', '2016-08-27', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('354', '2016-08-27', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('355', '2016-08-28', '6', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('356', '2016-08-28', '6', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('357', '2016-08-29', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('358', '2016-08-29', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('359', '2016-08-30', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('360', '2016-08-30', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('361', '2016-08-01', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('362', '2016-08-01', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('363', '2016-08-02', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('364', '2016-08-02', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('365', '2016-08-03', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('366', '2016-08-03', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('367', '2016-08-04', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('368', '2016-08-04', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('369', '2016-08-05', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('370', '2016-08-05', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('371', '2016-08-06', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('372', '2016-08-06', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('373', '2016-08-07', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('374', '2016-08-07', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('375', '2016-08-08', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('376', '2016-08-08', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('377', '2016-08-09', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('378', '2016-08-09', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('379', '2016-08-10', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('380', '2016-08-10', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('381', '2016-08-11', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('382', '2016-08-11', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('383', '2016-08-12', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('384', '2016-08-12', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('385', '2016-08-13', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('386', '2016-08-13', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('387', '2016-08-14', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('388', '2016-08-14', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('389', '2016-08-15', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('390', '2016-08-15', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('391', '2016-08-16', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('392', '2016-08-16', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('393', '2016-08-17', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('394', '2016-08-17', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('395', '2016-08-18', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('396', '2016-08-18', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('397', '2016-08-19', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('398', '2016-08-19', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('399', '2016-08-20', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('400', '2016-08-20', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('401', '2016-08-21', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('402', '2016-08-21', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('403', '2016-08-22', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('404', '2016-08-22', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('405', '2016-08-23', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('406', '2016-08-23', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('407', '2016-08-24', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('408', '2016-08-24', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('409', '2016-08-25', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('410', '2016-08-25', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('411', '2016-08-26', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('412', '2016-08-26', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('413', '2016-08-27', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('414', '2016-08-27', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('415', '2016-08-28', '7', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('416', '2016-08-28', '7', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('417', '2016-08-29', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('418', '2016-08-29', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('419', '2016-08-30', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('420', '2016-08-30', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('421', '2016-08-01', '8', '上班', null, '未打卡', '事假', '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('422', '2016-08-01', '8', '下班', null, '未打卡', '事假', '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('423', '2016-08-02', '8', '上班', null, '未打卡', '事假', '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('424', '2016-08-02', '8', '下班', null, '未打卡', '事假', '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('425', '2016-08-03', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('426', '2016-08-03', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('427', '2016-08-04', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('428', '2016-08-04', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('429', '2016-08-05', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('430', '2016-08-05', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('431', '2016-08-06', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('432', '2016-08-06', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('433', '2016-08-07', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('434', '2016-08-07', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('435', '2016-08-08', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('436', '2016-08-08', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('437', '2016-08-09', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('438', '2016-08-09', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('439', '2016-08-10', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('440', '2016-08-10', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('441', '2016-08-11', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('442', '2016-08-11', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('443', '2016-08-12', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('444', '2016-08-12', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('445', '2016-08-13', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('446', '2016-08-13', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('447', '2016-08-14', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('448', '2016-08-14', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('449', '2016-08-15', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('450', '2016-08-15', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('451', '2016-08-16', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('452', '2016-08-16', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('453', '2016-08-17', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('454', '2016-08-17', '8', '下班', '2016-08-17 13:13:10', '早退', null, '1', '1', '17209', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('455', '2016-08-18', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('456', '2016-08-18', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('457', '2016-08-19', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('458', '2016-08-19', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('459', '2016-08-20', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('460', '2016-08-20', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('461', '2016-08-21', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('462', '2016-08-21', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('463', '2016-08-22', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('464', '2016-08-22', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('465', '2016-08-23', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('466', '2016-08-23', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('467', '2016-08-24', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('468', '2016-08-24', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('469', '2016-08-25', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('470', '2016-08-25', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('471', '2016-08-26', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('472', '2016-08-26', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('473', '2016-08-27', '8', '上班', null, '未打卡', null, '0', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('474', '2016-08-27', '8', '下班', null, '未打卡', null, '1', '0', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('475', '2016-08-28', '8', '上班', '2016-08-28 10:31:46', '迟到', null, '0', '0', '5505', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('476', '2016-08-28', '8', '下班', '2016-08-28 17:20:59', '早退', null, '1', '0', '2340', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('477', '2016-08-29', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('478', '2016-08-29', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('479', '2016-08-30', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('480', '2016-08-30', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-30 21:38:27', null);
-INSERT INTO `xinhu_kqanay` VALUES ('481', '2016-08-31', '1', '上班', '2016-08-31 09:10:26', '迟到', null, '0', '1', '4225', '2016-08-31 09:10:26', null);
-INSERT INTO `xinhu_kqanay` VALUES ('482', '2016-08-31', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-08-31 09:10:26', null);
-INSERT INTO `xinhu_kqanay` VALUES ('483', '2016-09-01', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('484', '2016-09-01', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('485', '2016-09-01', '2', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('486', '2016-09-01', '2', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('487', '2016-09-01', '3', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('488', '2016-09-01', '3', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('489', '2016-09-01', '4', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('490', '2016-09-01', '4', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('491', '2016-09-01', '5', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('492', '2016-09-01', '5', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('493', '2016-09-01', '6', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('494', '2016-09-01', '6', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('495', '2016-09-01', '7', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('496', '2016-09-01', '7', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('497', '2016-09-01', '8', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('498', '2016-09-01', '8', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-01 15:42:59', null);
-INSERT INTO `xinhu_kqanay` VALUES ('499', '2016-09-02', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('500', '2016-09-02', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('501', '2016-09-03', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('502', '2016-09-03', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('503', '2016-09-04', '1', '上班', null, '未打卡', null, '0', '0', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('504', '2016-09-04', '1', '下班', null, '未打卡', null, '1', '0', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('505', '2016-09-05', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('506', '2016-09-05', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('507', '2016-09-06', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('508', '2016-09-06', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('509', '2016-09-07', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('510', '2016-09-07', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('511', '2016-09-08', '1', '上班', null, '未打卡', null, '0', '1', '0', '2016-09-08 21:49:18', null);
-INSERT INTO `xinhu_kqanay` VALUES ('512', '2016-09-08', '1', '下班', null, '未打卡', null, '1', '1', '0', '2016-09-08 21:49:18', null);
 
 -- ----------------------------
 -- Table structure for `xinhu_kqdist`
@@ -2270,15 +1758,11 @@ CREATE TABLE `xinhu_log` (
   `web` varchar(100) DEFAULT NULL COMMENT '浏览器',
   `device` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_log
 -- ----------------------------
-INSERT INTO `xinhu_log` VALUES ('1', 'pc登录', '8', '信呼客服', '[xinhu]超级密码登录成功', '2016-09-08 23:39:49', '127.0.0.1', 'Chrome', '1469187263496');
-INSERT INTO `xinhu_log` VALUES ('2', 'pc登录', '5', '磐石', '[rock]超级密码登录成功', '2016-09-08 23:41:43', '127.0.0.1', 'Chrome', '1469187263496');
-INSERT INTO `xinhu_log` VALUES ('3', 'pc登录', '1', '管理员', '[admin]超级密码登录成功', '2016-09-08 23:41:49', '127.0.0.1', 'Chrome', '1469187263496');
-INSERT INTO `xinhu_log` VALUES ('4', 'pc登录', '1', '管理员', '[admin]超级密码登录成功', '2016-09-09 10:09:05', '127.0.0.1', 'Chrome', '1469187263496');
 
 -- ----------------------------
 -- Table structure for `xinhu_logintoken`
@@ -2298,14 +1782,11 @@ CREATE TABLE `xinhu_logintoken` (
   `online` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `token` (`token`,`cfrom`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_logintoken
 -- ----------------------------
-INSERT INTO `xinhu_logintoken` VALUES ('1', '8', '信呼客服', 'hervp7ba', '2016-09-08 23:39:49', '2016-09-08 23:39:49', 'pc', '1469187263496', '127.0.0.1', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('2', '5', '磐石', 'xhrct9n8', '2016-09-08 23:41:43', '2016-09-08 23:41:43', 'pc', '1469187263496', '127.0.0.1', 'Chrome', '0');
-INSERT INTO `xinhu_logintoken` VALUES ('4', '1', '管理员', 'zqgh3o2x', '2016-09-09 10:09:05', '2016-09-09 10:09:05', 'pc', '1469187263496', '127.0.0.1', 'Chrome', '0');
 
 -- ----------------------------
 -- Table structure for `xinhu_meet`
@@ -2498,9 +1979,6 @@ CREATE TABLE `xinhu_option` (
 -- ----------------------------
 -- Records of xinhu_option
 -- ----------------------------
-INSERT INTO `xinhu_option` VALUES ('31', null, null, 'reimrecidsystem', 'rockxinhu', '0', null, '1', '2016-07-06 16:44:37', '0');
-INSERT INTO `xinhu_option` VALUES ('2', null, null, 'reimhostsystem', 'ws://127.0.0.1:6552/', '0', null, '1', '2016-07-06 16:44:37', '0');
-INSERT INTO `xinhu_option` VALUES ('3', null, null, 'reimpushurlsystem', 'http://127.0.0.1:6553/', '0', null, '1', '2016-07-06 16:44:37', '0');
 INSERT INTO `xinhu_option` VALUES ('4', '流程分类', '1', 'flowfenlei', null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('5', '考勤', '4', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('6', '表单类型', '1', 'flowinputtype', null, '0', null, '1', null, '0');
@@ -2611,18 +2089,7 @@ INSERT INTO `xinhu_option` VALUES ('114', '待执行', '113', null, '0', '0', nu
 INSERT INTO `xinhu_option` VALUES ('115', '执行中', '113', null, '2', '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('116', '已取消', '113', null, '3', '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('117', '已完成', '113', null, '1', '0', null, '1', null, '0');
-INSERT INTO `xinhu_option` VALUES ('118', null, null, 'weixin_corpid', 'wx50b5364464b7e29e', '0', null, '1', '2016-08-17 11:07:23', '1');
-INSERT INTO `xinhu_option` VALUES ('119', null, null, 'weixin_secret', 'msvoxsaKP7wJmlc4Dn8tD55eKsLgKSF0d3Vysvd5tzSenqb21Hems4e4xmP4Fxla', '0', null, '1', '2016-08-17 11:07:23', '1');
-INSERT INTO `xinhu_option` VALUES ('120', null, null, 'weixin_token0', 'Ozzp8fl7AmGxNidnhds_LBCTmW2tkEmG0-cOFdrX87Le9U1BlYdt1mub6JyxH46X', '0', null, '1', '2016-09-09 10:10:21', '1');
-INSERT INTO `xinhu_option` VALUES ('121', null, null, 'weixin_token1', 'kgt8ON7yVITDhtdwci0qeTAc0Iio8dvoZrVYr65GFFnrCZsobcO_Vht8suf_U5Q5DOVeRHFjx-OySZmlzmpZsg', '0', null, '1', '2016-08-30 19:51:26', '1');
-INSERT INTO `xinhu_option` VALUES ('122', null, null, 'weixin_chatsecret', 'Ku5sFUjZYV15eGbympCfdp-1caam4h9yC5dIROg8lbv7rAOFdHfIVulQi3eOKHB5', '0', null, '1', '2016-08-17 11:07:23', '1');
-INSERT INTO `xinhu_option` VALUES ('123', null, null, 'weixin_huitoken', 'xinhuchattoken', '0', null, '1', '2016-08-17 11:07:23', '1');
-INSERT INTO `xinhu_option` VALUES ('124', null, null, 'weixin_aeskey', 'kcF6dPm91S2c7UwIc3xzyVY9yTy6mXWLvSVN6DhzB6X', '0', null, '1', '2016-08-17 11:07:23', '1');
-INSERT INTO `xinhu_option` VALUES ('125', null, null, 'weixin_chattb', '1', '0', null, '1', '2016-08-17 11:07:23', '1');
-INSERT INTO `xinhu_option` VALUES ('126', null, null, 'weixin_token3', 'gOTpqRdTqku3nqZFWRy23sSfZ7NxG4L7Q09GBL4g_XhPaheFKeEBnhxmoVkWVs-6', '0', null, '1', '2016-09-08 23:38:20', '0');
-INSERT INTO `xinhu_option` VALUES ('127', null, null, 'systemnum', '2acc93656cd04c13443a360bea425af3', '0', null, '1', '2016-08-25 14:20:43', '1');
 INSERT INTO `xinhu_option` VALUES ('128', '文件夹目录', null, 'folder8', null, '0', null, '1', '2016-08-28 18:14:56', '8');
-INSERT INTO `xinhu_option` VALUES ('129', null, null, 'sysupg_lastdt', '1472385707', '0', null, '1', '2016-08-28 20:01:47', '0');
 INSERT INTO `xinhu_option` VALUES ('130', '财务选项', '1', 'finance', null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('131', '付款方式', '130', 'paytype', null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('132', '现金', '131', null, null, '0', null, '1', null, '0');
@@ -2635,7 +2102,6 @@ INSERT INTO `xinhu_option` VALUES ('138', '电话费', '136', null, null, '0', n
 INSERT INTO `xinhu_option` VALUES ('139', '快递费', '136', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('140', '停车费', '136', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('141', '文件夹目录', null, 'folder5', null, '0', null, '1', '2016-09-08 21:13:56', '5');
-INSERT INTO `xinhu_option` VALUES ('142', null, null, 'systaskrun', '2016-09-09 10:01:17', '0', null, '1', '2016-09-09 10:01:16', '0');
 
 -- ----------------------------
 -- Table structure for `xinhu_project`
@@ -2686,15 +2152,11 @@ CREATE TABLE `xinhu_reads` (
   `web` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `table` (`table`,`mid`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of xinhu_reads
 -- ----------------------------
-INSERT INTO `xinhu_reads` VALUES ('1', 'kqinfo', '9', '1', '2016-09-09 10:43:23', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('2', 'goodm', '5', '1', '2016-09-09 10:45:43', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('3', 'project', '1', '1', '2016-09-09 10:51:25', '127.0.0.1', 'Chrome');
-INSERT INTO `xinhu_reads` VALUES ('4', 'project', '2', '1', '2016-09-09 10:51:27', '127.0.0.1', 'Chrome');
 
 -- ----------------------------
 -- Table structure for `xinhu_schedule`
@@ -2879,110 +2341,3 @@ INSERT INTO `xinhu_work` VALUES ('4', null, '官网设计并给预算', '设计'
 INSERT INTO `xinhu_work` VALUES ('5', null, '系统用户更新。', '改进', '中', '8', '信呼客服', '1、用户问题解答。\n2、问题反馈。', '2016-07-06 21:41:08', '8', '信呼客服', '2016-07-06 21:40:16', null, '2', null, '0', '1');
 INSERT INTO `xinhu_work` VALUES ('6', null, '赶紧弄啊', 'bug', '低', '4', '大乔', null, '2016-07-18 19:49:45', '1', '管理员', '2016-07-18 19:49:19', null, '1', null, '0', '1');
 INSERT INTO `xinhu_work` VALUES ('7', null, '漏洞啦，快去改啊。', 'bug', '高', '5', '磐石', '嗯嗯嗯', '2016-07-20 12:59:13', '1', '管理员', '2016-07-20 12:51:17', null, '1', null, '0', '1');
-
--- ----------------------------
--- Table structure for `xinhu_wx_agent`
--- ----------------------------
-DROP TABLE IF EXISTS `xinhu_wx_agent`;
-CREATE TABLE `xinhu_wx_agent` (
-  `id` smallint(6) NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) DEFAULT NULL COMMENT '应用名称',
-  `agentid` smallint(6) DEFAULT '0' COMMENT '应用Id',
-  `sort` smallint(6) DEFAULT '0',
-  `square_logo_url` varchar(500) DEFAULT NULL,
-  `redirect_domain` varchar(50) DEFAULT NULL,
-  `type` tinyint(1) DEFAULT '0',
-  `description` varchar(500) DEFAULT NULL,
-  `allow_userinfos` varchar(500) DEFAULT NULL,
-  `allow_partys` varchar(500) DEFAULT NULL,
-  `allow_tags` varchar(500) DEFAULT NULL,
-  `close` tinyint(1) DEFAULT '0' COMMENT '是否被禁用',
-  `report_location_flag` tinyint(1) DEFAULT '0' COMMENT '@地理位置上报 0：不上报；1：进入会话上报；2：持续上报',
-  `isreportenter` tinyint(1) DEFAULT '0' COMMENT '是否上报用户进入应用事件',
-  `isreportuser` tinyint(1) DEFAULT '0' COMMENT '是否接收用户变更通知',
-  `home_url` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of xinhu_wx_agent
--- ----------------------------
-INSERT INTO `xinhu_wx_agent` VALUES ('1', '办公助手', '0', '0', 'http://wx.qlogo.cn/mmhead/Q3auHgzwzM6PwAay1PUiblr2Nhkbxz7IUfziaIg9liam4EJfQqDe9EpRQ/0', 'demo.xh829.com', '1', '信呼办公助手', '{\"user\":[]}', '{\"partyid\":[1]}', '{\"tagid\":[]}', '0', '0', '0', '0', null);
-INSERT INTO `xinhu_wx_agent` VALUES ('2', '主页', '1', '0', 'http://wx.qlogo.cn/mmhead/Q3auHgzwzM7Qdialf2855e1wFxO9fqX2PPu3T6do3UPyT6mqsrBfRWg/0', 'demo.xh829.com', '2', '主页功能', '{\"user\":[]}', '{\"partyid\":[1]}', '{\"tagid\":[]}', '0', '0', '0', '1', null);
-INSERT INTO `xinhu_wx_agent` VALUES ('3', '定位打卡', '3', '0', 'http://wx.qlogo.cn/mmhead/Q3auHgzwzM7Cn0iaKhPUlEIWcJY72PlJbqG7mPWf9OOdySgDe2eYiaDQ/0', 'demo.xh829.com', '1', '全体人员打卡定位，外勤打开使用。', '{\"user\":[]}', '{\"partyid\":[1]}', '{\"tagid\":[]}', '0', '1', '0', '1', null);
-
--- ----------------------------
--- Table structure for `xinhu_wx_chat`
--- ----------------------------
-DROP TABLE IF EXISTS `xinhu_wx_chat`;
-CREATE TABLE `xinhu_wx_chat` (
-  `id` int(11) DEFAULT '0',
-  `name` varchar(30) DEFAULT NULL,
-  `owner` varchar(20) DEFAULT NULL COMMENT '管理员id',
-  `userlist` varchar(4000) DEFAULT NULL COMMENT '成员',
-  `chatid` varchar(50) NOT NULL DEFAULT '',
-  PRIMARY KEY (`chatid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of xinhu_wx_chat
--- ----------------------------
-INSERT INTO `xinhu_wx_chat` VALUES ('5', '技术群', 'admin', 'admin|zhaozl|zhangfei', 'chatwx5');
-INSERT INTO `xinhu_wx_chat` VALUES ('2', '全体人员', 'admin', 'admin|daqiao|diaochan|lisi|rock|xiaoqiao|xinhu|zhangfei|zhaozl', 'chatwx2');
-INSERT INTO `xinhu_wx_chat` VALUES ('14', '高管群', 'admin', 'admin|rock|diaochan', 'chatwx14');
-
--- ----------------------------
--- Table structure for `xinhu_wx_dept`
--- ----------------------------
-DROP TABLE IF EXISTS `xinhu_wx_dept`;
-CREATE TABLE `xinhu_wx_dept` (
-  `id` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(30) DEFAULT NULL,
-  `parentid` int(11) DEFAULT NULL,
-  `order` smallint(6) DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of xinhu_wx_dept
--- ----------------------------
-INSERT INTO `xinhu_wx_dept` VALUES ('1', '信呼开发团队', '0', '0');
-INSERT INTO `xinhu_wx_dept` VALUES ('5', '管理层', '1', '0');
-INSERT INTO `xinhu_wx_dept` VALUES ('2', '开发部', '1', '1');
-INSERT INTO `xinhu_wx_dept` VALUES ('3', '财务部', '1', '2');
-INSERT INTO `xinhu_wx_dept` VALUES ('4', '行政人事部', '1', '3');
-
--- ----------------------------
--- Table structure for `xinhu_wx_user`
--- ----------------------------
-DROP TABLE IF EXISTS `xinhu_wx_user`;
-CREATE TABLE `xinhu_wx_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `userid` varchar(30) DEFAULT NULL,
-  `name` varchar(20) DEFAULT NULL,
-  `department` varchar(20) DEFAULT NULL,
-  `position` varchar(20) DEFAULT NULL,
-  `mobile` varchar(20) DEFAULT NULL,
-  `gender` varchar(5) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `weixinid` varchar(50) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '0' COMMENT '状态@1|已关注,2|已冻结,4|未关注',
-  `avatar` varchar(300) DEFAULT NULL COMMENT '头像url',
-  `enable` tinyint(1) DEFAULT '1',
-  `optdt` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of xinhu_wx_user
--- ----------------------------
-INSERT INTO `xinhu_wx_user` VALUES ('1', 'admin', '管理员', '[2]', '项目主管', '15800000000', '1', 'admin@rockoa.com', 'chenxihu829', '1', 'http://shp.qpic.cn/bizmp/ibfWnHfCtYUibOceWtaib0XAV8sckc46gymkhyXnq3nTI5WadrhevO0qA/', '1', '2016-08-18 17:30:25');
-INSERT INTO `xinhu_wx_user` VALUES ('11', 'diaochan', '貂蝉', '[3]', '财务总监', '15800000007', '2', null, null, '4', null, '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('4', 'xiaoqiao', '小乔', '[3]', '出纳', '15800000001', '2', null, null, '4', null, '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('5', 'daqiao', '大乔', '[4]', '人事主管', '15800000002', '2', null, null, '4', null, '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('6', 'rock', '磐石', '[5]', '董事长', '15800000003', '1', null, null, '4', null, '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('7', 'zhangfei', '张飞', '[2]', '程序员', '15800000004', '1', null, null, '4', null, '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('8', 'zhaozl', '赵子龙', '[2]', '高级程序员', '15800000005', '1', null, null, '4', null, '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('9', 'xinhu', '信呼客服', '[2]', '客服', '15800000006', '1', null, 'rainrock829', '1', 'http://shp.qpic.cn/bizmp/ibfWnHfCtYUibOceWtaib0XAV8sckc46gymMg9Fc1HicAOIibhXnIpU3X0w/', '1', null);
-INSERT INTO `xinhu_wx_user` VALUES ('12', 'lisi', '李四', '[2]', '程序员', null, '1', '505581617@qq.com', null, '1', 'http://shp.qpic.cn/bizmp/ibfWnHfCtYU8FH4rb9cTHqm5s5BKGr2HXNClhsQ6CvTW05rTkd8hM1A/', '1', null);

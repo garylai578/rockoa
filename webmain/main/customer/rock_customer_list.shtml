@@ -1,0 +1,97 @@
+<script >
+$(document).ready(function(){
+	{params}
+	var atype=params.atype;
+	var a = $('#view_{rand}').bootstable({
+		tablename:'customer',params:{'atype':atype},fanye:true,modenum:'customer',
+		url:publicstore('{mode}','{dir}'),celleditor:true,
+		storeafteraction:'customerafter',storebeforeaction:'customerbefore',
+		columns:[{
+			text:'',dataIndex:'caozuo'
+		},{
+			text:'名称',dataIndex:'name'
+		},{
+			text:'单位名称',dataIndex:'unitname'
+		},{
+			text:'来源',dataIndex:'laiyuan'
+		},{
+			text:'拥有者',dataIndex:'optname'
+		},{
+			text:'电话',dataIndex:'tel'
+		},{
+			text:'状态',dataIndex:'status',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'供应商',dataIndex:'isgys',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'共享给',dataIndex:'shate'
+		},{
+			text:'创建人',dataIndex:'createname'
+		}],
+		itemclick:function(){
+			btn(false);
+		},
+		beforeload:function(){
+			btn(true);
+		}
+	});
+	
+	function btn(bo){
+		get('xiang_{rand}').disabled = bo;
+	}
+	
+	var c = {
+		del:function(){
+			a.del();
+		},
+		reload:function(){
+			a.reload();
+		},
+		view:function(){
+			var d=a.changedata;
+			openxiangs('客户','customer',d.id);
+		},
+		search:function(){
+			var s=get('key_{rand}').value;
+			a.setparams({key:s,zt:get('status_{rand}').value},true);
+		},
+		daochu:function(){
+			a.exceldown(nowtabs.name);
+		},
+		clickwin:function(o1,lx){
+			var id=0;
+			if(lx==1)id=a.changeid;
+			openinput('客户', 'customer',id);
+		}
+	};
+	js.initbtn(c);
+});
+</script>
+<div>
+	<table width="100%">
+	<tr>
+	<td >
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+	</td>
+	<td  style="padding-left:10px">
+		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="名称">
+	</td>
+	<td  style="padding-left:10px">
+		<select id="status_{rand}" style="width:100px" class="form-control" ><option value="">-状态-</option><option value="0">停用</option><option value="1" style="color:green">启用</option></select>	
+	</td>
+	<td style="padding-left:10px">
+		<button class="btn btn-default" click="search" type="button">搜索</button> 
+	</td>
+	<td style="padding-left:10px">
+		
+	</td>
+	<td width="80%"></td>
+	<td align="right" nowrap>
+		<button class="btn btn-default" id="xiang_{rand}" click="view" disabled type="button">详情</button> &nbsp; 
+		<button class="btn btn-default" click="daochu,1" type="button">导出</button> 
+	</td>
+	</tr>
+	</table>
+	
+</div>
+<div class="blank10"></div>
+<div id="view_{rand}"></div>

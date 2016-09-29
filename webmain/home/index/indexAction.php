@@ -45,14 +45,22 @@ class indexClassAction extends Action{
 		$msgar[1] = $s1;
 		$arr['msgar']	= $msgar;
 		$arr['total']	= m('totals')->gettotals($uid);
+		$arr['gongarr'] = $this->getgonglist();
 		$this->returnjson($arr);
 	}
 	
 	
 	public function getqrcodeAjax()
 	{
+		header("Content-type:image/png");
 		$url = ''.URL.'?m=login&d=we&token='.$this->admintoken.'&user='.$this->jm->base64encode($this->adminuser).'';
 		$img = c('qrcode')->show($url);
 		echo $img;
+	}
+	
+	private function getgonglist()
+	{
+		$rows = m('flow')->initflow('gong')->getflowrows($this->adminid,'wexx');
+		return $rows;
 	}
 }

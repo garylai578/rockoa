@@ -11,6 +11,7 @@ class Action extends mainAction
 	public $adminname	= '';
 	public $admintoken	= '';
 	public $loadci		= 0;
+	public $flow;
 	
 	protected $ajaxbool 	= 'false';
 
@@ -134,7 +135,7 @@ class Action extends mainAction
 		$isadmin= (int)$this->getsession('isadmin');
 		if($modenum==''){
 			if($isadmin!=1)$this->showreturn('','只有管理员才能操作' , 201);
-			if(substr($table,0,5)=='flow_'||$table=='todo'){
+			if(substr($table,0,5)=='flow_'||$table=='todo'||$table=='option'){
 				m($table)->delete("`id` in($id)");
 			}else{
 				$this->showreturn('','未设置删除权限' , 201);
@@ -156,11 +157,28 @@ class Action extends mainAction
 		$fields			= '*';
 		$order			= $this->rock->iconvsql($this->request('defaultorder'));
 		$aftera			= $this->request('storeafteraction');
+		$modenum		= $this->post('modenum');
+		$atype			= $this->post('atype');
 		$execldown		= $this->request('execldown');
 		$this->loadci	= (int)$this->request('loadci');
 		$where			= '1=1 ';
 		$beforea		= $this->request('storebeforeaction');
 		$tables 		= $this->T($table);
+		if($modenum != ''){
+			$this->flow = m('flow')->initflow($modenum);
+			$nas		= $this->flow->billwhere($this->adminid, $atype);
+			$_wehs		= $nas['where'];
+			if(!isempt($nas['order']))$order 	= $nas['order'];
+			if(!isempt($nas['fields']))$fields 	= $nas['fields'];
+			if($_wehs!='')$where .= ' '.$_wehs.' ';
+			$_tabsk		= $nas['table'];
+			if(contain($_tabsk,' ')){
+				$tables	= $_tabsk;
+			}else{
+				$table	= $_tabsk;
+				$tables = $this->T($table);
+			}
+		}
 		if($beforea != ''){
 			if(method_exists($this, $beforea)){
 				$nas	= $this->$beforea($table);
@@ -174,7 +192,6 @@ class Action extends mainAction
 				}
 			}
 		}
-		
 		$arr	= $this->limitRows($tables, $fields, $where, $order);
 		$total	= $arr['total'];
 		$rows	= $arr['rows'];
@@ -351,6 +368,12 @@ class Action extends mainAction
 		$value	= $this->rock->post('value');
 		$where	= "`id` in($id)";
 		m($table)->record(array($fields=>$value), $where);
+		$fiesa  = $this->rock->request('fieldsafteraction');
+		if($fiesa!=''){
+			if(method_exists($this, $fiesa)){
+				$this->$fiesa($table, $fields, $value, $id);
+			}	
+		}
 		echo 'success';
 	}
 	

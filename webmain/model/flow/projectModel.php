@@ -2,7 +2,7 @@
 class flow_projectClassModel extends flowModel
 {
 
-	protected function flowinit()
+	public function initModel()
 	{
 		$this->statearr		 = c('array')->strtoarray('待执行|blue,已完成|green,执行中|#ff6600,终止|#888888');
 	}
@@ -43,5 +43,36 @@ class flow_projectClassModel extends flowModel
 		$bo 		= true;
 		if(m('admin')->rows($where)==0)$bo=false;
 		return $bo;
+	}
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$key 	= $this->rock->post('key');
+		$zt 	= $this->rock->post('zt');
+		$where	= 'and optid='.$uid.'';
+		
+		if($lx=='my' || $lx=='wwc'){
+			$where = m('admin')->getjoinstr('runuserid', $uid);
+		}
+		
+		if($lx=='wwc'){
+			$where.=' and `state` in(0,2)';
+		}
+		
+		if($lx=='myfz'){
+			$where	= 'and '.$this->rock->dbinstr('fuzeid', $uid).'';
+		}
+		if($lx=='all'){
+			$where	= '';
+		}
+		
+		if($zt!='')$where.=' and `state`='.$zt.'';
+		if(!isempt($key))$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `fuze` like '%$key%')";
+		
+		return array(
+			'where' => $where,
+			'fields'=> 'id,type,num,fuze,startdt,title,enddt,state,optname,runuser,progress',
+			'order' => 'pid,optdt desc'
+		);
 	}
 }

@@ -175,6 +175,7 @@ class dateChajian extends Chajian
 	*/
 	public function getenddt($month)
 	{
+		$month	= substr($month,0,7);
 		$max 	= $this->getmaxdt($month);
 		return  ''.$month.'-'.$max.'';
 	}
@@ -207,6 +208,18 @@ class dateChajian extends Chajian
 			$arr[] = $this->adddate($dt, 'd', $j);
 		}
 		return $arr;
+	}
+	
+	public function getweekfirst($dt)
+	{
+		$arr = $this->getweekarr($dt);
+		return $arr[0];
+	}
+	
+	public function getweeklast($dt)
+	{
+		$arr = $this->getweekarr($dt);
+		return $arr[6];
 	}
 	
 	/**

@@ -12,7 +12,7 @@ class agent_gongClassModel extends agentModel
 		return array('stotal'=>$stotal,'titles'=> $titles);
 	}
 	
-	public function getwdtotal($uid)
+	private function getwdtotal($uid)
 	{
 		$ydid 	= m('log')->getread('infor', $uid);
 		$where	= "id not in($ydid)";
@@ -22,33 +22,26 @@ class agent_gongClassModel extends agentModel
 		return $stotal;
 	}
 	
-	public function getdatas($uid, $lx, $page)
+	
+	protected function agenttotals($uid)
 	{
-		$where 	= '1=1';
-		$ydid 	= m('log')->getread('infor', $uid);
-		if($lx=='wexx'){
-			$where= "id not in($ydid)";
-		}
-		
-		$meswh	= m('admin')->getjoinstr('receid', $uid);
-		$where .= $meswh;
-		
-		$ydarr	= explode(',', $ydid);
-		$arr 	= m('infor')->getlimit($where, $page,'`id`,`title`,`optdt`,`typename`','`optdt` desc', $this->limit);
-		$rows 	= $arr['rows'];
-		foreach($rows as $k=>$rs){
-			$rows[$k]['title'] 	= '['.$rs['typename'].']'.$rs['title'].'';
-			if(!in_array($rs['id'], $ydarr)){
-				$rows[$k]['statustext'] 	= '未读';
-				$rows[$k]['statuscolor'] 	= '#ED5A5A';
-			}else{
-				$rows[$k]['ishui']			= 1;
-			}
-		}
-		$arr['rows'] 	= $rows;
-		$arr['stotal'] 	= array(
+		$a = array(
 			'weidu' => $this->getwdtotal($uid)
 		);
-		return $arr;
+		return $a;
+	}
+	protected function agentrows($rows, $rowd, $uid){
+		if($rows){
+			$ydarr	= explode(',', m('log')->getread('infor', $uid));
+			foreach($rowd as $k=>$rs){
+				if(!in_array($rs['id'], $ydarr)){
+					$rows[$k]['statustext'] 	= '未读';
+					$rows[$k]['statuscolor'] 	= '#ED5A5A';
+				}else{
+					$rows[$k]['ishui']			= 1;
+				}
+			}
+		}
+		return $rows;
 	}
 }

@@ -162,6 +162,12 @@ var yy={
 				st='';
 				if(d.ishui==1)st='color:#aaaaaa;';
 				s='<div onclick="yy.showmenu('+oi+')" style="'+st+'" class="contlist">';
+				/*
+				s+='<div><table><tr>';
+				s+='<td align="left" width="45"><img height="35" width="35" src="images/noface.png"></td>';
+				s+='<td><div style="height:1px;line-height:16px;font-size:12px">管理员</div><div style="height:20px;line-height:20px"  class="dt">'+d.title+'</div></td>';
+				s+='</tr></table></div>';
+				*/
 				if(d.title)s+='<div class="tit">'+d.title+'</div>';
 				if(d.optdt)s+='<div class="dt">'+d.optdt+'</div>';
 				if(d.cont)s+='<div class="cont">'+d.cont.replace(/\n/g,'<br>')+'</div>';

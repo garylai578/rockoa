@@ -38,7 +38,7 @@ final class rockClass
 		$this->now		= $this->now();
 		$this->date		= date('Y-m-d');
 		$this->lvlaras  = explode(',','select ,alter table,delete ,drop ,update ,insert into,load_file,outfile');
-		$this->lvlaraa  = explode(',','select,alter,delete,drop,update,insert,from,time_so_sec,convert,from_unixtime,unix_timestamp,curtime,time_format,union,concat,information_schema,group_concat,length,load_file,outfile,where,database,system_user,current_user,user(),found_rows,declare,master,exec');
+		$this->lvlaraa  = explode(',','select,alter,delete,drop,update,insert,from,time_so_sec,convert,from_unixtime,unix_timestamp,curtime,time_format,union,concat,information_schema,group_concat,length,load_file,outfile,database,system_user,current_user,user(),found_rows,declare,master,exec');
 		$this->lvlarab	= array();
 		foreach($this->lvlaraa as $_i)$this->lvlarab[]='';
 	}
@@ -493,5 +493,11 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		$val  = $dev;
 		if(isset($arr[$k]))$val= $arr[$k];
 		return $val;
+	}
+	
+	public function nowurl()
+	{
+		$url='http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+		return $url;
 	}
 }

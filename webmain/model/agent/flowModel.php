@@ -13,18 +13,22 @@ class agent_flowClassModel extends agentModel
 		return array('stotal'=>$stotal,'titles'=> $titles);
 	}
 	
-	public function getwdtotal($uid)
+	private function getwdtotal($uid)
 	{
 		$stotal	= $this->rows("`uid`='$uid' and `status`=2");
 		return $stotal;
 	}
 	
-	public function getdatas($uid, $lx, $page)
+	protected function agentdata($uid, $lx)
 	{
-		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $page, $this->limit);
-		$arr['stotal'] 	= array(
+		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $this->page, $this->limit);
+		return $arr;
+	}
+	
+	protected function agenttotals($uid)
+	{
+		return array(
 			'mywtg' => $this->getwdtotal($uid)
 		);
-		return $arr;
 	}
 }

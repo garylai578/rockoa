@@ -143,4 +143,26 @@ class htmlChajian extends Chajian{
 		$bo 		= file_put_contents(iconv('utf-8','gb2312',$url), $s);
 		return $url;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public function htmlremove($str)
+	{
+		$str = preg_replace("/<[^>]*>/si",'',$str);
+		return $str;
+	}
+	
+	public function substrstr($str, $start, $length=null) {  
+		preg_match_all('/./us', $str, $match);  
+		$chars = is_null($length)? array_slice($match[0], $start ) : array_slice($match[0], $start, $length);  
+		unset($str);
+		return implode('', $chars);  
+	} 
 }                                  

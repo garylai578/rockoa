@@ -75,23 +75,20 @@ $(document).ready(function(){
 			var cans = {
 				type:'usercheck',
 				title:'选择人员',
-				callback:function(d){
-					c.savedist(d);
+				callback:function(sna,sid){
+					c.savedist(sid);
 				}
 			};
 			js.getuser(cans);
 			return false;
 		},
-		savedist:function(d){
-			var sid = '0';
-			for(var i=0;i<d.length;i++){
-				if(d[i].type=='u')sid+=','+d[i].uid+'';
-			}
-			if(sid!='0'){
+		savedist:function(sid){
+			if(sid!=''){
 				js.msg('wait','保存中...');
 				js.ajax(js.getajaxurl('saveuser','{mode}','{dir}'),{sid:sid,gid:gid},function(){
 					js.msg('success','保存成功');
 					at.reload();
+					a.reload();
 				},'post');
 			}
 		},
@@ -100,6 +97,7 @@ $(document).ready(function(){
 			js.ajax(js.getajaxurl('deluser','{mode}','{dir}'),{sid:uid,gid:gid},function(){
 				js.msg('success','删除成功');
 				at.reload();
+				a.reload();
 			},'post');
 		}
 	};

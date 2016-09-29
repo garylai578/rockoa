@@ -1,19 +1,20 @@
 <script >
 $(document).ready(function(){
-
-	var bools=false;
+	var bools=false,mid=0;
 	var a = $('#view_{rand}').bootstable({
 		tablename:'flow_extent',celleditor:true,fanye:true,
 		url:publicstore('{mode}','{dir}'),storeafteraction:'afterstroesss',
 		columns:[{
 			text:'针对对象',dataIndex:'recename'
 		},{
-			text:'模块',dataIndex:'modeid',sortable:true
+			text:'模块',dataIndex:'modename',sortable:true
 		},{
 			text:'类型',dataIndex:'type',sortable:true,renderer:function(oi){
 				var as=['查看','添加','编辑','删除'];
 				return '可'+as[oi]+'';
 			}
+		},{
+			text:'条件',dataIndex:'whereid'
 		},{
 			text:'说明',dataIndex:'explain'
 		},{
@@ -22,6 +23,7 @@ $(document).ready(function(){
 			text:'ID',dataIndex:'id'
 		}],
 		itemclick:function(d){
+			mid=d.modeid;
 			btn(false, d);
 		},
 		beforeload:function(){
@@ -46,6 +48,10 @@ $(document).ready(function(){
 			a.reload();
 		},
 		clickwin:function(o1,lx){
+			if(mid==0){
+				js.msg('msg','请先选择模块');
+				return;
+			}
 			var icon='plus',name='新增流程模块权限',id=0;
 			if(lx==1){
 				id = a.changeid;
@@ -53,10 +59,11 @@ $(document).ready(function(){
 				name='编辑流程模块权限';
 			};
 			guanflowviewlist = a;
-			addtabs({num:'flowview'+id+'',url:'main,view,edit,id='+id+'',icons:icon,name:name});
+			addtabs({num:'flowview'+id+'',url:'main,view,edit,id='+id+',mid='+mid+'',icons:icon,name:name});
 		},
 		changemode:function(){
 			var v=this.value;
+			mid=v;
 			a.search('and modeid='+v+'');
 		}
 	};

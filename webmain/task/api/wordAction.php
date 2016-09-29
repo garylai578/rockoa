@@ -39,7 +39,7 @@ class wordClassAction extends apiAction
 		$slx 	= $this->post('slx');
 		$where 	= " and a.typeid='$typeid'";
 		if($slx=='wfx')$where 	= " and a.shate is not null";
-		$arr 	= $this->db->getall("select a.fileid,a.shate,a.typeid,b.filepath,a.optdt,b.filename,b.fileext,b.filesizecn from `[Q]word` a left join `[Q]file` b on a.fileid=b.id where a.optid=".$this->adminid." $where order by a.`id` desc");
+		$arr 	= $this->db->getall("select a.fileid,a.shate,a.typeid,b.filepath,a.optdt,b.filename,b.fileext,b.filesizecn from `[Q]word` a left join `[Q]file` b on a.fileid=b.id where b.id is not null and a.optid=".$this->adminid." $where order by a.`id` desc");
 		$rows 	= array_merge($rows, $arr);			
 		$this->showreturn($rows);
 	}

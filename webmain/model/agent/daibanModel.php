@@ -13,19 +13,23 @@ class agent_daibanClassModel extends agentModel
 		return array('stotal'=>$stotal,'titles'=> $titles);
 	}
 	
-	public function getdbtotal($uid)
+	private function getdbtotal($uid)
 	{
 		$sws	= $this->rock->dbinstr('nowcheckid', $uid);
 		$stotal	= $this->rows("`isdel`=0 and `status`=0 and $sws");
 		return $stotal;
 	}
 	
-	public function getdatas($uid, $lx, $page)
+	protected function agenttotals($uid)
 	{
-		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $page, $this->limit);
-		$arr['stotal'] 	= array(
+		return array(
 			'daiban' => $this->getdbtotal($uid)
 		);
+	}
+	
+	protected function agentdata($uid, $lx)
+	{
+		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $this->page, $this->limit);
 		return $arr;
 	}
 }

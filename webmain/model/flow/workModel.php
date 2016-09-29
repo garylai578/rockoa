@@ -61,4 +61,42 @@ class flow_workClassModel extends flowModel
 			$this->push($cnameid, '任务', ''.$this->adminname.'指派任务[{type}]{title}给你');
 		}
 	}
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$where 	= 'and '.$this->rock->dbinstr('distid', $uid);
+		if($lx=='def' || $lx=='wwc'){
+			$where.=' and state in(0,2)';
+		}
+		if($lx=='myall'){
+			
+		}
+		if($lx=='all'){
+			$where = '';
+		}
+		if($lx=='ywc'){
+			$where.=' and state=1';
+		}
+		
+		if($lx=='wcj'){
+			$where = 'and optid='.$uid.'';
+		}
+		if($lx=='xxrw'){
+			$where = 'and 1=2';
+		}
+		if($lx=='down'){
+			$where  = 'and '.m('admin')->getdownwhere('`distid`', $uid, 1);
+		}
+		
+		$key 	= $this->rock->post('key');
+		$zt 	= $this->rock->post('zt');
+		if($zt!='')$where.=' and `state`='.$zt.'';
+		if(!isempt($key))$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `grade` like '%$key%')";
+		
+		return array(
+			'where' => $where,
+			'fields'=> 'id,type,grade,dist,startdt,title,enddt,state,optname,projectid',
+			'order' => '`optdt` desc'
+		);
+	}
 }

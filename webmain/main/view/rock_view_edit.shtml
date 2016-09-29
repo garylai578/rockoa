@@ -1,12 +1,12 @@
 <script >
 $(document).ready(function(){
 	{params};
-	var id = params.id;
+	var id = params.id,mid=params.mid;
 	if(!id)id = 0;
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'flow_extent',
 		url:publicsave('{mode}','{dir}'),
-		submitfields:'recename,receid,modeid,type,wherestr,explain,status',
+		submitfields:'recename,receid,modeid,type,whereid,wherestr,explain,status',
 		requiredfields:'recename,type,modeid',
 		success:function(){
 			closenowtabs();
@@ -14,7 +14,7 @@ $(document).ready(function(){
 			
 		},
 		load:function(a){
-			js.setselectdata(h.form.modeid,a.modearr,'id');
+			js.setselectdata(h.form.whereid,a.wherelist,'id');
 		},
 		loadafter:function(a){
 			if(a.data){
@@ -26,8 +26,8 @@ $(document).ready(function(){
 		}
 	});
 	h.forminit();
-	h.load(js.getajaxurl('loaddata','{mode}','{dir}',{id:id}));
-	
+	h.load(js.getajaxurl('loaddata','{mode}','{dir}',{id:id,mid:mid}));
+	h.setValue('modeid',mid);
 	var c = {
 		getdist:function(o1, lx){
 			var cans = {
@@ -48,6 +48,11 @@ $(document).ready(function(){
 			if(lx==2)h.form.wherestr.value='{super}';
 			if(lx==3)h.form.wherestr.value='all';
 		}
+		,
+		reloadhweil:function(){
+			h.form.whereid.length = 1;
+			h.load(js.getajaxurl('loaddata','{mode}','{dir}',{id:id,mid:mid}));
+		}
 	};
 	js.initbtn(c);
 });
@@ -61,6 +66,7 @@ $(document).ready(function(){
 	<form name="form_{rand}">
 	
 		<input name="id" value="0" type="hidden" />
+		<input name="modeid" value="0" type="hidden" />
 		
 		<table cellspacing="0" border="0" width="100%" align="center" cellpadding="0">
 		
@@ -80,17 +86,25 @@ $(document).ready(function(){
 		</tr>
 		
 		<tr>
-			<td  align="right" width="15%" ><font color=red>*</font> 对应模块：</td>
-			<td class="tdinput" width="35%" ><select name="modeid" class="form-control"><option value="">-选择-</option></select></td>
-			<td  align="right"  width="15%"><font color=red>*</font> 类型可：</td>
+			<td  align="right" width="15%" ><font color=red>*</font> 类型可：</td>
 			<td class="tdinput" width="35%" ><select name="type" class="form-control"><option value="0">查看</option><option value="1">添加</option><option value="2">编辑</option><option value="3">删除</option></select></td>
+			<td  align="right"  width="15%"></td>
+			<td class="tdinput" width="35%" ></td>
 		</tr>
 		
-
+		<tr>
+			<td  align="right" >选择条件：</td>
+			<td class="tdinput"><select class="form-control" name="whereid"><option value="0">无条件</option></select></td>
+			<td colspan="2"><a click="reloadhweil" href="javascript:;">[刷新]</a></td>
+		</tr>
+		<tr>
+			<td  align="right" ></td>
+			<td colspan="3" style="padding-bottom:10px"><font color=#888888>在【流程模块条件】上添加，满足此条件才需要此步骤</font></td>
+		</tr>
 		
 		<tr>
 			<td  align="right" >相应条件：</td>
-			<td class="tdinput" colspan="3"><textarea  name="wherestr" style="height:100px" class="form-control"></textarea><br><a href="javascript:;">[设置条件]</a>,如:<a click="hanrenss,0" href="javascript:;">[receid中包含我]</a>,<a click="hanrenss,1" href="javascript:;">[所有下属人员]</a>,<a click="hanrenss,2" href="javascript:;">[直属下属人员]</a>,<a click="hanrenss,3" href="javascript:;">[所有数据]</a></td>
+			<td class="tdinput" colspan="3"><textarea  name="wherestr" style="height:60px" class="form-control"></textarea><br><a href="javascript:;">[设置条件]</a>,如:<a click="hanrenss,0" href="javascript:;">[receid中包含我]</a>,<a click="hanrenss,1" href="javascript:;">[所有下属人员]</a>,<a click="hanrenss,2" href="javascript:;">[直属下属人员]</a>,<a click="hanrenss,3" href="javascript:;">[所有数据]</a></td>
 		</tr>
 		
 		<tr>

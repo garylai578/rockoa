@@ -27,11 +27,9 @@ class imgroupClassAction extends Action
 	
 	public function saveuserAjax()
 	{
-		$gid 	= $this->post('gid','0');
-		$sid 	= $this->post('sid','0');
-		$dbs 	= m('im_groupuser');
-		$dbs->delete("`gid`='$gid' and `uid` in($sid)");
-		$this->db->insert('[Q]im_groupuser','`gid`,`uid`', "select '$gid',`id` from `[Q]admin` where `id` in($sid)", true);
+		$gid 	= (int)$this->post('gid','0');
+		$sid 	= $this->post('sid');
+		m('reim')->adduserchat($gid, $sid, true);
 		echo 'success';
 	}
 	
@@ -39,8 +37,7 @@ class imgroupClassAction extends Action
 	{
 		$gid 	= $this->post('gid','0');
 		$sid 	= $this->post('sid','0');
-		$dbs 	= m('im_groupuser');
-		$dbs->delete("`gid`='$gid' and `uid`='$sid'");
+		m('reim')->exitchat($gid, $sid);
 		echo 'success';
 	}
 }

@@ -1,0 +1,59 @@
+<script >
+$(document).ready(function(){
+	var a = $('#view_{rand}').bootstable({
+		tablename:'infor',fanye:true,celleditor:true,params:{atype:'my'},modenum:'gong',
+		modedir:'{mode}:{dir}',storeafteraction:'inforafter',storebeforeaction:'inforbefore',
+		columns:[{
+			text:'类型',dataIndex:'typename',sortable:true
+		},{
+			text:'名称',dataIndex:'title',align:'left'
+		},{
+			text:'操作人',dataIndex:'optname',sortable:true
+		},{
+			text:'发布者',dataIndex:'zuozhe'
+		},{
+			text:'日期',dataIndex:'indate',sortable:true,sortable:true
+		},{
+			text:'发布给',dataIndex:'recename'
+		},{
+			text:'修改时间',dataIndex:'optdt',sortable:true,renderer:function(v){
+				return v.replace(' ','<br>');
+			}
+		},{
+			text:'',dataIndex:'opts',renderer:function(v,d){
+				return '<a onclick="openxiangs(\''+d.typename+'\',\'gong\','+d.id+')">详</a>';
+			}
+		}]
+	});
+	var c = {
+		getcans:function(){
+			var can = {key:get('key_{rand}').value};
+			return can;
+		},
+		search:function(o1){
+			a.setparams(this.getcans(), true);
+		}
+	};
+	
+	js.initbtn(c);
+});
+</script>
+
+<div>
+	<table width="100%">
+	<tr>
+	 <td align="left" >
+		<input style="width:200px"  class="form-control" id="key_{rand}"  placeholder="类型/名称">
+	 </td>
+	  <td style="padding-left:10px" align="left" >
+		<button class="btn btn-default" click="search" type="button">搜索</button>
+	  </div>
+	  <td width="90%" align="right">  
+			
+	</td>
+	</tr>
+	</table>
+	
+</div>
+<div class="blank10"></div>
+<div id="view_{rand}"></div>

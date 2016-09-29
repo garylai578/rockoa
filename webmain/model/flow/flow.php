@@ -2,7 +2,7 @@
 class flowModel extends Model
 {
 	public $modenum;
-	public $id;
+	public $id		= 0;
 	public $moders;
 	public $modeid;
 	public $modename;
@@ -29,8 +29,11 @@ class flowModel extends Model
 	protected function flowoptmenu($ors, $crs){}
 	protected function flowisreadqx(){return false;}
 	protected function flowprintrows($r){return $r;}
+	protected function flowbillwhere($lx, $uid){return '';}
 	
 	protected $flowweixinarr	= array();
+	
+	public function flowrsreplace($rs){return $rs;}
 	
 	public function echomsg($msg)
 	{
@@ -52,7 +55,8 @@ class flowModel extends Model
 		$this->mtable	= $table;
 		$this->viewmodel= m('view');
 		$this->billmodel= m('flow_bill');
-		$this->checksmodel= m('flow_checks');
+		$this->checksmodel	= m('flow_checks');
+		$this->wheremodel	= m('where');
 		$this->flowinit();
 		if($id==null)return;
 		$this->loaddata($id, true);
@@ -89,7 +93,7 @@ class flowModel extends Model
 			if($this->isflow==1)$this->savebill();
 		}
 		
-		if($ispd)$this->isreadqx();
+		if($ispd && !isajax())$this->isreadqx();
 
 		$this->rssust	= $this->rs;
 		$this->flowchangedata();
@@ -176,6 +180,7 @@ class flowModel extends Model
 	{
 		m('log')->addread($this->mtable, $this->id);
 		$arr['modename'] = $this->modename;
+		$arr['title'] 	 = $this->modename;
 		$arr['modeid']   = $this->modeid;
 		$arr['modenum']  = $this->modenum;
 		$arr['mid']  	 = $this->id;
@@ -208,6 +213,7 @@ class flowModel extends Model
 			if($issubtabs == 1)$fields[$subd['fields']]		= $subd['name'];
 			if(!isset($fields['optdt']))$fields['optdt']='操作时间';
 			$contview 	= c('html')->createtable($fields, $this->rs);
+			
 			$contview 	= '<div align="center">'.$contview.'</div>';
 		}
 		$arr['contview'] = $contview;
@@ -218,7 +224,7 @@ class flowModel extends Model
 		$arr['isflow'] 	 = $this->isflow;
 		$arr['flowinfor']= array();
 		if($this->isflow==1)$arr['flowinfor']= $this->getflowinfor();
-
+		if(isset($this->rs['title']))$arr['title'] = $this->rs['title'];
 		$_oarr 			 = $this->flowdatalog($arr);
 		if(is_array($_oarr))foreach($_oarr as $k=>$v)$arr[$k]=$v;
 		return $arr;
@@ -382,6 +388,7 @@ class flowModel extends Model
 		if($this->isflow == 1){
 			$marr['isturn'] = $isturn;
 			$marr['status'] = 0;
+			$this->rs['status'] = 0;
 			$this->update($marr, $this->id);
 			$farr = $this->getflow();
 			$farr['status'] = 0;
@@ -391,6 +398,28 @@ class flowModel extends Model
 			}
 		}
 		$this->flowsubmit($na, $sm);
+	}
+	
+	/**
+	* 追加说明
+	*/
+	public function zhuijiaexplain($sm='')
+	{
+		$this->addlog(array(
+			'explain' 	=> $sm,
+			'name'		=> '追加说明',
+			'status'	=> 1,
+		));
+		$zt = $this->rs['status'];
+		if($zt==2 && $this->isflow==1){
+			$marr['status'] 	= 0;
+			$this->rs['status'] = 0;
+			$this->update($marr, $this->id);
+			$farr = $this->getflow();
+			$farr['status'] 	= 0;
+			$this->savebill($farr);
+			$this->nexttodo($farr['nowcheckid'],'zhui', $sm);
+		}
 	}
 	
 	/*
@@ -427,13 +456,12 @@ class flowModel extends Model
 		$nowstep = $zongsetp  = -1;
 		$isend 	 = 0;
 		foreach($rows as $k=>$rs){
-			$checkwhere = $rs['where'];
+			$whereid 	= (int)$rs['whereid'];
 			$checkshu 	= $rs['checkshu'];
 			
-			if(!$this->isempt($checkwhere)){
-				$checkwhere = $this->rock->jm->base64decode($checkwhere);
-				$to = $this->rows("`id`='$this->id' and $checkwhere");
-				if($to==0)continue;
+			if($whereid > 0){
+				$bo = $this->wheremanzhu($whereid);
+				if(!$bo)continue;
 			}
 			
 			$zongsetp++;
@@ -508,6 +536,27 @@ class flowModel extends Model
 		$arrbill['status']			= $this->rs['status'];
 		if($sbo)$this->getflowsave($arrbill);
 		return $arrbill;
+	}
+	private function wheremanzhu($id)
+	{
+		$ser = $this->wheremodel->getflowwhere($id, $this->adminid);
+		if(!$ser)return true;
+		$str = $ser['ntr'];
+		if(!isempt($str)){
+			$to = $this->db->rows('[Q]admin',"`id`='$this->uid' and ($str)");
+			if($to>0)return false;
+		}
+		$str = $ser['str'];
+		if(!isempt($str)){
+			$to = $this->rows("`id`='$this->id' and $str");
+			if($to==0)return false;
+		}
+		$str = $ser['utr'];
+		if(!isempt($str)){
+			$to = $this->db->rows('[Q]admin',"`id`='$this->uid' and $str");
+			if($to==0)return false;
+		}
+		return true;
 	}
 	
 	public function getflowsave($sarr)
@@ -636,6 +685,9 @@ class flowModel extends Model
 		if($type == 'finish'){
 			$cont = '您提交的['.$this->modename.',单号:'.$this->sericnum.']已全部处理完成';
 		}
+		if($type == 'zhui'){
+			$cont = '您有['.$this->adminname.']的['.$this->modename.',单号:'.$this->sericnum.']需要处理，追加说明:['.$sm.']';
+		}
 		if($cont!='')$this->push($nuid, $gname, $cont);
 	}
 	
@@ -754,6 +806,9 @@ class flowModel extends Model
 		$reim	= m('reim');
 		$url 	= ''.URL.'task.php?a=p&num='.$this->modenum.'&mid='.$this->id.'';
 		$wxurl 	= ''.URL.'task.php?a=x&num='.$this->modenum.'&mid='.$this->id.'';
+		if($this->id==0){
+			$url = '';$wxurl = '';
+		}
 		$slx	= 0;
 		$pctx	= $this->moders['pctx'];
 		$mctx	= $this->moders['mctx'];
@@ -764,7 +819,7 @@ class flowModel extends Model
 		$cont	= $this->rock->reparr($cont, $this->rs);
 		if(contain($receid,'u') || contain($receid, 'd'))$receid = m('admin')->gjoin($receid);
 		$reim->pushagent($receid, $gname, $cont, $title, $url, $slx);
-		if($wxtx==1){
+		if($wxtx==1 && $reim->isanwx()){
 			if($title=='')$title = $this->modename;
 			$wxarra  = $this->flowweixinarr;
 			$wxarr	 = array(
@@ -826,11 +881,10 @@ class flowModel extends Model
 			if($bo)$arr[] = $rs;
 		}
 		
-		if($this->isdeleteqx()==1){
-			$arr[] = array('name'=>'删除','color'=>'red','optnum'=>'del','issm'=>1,'islog'=>0,'statusvalue'=>9,'lx'=>'9','optmenuid'=>-9);
-		}
-		
 		if($this->isflow==1){
+			if($this->rs['status'] != 1 && $this->uid == $this->adminid){
+				$arr[] = array('name'=>'追加说明...','lx'=>1,'optmenuid'=>-12);
+			}
 			$chearr = $this->getflowinfor();
 			if($chearr['ischeck']==1){
 				$arr[] = array('name'=>'<b>去处理单据...</b>','color'=>'#1abc9c','lx'=>996);
@@ -843,6 +897,15 @@ class flowModel extends Model
 				}
 			}
 		}
+		
+		if($flx==1 && $this->iseditqx()==1){
+			$arr[] = array('name'=>'编辑','optnum'=>'edit','lx'=>'11','optmenuid'=>-11);
+		}
+		
+		if($this->isdeleteqx()==1){
+			$arr[] = array('name'=>'删除','color'=>'red','optnum'=>'del','issm'=>1,'islog'=>0,'statusvalue'=>9,'lx'=>'9','optmenuid'=>-9);
+		}
+		
 		return $arr;
 	}
 	
@@ -860,6 +923,8 @@ class flowModel extends Model
 		}else if($czid==-10){
 			$msg 	 = $this->check($zt, $sm);
 			if(contain($msg,'成功'))$msg = 'ok';
+		}else if($czid==-12){
+			$this->zhuijiaexplain($sm);
 		}else{
 			$ors 	 = m('flow_menu')->getone("`id`='$czid' and `setid`='$this->modeid' and `status`=1");
 			if(!$ors)return '菜单不存在';
@@ -898,8 +963,36 @@ class flowModel extends Model
 		return $msg;
 	}
 	
+	/**
+	*	单据展示条件搜索
+	*/
+	public function billwhere($uid, $lx)
+	{
+		$arr['table'] 	= $this->mtable;
+		$arr['fields'] 	= '';
+		$arr['order'] 	= '';
+		$nas 			= $this->flowbillwhere($uid, $lx);
+		$_wehs			= '';
+		if(is_array($nas)){
+			if(isset($nas['where']))$_wehs = $nas['where'];
+			if(isset($nas['order']))$arr['order']  = $nas['order'];
+			if(isset($nas['fields']))$arr['fields']= $nas['fields'];
+			if(isset($nas['table']))$arr['table']  = $nas['table'];
+		}else{
+			$_wehs	= $nas;
+		}
+		$arr['where'] 	= $_wehs;
+		return $arr;
+	}
 	
-	
+	public function getflowrows($uid, $lx, $limit=5)
+	{
+		$nas 	= $this->billwhere($uid, $lx);
+		$table 	= $nas['table'];
+		if(!contain($table,' '))$table='[Q]'.$table.'';
+		$rows 	= $this->db->getrows($table, '1=1 '.$nas['where'].'', $nas['fields'], $nas['order'], $limit);
+		return $rows;
+	}
 	
 	
 	

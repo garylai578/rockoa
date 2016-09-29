@@ -14,7 +14,19 @@ class flowClassAction extends Action
 	public function loaddatacourseAjax()
 	{
 		$id		= (int)$this->get('id');
+		$setid	= (int)$this->get('setid');
 		$data	= m('flow_course')->getone($id);
+		$arr 	= array(
+			'data'		=> $data,
+			'wherelist' => m('flow_where')->getall('setid='.$setid.'','id,name','sort')
+		);
+		echo json_encode($arr);
+	}
+	
+	public function loaddatawhereAjax()
+	{
+		$id		= (int)$this->get('id');
+		$data	= m('flow_where')->getone($id);
 		$arr 	= array(
 			'data'		=> $data
 		);
@@ -192,6 +204,14 @@ class flowClassAction extends Action
 			$content = file_get_contents($path);
 		}
 		$this->smartydata['content'] = $content;
+		$apaths		= ''.P.'/flow/input/inputjs/mode_'.$modenum.'.js';
+		if(!file_exists($apaths)){
+			$stra='//初始函数
+function initbodys(){
+	
+}';
+			$this->rock->createtxt($apaths, $stra);
+		}
 		
 		$apaths		= ''.P.'/flow/input/mode_'.$modenum.'Action.php';
 		$apath		= ''.ROOT_PATH.'/'.$apaths.'';
@@ -363,5 +383,25 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$whe	= '';
 		if($mid>0)$whe=' and id='.$mid.'';
 		echo m('flow')->repipei($whe);
+	}
+	
+	public function setwherelistafter($table, $rows)
+	{
+		$dbs = m('flow_where');
+		foreach($rows as $k=>$rs){
+			$shu = $dbs->rows("`setid`='".$rs['id']."'");
+			if($shu>0)$rows[$k]['shu'] = $shu;
+		}
+		return array('rows'=>$rows);
+	}
+	
+	public function setcourselistafter($table, $rows)
+	{
+		$dbs = m('flow_course');
+		foreach($rows as $k=>$rs){
+			$shu = $dbs->rows("`setid`='".$rs['id']."'");
+			if($shu>0)$rows[$k]['shu'] = $shu;
+		}
+		return array('rows'=>$rows);
 	}
 }

@@ -2,6 +2,17 @@
 
 class flow_meetClassModel extends flowModel
 {
+	public function initModel()
+	{
+		$this->hyarra 	= array('正常','会议中','结束','取消');
+		$this->hyarrb 	= array('green','blue','#ff6600','#888888');
+	}
+	
+	public function getstatezt($zt)
+	{
+		return '<font color="'.$this->hyarrb[$zt].'">'.$this->hyarra[$zt].'</font>';
+	}
+	
 	protected function flowsubmit($na, $sm)
 	{
 		$cont  = '{optname}发起会议预定从{startdt}→{enddt},在{hyname},主题:{title}';

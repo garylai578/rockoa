@@ -327,8 +327,9 @@
 				jl		= l+nw-winWb(),
 				jl1		= 5;
 			if($('body,html').height()>winHb())jl1=22;
+			jl=jl+jl1;
 			if(dy>0)t=t-dy-5;
-			if(jl>0)l=l-jl-jl1;
+			if(jl>0)l=l-jl;
 			this.mleft	= l;
 			this.mtop	= t;
 			o.css({'left':''+l+'px','top':''+t+'px'});

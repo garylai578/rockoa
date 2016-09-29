@@ -5,7 +5,7 @@ class checkChajian extends Chajian{
 	public function isemail($str)
 	{
 		if(isempt($str))return false;
-		return filter_var($inAddress, FILTER_VALIDATE_EMAIL);
+		return filter_var($str, FILTER_VALIDATE_EMAIL);
 	}
 	
 	//是否为手机号

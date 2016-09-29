@@ -1,8 +1,10 @@
 <script >
 $(document).ready(function(){
 	var a = $('#veiw_{rand}').bootstable({
-		tablename:'task',celleditor:true,modenum:'task',
+		tablename:'task',celleditor:true,modenum:'task',sort:'sort',dir:'asc',
 		columns:[{
+			text:'分类',dataIndex:'fenlei',editor:true,sortable:true
+		},{
 			text:'名称',dataIndex:'name',editor:true,align:'left'
 		},{
 			text:'地址',dataIndex:'url',editor:true
@@ -15,9 +17,11 @@ $(document).ready(function(){
 		},{
 			text:'状态',dataIndex:'status',editor:true,type:'checkbox',editor:true,sortable:true
 		},{
-			text:'排序号',dataIndex:'sort',editor:true
+			text:'排序号',dataIndex:'sort',editor:true,sortable:true
 		},{
-			text:'最后运行',dataIndex:'lastdt'
+			text:'最后运行',dataIndex:'lastdt',renderer:function(v){
+				return v.replace(' ','<br>');
+			}
 		},{
 			text:'最后状态',dataIndex:'state',renderer:function(v){
 				var s='<font color=#888888>待运行</font>';
@@ -27,6 +31,8 @@ $(document).ready(function(){
 			}
 		},{
 			text:'最后内容',dataIndex:'lastcont'
+		},{
+			text:'说明',dataIndex:'explain',type:'textarea',editor:true,align:'left'
 		},{
 			text:'ID',dataIndex:'id'	
 		}],
@@ -44,8 +50,10 @@ $(document).ready(function(){
 				title:'计划任务',height:400,width:500,
 				tablename:'task',isedit:lx,
 				params:{int_filestype:'sort,status'},
-				submitfields:'name,url,sort,status,type,time,ratecont',
+				submitfields:'fenlei,name,url,sort,status,type,time,ratecont',
 				items:[{
+					labelText:'分类',name:'fenlei',required:true
+				},{
 					labelText:'名称',name:'name',required:true
 				},{
 					labelText:'运行地址',name:'url',required:true
@@ -139,4 +147,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="veiw_{rand}"></div>
-<div class="tishi">提示：执行地址如[sys,beifen]也就是运行webmain/task/runt/sysAction.php文件的beifenAction方法，以此类推。</div>
+<div class="tishi">提示：执行地址如[sys,beifen]也就是运行webmain/task/runt/sysAction.php文件的beifenAction方法，以此类推。频率d每天,i分钟</div>

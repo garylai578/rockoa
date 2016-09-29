@@ -119,18 +119,17 @@ abstract class Model{
 		return  $this->db->delete($this->table, $where);
 	}
 	
-	public function getlimit($where, $page=1, $fields='*', $order='', $limit=20)
+	public function getlimit($where, $page=1, $fields='*', $order='', $limit=20, $table='')
 	{
 		if($order != '')$order = 'order by '.$order.'';
 		$where  	= $this->getwhere($where);
-		$sql 		= "select $fields from $this->table where $where $order ";
-		$count		= $this->rows($where);
-		$maxpage	= ceil($count/$limit);
-		if($page > $maxpage)$page=$maxpage;
+		if($table == '')$table = $this->table;
+		$sql 		= "select SQL_CALC_FOUND_ROWS $fields from $table where $where $order ";
 		if($page <= 0)$page=1;
 		$sql	.= "limit ".($page-1)*$limit.",$limit";
 		$rows	 = $this->db->getall($sql);
-		
+		$count 	 = $this->db->found_rows();
+		$maxpage = ceil($count/$limit);
 		return array(
 			'rows'		=> $rows,
 			'count'		=> $count,

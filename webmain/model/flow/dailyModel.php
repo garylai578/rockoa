@@ -1,11 +1,21 @@
 <?php
 class flow_dailyClassModel extends flowModel
 {
+	public function initModel()
+	{
+		$this->typearr = explode(',','日报,周报,月报,年报');
+	}
+	
+	public function flowrsreplace($rs)
+	{
+		$rs['type'] 		= $this->typearr[$rs['type']];
+		return $rs;
+	}
+	
 	protected function flowchangedata(){
 		$this->rs['content'] 	= str_replace("\n",'<br>', $this->rs['content']);
 		$this->rs['plan'] 		= str_replace("\n",'<br>', $this->rs['plan']);
-		$typearr = explode(',','日报,周报,月报,年报');
-		$this->rs['type'] 		= $typearr[$this->rs['type']];
+		$this->rs['type'] 		= $this->typearr[$this->rs['type']];
 	}
 	
 	protected function flowgetoptmenu($opt)
@@ -38,14 +48,40 @@ class flow_dailyClassModel extends flowModel
 	
 	protected function flowprintrows($rows)
 	{
-		$arrs = explode(',','日报,周报,月报,年报');
 		foreach($rows as $k=>$rs){
 			$rows[$k]['plan_style']		= 'text-align:left';
 			$rows[$k]['content']		= str_replace("\n",'<br>', $rs['content']);
 			$rows[$k]['plan']			= str_replace("\n",'<br>', $rs['plan']);
-			$rows[$k]['type']			= $arrs[$rs['type']];
+			$rows[$k]['type']			= $this->typearr[$rs['type']];
 		}
 		return $rows;
+	}
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$type 	= $this->rock->post('type');
+		$key 	= $this->rock->post('key');
+		$dt 	= $this->rock->post('dt');
+		$where 		= 'and uid='.$uid.'';
+		
+		//全部下属
+		if($lx == 'undall' || $lx == 'undwd'){
+			$ss = $this->rock->dbinstr('superid', $uid);
+			$where  = 'and uid in(select id from [Q]admin where '.$ss.')';
+			if($lx == 'undwd'){
+				$ydid  	= m('log')->getread('daily', $uid); 
+				$where.=' and id not in('.$ydid.')';
+			}
+		}
+
+		if(!isempt($type))$where.=" and `type`='$type'";
+		if(!isempt($dt))$where.=" and `dt` like '$dt%'";
+		if(!isempt($key))$where.=" and (`content` like '%$key%' or `optname` like '%$key%')";
+		
+		return array(
+			'where' => $where,
+			'order' => 'optdt desc'
+		);
 	}
 	
 }

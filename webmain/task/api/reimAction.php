@@ -95,20 +95,8 @@ class reimClassAction extends apiAction
 	{
 		$gid	= (int)$this->post('gid');
 		$val	= $this->post('val');
-		$ars	= explode(',', $val);
-		$ids 	= '';
-		$msg 	= '';
-		$db 	= m('im_groupuser');
-		foreach($ars as $uid){
-			if($db->rows("gid='$gid' and `uid`='$uid'")==0){
-				$ids .= ','.$uid.'';
-				$db->insert("gid='$gid',`uid`='$uid'");
-			}
-		}
-		if($ids!='')$ids = substr($ids,1);
-		if($msg==''){
-			$msg='success'.$ids.'';
-		}
+		$ids 	= m('reim')->adduserchat($gid, $val, true);
+		$msg	= 'success'.$ids.'';
 		$this->showreturn($msg);
 	}
 	
@@ -124,7 +112,7 @@ class reimClassAction extends apiAction
 	public function createlunAction()
 	{
 		$val	= $this->getvals('val');
-		m('reim')->createchat($val, $this->adminid);
+		m('reim')->createchat($val, $this->adminid,$this->adminid, $this->adminname,'', true);
 		$this->showreturn('success');
 	}
 	

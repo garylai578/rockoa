@@ -73,7 +73,7 @@ class scheduleClassModel extends Model
 			foreach($rows as $k=>$rs){
 				$txsj 	= strtotime($rs['time']);
 				$jg 	= $txsj-$time;
-				if($jg <= 6*60 && $jg>0){
+				if($jg <= 305 && $jg>0){
 					$str   .= ','.$rs['title'];
 					$sid 	= $rs['id'];
 				}

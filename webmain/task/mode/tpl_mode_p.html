@@ -5,7 +5,7 @@
 <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
-<title><?=$da['title']?></title>
+<title><?=$da['pagetitle']?></title>
 <link rel="shortcut icon" href="favicon.ico" />
 <link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -31,7 +31,7 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 .menullss{position:absolute;left:1px;top:32px; background-color:white; border:1px #cccccc solid;border-bottom:0px;display:none}
 .menullss li{padding:5px 10px;border-bottom:1px #dddddd solid;cursor:pointer}
 .menullss li:hover{ background-color:#f1f1f1}
-.pcont{line-height:27px}
+.pcont{line-height:27px;}
 .pcont p{text-indent:24pt;margin:10px 0px}
 .status{position: absolute;right:20px;top:10px;display:}
 </style>
@@ -52,10 +52,11 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 	
 	<?php
 	if($da['arr']['isflow']==1)echo '<div class="status"><img src="images/status'.$da['arr']['flowinfor']['nowstatus'].'.png"></div>';
+	
+	if(!isempt($da['title']))echo '<div class="ptitle">'.$da['title'].'</div>';
 	?>
 	
 	
-	<div class="ptitle"><?=$da['title']?></div>
 	<div class="padding10 pcont" align="left"><?=$da['arr']['contview']?></div>
 
 	<div class="padding10">

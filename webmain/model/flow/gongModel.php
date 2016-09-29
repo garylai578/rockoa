@@ -7,7 +7,10 @@ class flow_gongClassModel extends flowModel
 	
 	protected function flowsubmit($na, $sm)
 	{
-		$this->push($this->rs['receid'], '通知公告', $this->rs['title'], $this->rs['typename'],1);
+		$h = c('html');
+		$cont = $h->htmlremove($this->rs['content']);
+		$cont = $h->substrstr($cont,0, 50);
+		$this->push($this->rs['receid'], '通知公告', $cont.'...', $this->rs['title'],1);
 	}
 	
 	protected function flowgetoptmenu($opt)
@@ -36,5 +39,25 @@ class flow_gongClassModel extends flowModel
 		}
 	}
 	
+	protected function flowdatalog($arr)
+	{
+		return array('title'=>'');
+	}
 	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$s = m('admin')->getjoinstr('receid', $uid);
+		if($lx=='my'){
+			
+		}
+		if($lx=='wexx'){
+			$ydid 	= m('log')->getread('infor', $uid);
+			$s 		= 'and id not in('.$ydid.') '.$s.' ';
+		}
+		return array(
+			'where' => $s,
+			'order' => 'optdt desc',
+			'fields'=> 'id,typename,optdt,title,optname,zuozhe,indate,recename'
+		);
+	}
 }

@@ -12,7 +12,7 @@ class userinfoClassAction extends Action
 		return array(
 			'table' => $table,
 			'where'	=> $s,
-			'fields'=> 'a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.dkip,b.dkmac'
+			'fields'=> 'a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.dkip,b.dkmac,b.iskq,b.isdwdk'
 		);
 	}
 	
@@ -28,6 +28,28 @@ class userinfoClassAction extends Action
 					'ranking' 	=> $rs['ranking']
 				));
 			}
+		}
+		return array('rows'=>$rows);
+	}
+	
+	public function userinfobeforeabc($table)
+	{
+		$s 		= '';
+		$key 	= $this->post('key');
+		if($key!=''){
+			$s = " and (`name` like '%$key%' or `ranking` like '%$key%' or `deptname` like '%$key%') ";
+		}
+		return array(
+			'where'	=> $s,
+			'fields'=> 'id,name,deptname,ranking,state,tel,sex,mobile,workdate,quitdt'
+		);
+	}
+	
+	public function userinfoafterabc($table, $rows)
+	{
+		$statearr = m('flow:userinfo')->statearr;
+		foreach($rows as $k=>$rs){
+			$rows[$k]['state'] = $statearr[$rs['state']];
 		}
 		return array('rows'=>$rows);
 	}

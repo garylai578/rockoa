@@ -21,17 +21,14 @@ class agent_meetClassModel extends agentModel
 	public function gettotal()
 	{
 		$stotal = $this->getstotal($this->adminid, $this->rock->date);
-		
 		return array('stotal'=>$stotal,'titles'=>'');
 	}
 	
-	public function getdatas($uid, $lx, $page)
+	protected function agentdata($uid, $lx)
 	{
 		$row = array();
 		$dt  = $this->rock->date;
-		
 		if($this->joinwhere=='')$this->joinwhere	= m('admin')->getjoinstr('joinid', $uid);
-		
 		if($lx=='week'){
 			$warr = $this->dtobj->getweekarr($dt);
 			foreach($warr as $dts){
@@ -42,18 +39,21 @@ class agent_meetClassModel extends agentModel
 			$row 		= $this->getweek($dt, $uid);
 		}
 		$arr['rows'] 	= $row;
-		$arr['stotal'] 	= array(
-			'today' => $this->getstotal($uid, $dt)
-		);
 		return $arr;
 	}
 	
-	public function getweek($dt, $uid)
+	protected function agenttotals($uid)
 	{
-		
+		return array(
+			'today' => $this->getstotal($uid, $this->rock->date)
+		);
+	}
+	
+	private function getweek($dt, $uid)
+	{
 		$row		= array();	
-		$hyarra 	= array('正常','会议中','结束','取消');
-		$hyarrb 	= array('green','blue','#ff6600','#888888');
+		$hyarra 	= $this->flow->hyarra;
+		$hyarrb 	= $this->flow->hyarrb;
 		$week 		= $this->dtobj->cnweek($dt);
 		$now 		= $this->rock->now;
 		$time 		= time();

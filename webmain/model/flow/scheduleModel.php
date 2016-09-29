@@ -7,26 +7,36 @@ class flow_scheduleClassModel extends flowModel
 	}
 	
 	protected function flowchangedata(){
-		$rate = $this->rs['rate'];
-		if(isset($this->ratearr[$rate])){
-			$this->rs['rate'] = '每'.$this->ratearr[$rate];
-		}
-		$txsj = (int)$this->rs['txsj'];
+		$this->rs = $this->flowrsreplace($this->rs);
+	}
+	
+	public function flowrsreplace($rs)
+	{
+		$txsj = (int)$rs['txsj'];
 		$str  = '不提醒';
 		if($txsj==1)$str  = '提醒';
-		$this->rs['txsj']= $str;
+		$rs['txsj'] = $str;
+		$rate = $rs['rate'];
+		if(isset($this->ratearr[$rate])){
+			$rs['rate'] = '每'.$this->ratearr[$rate];
+		}
+		return $rs;
 	}
 	
 	protected function flowprintrows($rows)
 	{
 		foreach($rows as $k=>$rs){
-			$rate = $rs['rate'];
-			if(isset($this->ratearr[$rate])){
-				$rate = '每'.$this->ratearr[$rate];
-			}
-			
-			$rows[$k]['rate'] = $rate;
+			$rows[$k] = $this->flowrsreplace($rs);
 		}
 		return $rows;
+	}
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$where	= 'and uid='.$uid.'';
+		return array(
+			'where' => $where,
+			'order' => 'optdt desc'
+		);
 	}
 }

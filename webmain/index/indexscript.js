@@ -108,24 +108,22 @@ function openinput(name,num, id,cbal){
 	if(!id)id=0;
 	if(!cbal)cbal='';
 	if(id==0){name='[新增]'+name+'';}else{name='[编辑]'+name+'';}
-	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
-	js.tanbody('winiframe',name,820,410,{
-		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
-		bbar:'none'
-	});
 	var url='?a=lu&m=input&d=flow&num='+num+'&mid='+id+'&callback='+cbal+'';
-	openinputiframe.location.href=url;
+	openxiangs(name, url,'', cbal);
 	return false;
 }
-function openxiangs(name,num, id,cbal){
+function openxiangs(name,num,id,cbal){
 	if(!id)id=0;
 	if(!cbal)cbal='';
 	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
-	js.tanbody('winiframe',name,820,410,{
+	var wi = winWb()-150;if(wi>900)wi=900;if(wi<700)wi=700;
+	js.tanbody('winiframe',name,wi,410,{
 		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
 	});
-	var url = 'task.php?a=p&num='+num+'&mid='+id+'&callback='+cbal+'';
+	var url = 'task.php?a=p&num='+num+'&mid='+id+'';
+	if(num.indexOf('?')>-1)url=num;
+	url+='&callback='+cbal+'';
 	openinputiframe.location.href=url;
 	return false;
 }
@@ -330,6 +328,9 @@ function optmenuclass(o1,num,id,obj,mname,oi){
 			openxiang(this.modenum,this.mid);
 		}
 	};
+	this.openedit=function(){
+		openinput(this.modename,this.modenum,this.mid);
+	};
 	this.showmenuclick=function(d){
 		d.num=this.modenum;d.mid=this.id;
 		d.modenum = this.modenum;
@@ -338,6 +339,7 @@ function optmenuclass(o1,num,id,obj,mname,oi){
 		if(lx==998){this.xiang(d.oi, d.nbo);return;}
 		if(lx==997){this.printexcel(d.oi);return;}
 		if(lx==996){this.xiang(d.oi, d.nbo);return;}
+		if(lx==11){this.openedit();return;}
 		this.changdatsss = d;
 		if(lx==2 || lx==3){
 			var clx='user';if(lx==3)clx='usercheck';

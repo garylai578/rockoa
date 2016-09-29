@@ -4,10 +4,13 @@ $(document).ready(function(){
 	var num = params.num,mid,optlx=0;
 	var at = $('#optionview_{rand}').bootstable({
 		tablename:'flow_set',defaultorder:'`sort`',where:'and isflow=1 and status=1',
+		modedir:'{mode}:{dir}',storeafteraction:'setcourselistafter',
 		columns:[{
 			text:'名称',dataIndex:'name'
 		},{
 			text:'编号',dataIndex:'num'
+		},{
+			text:'步骤数',dataIndex:'shu'
 		},{
 			text:'ID',dataIndex:'id'
 		}],

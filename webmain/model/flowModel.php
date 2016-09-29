@@ -64,7 +64,7 @@ class flowClassModel extends Model
 			}
 			if($hshu>0)$str.=''.$rs['name'].'匹配('.$hshu.')条;';
 		}
-		$str = '无从新匹配记录';
+		if($str=='')$str = '无从新匹配记录';
 		return $str;
 	}
 }

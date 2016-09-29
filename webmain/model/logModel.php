@@ -42,7 +42,7 @@ class logClassModel extends Model
 						'optdt' 	=> $rs['optdt'],
 						'stotal' 	=> $rs['stotal'],
 						'name'	=> $uarr[$uid]['name'],
-						'face'	=> $this->rock->repempt($uarr[$uid]['face'],'images/noface.jpg')
+						'face'	=> $this->rock->repempt($uarr[$uid]['face'],'images/noface.png')
 					);
 				}
 			}

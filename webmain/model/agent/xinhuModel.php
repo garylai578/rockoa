@@ -4,7 +4,7 @@
 */
 class agent_xinhuClassModel extends agentModel
 {
-	public function getdatas($uid, $lx, $page)
+	protected function agentdata($uid, $lx)
 	{
 		$rows[] = array(
 			'title' => '欢迎使用信呼',
@@ -14,20 +14,5 @@ class agent_xinhuClassModel extends agentModel
 		);
 		$arr['rows'] 	= $rows;
 		return $arr;
-	}
-	
-	public function gettotal()
-	{
-		return array(
-			'stotal' => 0,
-			'titles' => ''
-		);
-	}
-	
-	public function updatedata()
-	{
-		$url = 'aHR0cDovLzEyNy4wLjAuMS9hcHAvd2Vic2l0ZS8:';
-		//$url = 'aHR0cDovL3hoLnJvY2tvYS5jb20v';
-		//$cont = c('curl')->geturl();
 	}
 }

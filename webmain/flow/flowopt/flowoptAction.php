@@ -43,7 +43,7 @@ class flowoptClassAction extends Action
 		$mid 	= (int)$this->post('mid');
 		$num	= $this->post('num');
 		
-		$arr 	= m('flow')->opt('getoptmenu', $num, $mid);
+		$arr 	= m('flow')->opt('getoptmenu', $num, $mid, 1);
 		$this->showreturn($arr);
 	}
 	

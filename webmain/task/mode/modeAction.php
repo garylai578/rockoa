@@ -36,8 +36,9 @@ class modeClassAction extends ActionNot
 		
 		
 		$arr 	 = m('flow')->getdatalog($num, $mid, 1);
-		$this->title = $arr['modename'];
-		
+		$pagetitle 		= $arr['title'];
+		$this->title 	= $arr['title'];
+		if($pagetitle=='')$pagetitle = $arr['modename'];
 		$this->smartydata['arr'] = $arr;
 		
 		$spagepath 	= P.'/flow/view/vie1_'.$num.'_spage.html';
@@ -48,6 +49,7 @@ class modeClassAction extends ActionNot
 		if($this->web != 'wxbro' && $this->get('show')=='we')$isheader=1;
 		$this->assign('isheader', $isheader);
 		$this->smartydata['spagepath']		= $spagepath;
+		$this->smartydata['pagetitle']		= $pagetitle;
 	}
 	
 	public function pAction()
@@ -59,8 +61,10 @@ class modeClassAction extends ActionNot
 		if($num=='' || $mid==0)exit('无效请求');
 		
 		
-		$arr 	 = m('flow')->getdatalog($num, $mid, 0);
-		$this->title = $arr['modename'];
+		$arr 	 		= m('flow')->getdatalog($num, $mid, 0);
+		$pagetitle 		= $arr['title'];
+		$this->title 	= $arr['title'];
+		if($pagetitle=='')$pagetitle = $arr['modename'];
 		$this->smartydata['arr'] = $arr;
 		
 		$spagepath 	= P.'/flow/view/vie0_'.$num.'_spage.html';
@@ -68,6 +72,7 @@ class modeClassAction extends ActionNot
 			$spagepath = '';
 		}
 		$this->smartydata['spagepath']		= $spagepath;
+		$this->smartydata['pagetitle']		= $pagetitle;
 	}
 	
 	public function downAction()

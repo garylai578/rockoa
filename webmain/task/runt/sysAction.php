@@ -30,4 +30,12 @@ class sysClassAction extends runtAction
 		if($str!='')m('todo')->add(1,'安装升级',$str.'请到[系统→系统工具→系统升级]下处理');
 		echo 'success';
 	}
+	
+	
+	//数据更新
+	public function dataupAction()
+	{
+		m('admin')->updateinfo();
+		echo 'success';
+	}
 }

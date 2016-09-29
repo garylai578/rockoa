@@ -73,7 +73,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right">编号：</td>
-			<td class="tdinput"><input name="num" class="form-control"></td>
+			<td class="tdinput"><input name="num" placeholder="一般跟模块的编号一致" class="form-control"></td>
 		</tr>
 		
 		<tr>

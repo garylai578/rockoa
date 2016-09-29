@@ -4,7 +4,7 @@ $(document).ready(function(){
 	var atype=params.atype;
 	var a = $('#view_{rand}').bootstable({
 		tablename:'customer',params:{'atype':atype},fanye:true,modenum:'customer',
-		url:publicstore('{mode}','{dir}'),celleditor:true,
+		url:publicstore('{mode}','{dir}'),celleditor:false,
 		storeafteraction:'customerafter',storebeforeaction:'customerbefore',
 		columns:[{
 			text:'',dataIndex:'caozuo'

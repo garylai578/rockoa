@@ -2,36 +2,40 @@
 $(document).ready(function(){
 	{params};
 	var id = params.id;
-	if(!id)id = 0;
+	if(!id)id = 0;var setid=params.setid;
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'flow_course',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'optdt={now}'},
-		submitfields:'setid,name,num,checktype,checktypeid,checktypename,sort,where,explain,status,courseact,checkshu',
+		submitfields:'setid,name,num,checktype,checktypeid,checktypename,sort,whereid,explain,status,courseact,checkshu',
 		requiredfields:'name',
 		success:function(){
 			closenowtabs();
 			try{guanflowcourselist.reload();}catch(e){}
 		},
+		load:function(a){
+			js.setselectdata(h.form.whereid,a.wherelist,'id');
+		},
 		loadafter:function(a){
 			c.changetype(0);
 			if(a.data){
-				h.form.where.value=jm.base64decode(a.data.where);
+				
 			}
 		},
 		submitcheck:function(d){
 			if(d.checktype=='user'&&d.checktypeid=='')return '请选择人员';
 			if(d.checktype=='rank'&&d.checktypename=='')return '请输入职位';
-			return {where:jm.base64encode(d.where)};
+			return '';
 		}
 	});
 	h.forminit();
-	h.load(js.getajaxurl('loaddatacourse','{mode}','{dir}',{id:id}));
+	h.load(js.getajaxurl('loaddatacourse','{mode}','{dir}',{id:id,setid:setid}));
 	var c = {
 		getdist:function(o1, lx){
 			var cans = {
 				nameobj:h.form.checktypename,
 				idobj:h.form.checktypeid,
+				value:h.form.checktypeid.value,
 				type:'usercheck',
 				title:'选择人员'
 			};
@@ -58,13 +62,14 @@ $(document).ready(function(){
 				$('#checkname_{rand}').show();
 			}
 		},
-		setwhere:function(){
-			js.setwhere(params.setid,'backsheowe{rand}');
+		reloadhweil:function(){
+			h.form.whereid.length = 1;
+			h.load(js.getajaxurl('loaddatacourse','{mode}','{dir}',{id:id,setid:setid}));
 		}
 	};
 	js.initbtn(c);
 	
-	if(id==0)h.form.setid.value=params.setid;
+	if(id==0)h.form.setid.value=setid;
 	
 	$(h.form.checktype).change(function(){
 		c.changetype(1);
@@ -127,11 +132,17 @@ $(document).ready(function(){
 			</td>
 			
 		</tr>
-
+		
 		<tr>
 			<td  align="right" >审核条件：</td>
-			<td class="tdinput" colspan="3"><textarea  name="where" style="height:60px" class="form-control"></textarea><div class="tishi" style="padding-top:0px">Sql的条件，为空此步需要审核，不为空时当条件满足了就需要审核,<a click="setwhere" href="javascript:;">[设置条件]</a></div></td>
+			<td class="tdinput"><select class="form-control" name="whereid"><option value="0">无条件</option></select></td>
+			<td colspan="2"><a click="reloadhweil" href="javascript:;">[刷新]</a></td>
 		</tr>
+		<tr>
+			<td  align="right" ></td>
+			<td colspan="3" style="padding-bottom:10px"><font color=#888888>在【流程模块条件】上添加，满足此条件才需要此步骤</font></td>
+		</tr>
+
 		
 		<tr>
 			<td  align="right" >审核动作：</td>

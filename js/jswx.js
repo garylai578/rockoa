@@ -204,3 +204,34 @@ js.wx.actionsheet=function(d){
 		try{d.oncancel();}catch(e){}
 	});
 }
+
+js.iswxbo=function(){
+	var bo = true;
+	var ua = navigator.userAgent.toLowerCase(); 
+	if(ua.indexOf('micromessenger')<0)bo=false;
+	return bo;
+}
+js.jssdkstate = false;
+js.jssdkwixin = function(qxlist,afe){
+	if(!js.iswxbo())return;
+	if(!afe)$.getScript('http://res.wx.qq.com/open/js/jweixin-1.1.0.js', function(){
+		js.jssdkwixin(qxlist, true);
+	});
+	if(!afe)return;
+	var surl= location.href;
+	if(!qxlist)qxlist= ['openLocation','getLocation'];
+	js.ajax('weixin','getsign',{url:jm.base64encode(surl)},function(ret){
+		if(!ret.appId)return;
+		wx.config({
+			debug: false,
+			appId: ret.appId,
+			timestamp:ret.timestamp,
+			nonceStr: ret.nonceStr,
+			signature: ret.signature,
+			jsApiList:qxlist
+		});
+		wx.ready(function(){
+			js.jssdkstate=true;
+		});
+	});
+}

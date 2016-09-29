@@ -37,6 +37,7 @@ agentobj.word.initagent = function(){
 				$('#progresscls_hehehehsss').remove();
 				js.msg('success',''+a.filename+'上传成功');
 				a.fileid=a.id;
+				a.optdt=a.adddt;
 				$('#wordlisttable').append(c.showlist(a));
 			},'none');
 		},
@@ -68,7 +69,7 @@ agentobj.word.initagent = function(){
 			var i,len=a.length,s;
 			s='<table id="wordlisttable" style="width:100%">';
 			s+='<tr>';
-			s+='<td></td><td>名称</td><td>类型</td><td>大小</td>';
+			s+='<td></td><td>名称</td><td>类型</td><td>时间</td><td>大小</td>';
 			s+='</tr>';
 			for(i=0;i<len;i++){
 				s+=c.showlist(a[i]);
@@ -87,12 +88,12 @@ agentobj.word.initagent = function(){
 			if(!isempt(d.shate))s1+='<div style="font-size:12px;color:#888888">分享给：'+d.shate+'</div>';
 			
 			if(d.fileext=='folder'){
-				s+='<td align="center" width="30"><img src="images/folder.png" height="24" width="24"></td><td>'+s1+'</td><td>文件夹</td><td></td>';
+				s+='<td align="center" width="30"><img src="images/folder.png" height="24" width="24"></td><td>'+s1+'</td><td>文件夹</td><td>'+d.optdt+'</td><td></td>';
 			}else{
 				
 				var slx = d.fileext;
 				if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
-				s+='<td align="center" width="30"><img src="images/fileicons/'+slx+'.gif" height="16" width="16"></td><td>'+s1+'</td><td>'+d.fileext+'</td><td>'+d.filesizecn+'</td>';
+				s+='<td align="center" width="30"><img src="images/fileicons/'+slx+'.gif" height="16" width="16"></td><td>'+s1+'</td><td>'+d.fileext+'</td><td>'+d.optdt+'</td><td>'+d.filesizecn+'</td>';
 			}
 			s+='</tr>';
 			return s;

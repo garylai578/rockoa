@@ -43,6 +43,10 @@ class fworkClassAction extends Action
 			$where	= 'and '.$this->rock->dbinstr('a.allcheckid', $uid);
 		}
 		
+		if($lx=='mywtg'){
+			$where.=" and a.status=2";
+		}
+		
 		if($zt!='')$where.=" and a.status='$zt'";
 		if($dt!='')$where.=" and a.applydt='$dt'";
 		if($modeid>0)$where.=' and a.modeid='.$modeid.'';
@@ -63,6 +67,62 @@ class fworkClassAction extends Action
 		return array(
 			'rows'		=> $rows,
 			'flowarr' 	=> m('mode')->getmodemyarr($this->adminid)
+		);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public function meetbefore($table)
+	{
+		$lx 	= $this->post('atype');
+		$dt 	= $this->post('dt');
+		$key 	= $this->post('key');
+		
+		$where	= 'and 1=2';
+		if($lx=='my' || $lx=='mybz' || $lx=='myall'){
+			$where	= m('admin')->getjoinstr('joinid', $this->adminid);
+		}
+		if($lx=='my'){
+			$where.=" and startdt like '$this->date%'";
+		}
+		
+		if($lx=='mybz'){
+			$listdt	= c('date')->getweekfirst($this->date);
+			$where.=" and startdt >='$listdt'";
+		}
+		
+		if($lx=='myfq'){
+			$where =" and optid='$this->adminid'";
+		}
+		
+		m($table)->update('state=2',"`state`=0 and `enddt`<'$this->now'");
+
+		if($dt!='')$where.=" and startdt like '$dt%'";
+		if(!isempt($key))$where.=" and (`joinname` like '%$key%' or `title` like '%$key%')";
+		
+		
+		return array(
+			'where' => " and type=0 and `status`=1 $where",
+			'order' => 'startdt desc'
+		);
+	}
+	
+	public function meetafter($table, $rows)
+	{
+		$dtobj	= c('date');
+		$flow	= m('flow')->initflow('meet');
+		foreach($rows as $k=>$rs){
+			$rows[$k]['week']  = $dtobj->cnweek($rs['startdt']);
+			$rows[$k]['state'] = $flow->getstatezt($rs['state']);
+		}
+		return array(
+			'rows'		=> $rows
 		);
 	}
 }

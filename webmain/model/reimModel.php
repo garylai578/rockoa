@@ -7,6 +7,7 @@ class reimClassModel extends Model
 	public $serverhosturl 	= '';
 	public $servertitle		= '';
 	public $wxchattb		= 0;//聊天是否同步到微信
+	public $wxcorpid		= '';//聊天是否同步到微信
 	
 	public function initModel()
 	{
@@ -22,9 +23,17 @@ class reimClassModel extends Model
 		$this->serverpushurl	= $dbs->getval('reimpushurlsystem');
 		$this->serverhosturl	= $dbs->getval('reimhostsystem');
 		$this->servertitle		= $dbs->getval('reimtitlesystem');
+		$this->wxcorpid			= $dbs->getval('weixin_corpid');
 		$this->wxchattb			= (int)$dbs->getval('weixin_chattb','0');
-		if(getconfig('systype')=='demo')$this->serverhosturl = $this->rock->jm->base64decode('d3M6Ly8yMTEuMTQ5LjIzNC45Mzo2NTUyLw::');
+		if(getconfig('systype')=='demo')$this->serverhosturl = $this->rock->jm->base64decode('d3M6Ly93d3cueGg4MjkuY29tOjY1NTIv');
 		if($this->isempt($this->servertitle))$this->servertitle='信呼';
+	}
+	
+	public function isanwx()
+	{
+		$bo = false;
+		if($this->wxcorpid!='')$bo=true;
+		return $bo;
 	}
 	
 	public function getreims()
@@ -111,7 +120,6 @@ class reimClassModel extends Model
 		if($slx==3)return false;
 		$gid	= $this->getgroupid($gname);
 		$gname	= $this->groupname;
-		if($gid==0)return false;
 		$sarr	= array(
 			'gname'		=> $gname,
 			'optdt'		=> $this->rock->now,
@@ -741,6 +749,7 @@ class reimClassModel extends Model
 	{
 		$bsarr 	= array('msg'=>'notpushurl','code'=>2);
 		$bstt	= json_encode($bsarr);
+		if($sendid==0)$sendid = 1;
 		$sers 	= $this->db->getone('[Q]admin',"`id`='$sendid'", "`name`,`face`");
 		if(!$sers)return $bstt;
 		$face 	= $sers['face']; 
@@ -915,7 +924,7 @@ class reimClassModel extends Model
 	}
 	
 	//会话管理的
-	public function createchat($name, $aid, $uids='', $na='', $optdt='')
+	public function createchat($name, $aid, $uids='', $na='', $optdt='', $iscjwx=false)
 	{
 		if($optdt=='')$optdt=$this->rock->now;
 		if($na=='')$na = $this->adminname;
@@ -929,19 +938,24 @@ class reimClassModel extends Model
 			'valid'			=> '1'
 		));
 		$gid	= $this->db->insert_id();
-		$this->adduserchat($gid, $uids);
+		$this->adduserchat($gid, $uids, false);
 		return $gid;
 	}
-	public function adduserchat($gid, $uids)
+	public function adduserchat($gid, $uids, $isadd=false)
 	{
-		if(isempt($uids))return;
+		if(isempt($uids))return '';
+		$ids 	= '';
 		$uidss	= explode(',', $uids);
 		$db		= m('im_groupuser');
 		foreach($uidss as $aid){
 			if($db->rows("gid='$gid' and `uid`='$aid'")==0){
 				$db->insert(array('gid' => $gid,'uid' => $aid));
+				$ids .= ','.$aid.'';
 			}
 		}
+		if($ids!='')$ids = substr($ids,1);
+		if($isadd && $this->isanwx())m('weixin:chat')->chatupdate($gid);
+		return $ids;
 	}
 	public function deluserchat($gid, $uids)
 	{
@@ -957,8 +971,11 @@ class reimClassModel extends Model
 	}
 	public function exitchat($gid, $aid)
 	{
-		m('im_groupuser')->delete("`gid`='$gid' and `uid`='$aid'");
+		$dbs = m('im_groupuser');
+		$dbs->delete("`gid`='$gid' and `uid`='$aid'");
 		m('im_messzt')->delete("`gid`='$gid' and `uid`='$aid'");
+		if($this->isanwx())m('weixin:chat')->chatquit($gid, $aid);
+		if($dbs->rows('gid='.$gid.'')==0)m('im_group')->delete($gid);
 		$this->delhistory('group',$gid, $aid);
 	}
 	

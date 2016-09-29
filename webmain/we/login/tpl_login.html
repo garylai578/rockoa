@@ -21,6 +21,7 @@ body{overflow-x:hidden;background-color:#fbf9fe}
 <script>
 var temp_token='';
 function initbody(){
+	var msurl = location.href;
 	var us=jm.base64decode(js.request('user'));
 	if(!us)us=js.getoption('adminuser');
 	temp_token=js.request('token');
@@ -29,6 +30,15 @@ function initbody(){
 	if(face)get('myface').src=face;
 	if(temp_token.length>=8&&us!=''){
 		loginsubmit(0);
+	}
+	if(msurl.indexOf('#notuserid')>0){
+		js.wx.alert('无法微信快捷登录，可能未关注/设置微信企业号');
+	}else{
+		var ptoken = js.request('ptoken');
+		if(ptoken!='' && us!=''){
+			$('#adminpass').val(ptoken);
+			loginsubmit(0);
+		}
 	}
 }
 function loginsubmit(lx){
@@ -68,6 +78,10 @@ function loginsuccess(d){
 		js.location('?m=index&d=we');
 	}
 }
+function yanzdengl(){
+	js.wx.load('处理中...');
+	js.location('?m=login&d=we&a=wxlogin');
+}
 </script>
 </head>
 
@@ -97,6 +111,10 @@ function loginsuccess(d){
 <div class="weui_btn_area">
 	<input class="weui_btn weui_btn_primary" type="button" onclick="loginsubmit(0)" value="确定" id="btn0">
 </div>
+<?php 
+if($da['web']=='wxbro')echo '<div onclick="yanzdengl()" style="text-align:center;padding-top:10px;color:#04BE02">微信快捷登录</div>';
+?>
+
 
 
 </body>

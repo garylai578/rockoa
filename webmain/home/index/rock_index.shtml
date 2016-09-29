@@ -32,6 +32,7 @@ $(document).ready(function(){
 				admintoken = a.token;
 				this.showicons(a.menuarr);
 			}
+			this.showgonglist(a.gongarr);
 			$('#guestbook_wd').html(a.todo+'');
 			for(var oi in a.total)this.showtotal(a.total[oi],oi);
 			var d = a.worklist;
@@ -84,6 +85,14 @@ $(document).ready(function(){
 		},
 		opennewtx:function(lx){
 			return '0';
+		},
+		showgonglist:function(a){
+			var s='',a1,i;
+			for(i=0;i<a.length;i++){
+				a1=a[i];
+				s+='<a onclick="openxiangs(\''+a1.typename+'\',\'gong\',\''+a1.id+'\');$(this).remove();" class="list-group-item">◇【'+a1.typename+'】'+a1.title+'['+a1.indate+']</a>';
+			}
+			$('#homegonglist').html(s);
 		}
 	}
 	
@@ -140,6 +149,9 @@ $(document).ready(function(){
 		window.open('web/login.html?user='+adminuser+'&token='+admintoken+'');
 	}
 	
+	moregonggao=function(){
+		addtabs({num:'gong',url:'system,infor,geren',icons:'volume-up',name:'通知公告'});
+	}
 });
 </script>
 <style>
@@ -167,54 +179,20 @@ $(document).ready(function(){
 	
 	<div class="blank1" style="margin:10px 0px"></div>
 	<div class="blank10"></div>
-
+	
 	<div align="left" style="padding:0px 10px">
 		<table  border="0" cellspacing="0" cellpadding="0">
 		<tr valign="top">
-			<td style="padding-right:20px;display:none">
-				<div align="left" id="worklist_{rand}" style="min-width:200px" class="list-group">
-				<div class="list-group-item  list-group-item-success"><i class="icon-bar-chart"></i> 个人统计</div>
-				<a class="list-group-item">1. 未完成任务<font color=red>(2)</font></a>
-				<a class="list-group-item">2. 执行中项目<font color=red>(2)</font></a>
-				<a class="list-group-item">3. 我申请未通过<font color=red>(2)</font></a>
-				</div>
-			</td>
+			
 			<td>
-				<div align="left" style="display:none" class="list-group">
-				<div class="list-group-item  list-group-item-info"><i class="icon-volume-up"></i> 通知公告</div>
-				<a class="list-group-item">1. [企业文化]关于信呼的使用！[2016-09-08]</a>
-				<a class="list-group-item">2. [规章制度]关于员工写日报制度！[2016-09-08]</a>
+				<div align="left"  class="list-group">
+				<div class="list-group-item  list-group-item-info">
+					<i class="icon-volume-up"></i> 通知公告
+					<a style="float:right" onclick="moregonggao()">更多&gt;&gt;</a>
 				</div>
-			
-				
-				<div class="panel panel-success">
-				  <div class="panel-heading">
-					<h3 class="panel-title">关于信呼</h3>
-				  </div>
-				  <div class="panel-body">
-					
-					<div style="line-height:25px">
-					软件：信呼<br>
-					官网：<a href="http://xh829.com/" target="_blank">http://xh829.com/</a><br>
-					版本：V<span id="banben">1.0</span><br>
-					下载：服务端，PC客户端，APP<a href="http://xh829.com/view_down.html" target="_blank">[去下载]</a><br>
-					声明：我们是开源的，请遵守我们的<a href="http://xh829.com/view_version.html" target="_blank">开源协议</a>，谢谢！<br>
-					帮助：提供开发帮助使用文档<a href="http://xh829.com/help.html" target="_blank">[查看]</a>
-					</div>
-	
-					
-					
-				  </div>
+				<span id="homegonglist"></span>
 				</div>
 				
-				
-				
-				
-			
-			</td>
-			
-			<td style="padding-left:20px">
-			
 				<div class="panel panel-danger">
 				  <div class="panel-heading">
 					<h3 class="panel-title">微信企业号办公</h3>
@@ -237,9 +215,56 @@ $(document).ready(function(){
 				  </div>
 				</div>
 				
+			
+				
+			</td>
+			
+			<td style="padding-left:20px;">
+				<div class="panel panel-success">
+				  <div class="panel-heading">
+					<h3 class="panel-title">关于信呼</h3>
+				  </div>
+				  <div class="panel-body">
+					
+					<div style="line-height:25px">
+					软件：信呼<br>
+					官网：<a href="http://xh829.com/" target="_blank">http://xh829.com/</a><br>
+					版本：V<span id="banben">1.0</span><br>
+					下载：服务端，PC客户端，APP<a href="http://xh829.com/view_down.html" target="_blank">[去下载]</a><br>
+					声明：我们是开源的，请遵守我们的<a href="http://xh829.com/view_version.html" target="_blank">开源协议</a>，谢谢！<br>
+					帮助：提供开发帮助使用文档<a href="http://xh829.com/help.html" target="_blank">[查看]</a>
+					</div>
+	
+					
+					
+				  </div>
+				</div>
+				
+			</td>
+			
+			
+			
+		</tr>
+		</table>
+	</div>
+	
+
+	<div align="left" style="padding:0px 10px">
+		<table  border="0" cellspacing="0" cellpadding="0">
+		<tr valign="top">
+			
+			<td>
+				
+				
+				
+				<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.shtml</div>
+				
 				
 			
 			</td>
+			
+	
+			
 			
 			<td style="padding-left:20px">
 			
@@ -272,6 +297,6 @@ $(document).ready(function(){
 		</table>
 	</div>
 	
-	<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.shtml</div>
+	<div class="tishi" align="center">Copyright ©2016 技术支持：信呼开发团队</div>
 	
 </div>

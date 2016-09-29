@@ -27,28 +27,33 @@ class adminClassAction extends Action
 		);
 	}
 	
-	private function checkEmail($inAddress)
-	{   
-		return filter_var($inAddress, FILTER_VALIDATE_EMAIL);
+	public function fieldsafters($table, $fid, $val, $id)
+	{
+		$fields = 'sex,ranking,tel,mobile,workdate,email,quitdt';
+		if(contain($fields, $fid))m('userinfo')->update("`$fid`='$val'", $id);
 	}
 	
+
 	
 	public function publicbeforesave($table, $cans, $id)
 	{
 		$user = strtolower(str_replace(' ','',$cans['user']));
 		$name = str_replace(' ','',$cans['name']);
 		$email= str_replace(' ','',$cans['email']);
+		$check= c('check');
 		$mobile 	= $cans['mobile'];
 		$weixinid 	= $cans['weixinid'];
 		$msg  = '';	
 		if(is_numeric($user))return '用户名不能是数字';
-		if(preg_match("/[\x7f-\xff]/", $user))return '用户名不能有中文';
-		if(!$this->checkEmail($email))return '邮箱格式有误';
+		if($check->isincn($user))return '用户名不能有中文';
+		if(!isempt($email) && !$check->isemail($email))return '邮箱格式有误';
 		if(!isempt($mobile)){
-			if(!is_numeric($mobile) || strlen($mobile)!=11)return '手机格式有误';
+			if(!$check->ismobile($mobile))return '手机格式有误';
 		}
+		if(isempt($mobile) && isempt($email))return '邮箱/手机号不能同时为空';
 		if(!isempt($weixinid)){
-			if(!is_numeric($weixinid))return '微信号格式有误';
+			if(is_numeric($weixinid))return '微信号不能是数字';
+			if($check->isincn($weixinid))return '微信号不能有中文';
 		}
 		$db  = m($table);
 		if($msg=='')if($db->rows("`user`='$user' and `id`<>'$id'")>0)$msg ='用户名['.$user.']已存在';

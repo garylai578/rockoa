@@ -119,19 +119,48 @@ class adminClassModel extends Model
 	}
 	
 	/**
-		获取下级人员id
+	*	获取下级人员id
+	*	$lx 0 全部下级，1直属下级
 	*/
-	public function getdown($uid)
+	public function getdown($uid, $lx=0)
 	{
-		$rows = $this->getall("instr(superpath,'[$uid]')>0", 'id');
+		$where = "instr(superpath,'[$uid]')>0";
+		if($lx==1)$where=$this->rock->dbinstr('superid', $uid);
+		$rows = $this->getall($where, 'id');
 		$s	  = '';
 		foreach($rows as $k=>$rs)$s.=','.$rs['id'];
 		if($s != '')$s = substr($s, 1);
 		return $s;
 	}
 	
+	public function getdownwhere($fid, $uid, $lx=0)
+	{
+		$bstr = $this->getdown($uid, $lx);
+		$where= '1=2';
+		if($bstr=='')return $where;
+		$bas  = explode(',', $bstr);
+		$barr = array();
+		foreach($bas as $bid){
+			$barr[] = ''.$fid.' in('.$bid.')';
+		}
+		$where = join(' or ', $barr);
+		$where = '('.$where.')';
+		return $where;
+	}
+	
+	public function getdownwheres($fid, $uid, $lx=0)
+	{
+		$bstr = $this->getdown($uid, $lx);
+		$where= '1=2';
+		if($bstr=='')return $where;
+		$bstr = ','.$bstr.',';
+		$where= "instr('$bstr', concat(',',$fid,','))>0";
+		return $where;
+	}
+	
+	
 	/**
-		获取用户信息(部门，单位，职位等)
+	*	获取用户信息(部门，单位，职位等)
 	*/
 	public function getinfor($uid)
 	{
@@ -268,21 +297,25 @@ class adminClassModel extends Model
 	public function updateuserinfo()
 	{
 		$db 	= m('userinfo');
-		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id');
+		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id');
 		foreach($rows as $k=>$rs){
 			$uparr = array(
 				'id' 		=> $rs['id'],
 				'name' 		=> $rs['name'],
 				'deptname' 	=> $rs['deptname'],
 				'ranking' 	=> $rs['ranking'],
+				'sex' 		=> $rs['sex'],
+				'tel' 		=> $rs['tel'],
+				'mobile' 	=> $rs['mobile'],
+				'email' 	=> $rs['email'],
+				'workdate' 	=> $rs['workdate'],
+				'quitdt' 	=> $rs['quitdt']
 			);
 			if(isempt($rs['ids'])){
 				$db->insert($uparr);
 			}else{
-				if($rs['name'] != $rs['names'] || $rs['deptname'] != $rs['deptnames'] || $rs['ranking'] != $rs['rankings']){
-					unset($uparr['id']);
-					$db->update($uparr, $rs['ids']);
-				}
+				unset($uparr['id']);
+				$db->update($uparr, $rs['ids']);
 			}
 		}
 	}

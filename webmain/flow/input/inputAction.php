@@ -39,6 +39,7 @@ class inputAction extends ActionNot
 		$fieldsarr		= m('flow_element')->getrows("`mid`='$modeid' and `islu`=1 and `iszb`=0",'`name`,`fields`,`isbt`,`fieldstype`,`data`,`iszb`','`sort`');
 		if(!$fieldsarr)$this->backmsg('没有录入元素');
 		$db	   = m($table);$subna = '提交';$addbo = false;$where = "`id`='$id'"; $oldrs = false;
+		$this->mdb = $db;
 		if($id==0){
 			$where = '';
 			$addbo = true;
@@ -91,6 +92,7 @@ class inputAction extends ActionNot
 			$uaarr['status']= '0';
 		}else{
 			if(in_array('status', $allfields))$uaarr['status'] = (int)$this->post('status', '1');
+			if(in_array('isturn', $allfields))$uaarr['isturn'] = 1;
 		}
 		$ss 	= '';
 		$befa 	= $this->savebefore($table, $uaarr, $id, $addbo);

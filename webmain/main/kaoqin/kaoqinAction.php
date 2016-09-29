@@ -4,10 +4,12 @@ class kaoqinClassAction extends Action
 	//打卡的
 	public function kqdkjlbeforeshow($table)
 	{
+		$atype	= $this->post('atype');
 		$dt1	= $this->post('dt1');
 		$dt2	= $this->post('dt2');
 		$key	= $this->post('key');
 		$s 		= '';
+		if($atype=='my')$s.=' and b.id='.$this->adminid.'';
 		if(!isempt($dt1))$s.=" and a.`dkdt`>='$dt1'";
 		if(!isempt($dt2))$s.=" and a.`dkdt`<='$dt2 23:59:59'";
 		if(!isempt($key))$s.=" and (b.`name` like '%$key%' or b.`deptname` like '%$key%')";
@@ -26,14 +28,50 @@ class kaoqinClassAction extends Action
 		return array('rows'=>$rows);
 	}
 	
+	//定位打卡的
+	public function locationbeforeshow($table)
+	{
+		$atype	= $this->post('atype');
+		$dt1	= $this->post('dt1');
+		$dt2	= $this->post('dt2');
+		$key	= $this->post('key');
+		$s 		= '';
+		if($atype=='my')$s.=' and b.id='.$this->adminid.'';
+		if(!isempt($dt1))$s.=" and a.`optdt`>='$dt1'";
+		if(!isempt($dt2))$s.=" and a.`optdt`<='$dt2 23:59:59'";
+		if(!isempt($key))$s.=" and (b.`name` like '%$key%' or b.`deptname` like '%$key%')";
+		$fields = 'a.*,b.name,b.deptname';
+		$table  = '[Q]'.$table.' a left join `[Q]admin` b on a.uid=b.id';
+		return array('where'=>$s,'table'=>$table, 'fields'=>$fields);
+	}
+	public function locationaftershow($table, $rows)
+	{
+		$dtobj = c('date');
+		foreach($rows as $k=>$rs){
+			$rows[$k]['week'] = $dtobj->cnweek($rs['optdt']);
+		}
+		return array('rows'=>$rows);
+	}
+	
 	
 	//考勤信息
 	public function kqinfobeforeshow($table)
 	{
 		$dt1	= $this->post('dt1');
+		$atype	= $this->post('atype');
 		$key	= $this->post('key');
 		$keys	= $this->post('keys');
+		$uid	= $this->adminid;
 		$s 		= '';
+		
+		if($atype=='all'){
+			$s = '';
+		}
+		if($atype=='my'){
+			$s = 'and uid='.$uid.'';
+		}
+		
+		
 		if(!isempt($dt1))$s.=" and a.`stime` like '$dt1%'";
 		if(!isempt($key))$s.=" and (b.`name` like '%$key%' or b.`deptname` like '%$key%')";
 		if(!isempt($keys))$s.=" and (a.`kind`='$keys' or a.`qjkind`='$keys')";
@@ -44,11 +82,32 @@ class kaoqinClassAction extends Action
 	
 	public function kqinfoaftershow($table, $rows)
 	{
-		$types = explode(',','<font color=blue>待审核</font>,<font color=green>已审核</font>,<font color=red>未通过</font>');
+		$uid 	= $this->adminid;
+		$types 	= explode(',','<font color=blue>待审核</font>,<font color=green>已审核</font>,<font color=red>未通过</font>');
 		foreach($rows as $k=>$rs){
 			$rows[$k]['status'] = $types[$rs['status']];
+			$modenum  = 'leavehr';
+			$modename = '考勤信息';
+			if($rs['kind']=='请假'){
+				$modenum  = 'leave';
+				$modename = '请假条';
+			}
+			if($rs['kind']=='加班'){
+				$modenum  = 'jiaban';
+				$modename = '加班单';
+			}
+			$rows[$k]['modenum'] 	= $modenum;
+			$rows[$k]['modename'] 	= $modename;
 		}
-		return array('rows'=>$rows);
+		
+		$str = '';
+		if($this->post('atype')=='my'){
+			$kqm = m('kaoqin');
+			$njs = $kqm->getqjsytime($uid, '年假');
+			$tx  = $kqm->getqjsytime($uid, '调休');
+			$str='剩余年假('.$njs.'小时)，可调休('.$tx.'小时)';
+		}
+		return array('rows'=>$rows,'totalstr'=> $str);
 	}
 	
 	
@@ -200,8 +259,11 @@ class kaoqinClassAction extends Action
 	}
 	public function kqanayallAjax()
 	{
-		$dt = $this->post('dt');
-		m('kaoqin')->kqanayall($dt);
+		$dt 	= $this->post('dt');
+		$atype 	= $this->post('atype');
+		$whe 	= '';
+		if($atype=='my')$whe=' and id='.$this->adminid.'';
+		m('kaoqin')->kqanayall($dt, $whe);
 		echo 'ok';
 	}
 	
@@ -262,9 +324,14 @@ class kaoqinClassAction extends Action
 		$dt1			= $this->post('dt1', date('Y-m'));
 		$this->months 	= $dt1;
 		$key	= $this->post('key');
+		$atype	= $this->post('atype');
 		$dt 	= $dt1.'-01';
 		$enddt	= c('date')->getenddt($dt1);
 		$s 		= "and (`quitdt` is null or `quitdt`>='$dt') and (`workdate` is null or `workdate`<='$enddt')";
+		if($atype=='my'){
+			$s = 'and id='.$this->adminid.'';
+		}
+		
 		if(!isempt($key))$s.=" and (`name` like '%$key%' or `deptname` like '%$key%')";
 		
 		$fields = 'id,name,deptname,ranking,workdate';
@@ -357,5 +424,23 @@ class kaoqinClassAction extends Action
 			if(!isset($a[$i]))$a[$i] = '';
 		}
 		return $a;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public function locationAction()
+	{
+		$id = (int)$this->get('id');
+		$rs = m('location')->getone($id);
+		if(!$rs)exit('not found record');
+		if($rs['scale']<=0)$rs['scale']=12;
+		$this->smartydata['rs'] = $rs;
 	}
 }

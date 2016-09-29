@@ -1,10 +1,11 @@
 <script >
 $(document).ready(function(){
 	{params}
-	var atype=params.atype;
+	var atype=params.atype,zt=params.zt;
+	if(!zt)zt='';
 	var bools=false;
 	var a = $('#view_{rand}').bootstable({
-		tablename:'flow_bill',params:{'atype':atype},fanye:true,
+		tablename:'flow_bill',params:{'atype':atype,'zt':zt},fanye:true,
 		url:publicstore('{mode}','{dir}'),
 		storeafteraction:'flowbillafter',storebeforeaction:'flowbillbefore',
 		columns:[{
@@ -58,10 +59,10 @@ $(document).ready(function(){
 			openxiangs(d.modename,d.modenum,d.id,'opegs{rand}');
 		},
 		search:function(){
-			var s=get('key_{rand}').value;
-			a.setparams({key:s,dt1:get('dt1_{rand}').value,
-				modeid:get('mode_{rand}').value,
-				zt:get('status_{rand}').value
+			a.setparams({
+				key:get('key_{rand}').value,
+				dt1:get('dt1_{rand}').value,
+				modeid:get('mode_{rand}').value
 			},true);
 		},
 		clickdt:function(o1, lx){
@@ -69,6 +70,12 @@ $(document).ready(function(){
 		},
 		daochu:function(){
 			a.exceldown(nowtabs.name);
+		},
+		changlx:function(o1,lx){
+			$("button[id^='state{rand}']").removeClass('active');
+			$('#state{rand}_'+lx+'').addClass('active');
+			a.setparams({zt:lx});
+			this.search();
 		}
 	};
 	js.initbtn(c);
@@ -77,6 +84,12 @@ $(document).ready(function(){
 	});
 	opegs{rand}=function(){
 		c.reload();
+	}
+	
+	$('#state{rand}_'+zt+'').addClass('active');
+	
+	if(atype=='mywtg'){
+		$('#stewwews{rand}').hide();
 	}
 });
 </script>
@@ -97,13 +110,21 @@ $(document).ready(function(){
 	<td  style="padding-left:10px">
 		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="姓名/部门/单号">
 	</td>
-	<td  style="padding-left:10px">
-		<select id="status_{rand}" style="width:100px" class="form-control" ><option value="">-状态-</option><option value="0">待审核</option><option value="1" style="color:green">已审核</option><option value="2">未通过</option></select>	
-	</td>
+	
 	<td  style="padding-left:10px">
 		<button class="btn btn-default" click="search" type="button">搜索</button>
 	</td>
-	<td width="80%"></td>
+	<td  width="80%" style="padding-left:10px">
+		
+		<div id="stewwews{rand}" class="btn-group">
+		<button class="btn btn-default" id="state{rand}_" click="changlx," type="button">全部状态</button>
+		<button class="btn btn-default" id="state{rand}_0" click="changlx,0" type="button">待审核</button>
+		<button class="btn btn-default" id="state{rand}_1" style="color:green" click="changlx,1" type="button">已审核</button>
+		<button class="btn btn-default" id="state{rand}_2" style="color:red" click="changlx,2" type="button">未通过</button>
+		</div>	
+	</td>
+	
+	
 	<td align="right" nowrap>
 		<button class="btn btn-default" id="xiang_{rand}" click="view" disabled type="button">详情</button> &nbsp; 
 		<button class="btn btn-default" click="daochu,1" type="button">导出</button>

@@ -124,17 +124,26 @@ class kaoqinClassModel extends Model
 		return $mid;
 	}
 	
-	public function kqanayall($month)
+	public function kqanayall($month, $where='')
 	{
 		if(isempt($month))return;
 		$month	= substr($month, 0, 7);
 		$start	= ''.$month.'-01';
 		$max 	= c('date')->getmaxdt($month);
 		$enddt	= ''.$month.'-'.$max.'';
-		$s 		= "and (`quitdt` is null or `quitdt`>='$start') and (`workdate` is null or `workdate`<='$enddt')";
+		$s 		= "and (`quitdt` is null or `quitdt`>='$start') and (`workdate` is null or `workdate`<='$enddt') $where";
 		$urows 	= m('admin')->getall('1=1 '.$s.'', '`id`,`workdate`,`quitdt`');
 		foreach($urows as $k=>$urs){
 			$this->kqanaymonth($urs['id'], $month, $urs, $max);
+		}
+	}
+	
+	public function kqanayalldt($dt)
+	{
+		$s 		= "and (`quitdt` is null or `quitdt`>='$dt') and (`workdate` is null or `workdate`<='$dt')";
+		$urows 	= m('admin')->getall('1=1 '.$s.'', '`id`,`workdate`,`quitdt`');
+		foreach($urows as $k=>$urs){
+			$this->kqanay($urs['id'], $dt);
 		}
 	}
 	

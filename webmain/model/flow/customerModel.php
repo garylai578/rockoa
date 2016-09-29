@@ -60,4 +60,25 @@ class flow_customerClassModel extends flowModel
 			$this->push($cnameid, '客户管理', ''.$this->adminname.'将一个客户【{name}】共享给你');
 		}	
 	}
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$where 	= '`uid`='.$uid.' and `status`=1';
+		if($lx=='myty'){
+			$where 	= '`uid`='.$uid.' and `status`=0';
+		}
+		if($lx=='myall'){
+			$where 	= '`uid`='.$uid.'';
+		}
+		if($lx=='gxgw'){
+			$where	= $this->rock->dbinstr('shateid', $uid);
+		}
+		if($lx=='mygx'){
+			$where 	= '`uid`='.$uid.' and `shateid` is not null';
+		}
+		return array(
+			'where' => 'and '.$where,
+			'order' => 'status desc,optdt desc'
+		);
+	}
 }

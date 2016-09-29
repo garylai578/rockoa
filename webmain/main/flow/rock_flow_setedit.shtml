@@ -7,7 +7,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_set',
 		url:publicsave('{mode}','{dir}'),url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'optdt={now}'},aftersaveaction:'flowsetsaveafter',beforesaveaction:'flowsetsavebefore',
-		submitfields:'name,tables,type,num,table,sort,status,where,summary,pctx,mctx,isflow,sericnum,receid,recename,names',
+		submitfields:'name,tables,type,num,table,sort,status,where,summary,summarx,pctx,mctx,isflow,sericnum,receid,recename,names',
 		requiredfields:'name,type,num,table',
 		success:function(){
 			closenowtabs();
@@ -97,6 +97,18 @@ $(document).ready(function(){
 		<tr>
 			<td  align="right" >摘要规则：</td>
 			<td class="tdinput" colspan="3"><textarea  name="summary" style="height:60px" class="form-control"></textarea></td>
+		</tr>
+		
+		<tr>
+			<td  align="right" >应用上摘要显示：</td>
+			<td class="tdinput" colspan="3"><textarea  name="summarx"
+placeholder="title:{title}
+optdt:{optdt}
+cont:
+" 
+			style="height:100px" class="form-control"></textarea>
+			<font color=#888888>title:标题，optdt:显示的时间，cont:内容信息</font>
+			</td>
 		</tr>
 		
 		<tr>

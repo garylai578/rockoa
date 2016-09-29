@@ -247,6 +247,7 @@
 					}else{
 						o1.disabled = false;
 						me.setmsg(a.msg);
+						if(!a.msg)js.msg('msg', da);
 						can.error();
 					}
 				},

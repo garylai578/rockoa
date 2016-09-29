@@ -1,79 +1,43 @@
 <?php
 class workClassAction extends Action
 {
-	public function workbefore($table)
+	public function initAction()
 	{
-		$lx 	= $this->post('atype');
-		$key 	= $this->post('key');
-		$zt 	= $this->post('zt');
-		$uid 	= $this->adminid;
-		$where	= 'and '.$this->rock->dbinstr('distid', $uid).'';
-		if($lx=='wwc'){
-			$where.=' and state in(0,2)';
-		}
-		if($lx=='mycj'){
-			$where='and optid='.$uid.'';
-		}
-		if($zt!='')$where.=' and `state`='.$zt.'';
-		if(!isempt($key))$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `grade` like '%$key%')";
-
-		return array(
-			'where' => $where,
-			'fields'=> 'id,type,grade,dist,startdt,title,enddt,state,optname',
-			'order' => 'optdt desc'
-		);
+		$flow = m('flow:project');
+		$this->statearr = $flow->statearr;
 	}
+	
 	
 	public function workafter($table,$rows)
 	{
-		$statearr		 = explode(',','待执行,已完成,执行中,终止');
-		$statearrs		 = explode(',','blue,green,#ff6600,#888888');
 		foreach($rows as $k=>$rs){
-			$zt = $rs['state'];
-			$rows[$k]['state'] = '<font color="'.$statearrs[$zt].'">'.$statearr[$zt].'</font>';
+			$zt = $this->statearr[$rs['state']];
+			$rows[$k]['state'] = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+			$title 		= $rs['title'];
+			$projectid 	= (int)$rs['projectid'];
+			if($projectid>0){
+				$prs 		= $this->db->getone('[Q]project', $projectid);
+				if($prs){
+					$title.='<br><span style="color:#888888;font-size:12px">'.$prs['title'].'('.$prs['progress'].'%)</span>';
+				}
+			}
+			$rows[$k]['title'] = $title;
 		}
 		return array('rows'=>$rows);
 	}
 	
 	
-
-	public function projectbefore($table)
-	{
-		$lx 	= $this->post('atype');
-		$key 	= $this->post('key');
-		$zt 	= $this->post('zt');
-		$uid 	= $this->adminid;
-		$where	= 'and optid='.$uid.'';
-		
-		if($lx=='myzx' || $lx=='wwc'){
-			$where = m('admin')->getjoinstr('runuserid', $uid);
-		}
-		
-		if($lx=='wwc'){
-			$where.=' and `state` in(0,2)';
-		}
-		
-		if($lx=='myfz'){
-			$where	= 'and '.$this->rock->dbinstr('fuzeid', $uid).'';
-		}
-		
-		if($zt!='')$where.=' and `state`='.$zt.'';
-		if(!isempt($key))$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `fuze` like '%$key%')";
-
-		return array(
-			'where' => $where,
-			'fields'=> 'id,type,num,fuze,startdt,title,enddt,state,optname,runuser,progress',
-			'order' => 'pid,optdt desc'
-		);
-	}
-	
 	public function projectafter($table,$rows)
 	{
-		$statearr		 = explode(',','待执行,已完成,执行中,终止');
-		$statearrs		 = explode(',','blue,green,#ff6600,#888888');
+		$work = m('work');
 		foreach($rows as $k=>$rs){
-			$zt = $rs['state'];
-			$rows[$k]['state'] = '<font color="'.$statearrs[$zt].'">'.$statearr[$zt].'</font>';
+			$zt = $this->statearr[$rs['state']];
+			$id = $rs['id'];
+			$rows[$k]['state'] = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+			$wwc= $work->rows('projectid='.$id.' and state in(0,2)');
+			$wez= $work->rows('projectid='.$id.'');
+			if($wwc>0)$wwc='<font color=red>'.$wwc.'</font>';
+			$rows[$k]['worklist'] = ''.$wwc.'/'.$wez.'';
 		}
 		return array('rows'=>$rows);
 	}	

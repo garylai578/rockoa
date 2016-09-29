@@ -2,7 +2,7 @@
 
 class flow_custsaleClassModel extends flowModel
 {
-	protected function flowinit(){
+	public function initModel(){
 		$this->statearr		 = c('array')->strtoarray('跟进中|blue,已成交|green,已丢失|#888888');
 	}
 	
@@ -40,5 +40,23 @@ class flow_custsaleClassModel extends flowModel
 			$rows[$k]['state']		= '<font color="'.$zt[1].'">'.$zt[0].'</font>';;
 		}
 		return $rows;
+	}
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$where 	= '`uid`='.$uid.' and `state`=0';
+		if($lx=='saleycj'){
+			$where 	= '`uid`='.$uid.' and `state`=1';
+		}
+		if($lx=='saleyds'){
+			$where 	= '`uid`='.$uid.' and `state`=2';
+		}
+		if($lx=='saleall'){
+			$where 	= '`uid`='.$uid.'';
+		}
+		return array(
+			'where' => 'and '.$where,
+			'order' => '`state`,`optdt` desc'
+		);
 	}
 }

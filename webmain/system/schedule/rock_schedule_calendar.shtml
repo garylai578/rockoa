@@ -16,9 +16,9 @@ $(document).ready(function(){
 		loadschedule:function(){
 			$.get(js.getajaxurl('loadschedule','{mode}','{dir}', {month:month}), function(da){
 				for(var d1 in da){
-					var s='',d=da[d1],i;
+					var s='',s1,d=da[d1],i;
 					for(i=0;i<d.length;i++){
-						s+=''+(i+1)+'.'+d[i].title+'<br>';
+						s+='<div style="height:20px;line-height20px;overflow:hidden">'+(i+1)+'.['+d[i].time.substr(11,5)+']'+d[i].title+'</div>';
 					}
 					$('#s'+d1+'_{rand}').html('<div style="border-top:1px #eeeeee solid;margin-top:3px;height:40px;overflow:hidden">'+s+'</div>');
 				}

@@ -40,7 +40,7 @@ class minute5ClassAction extends runtAction
 					if($zt==0)$nzt = 1;
 				}else{
 					$jg = $sttime - $time;
-					if($jg <= 6*60 && $zt==0){
+					if($jg <= 305 && $zt==0){
 						$tzuid = $adm->gjoin($rs['joinid']);
 						$cont  = '['.$rs['title'].']会议将在5分钟后'.$dts[1].'开始，请做好准备,会议室['.$rs['hyname'].']';
 						$flow->id = $rs['id'];

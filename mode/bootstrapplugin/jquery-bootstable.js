@@ -42,6 +42,12 @@
 			return this.json;
 		};
 		this._init	= function(){
+			var sas = can.modedir;
+			if(sas!=''){
+				sas = sas.split(':');
+				can.url = js.getajaxurl('publicstore', sas[0], sas[1]);
+				can.cellurl = js.getajaxurl('publicsavevalue', sas[0], sas[1]);
+			}
 			var a,s,i;
 			for(i=0; i<can.columns.length; i++){
 				a = can.columns[i];
@@ -66,6 +72,7 @@
 					attr = '';
 					if(can.sort == a[i].dataIndex)hs='style="color:#3399FF"';
 					if(a[i].width)attr+=' width="'+a[i].width+'"';
+					if(a[i].tooltip)attr+=' title="'+a[i].tooltip+'"';
 					s+='<th nowrap '+attr+'><div '+hs+' align="'+a[i].align+'" lfields="'+a[i].dataIndex+'">';
 					if(can.celleditor&&a[i].editor)s+='<i class="icon-pencil"></i>&nbsp;';
 					s+=a[i].text;
@@ -230,7 +237,7 @@
 				fields  = o.attr('fields'),
 				row		= parseFloat(o.attr('row')),
 				cell	= parseFloat(o.attr('cell'));
-			var a		= this.data[row]
+			var a		= this.data[row],i,len,sel,d,
 				b		= can.columns[cell],
 				l		= o.offset(),
 				w		= o1.clientWidth,
@@ -249,6 +256,14 @@
 				s+='<div><label><input type="checkbox" id="inputedit_'+rand+'" '+at+' value="1"> '+b.text+'</label></div>';
 			}else if(b.type=='textarea'){
 				s+='<div><textarea type="text" style="width:'+wss+'px;height:100px" id="inputedit_'+rand+'" class="input">'+v+'</textarea></div>';
+			}else if(b.type=='select' && b.store){
+				d=b.store;
+				s+='<div><select style="width:'+wss+'px" id="inputedit_'+rand+'" class="input">';
+				len=b.store.length;for(i=0;i<len;i++){
+					sel='';if(d[i][0]==v)sel='selected';
+					s+='<option value="'+d[i][0]+'" '+sel+'>'+d[i][1]+'</option>';
+				}
+				s+='</select></div>';
 			}else{
 				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" class="input" value="'+v+'"></div>';
 			}
@@ -290,19 +305,24 @@
 			js.setmsg('处理中...','#ff6600',vid);
 			o1.disabled = true;
 			this.bool = true;
-			
-			var data = {tablename:can.tablename,id:a.id,fieldname:a.fields,value:v};
-			$.post(can.cellurl,data,function(){
-				js.setmsg('处理完成','green',vid);
-				$('#edittable_'+rand+'').remove();
-				me.bool = false;
-				
-				var ohtml = a.obj.html();
-				ohtml	  = ohtml.replace(ov, v);
-				if(a.type=='checkbox')ohtml='<img height="20" width="20" src="images/checkbox'+v+'.png">';
-				a.obj.html(ohtml);
-				me.data[a.row][a.fields] = v;
-			});	
+			var data = {tablename:can.tablename,id:a.id,fieldname:a.fields,value:v,fieldsafteraction:can.fieldsafteraction};
+			$.ajax({
+				data:data,type:'post',url:can.cellurl,
+				success:function(){
+					js.setmsg('处理完成','green',vid);
+					$('#edittable_'+rand+'').remove();
+					me.bool = false;
+					var ohtml = a.obj.html();
+					ohtml	  = ohtml.replace(ov, v);
+					if(a.type=='checkbox')ohtml='<img height="20" width="20" src="images/checkbox'+v+'.png">';
+					a.obj.html(ohtml);
+					me.data[a.row][a.fields] = v;
+				},
+				error:function(e){
+					js.msg('msg',e.responseText);
+					me.bool = false;
+				}
+			});
 		};
 		this._itemclick= function(o1, e){
 			this.trobj.css('background','');
@@ -325,7 +345,7 @@
 			this.loadci++;
 			this.changedata = {};
 			var url = can.url;
-			var das	= {tablename_abc:can.tablename,defaultorder:can.defaultorder,keywhere:can.keywhere,where:this.where,sort:can.sort,dir:can.dir,loadci:this.loadci,storebeforeaction:can.storebeforeaction,storeafteraction:can.storeafteraction},
+			var das	= {tablename_abc:can.tablename,defaultorder:can.defaultorder,keywhere:can.keywhere,where:this.where,sort:can.sort,dir:can.dir,loadci:this.loadci,storebeforeaction:can.storebeforeaction,storeafteraction:can.storeafteraction,modenum:can.modenum},
 			s='',of=obj.offset();
 			das.keywhere=jm.encrypt(das.keywhere.replace(/\'/g, '[F]'));
 			das.where = jm.encrypt(das.where.replace(/\'/g, '[F]'));
@@ -368,7 +388,7 @@
 			var excelfields='',excelheader='',i,a=can.columns;
 			var das = this._loaddata(1, true);
 			das.limit = 2000;
-			das.execldown 	= 'true';
+			das.execldown 	= 'true';if(!bt)bt=nowtabs.name;
 			das.exceltitle	= jm.encrypt(bt);
 			this.bool = true;
 			js.msg('wait', '下载处理中...');
@@ -635,8 +655,7 @@
 			url:js.getajaxurl('publicstore','index'),celleditor:false,cellautosave:true,celledittype:'dblclick',
 			data:[],autoLoad:true,tree:false,itemdblclick:function(){},searchwidth:500,
 			defaultorder:'',where:'',hideHeaders:false,modename:'',modenum:'',statuschange:true,
-			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',
-			keywhere:'',params:{},cellurl:js.getajaxurl('publicsavevalue','index'),
+			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',fieldsafteraction:'',modedir:'',keywhere:'',params:{},cellurl:js.getajaxurl('publicsavevalue','index'),
 			tablename:'',selectcls:'success',itemclick:function(da, index, e){},beforeload:function(){},load:function(){},
 			outsearch:function(){return  ''},searchview:'',
 			rendertr:function(){return  ''},rowsbody:function(){return ''},

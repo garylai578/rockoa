@@ -10,11 +10,15 @@ $(document).ready(function(){
 		},{
 			text:'职位',dataIndex:'ranking'
 		},{
-			text:'状态',dataIndex:'status',type:'checkbox'
+			text:'是否启用',dataIndex:'status',type:'checkbox'
 		},{
 			text:'在线打卡IP',dataIndex:'dkip',editor:true
 		},{
 			text:'在线打卡MAC地址',dataIndex:'dkmac',editor:true
+		},{
+			text:'是否考勤',dataIndex:'iskq',type:'checkbox',editor:true
+		},{
+			text:'是否定位打卡',dataIndex:'isdwdk',type:'checkbox',editor:true
 		},{
 			text:'ID',dataIndex:'id'
 		}]

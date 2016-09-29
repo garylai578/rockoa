@@ -11,7 +11,8 @@ class totalsClassModel extends Model
 		$todo			= m('todo')->rows("uid='$uid' and `status`=0 and `tododt`<='$optdt'");
 		$arr['todo']	= $todo;
 		$arr['daiban']	= $bidb->daibanshu($uid);
-		$arr['applymy']	= $bidb->applymywgt($uid);
+		$arr['applywtg']= $bidb->applymywgt($uid);
+		$arr['workwwc']	= m('work')->getwwctotals($uid);
 		return $arr;
 	}
 }

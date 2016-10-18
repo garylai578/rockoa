@@ -35,11 +35,18 @@ class wordClassAction extends apiAction
 		$typeid = (int)$this->post('typeid');
 		$pid	= $typeid;
 		if($pid==0)$pid 	= $this->getfolderid();
-		$rows 	= $this->option->getall("`pid`='$pid' and `valid`=1 order by `sort`,`id`");
 		$slx 	= $this->post('slx');
-		$where 	= " and a.typeid='$typeid'";
-		if($slx=='wfx')$where 	= " and a.shate is not null";
-		$arr 	= $this->db->getall("select a.fileid,a.shate,a.typeid,b.filepath,a.optdt,b.filename,b.fileext,b.filesizecn from `[Q]word` a left join `[Q]file` b on a.fileid=b.id where b.id is not null and a.optid=".$this->adminid." $where order by a.`id` desc");
+		$rows	= array();
+		if($slx=='')$rows 	= $this->option->getall("`pid`='$pid' and `valid`=1 order by `sort`,`id`");
+		
+		$where 	= " and a.optid=".$this->adminid." and a.typeid='$typeid'";
+		
+		if($slx=='wfx')$where 	= " and a.optid=".$this->adminid." and a.shate is not null";
+		if($slx=='fxgw'){
+			$where 	= m('admin')->getjoinstrs('a.shateid', $this->adminid, 1);
+		}
+		
+		$arr 	= $this->db->getall("select a.fileid,a.shate,a.typeid,b.filepath,a.optname,a.optid,a.optdt,b.filename,b.fileext,b.filesizecn from `[Q]word` a left join `[Q]file` b on a.fileid=b.id where b.id is not null $where order by a.`id` desc");
 		$rows 	= array_merge($rows, $arr);			
 		$this->showreturn($rows);
 	}

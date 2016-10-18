@@ -98,7 +98,8 @@ class htmlChajian extends Chajian{
 					if($h==$lens)$stls.=';border-right:none';
 					if($k==$rlen-1)$stls.=';border-bottom:none';
 				}
-				$txt	.= '<td style="'.$stls.'" align="'.$head[$h][2].'">'.$rs[$head[$h][0]].'</td>';
+				$val 	 = isset($rs[$head[$h][0]]) ? $rs[$head[$h][0]] : '';
+				$txt	.= '<td style="'.$stls.'" align="'.$head[$h][2].'">'.$val.'</td>';
 			}	
 			$txt	.= '</tr>';
 		}
@@ -139,6 +140,7 @@ class htmlChajian extends Chajian{
 		if(!is_dir($mkdir))mkdir($mkdir);
 		
 		$filename 	= ''.$title.'_'.time().'.'.$lx.'';
+		$filename	= str_replace('/','',$filename);
 		$url 		= ''.$mkdir.'/'.$filename.'';
 		$bo 		= file_put_contents(iconv('utf-8','gb2312',$url), $s);
 		return $url;
@@ -165,4 +167,37 @@ class htmlChajian extends Chajian{
 		unset($str);
 		return implode('', $chars);  
 	} 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public function importdata($fields,$btfid='', $fid='')
+	{
+		if($fid=='')$fid='importcont';
+		$rows 	= array();
+		$val	= $this->rock->post($fid);
+		if($val=='')return $rows;
+		$arrs 	= explode("\n", $val);
+		$farr 	= explode(',', $fields);
+		$fars 	= explode(',', $btfid);
+		foreach($arrs as $valss){
+			$dars 	= explode('	', $valss);
+			$barr 	= array();
+			foreach($farr as $k=>$fid){
+				$barr[$fid] = isset($dars[$k]) ?  $dars[$k] : '';
+			}
+			$bos 	= true;
+			foreach($fars as $fids){
+				if(isset($barr[$fids]) && isempt($barr[$fids]))$bos = false;
+			}
+			if($bos)$rows[] = $barr;
+		}
+		return $rows;
+	}
 }                                  

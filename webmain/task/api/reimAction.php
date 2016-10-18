@@ -128,18 +128,10 @@ class reimClassAction extends apiAction
 	
 	public function changefaceAction()
 	{
-		$id 	= (int)$this->post('id');
-		$frs 	= m('file')->getone($id);
-		if(!$frs)$this->showreturn('','不存在',201);
-		$path 	= $frs['thumbpath'];
-		if($this->isempt($path))$path = $frs['filepath'];
-		$face	= $path;
-		if(file_exists($path)){
-			$face = 'upload/face/'.$this->adminid.'.jpg';
-			c('image')->conver($path, $face);
-			m('admin')->update("face='$face'", $this->adminid);
-		}
-		m('file')->delfile($id);
+		$fid 	= (int)$this->post('id');
+		$uid 	= $this->adminid;
+		$face 	= m('admin')->changeface($uid, $fid); 	
+		if(!$face)$this->showreturn('','fail changeface',201);
 		$this->showreturn($face);
 	}
 	

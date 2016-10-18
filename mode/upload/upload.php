@@ -64,16 +64,18 @@ var up={
 			get('startbtn').disabled=true;
 		}
 		this.obj=$('#upfile');
-		if(maxup!=0){
-			$('#footmsg').html('最多可添加'+maxup+'文件');
-		}
+		var fmsg = '';
+		if(maxup!=0)fmsg=',最多可添加'+maxup+'个文件';
+		if(uptype!='*')fmsg+=',限制'+uptype+'类型';
+		if(fmsg!='')fmsg=fmsg.substr(1);
+		$('#footmsg').html(fmsg);
 	},
 	add:function()
 	{
 		if(!this.reader||this.bool)return false;
 		if(maxup!=0){
 			if(this.gsize()>=maxup){
-				alert('最多可添加'+maxup+'个文件');
+				js.msg('msg','最多可添加'+maxup+'个文件');
 				return false;
 			}
 		}
@@ -255,7 +257,6 @@ var up={
 		var arr		= this.suarr;
 		var cont	= arr.filecout;
 		var sendcont= cont.substr(oj*this.upsize,this.upsize);
-		//arr.sendcont= sendcont;
 		var data	= {sendcont:sendcont,filename:arr.filename,maxsend:this.maxsend,sendci:oj,filetype:arr.filetype,fileext:arr.fileext,filesize:arr.filesize,filesizecn:arr.filesizecn,mkdir:mkdir,newfile:arr.newfile,savepath:savepath,thumbnail:thumbnail,maxwidth:maxwidth,thumbtype:thumbtype};
 		this.rejisuan(0);
 		$.ajax({
@@ -287,7 +288,6 @@ var up={
 	},
 	unload:function()
 	{
-		//window.returnValue='问';
 		return false;
 	},
 	clear:function()
@@ -330,7 +330,7 @@ window.onbeforeunload=function(){
 <style type="text/css">
 button{cursor:pointer}
 .alert{ padding:1px 5px; border:1px #996 solid; background-color:#ffffff; color:#933}
-*{ font-size:12px;font-family:微软雅黑,Verdana, Geneva, sans-serif;}
+*{ font-size:14px;font-family:微软雅黑,Verdana, Geneva, sans-serif;}
 .mdiv{ border-bottom:1px #cccccc solid; height:22px; overflow:hidden}
 .mdiv div{ float:left; height:22px; line-height:22px; overflow:hidden; padding:0px 3px}
 .div01{ width:55%;text-align:left;border-right:1px #cccccc solid;}
@@ -342,6 +342,9 @@ button{cursor:pointer}
 button{ cursor:pointer}
 #footmsg{ text-align:left; padding:3px}
 .quebntha{position:fixed;right:10px;bottom:10px;}
+.webbtn{color:#ffffff;opacity:0.8; background-color:#1abc9c; padding:5px 8px; border:none; cursor:pointer;font-size:14px}
+.webbtn:disabled{background-color:#aaaaaa; color:#eeeeee}
+.webbtn:hover{box-shadow:0px 0px 5px rgba(0,0,0,0.3);opacity:1}
 </style>
 </head>
 <body style="padding:1px" onLoad="up.init()">
@@ -351,8 +354,8 @@ button{ cursor:pointer}
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     
-    <td align="left"><button type="button" id="addbtn" onClick="up.add()">＋添加文件</button>&nbsp; <button type="button" id="clearbtn" onClick="up.clear()">－清除所有文件</button>&nbsp; <button type="button" onClick="up.closeaa()">关闭</button></td>
-    <td align="right"><button type="button" id="startbtn" onClick="up.upload()">开始上传</button></td>
+    <td align="left"><button type="button" class="webbtn" id="addbtn" onClick="up.add()">＋添加文件</button>&nbsp; <button type="button" class="webbtn" id="clearbtn" onClick="up.clear()">－清除所有文件</button>&nbsp; <button type="button" class="webbtn" onClick="up.closeaa()">关闭</button></td>
+    <td align="right"><button type="button" class="webbtn" id="startbtn" onClick="up.upload()">开始上传</button></td>
   </tr>
 </table>
 <div style="overflow:hidden; height:5px"></div>
@@ -365,7 +368,7 @@ button{ cursor:pointer}
 <div id="upfile"></div>
 <div id="footmsg"></div>
 
-<div class="quebntha"><button type="button" disabled id="quebtn" onClick="up.okla()">确定</button></div>
+<div class="quebntha"><button type="button" disabled style="padding:5px 15px" class="webbtn" id="quebtn" onClick="up.okla()">确定</button></div>
 </center>
 </body>
 </html>

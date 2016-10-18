@@ -7,10 +7,11 @@ class optionClassModel extends Model
 	public function getval($num, $dev='', $lx=0)
 	{
 		$val= '';
-		$rs = $this->getone("`num`='$num'", '`name`,`value`');
+		$rs = $this->getone("`num`='$num'", '`name`,`value`,`id`');
 		if($rs){
 			if($lx==0)$val=$rs['value'];
 			if($lx==1)$val=$rs['name'];
+			if($lx==2)$val=$rs['id'];
 		}
 		if($this->rock->isempt($val))$val=$dev;
 		return $val;

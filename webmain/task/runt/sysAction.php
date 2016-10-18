@@ -27,7 +27,9 @@ class sysClassAction extends runtAction
 			if($state==0)$str.='模块['.$na.']可安装;';
 			if($state==2)$str.='模块['.$na.']可<font color=red>升级</font>;';
 		}
-		if($str!='')m('todo')->add(1,'安装升级',$str.'请到[系统→系统工具→系统升级]下处理');
+		if($str!=''){
+			m('todo')->add($this->runrs['todoid'],'安装升级',$str.'请到[系统→系统工具→系统升级]下处理');
+		}
 		echo 'success';
 	}
 	

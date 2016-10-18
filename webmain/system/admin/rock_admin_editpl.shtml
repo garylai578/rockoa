@@ -35,7 +35,7 @@ $(document).ready(function(){
 				return;
 			}
 			js.setmsg('处理中...','', vis);
-			js.ajax(js.getajaxurl('saveadminpl','{mode}','{dir}'),{val:val},function(ds){
+			js.ajax(js.getajaxurl('saveadminpl','{mode}','{dir}'),{importcont:val},function(ds){
 				if(ds.success){
 					js.msg('success', ds.msg);
 					closenowtabs();

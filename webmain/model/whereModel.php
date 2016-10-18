@@ -65,11 +65,14 @@ class whereClassModel extends Model
 		);
 	}
 	
-	public function getwherestr($id, $uid=0, $fid='')
+	public function getwherestr($id, $uid=0, $fid='', $lx=0)
 	{
 		$where 	= '';
 		$arr 	= $this->getflowwhere($id, $uid, $fid);
-		if($arr)$where = ' and '.$arr['atr'];
+		if($arr){
+			$where = $arr['atr'];
+			if($lx==0)$where = ' and '.$where;
+		}
 		return $where;
 	}
 }

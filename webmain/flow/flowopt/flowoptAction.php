@@ -43,7 +43,7 @@ class flowoptClassAction extends Action
 		$mid 	= (int)$this->post('mid');
 		$num	= $this->post('num');
 		
-		$arr 	= m('flow')->opt('getoptmenu', $num, $mid, 1);
+		$arr 	= m('flow')->getoptmenu($num, $mid, 1);
 		$this->showreturn($arr);
 	}
 	
@@ -54,7 +54,7 @@ class flowoptClassAction extends Action
 		$optid 	= (int)$this->post('optmenuid');
 		$zt 	= (int)$this->post('statusvalue');
 		$mid 	= (int)$this->post('mid');
-		$msg 	= m('flow')->opt('optmenu', $num, $mid, $optid, $zt, $sm);
+		$msg 	= m('flow')->optmenu($num, $mid, $optid, $zt, $sm);
 		if($msg != 'ok')$this->showreturn('', $msg, 201);
 		$this->showreturn('');
 	}

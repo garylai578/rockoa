@@ -6,10 +6,7 @@ class flow_scheduleClassModel extends flowModel
 		$this->ratearr		 = array('d'=>'天','w'=>'周','m'=>'月');
 	}
 	
-	protected function flowchangedata(){
-		$this->rs = $this->flowrsreplace($this->rs);
-	}
-	
+
 	public function flowrsreplace($rs)
 	{
 		$txsj = (int)$rs['txsj'];

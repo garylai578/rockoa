@@ -30,6 +30,8 @@ $(document).ready(function(){
 	}
 	$(h.form.fieldss).change(function(){
 		h.form.fields.value=this.value;
+		var txt = this.options[this.selectedIndex].text;
+		var as1 = txt.split(']');if(as1[1])h.form.name.value=as1[1];
 	});
 	$(h.form.fields).blur(function(){
 		var val = this.value;
@@ -67,7 +69,7 @@ $(document).ready(function(){
 		</tr>
 		
 		<tr>
-			<td  align="right" width="15%" nowrap ><font color=red>*</font> 类型：</td>
+			<td  align="right" width="15%" nowrap ><font color=red>*</font> 字段类型：</td>
 			<td width="35%"  class="tdinput"><select name="fieldstype" class="form-control"><option value="">-字段-</option></select></td>
 			
 			<td  width="15%" align="right" nowrap>默认值：</td>
@@ -110,6 +112,11 @@ $(document).ready(function(){
 		
 		</table>
 		</form>
-	
+		<div class="tishi" align="left">
+		<b>字段类型</b>：<br>
+		1、系统选项下拉框，数据源添加，【流程模块→数据选项】下对应的编号。<br>
+		2、下拉框，数据源填写，如：男,女，用,分开，也可以自定义数据源，写flow\input\mode_对应模块编号Action.php下方法返回数据源<br>
+		3、编号，数据源填写编号规则，Ymd代表年月日，如：HTYmd，生成的编号为HT201610120001<br>
+		</div>
 </div>
 </div>

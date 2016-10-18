@@ -63,15 +63,17 @@ class flowbillClassModel extends Model
 				$modename 	= $mors['name'];
 				$summary 	= $mors['summary'];
 				$modenum 	= $mors['num'];
-				
 				$rers 		= $this->db->getone('[Q]'.$rs['table'].'', $rs['mid']);
 				$summary	= $this->rock->reparr($summary, $rers);
 				if($rers){
-					$statustext  = $statsss[$rers['status']];
-					$statuscolor = $statsss1[$rers['status']];
+					$status		 = $rers['status'];
+					$statustext  = $statsss[$status];
+					$statuscolor = $statsss1[$status];
 					if($rers['isturn']==0){
 						$statustext  = '待提交';
 						$statuscolor = '#ff6600';
+					}else{
+						if($status==0)$statustext='待'.$rs['nowcheckname'].'处理';
 					}
 				}else{
 					$this->update('isdel=1', $rs['id']);
@@ -90,7 +92,9 @@ class flowbillClassModel extends Model
 				'title' => $title,
 				'cont' 	=> $cont,
 				'id' 	=> $rs['mid'],
-				'optdt' => $rs['optdt'],
+				'optdt' 	=> $rs['optdt'],
+				'sericnum' 	=> $rs['sericnum'],
+				'applydt' 	=> $rs['applydt'],
 				'statustext' 	=> $statustext,
 				'statuscolor' 	=> $statuscolor,
 				'modenum'		=> $modenum,
@@ -153,6 +157,7 @@ class flowbillClassModel extends Model
 					if($rers['isturn']==0){
 						$statustext  = '待提交';
 						$statuscolor = '#ff6600';
+						$wdst		 = 1;
 					}
 				}else{
 					$this->update('isdel=1', $rs['id']);
@@ -175,5 +180,24 @@ class flowbillClassModel extends Model
 			);
 		}
 		return $srows;
+	}
+	
+	public function homelistshow()
+	{
+		$arr 	= $this->getrecord($this->adminid, 'flow_dcl', 1, 5);
+		$rows  	= $arr['rows'];
+		$arows 	= array();
+		foreach($rows as $k=>$rs){
+			$cont = '【'.$rs['modename'].'】单号:'.$rs['sericnum'].',日期:'.$rs['applydt'].'，<font color="'.$rs['statuscolor'].'">'.$rs['statustext'].'</font>';
+			
+			$arows[] = array(
+				'cont' 		=> $cont,
+				'modename' 	=> $rs['modename'],
+				'modenum' 	=> $rs['modenum'],
+				'id' 		=> $rs['id'],
+				'count'		=> $arr['count']
+			);
+		}
+		return $arows;
 	}
 }

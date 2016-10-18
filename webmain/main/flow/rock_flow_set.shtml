@@ -74,6 +74,14 @@ $(document).ready(function(){
 			js.ajax(js.getajaxurl('reloadpipei','{mode}','{dir}'),{},function(s){
 				js.msg('success', s);
 			},'get',false,'匹配中...,匹配完成');
+		},
+		clearalldata:function(id){
+			js.confirm('确定要清空此['+a.changedata.name+']模块所有数据嘛？<b style="color:red">慎重慎重慎重慎重！</b>',function(ssal){
+				if(ssal=='yes')c.clearalldatas(id);
+			});
+		},
+		clearalldatas:function(id){
+			js.msg('msg','不允许清空');
 		}
 	};
 	js.initbtn(c);
@@ -84,12 +92,15 @@ $(document).ready(function(){
 			name:'表单元素管理',lx:0
 		},{
 			name:'PC端录入页面布局',lx:1
+		},{
+			name:'清空此模块数据',lx:2
 		}],
 		itemsclick:function(d, i){
 			var id = a.changedata.id;
 			if(!id)return;
 			if(d.lx==1)c.input(0);
 			if(d.lx==0)c.elements();
+			if(d.lx==2)c.clearalldata(id);
 		}
 	});
 });

@@ -13,6 +13,7 @@ class flowModel extends Model
 	public $mtable;
 	public $uname;
 	public $uid		= 0;
+	public $optid	= 0;
 	public $isflow	= 0;
 	
 	protected function flowinit(){}
@@ -32,6 +33,8 @@ class flowModel extends Model
 	protected function flowbillwhere($lx, $uid){return '';}
 	
 	protected $flowweixinarr	= array();
+	protected $flowviewufieds	= 'uid';
+	
 	
 	public function flowrsreplace($rs){return $rs;}
 	
@@ -74,7 +77,9 @@ class flowModel extends Model
 		if(isset($this->rs['uid']))$this->uid = $this->rs['uid'];
 		if(!isset($this->rs['applydt']))$this->rs['applydt'] = '';
 		if(!isset($this->rs['status']))$this->rs['status']	 = 1;
-		if($this->uid==0 && isset($this->rs['optid']))$this->uid = $this->rs['optid'];
+		$uisfield 		= property_exists($this, 'uidfields') ? $this->uidfields : 'optid';
+		if($this->uid==0 && isset($this->rs[$uisfield]))$this->uid = $this->rs[$uisfield];
+		$this->optid 	= isset($this->rs['optid']) ? $this->rs['optid'] : $this->uid;
 		$this->urs 		= $this->db->getone('[Q]admin',$this->uid,'id,name,deptid,deptname,ranking,superid,superpath,superman');
 		if($this->isempt($this->rs['applydt'])&&isset($this->rs['optdt']))$this->rs['applydt']=substr($this->rs['optdt'],0,10);
 		if($this->urs){
@@ -93,7 +98,7 @@ class flowModel extends Model
 			if($this->isflow==1)$this->savebill();
 		}
 		
-		if($ispd && !isajax())$this->isreadqx();
+		if($ispd)$this->isreadqx();
 
 		$this->rssust	= $this->rs;
 		$this->flowchangedata();
@@ -118,7 +123,7 @@ class flowModel extends Model
 		}
 		if(!$bo)$bo = $this->flowisreadqx();
 		if(!$bo){
-			$where 	= $this->viewmodel->viewwhere($this->moders, $this->adminid);
+			$where 	= $this->viewmodel->viewwhere($this->moders, $this->adminid, $this->flowviewufieds);
 			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=true;
 		}
@@ -195,10 +200,10 @@ class flowModel extends Model
 		if(isset($this->rs['content']))$this->rs['content'] = str_replace("\n",'<br>', $this->rs['content']);
 		$subd 			= $this->getsubdata(0);
 		$issubtabs		= $subd['iscz'];
-		
+		$data 			= $this->flowrsreplace($this->rs);
 		if(file_exists($path)){
 			$contview 	 = file_get_contents($path);
-			$contview 	 = $this->rock->reparr($contview, $this->rs);
+			$contview 	 = $this->rock->reparr($contview, $data);
 		}
 		if($this->isempt($contview)){
 			$_fields		 = array();
@@ -208,11 +213,11 @@ class flowModel extends Model
 				$_fields['base_deptname'] 	= '申请人部门';
 			}
 			$fields			 = array_merge($_fields, $this->getfields($lx));
-			if($lx==0)foreach($fields as $k=>$rs){$this->rs[''.$k.'_style'] = 'width:75%';break;}
+			if($lx==0)foreach($fields as $k=>$rs){$data[''.$k.'_style'] = 'width:75%';break;}
 			if($fstr!='')$fields['file_content'] 			= '相关文件';
 			if($issubtabs == 1)$fields[$subd['fields']]		= $subd['name'];
 			if(!isset($fields['optdt']))$fields['optdt']='操作时间';
-			$contview 	= c('html')->createtable($fields, $this->rs);
+			$contview 	= c('html')->createtable($fields, $data);
 			
 			$contview 	= '<div align="center">'.$contview.'</div>';
 		}
@@ -224,7 +229,7 @@ class flowModel extends Model
 		$arr['isflow'] 	 = $this->isflow;
 		$arr['flowinfor']= array();
 		if($this->isflow==1)$arr['flowinfor']= $this->getflowinfor();
-		if(isset($this->rs['title']))$arr['title'] = $this->rs['title'];
+		if(isset($data['title']))$arr['title'] = $data['title'];
 		$_oarr 			 = $this->flowdatalog($arr);
 		if(is_array($_oarr))foreach($_oarr as $k=>$v)$arr[$k]=$v;
 		return $arr;
@@ -327,6 +332,7 @@ class flowModel extends Model
 		foreach($act as $k=>$as1)if($k>0 && $as1[0]==$as1[1])$act[$k][1]='';
 		$sarr['courseact'] 		= $act;
 		$nowstatus				= $this->rs['status'];
+		if($this->isflow==1 && $this->rs['isturn']==0)$nowstatus=3;
 		$sarr['nowstatus']		= $nowstatus;
 		return $sarr;
 	}
@@ -632,13 +638,29 @@ class flowModel extends Model
 	}
 	
 	/**
-		创建单号
+	*	创建编号
+	*/
+	public function createbianhao($num, $fid)
+	{
+		if(isempt($num))$num=''.$this->modenum.'-';
+		@$appdt = $this->rs['applydt'];
+		if(isempt($appdt))$appdt = $this->rock->date;
+		$apdt 	= str_replace('-','', $appdt);
+		$num	= str_replace('Ymd',$apdt,$num);
+		return $this->db->sericnum($num,'[Q]'.$this->mtable.'', $fid,3);
+	}
+	
+	
+	/**
+	*	创建流程单号
 	*/
 	public function createnum()
 	{
 		$num = $this->moders['sericnum'];
 		if($num=='无'||$this->isempt($num))$num='TM-Ymd-';
-		$apdt 	= str_replace('-','',$this->rs['applydt']);
+		@$appdt = $this->rs['applydt'];
+		if(isempt($appdt))$appdt = $this->rock->date;
+		$apdt 	= str_replace('-','', $appdt);
 		$num	= str_replace('Ymd',$apdt,$num);
 		return $this->db->sericnum($num,'[Q]flow_bill');
 	}
@@ -650,7 +672,7 @@ class flowModel extends Model
 		$arr = array(
 			'table' => $this->mtable,
 			'mid' 	=> $this->id,
-			'optdt' => $this->rock->now,
+			'optdt' => isset($this->rs['optdt']) ? $this->rs['optdt'] : $this->rock->now,
 			'optname' 	=> $this->adminname,
 			'optid' 	=> $this->adminid,
 			'modeid'  	=> $this->modeid,
@@ -776,7 +798,7 @@ class flowModel extends Model
 		}else if($zt==2){
 			$bsarr['status'] 	= $zt;
 			$uparr['status'] 	= $zt;
-			$this->nexttodo($this->uid, 'nothrough', $sm, $act[0]);
+			$this->nexttodo($this->optid, 'nothrough', $sm, $act[0]);
 		}
 		$this->flowcheckafter($zt, $sm);
 		
@@ -786,7 +808,7 @@ class flowModel extends Model
 		if(!$this->nowcourse){//没有当前步骤就是结束完成了
 			$uparr['status'] = $zt;
 			$bsarr['status'] = $zt;
-			$this->nexttodo($this->uid, 'finish', $sm);
+			$this->nexttodo($this->optid, 'finish', $sm);
 			$this->flowcheckfinsh($zt);
 		}
 		
@@ -943,21 +965,25 @@ class flowModel extends Model
 					'color'		=> $ors['statuscolor']
 				));
 			}
+			$barrs = array(
+				'cname' 	=> $cname,
+				'sm'    	=> $sm,
+				'cnameid' 	=> $cnameid,
+				'cdate' 	=> $cdate
+			);
 			if($ors['type']==4 && !isempt($ors['fields'])){
 				$fielsa = explode(',', $ors['fields']);
 				$uarrs  = array();
 				foreach($fielsa as $fielsas){
 					$fsdiwe = 'fields_'.$fielsas.'';
-					if(isset($_REQUEST[$fsdiwe]))$uarrs[$fielsas]=$this->rock->post($fsdiwe);
+					if(isset($_REQUEST[$fsdiwe])){
+						$uarrs[$fielsas]=$this->rock->post($fsdiwe);
+						$barrs[$fsdiwe] = $uarrs[$fielsas];
+					}
 				}
 				if($uarrs)$this->update($uarrs, $this->id);
 			}
-			$this->flowoptmenu($ors, array(
-				'cname' 	=> $cname,
-				'sm'    	=> $sm,
-				'cnameid' 	=> $cnameid,
-				'cdate' 	=> $cdate
-			));
+			$this->flowoptmenu($ors, $barrs);
 		}
 		if($msg=='')$msg='ok';
 		return $msg;
@@ -972,6 +998,10 @@ class flowModel extends Model
 		$arr['fields'] 	= '';
 		$arr['order'] 	= '';
 		$nas 			= $this->flowbillwhere($uid, $lx);
+		$inwhere		= '';
+		if(substr($lx,0,5)=='grant'){
+			$inwhere	= $this->viewmodel->viewwhere($this->moders, $this->adminid, $this->flowviewufieds);
+		}
 		$_wehs			= '';
 		if(is_array($nas)){
 			if(isset($nas['where']))$_wehs = $nas['where'];
@@ -981,7 +1011,7 @@ class flowModel extends Model
 		}else{
 			$_wehs	= $nas;
 		}
-		$arr['where'] 	= $_wehs;
+		$arr['where'] 	= $inwhere.' '.$_wehs;
 		return $arr;
 	}
 	

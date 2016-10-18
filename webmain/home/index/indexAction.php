@@ -45,7 +45,8 @@ class indexClassAction extends Action{
 		$msgar[1] = $s1;
 		$arr['msgar']	= $msgar;
 		$arr['total']	= m('totals')->gettotals($uid);
-		$arr['gongarr'] = $this->getgonglist();
+		$arr['gongarr'] 	= $this->getgonglist();
+		$arr['applyarr'] 	= m('flowbill')->homelistshow();
 		$this->returnjson($arr);
 	}
 	

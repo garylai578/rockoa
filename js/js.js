@@ -161,30 +161,6 @@ js.decode=function(str){
 	}catch(e){}
 	return arr;
 }
-js.cropimg=function(aid,at,w,h){
-	var sou='';
-	if(get(aid))sou=get(aid).value;
-	var img=sou;
-	if(!at)at='';
-	if(sou.indexOf('crop')>0){
-		var ext=sou.substr(sou.lastIndexOf('.')+1);
-		var img=sou.substr(0,sou.lastIndexOf('_'))+'.'+ext;
-	}
-	var url='mode/cropimg/cropimg.php?imgsize='+w+'x'+h+'&imgurl='+img+'&thumimg='+sou+'&title='+at+'&aid='+aid+'&callback=js.cropimgcall';
-	js.open(url,750,430);
-	return false;
-}
-js.cropimgcall=function(a, aid){
-	var arr=a.split('|');
-	var sou=arr[0],
-		yan=arr[1];
-	if(sou=='')sou=yan;
-	if(get(aid)){
-		get(aid).value = sou;
-		if(sou=='')sou='images/noface.gif';
-		if(get('view_'+aid+''))get('view_'+aid+'').src=sou;
-	}
-}
 js.move=function(id,event){
 	var _left=0,_top=0;
 	var obj	= id;
@@ -227,9 +203,9 @@ js.upload=function(call,can, glx){
 	var url = 'mode/upload/upload.php?callback='+call+'&upkey='+js.uploadrand+'&p='+PROJECT+'';
 	for(var a in can)url+='&'+a+'='+can[a]+'';
 	if(glx=='url')return url;
-	var s='';
-	js.tanbody('uploadwin','上传文件',400,280,{
-		html:'<div style="height:230px;overflow:hidden"><iframe src="" name="winiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
+	var s='',tit=can.title;if(!tit)tit='上传文件';
+	js.tanbody('uploadwin',tit,450,300,{
+		html:'<div style="height:260px;overflow:hidden"><iframe src="" name="winiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
 	});
 	winiframe.location.href=url;
@@ -486,6 +462,8 @@ js.number=function(obj){
 		obj.value=js.focusval;
 		obj.focus();
 	}else{
+		var min=$(obj).attr('minvalue');if(min && parseFloat(val)<parseFloat(min))val=min;
+		var max=$(obj).attr('maxvalue');if(max && parseFloat(val)>parseFloat(max))val=max;
 		obj.value=val;
 	}
 }
@@ -532,7 +510,9 @@ js.debug	= function(s){
 	if(typeof(console)!='object')return;
 	console.log(s);
 }
-
+js.alert = function(txt,tit,fun){
+	js.confirm(txt, fun, '', tit, 2, '');
+}
 js.confirm	= function(txt,fun, tcls, tis, lx,ostr){
 	if(!lx)lx=0;
 	var h = '<div style="padding:20px;line-height:30px" align="center">';
@@ -545,7 +525,9 @@ js.confirm	= function(txt,fun, tcls, tis, lx,ostr){
 		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
 	}
 	h+='</div>';
-	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp;  &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
+	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a>';
+	if(lx!=2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a>';
+	h+='</div>';
 	h+='<div class="blank10"></div>';
 	if(!tcls)tcls='danger';if(lx==1)tcls='info';
 	if(!tis)tis='<i class="icon-question-sign"></i>&nbsp;系统提示';
@@ -748,5 +730,25 @@ js.filelxext = function(lx){
 	return lx;
 }
 js.datechange=function(o1,lx){
-	$(o1).rockdatepicker({view:lx,initshow:true});
+	if(!lx)lx='date';
+	$(o1).rockdatepicker({'view':lx,'initshow':true});
+	return false;
+}
+js.selectdate=function(o1,inp,lx){
+	if(!lx)lx='date';
+	$(o1).rockdatepicker({'view':lx,'initshow':true,'inputid':inp});
+	return false;
+}
+js.importjs=function(url,fun){
+	var scr = document.createElement('script');
+	scr.src = url;if(!fun)fun=function(){};
+	if(isIE){
+		scr.onreadystatechange = function(){
+			if(this.readyState=='loaded' || this.readyState=='complete'){fun(this);}
+		}
+	}else{
+		scr.onload = function(){fun(this);}
+	}
+	document.getElementsByTagName('head')[0].appendChild(scr);
+	return false;	
 }

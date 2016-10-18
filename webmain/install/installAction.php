@@ -95,11 +95,14 @@ class installClassAction extends ActionNot{
 		}
 		$db->query("delete from `".$perfix."option` where `name` is null");
 		$rand	= $this->rock->jm->getRandkey();
+		$asynkey= md5($this->rock->jm->getRandkey());
 		$txt 	= "<?php
 //系统配置文件		
 return array(
 	'url'		=> '$url',		//系统URL
+	'localurl'	=> '',			//本地系统URL
 	'title'		=> '$title',	//系统默认标题
+	'apptitle'	=> '',			//APP上的标题
 	'db_host'	=> '$host',		//数据库地址
 	'db_user'	=> '$user',		//用户名
 	'db_pass'	=> '$pass',		//密码
@@ -109,6 +112,7 @@ return array(
 	'highpass'	=> '',			//超级管理员密码，可用于登录任何帐号
 	'db_drive'	=> '$dbtype',	//操作数据库驱动
 	'randkey'	=> '$rand',		//这是个随机字符串
+	'asynkey'	=> '$asynkey',	//这是异步任务key
 	'install'	=> true			//已安装，不要去掉啊
 );";
 		$this->rock->createtxt($paths, $txt);

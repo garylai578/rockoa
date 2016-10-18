@@ -20,7 +20,7 @@ $(document).ready(function(){
 		},{
 			text:'元素类型',dataIndex:'fieldstype'
 		},{
-			text:'默认值',dataIndex:'dev'
+			text:'默认值',dataIndex:'dev',editor:true
 		},{
 			text:'排序号',dataIndex:'sort',editor:true,sortable:true
 		},{

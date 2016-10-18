@@ -69,7 +69,7 @@ agentobj.word.initagent = function(){
 			var i,len=a.length,s;
 			s='<table id="wordlisttable" style="width:100%">';
 			s+='<tr>';
-			s+='<td></td><td>名称</td><td>类型</td><td>时间</td><td>大小</td>';
+			s+='<td></td><td>名称</td><td>类型</td><td>创建人</td><td>时间</td><td>大小</td>';
 			s+='</tr>';
 			for(i=0;i<len;i++){
 				s+=c.showlist(a[i]);
@@ -85,15 +85,15 @@ agentobj.word.initagent = function(){
 			var s='';
 			s+='<tr id="'+d.fileext+'_{rand}_'+d.id+'" onclick="agentobj.word.clicksse('+oi+',event,this)" oncontextmenu="agentobj.word.rightsheowa('+oi+',event,this)" ondblclick="agentobj.word.celdblckc('+oi+')">';
 			s1='<div id="filename_{rand}_'+oi+'">'+d.name+'</div>';
-			if(!isempt(d.shate))s1+='<div style="font-size:12px;color:#888888">分享给：'+d.shate+'</div>';
+			if(!isempt(d.shate)&&d.optid==adminid)s1+='<div style="font-size:12px;color:#888888">分享给：'+d.shate+'</div>';
 			
 			if(d.fileext=='folder'){
-				s+='<td align="center" width="30"><img src="images/folder.png" height="24" width="24"></td><td>'+s1+'</td><td>文件夹</td><td>'+d.optdt+'</td><td></td>';
+				s+='<td align="center" width="30"><img src="images/folder.png" height="24" width="24"></td><td>'+s1+'</td><td>文件夹</td><td></td><td>'+d.optdt+'</td><td></td>';
 			}else{
 				
 				var slx = d.fileext;
 				if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
-				s+='<td align="center" width="30"><img src="images/fileicons/'+slx+'.gif" height="16" width="16"></td><td>'+s1+'</td><td>'+d.fileext+'</td><td>'+d.optdt+'</td><td>'+d.filesizecn+'</td>';
+				s+='<td align="center" width="30"><img src="images/fileicons/'+slx+'.gif" height="16" width="16"></td><td>'+s1+'</td><td>'+d.fileext+'</td><td>'+d.optname+'</td><td>'+d.optdt+'</td><td>'+d.filesizecn+'</td>';
 			}
 			s+='</tr>';
 			return s;
@@ -118,15 +118,18 @@ agentobj.word.initagent = function(){
 			if(!this.rightobj)this.rightobj = $.rockmenu({data:[],width:120,itemsclick:function(d){c.clickmenuss(d);}});
 			this.tempoi = oi;
 			this.tempda = d;
-			var a = [{name:(d.fileext=='folder')?'打开':'下载',lx:0},{name:'重命名',lx:1}];
-			if(d.fileext=='folder'){
-				if(this.movedata)a.push({name:'['+this.movedata.name+']移动到这',lx:3});
-			}else{
-				a.push({name:'移动',lx:2});
+			var a = [{name:(d.fileext=='folder')?'打开':'下载',lx:0}];
+			if(d.optid==adminid){
+				a.push({name:'重命名',lx:1});
+				if(d.fileext=='folder'){
+					if(this.movedata)a.push({name:'['+this.movedata.name+']移动到这',lx:3});
+				}else{
+					a.push({name:'移动',lx:2});
+				}
+				a.push({name:'删除',lx:4});
 			}
-			a.push({name:'删除',lx:4});
 			if(d.fileext!='folder'){
-				a.push({name:'分享给...',lx:5});
+				if(d.optid==adminid)a.push({name:'分享给...',lx:5});
 				a.push({name:'转发给...',lx:6});
 			}
 			this.rightobj.setData(a);
@@ -202,15 +205,16 @@ agentobj.word.initagent = function(){
 				js.msg('success','已分享给【'+sna+'】');
 			});
 		},
-		wfenxx:function(){
-			this.getfile(this.typeid,'wfx');
+		wfenxx:function(lx){
+			this.getfile(this.typeid,lx);
 		}
 	};
 	
 	this.clickevent=function(d){
 		if(d.url=='create')c.create();
 		if(d.url=='up')c.up();
-		if(d.url=='shate')c.wfenxx();
+		if(d.url=='shate')c.wfenxx('wfx');
+		if(d.url=='fxgw')c.wfenxx('fxgw');
 	};
 	this.celdblckc=function(oi){
 		c.celdblckc(oi);

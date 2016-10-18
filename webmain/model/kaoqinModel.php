@@ -366,16 +366,49 @@ class kaoqinClassModel extends Model
 	/**
 	*	计算当月请假时间合计
 	*/
-	public function getkqtotal($uid, $month, $lx=0)
+	public function getqjtotal($uid, $month)
 	{
-		$kind	= '请假';
+		$to 	= $this->getkqtotalsss($uid, $month,'请假');
+		return  $to;
+	}
+	
+	/**
+	*	计算当月加班时间合计
+	*/
+	public function getjbtotal($uid, $month)
+	{
+		$to 	= $this->getkqtotalsss($uid, $month,'加班');
+		return  $to;
+	}
+	private function getkqtotalsss($uid, $month, $kind)
+	{
 		$ors  	= $this->db->getmou('[Q]kqinfo','sum(totals)as totals',"`status`=1 and `uid`=$uid and `stime` like '$month%' and `kind`='$kind'");
 		$to 	= 0;
 		if($ors)$to = $ors['totals'];
 		return  $to;
 	}
 	
-	
+	/**
+	*	统计当前我考勤异常的状态
+	*/
+	public function getkqtotal($uid, $month)
+	{
+		$sql 	= "SELECT state,count(1)stotal FROM `[Q]kqanay` where `uid`=$uid and `dt` like '$month%' and `iswork`=1 and `states` is null GROUP BY `state`";
+		$rows 	= $this->db->getall($sql);
+		$chidao	= $zaotui = $weidk = 0;
+		foreach($rows as $k=>$rs){
+			if($rs['state']=='迟到')$chidao = $rs['stotal'];
+			if($rs['state']=='早退')$zaotui = $rs['stotal'];
+			if($rs['state']=='未打卡')$weidk= $rs['stotal'];
+		}
+		return array(
+			'chidao' 	=> $chidao,
+			'zaotui' 	=> $zaotui,
+			'weidk' 	=> $weidk,
+			'jiaban' 	=> $this->getjbtotal($uid, $month),
+			'leave' 	=> $this->getqjtotal($uid, $month),
+		);
+	}
 	
 	/**
 	*	获取默认某天应该上班时间段

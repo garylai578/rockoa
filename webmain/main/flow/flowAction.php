@@ -317,7 +317,7 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 			$zt 	= '';
 			if(isset($rs['status']))$zt = $rs['status'];
 			$narr['id'] 		= $rs['id'];
-			$narr['optname'] 	= $rs['optname'];
+			$narr['optname'] 	= @$rs['optname'];
 			$narr['modenum'] 	= $this->moders['num'];
 			$narr['modename'] 	= $this->moders['name'];
 			$narr['optdt'] 		= $rs['optdt'];
@@ -336,10 +336,10 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$this->modeid 	= (int)$this->post('modeid');
 		$mid 			= (int)$this->post('mid');
 		$this->moders 	= m('flow_set')->getone($this->modeid);
-		if(!$this->moders)exit('sorry!');
-		
-		$msg	= m('flow')->opt('deletebill', $this->moders['num'], $mid);
-		echo $msg;
+		if(!$this->moders)backmsg('sorry!');
+		$msg	= m('flow')->deletebill($this->moders['num'], $mid);
+		if($msg=='ok')$msg='';
+		backmsg($msg);
 	}
 	
 	//保存字段判断

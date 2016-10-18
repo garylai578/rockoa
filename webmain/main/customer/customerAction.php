@@ -1,59 +1,86 @@
 <?php
 class customerClassAction extends Action
 {
-	public function customerbefore($table)
+	public function custtotalbefore($table)
 	{
-		$lx 	= $this->post('atype');
-		$key 	= $this->post('key');
-		$zt 	= $this->post('zt');
+		$where 	= '';
 		$uid 	= $this->adminid;
-		$where	= 'and uid='.$uid.'';
+		$lx		= $this->post('atype');
+		$month	= $this->month = $this->post('month',date('Y-m'));
+		$key	= $this->post('key');
 		if($lx=='my'){
-			
+			$where=' and `id`='.$uid.'';
 		}
-		if($lx=='shatemy'){
-			$s		= $this->rock->dbinstr('shateid', $uid);
-			$where  ='and '.$s.'';
+		if($lx=='down'){
+			$s 		= m('admin')->getdownwheres('id', $uid, 1);
+			$where 	=' and ('.$s.' or `id`='.$uid.')';
 		}
-		if($zt!='')$where.=" and status='$zt'";
-		if(!isempt($key))$where.=" and (`name` like '%$key%' or `unitname` like '%$key%')";
-
+		if($key!=''){
+			$where .= " and (`name` like '%$key%' or `user` like '%$key%' or `ranking` like '%$key%' or `deptallname` like '%$key%') ";
+		}
 		return array(
-			'where' => $where,
-			'fields'=> 'id,name,status,laiyuan,isgys,optname,unitname,shate,tel',
-			'order' => 'status desc,optdt desc'
+			'fields'=> 'id,name,deptname',
+			'where'	=> $where,
 		);
 	}
 	
-	public function custsalebefore($table)
+	public function custtotalafter($table,$rows)
 	{
-		$lx 	= $this->post('atype');
-		$key 	= $this->post('key');
-		$zt 	= $this->post('zt');
-		$uid 	= $this->adminid;
-		$where	= 'and uid='.$uid.'';
-		
-		if($lx=='my'){
-			
-		}
-		if($zt!='')$where.=" and `state`='$zt'";
-		if(!isempt($key))$where.=" and (`custname` like '%$key%')";
-
-		return array(
-			'where' => $where,
-			'fields'=> 'id,custname,laiyuan,optname,state,money,optdt,createname,`explain`',
-			'order' => 'optdt desc'
-		);
-	}
-	
-	public function custsaleafter($table, $rows)
-	{
-		$flow = m('flow:custsale');
+		$crm = m('crm');
 		foreach($rows as $k=>$rs){
-			$zt = $flow->statearr[$rs['state']];
-			$rows[$k]['state'] = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+			$rows[$k]['month'] = $this->month;
+			$toarr 	= $crm->moneytotal($rs['id'], $this->month);
+			
+			foreach($toarr as $f=>$v){
+				if($v==0)$v='';
+				$rows[$k][$f] = $v;
+			}
 		}
-		return array('rows'=>$rows);
+		return array(
+			'rows' => $rows
+		);
 	}
 	
+	public function custtotalgebefore($table)
+	{
+		return 'and 1=2';
+	}
+	
+	public function custtotalgeafter($t, $rows)
+	{
+		$rows 		 = array();
+		$crm 		 = m('crm');
+		$dtobj		 = c('date');
+		$uid		 = $this->post('uid', $this->adminid);
+		$urs 		 = m('admin')->getone($uid, 'name,deptname');
+		$start		 = $this->post('startdt', date('Y-01'));
+		$end		 = $this->post('enddt', date('Y-m'));
+		$jgm 		 = $dtobj->datediff('m', $start.'-01', $end.'-01');
+		for($i=0; $i<=$jgm; $i++){
+			$month 	= $dtobj->adddate($end.'-01', 'm', 0-$i, 'Y-m');
+			$arr['month'] 	= $month;
+			$arr['name'] 	= $urs['name'];
+			$arr['deptname']= $urs['deptname'];
+			
+			$toarr 	= $crm->moneytotal($uid, $month);
+			foreach($toarr as $f=>$v){
+				if($v==0)$v='';
+				$arr[$f] = $v;
+			}
+			$rows[]	= $arr;
+		}
+		
+		$barr['rows'] 		= $rows;
+		$barr['totalCount'] = count($rows);
+		return $barr;
+	}
+	
+	//客户转移
+	public function movecustAjax()
+	{
+		$sid 	= $this->post('sid');
+		$toid 	= $this->post('toid');
+		if($sid==''||$sid=='')return;
+		m('crm')->movetouser($this->adminid, $sid, $toid);
+	}
 }

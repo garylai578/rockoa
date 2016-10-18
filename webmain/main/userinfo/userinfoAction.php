@@ -32,25 +32,11 @@ class userinfoClassAction extends Action
 		return array('rows'=>$rows);
 	}
 	
-	public function userinfobeforeabc($table)
-	{
-		$s 		= '';
-		$key 	= $this->post('key');
-		if($key!=''){
-			$s = " and (`name` like '%$key%' or `ranking` like '%$key%' or `deptname` like '%$key%') ";
-		}
-		return array(
-			'where'	=> $s,
-			'fields'=> 'id,name,deptname,ranking,state,tel,sex,mobile,workdate,quitdt'
-		);
-	}
+
+
 	
-	public function userinfoafterabc($table, $rows)
+	public function userinfobeforegeren()
 	{
-		$statearr = m('flow:userinfo')->statearr;
-		foreach($rows as $k=>$rs){
-			$rows[$k]['state'] = $statearr[$rs['state']];
-		}
-		return array('rows'=>$rows);
+		return ' and id='.$this->adminid.'';
 	}
 }

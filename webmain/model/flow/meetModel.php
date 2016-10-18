@@ -6,6 +6,14 @@ class flow_meetClassModel extends flowModel
 	{
 		$this->hyarra 	= array('正常','会议中','结束','取消');
 		$this->hyarrb 	= array('green','blue','#ff6600','#888888');
+		$this->dbobj	= c('date');
+	}
+	
+	public function flowrsreplace($rs)
+	{
+		$rs['week']  = $this->dbobj->cnweek($rs['startdt']);
+		$rs['state'] = $this->getstatezt($rs['state']);
+		return $rs;
 	}
 	
 	public function getstatezt($zt)
@@ -29,5 +37,40 @@ class flow_meetClassModel extends flowModel
 		if($actname == '结束会议'){
 			$this->update('`state`=2', $this->id);
 		}
+	}
+	
+	
+	protected function flowbillwhere($uid, $lx)
+	{
+		$dt 	= $this->rock->post('dt');
+		$key 	= $this->rock->post('key');
+		
+		$where	= 'and 1=2';
+		if($lx=='my' || $lx=='mybz' || $lx=='myall'){
+			$where	= m('admin')->getjoinstr('joinid', $uid);
+		}
+		if($lx=='my'){
+			$where.=" and startdt like '{$this->rock->date}%'";
+		}
+		
+		if($lx=='mybz'){
+			$listdt	= c('date')->getweekfirst($this->rock->date);
+			$where.=" and startdt >='$listdt'";
+		}
+		
+		if($lx=='myfq'){
+			$where =" and optid='$uid'";
+		}
+		
+		m($this->mtable)->update('state=2',"`state`=0 and `enddt`<'{$this->rock->now}'");
+
+		if($dt!='')$where.=" and startdt like '$dt%'";
+		if(!isempt($key))$where.=" and (`joinname` like '%$key%' or `title` like '%$key%')";
+		
+		
+		return array(
+			'where' => "and type=0 and `status`=1 $where",
+			'order' => 'startdt desc'
+		);
 	}
 }

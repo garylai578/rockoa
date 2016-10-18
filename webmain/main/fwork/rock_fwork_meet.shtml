@@ -4,7 +4,6 @@ $(document).ready(function(){
 	var atype=params.atype;
 	var a = $('#view_{rand}').bootstable({
 		tablename:'meet',modenum:'meet',modename:'会议',params:{'atype':atype},fanye:true,
-		modedir:'{mode}:{dir}',storeafteraction:'meetafter',storebeforeaction:'meetbefore',
 		columns:[{
 			text:'',dataIndex:'caozuo'
 		},{

@@ -10,6 +10,19 @@ function publicsave(mo, dos,oans){
 	if(!dos)dos='';
 	return js.getajaxurl('publicsave',mo,dos,oans);
 }
+function editfacechang(xid,nems){
+	js.upload('_editfacechangback',{maxup:'1',thumbnail:'150x150','title':'修改['+nems+']的头像',uptype:'image','params1':xid});	
+}
+function _editfacechangback(a,xid){
+	var f = a[0];
+	var nf= f.thumbpath+'?'+Math.random()+'';
+	if(xid==adminid)get('myface').src=nf;
+	if(get('faceviewabc_'+xid+''))get('faceviewabc_'+xid+'').src=nf;
+	js.msg('wait','头像修改中...');
+	js.ajax(js.getajaxurl('editface','admin','system'),{fid:f.id,'uid':xid},function(){
+		js.msg('success','修改成功,如没显示最新头像，请清除浏览器缓存');
+	});
+}
 function initbody(){
 	objcont = $('#content_allmainview');
 	objtabs = $('#tabs_title');
@@ -35,11 +48,21 @@ function initbody(){
 		},{
 			name:'<i class="icon-bell"></i> 提醒信息',num:'todo',url:'system,geren,todo',names:'提醒信息'
 		},{
+			name:'<i class="icon-picture"></i> 修改头像',num:'face'
+		},{
 			name:'<i class="icon-user"></i> 帐号('+adminuser+')',num:'user'
+		},{
+			name:'<i class="icon-signout"></i> 退出',num:'exit'
 		}],
 		itemsclick:function(d){
 			if(d.num=='exit'){
-				js.location('?m=login&a=exit');
+				js.confirm('确定要退出系统吗？',function(bn){
+					if(bn=='yes')js.location('?m=login&a=exit');
+				});
+				return;
+			}
+			if(d.num=='face'){
+				editfacechang(adminid, adminname);
 				return;
 			}
 			if(d.num=='user')return;
@@ -55,12 +78,6 @@ function initbody(){
 		$('#indexmenu').show();
 		$('#indexmenuss').hide();
 		resizewh();
-	});
-	$('#guestbook_wd').addClass('bounce animated');
-	$('#indexexit').click(function(){
-		js.confirm('确定要退出系统吗？',function(bn){
-			if(bn=='yes')js.location('?m=login&a=exit');
-		});
 	});
 	$('body').keydown(function(e){
 		var code	= e.keyCode;
@@ -401,8 +418,12 @@ function optmenuclass(o1,num,id,obj,mname,oi){
 	};
 	this.loadoptnum=function(){
 		js.ajax(js.getajaxurl('getoptnum','flowopt','flow'),{num:this.modenum,mid:this.id},function(ret){
-			optmenudatas[''+me.modenum+'_'+me.id+''] = ret.data;
-			me._init();
+			if(ret.code == 200){
+				optmenudatas[''+me.modenum+'_'+me.id+''] = ret.data;
+				me._init();
+			}else{
+				js.msg('msg',ret.msg);
+			}
 		},'get,json');
 	};
 	this._init();

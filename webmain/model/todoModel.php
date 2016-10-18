@@ -6,6 +6,7 @@ class todoClassModel extends Model
 	*/
 	public function add($uid, $title, $mess, $arrs=array())
 	{
+		if(isempt($uid))return false;
 		$arr['title']	= $title;
 		$arr['mess']	= $mess;
 		$arr['status']	= '0';

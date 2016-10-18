@@ -51,7 +51,7 @@ class adminClassModel extends Model
 		return $bo;
 	}
 	
-	public function getjoinstr($fids, $us, $lx=0)
+	public function getjoinstr($fids, $us, $lx=0, $slx=0)
 	{
 		$s 		= '';
 		if(is_numeric($us)){
@@ -63,7 +63,7 @@ class adminClassModel extends Model
 		$uid	= $us['id'];
 		$key 	= 'a'.$fids.''.$uid.'_'.$lx.'';
 		if(isset($this->_getjoinstr[$key]))return $this->_getjoinstr[$key];
-		$tj[]	= "ifnull($fids,'')=''";
+		if($slx==0)$tj[]	= "ifnull($fids,'')=''";
 		$tj[]	= $this->rock->dbinstr($fids, 'all');
 		$tj[]	= $this->rock->dbinstr($fids, 'u'.$uid);
 		if($us){
@@ -77,6 +77,11 @@ class adminClassModel extends Model
 		if($s != '' && $lx==0)$s = ' and ('.$s.')';
 		$this->_getjoinstr[$key] = $s;
 		return $s;
+	}
+	
+	public function getjoinstrs($fids, $us, $slx=0, $lx=0)
+	{
+		return $this->getjoinstr($fids, $us, $lx, $slx);
 	}
 	
 	/**
@@ -95,6 +100,7 @@ class adminClassModel extends Model
 	public function getpath($did, $sup)
 	{
 		$deptpath 	= $this->db->getpval('[Q]dept', 'pid', 'id', $did, '],[');
+		$deptallname= $this->db->getpval('[Q]dept', 'pid', 'name', $did, '/');
 		$deptname	= $this->db->getmou('[Q]dept', 'name', "`id`='$did'");
 		$supername	= '';
 		
@@ -114,6 +120,7 @@ class adminClassModel extends Model
 		$rows['superpath'] 	= $superpath;
 		$rows['deptname'] 	= $deptname;
 		$rows['superman'] 	= $supername;
+		$rows['deptallname']= $deptallname;
 		
 		return $rows;
 	}
@@ -121,6 +128,7 @@ class adminClassModel extends Model
 	/**
 	*	获取下级人员id
 	*	$lx 0 全部下级，1直属下级
+	*	return 所有人员ID
 	*/
 	public function getdown($uid, $lx=0)
 	{
@@ -148,6 +156,7 @@ class adminClassModel extends Model
 		return $where;
 	}
 	
+	//返回我下属字符串条件
 	public function getdownwheres($fid, $uid, $lx=0)
 	{
 		$bstr = $this->getdown($uid, $lx);
@@ -157,6 +166,8 @@ class adminClassModel extends Model
 		$where= "instr('$bstr', concat(',',$fid,','))>0";
 		return $where;
 	}
+	
+	
 	
 	
 	/**
@@ -232,7 +243,7 @@ class adminClassModel extends Model
 	
 	public function getuser($lx=0)
 	{
-		$rows = $this->getall("`status`=1",'id,name,deptid,deptname,ranking,tel,face,sex,email','sort,name');
+		$rows = $this->getall("`status`=1",'id,name,deptid,deptname,deptallname,ranking,tel,face,sex,email','sort,name');
 		$py   = c('pingyin');
 		foreach($rows as $k=>$rs){
 			$rows[$k]['face'] = $this->getface($rs['face']);
@@ -281,12 +292,12 @@ class adminClassModel extends Model
 	*/
 	public function updateinfo()
 	{
-		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,superman from `[Q]admin` where id>0 order by `sort`");
+		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman from `[Q]admin` where id>0 order by `sort`");
 		$total	= $this->db->count;
 		$cl		= 0;
 		foreach($rows as $k=>$rs){
 			$nrs	= $this->getpath($rs['deptid'], $rs['superid']);
-			if($nrs['deptpath'] != $rs['deptpath'] || $nrs['deptname'] != $rs['deptname'] || $nrs['superpath'] != $rs['superpath'] || $nrs['superman'] != $rs['superman']){
+			if($nrs['deptpath'] != $rs['deptpath'] || $nrs['deptname'] != $rs['deptname'] || $nrs['superpath'] != $rs['superpath'] || $nrs['superman'] != $rs['superman'] || $nrs['deptallname'] != $rs['deptallname']){
 				$this->record($nrs, "`id`='".$rs['id']."'");
 				$cl++;
 			}
@@ -318,5 +329,36 @@ class adminClassModel extends Model
 				$db->update($uparr, $rs['ids']);
 			}
 		}
+	}
+	
+	//返回这个月份人员
+	public function monthuwhere($month)
+	{
+		$month	= substr($month, 0, 7);
+		$start	= ''.$month.'-01';
+		$enddt	= c('date')->getenddt($month);
+		$s 		= $this->monthuwheres($start, $enddt);
+		return $s;
+	}
+	public function monthuwheres($start, $enddt)
+	{
+		$s 		= " and (`quitdt` is null or `quitdt`>='$start') and (`workdate` is null or `workdate`<='$enddt')";
+		return $s;
+	}
+	
+	public function changeface($uid, $fid)
+	{
+		$frs 	= m('file')->getone($fid);
+		if(!$frs)return false;
+		$path 	= $frs['thumbpath'];
+		if(isempt($path))$path = $frs['filepath'];
+		$face	= $path;
+		if(file_exists($path)){
+			$face = 'upload/face/'.$uid.'.jpg';
+			c('image')->conver($path, $face);
+			$this->update("face='$face'", $uid);
+		}
+		m('file')->delfile($fid);
+		return $face;
 	}
 }

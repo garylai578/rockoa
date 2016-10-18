@@ -46,6 +46,7 @@ $(document).ready(function(){
 			openinput('物品产品','goods', id, 'goodsrocks');
 		},
 		piliang:function(){
+			goodsmanagesss=a;
 			addtabs({num:'goodspladd',url:'main,goods,pladd',icons:'plus',name:'批量添加物品产品'});
 		},
 		rukuchu:function(o1, lx){
@@ -67,7 +68,9 @@ $(document).ready(function(){
 <table width="100%"><tr>
 	<td nowrap>
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
-		<!-- &nbsp; <button class="btn btn-primary" click="clickwin,0" type="button">批量添加</button>-->
+	</td>
+	<td  style="padding-left:10px">
+		<button class="btn btn-primary" click="piliang" type="button">批量添加</button>
 	</td>
 	<td  style="padding-left:10px">
 		<div class="input-group" style="width:250px">
@@ -77,13 +80,12 @@ $(document).ready(function(){
 			</span>
 		</div>
 	</td>
-	<td width="200" nowrap style="padding-left:10px">
+	<td  width="80%" style="padding-left:10px">
 		<div class="btn-group">
 		<button class="btn btn-default" click="rukuchu,0" type="button">入库操作</button>
 		<button class="btn btn-default" click="rukuchu,1" type="button">出库操作</button>
 		</div>
 	</td>
-	<td width="80%"></td>
 	<td align="right" nowrap>
 		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>

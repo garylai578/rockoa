@@ -113,7 +113,12 @@ abstract class mysql{
 		$this->sqlarr[]	= $sql;
 		$this->nowsql	= $sql;
 		$this->count 	= 0;
-		$rsbool			= $this->querysql($sql);
+		try {
+			$rsbool		= $this->querysql($sql);
+		} catch (Exception $e) {
+			$rsbool		= false;
+			$this->errormsg = $e->getMessage();
+		}
 		$this->nowerror	= false;
 		if(!$rsbool)$this->nowerror = true;
 		if(!$rsbool && DEBUG && $ebo){
@@ -511,7 +516,11 @@ abstract class mysql{
 	*/	
 	public function getallfields($table)
 	{
-		return array();
+		$finfo 	= $this->gettablefields($table);
+		foreach ($finfo as $val) {
+			$arr[] = $val['name'];
+		}
+		return $arr;
 	}
 	
 	public function getfields($table)
@@ -650,5 +659,19 @@ abstract class mysql{
 			$pid	= $rsa[$pfields];
 			if($pid!=$afid)if($this->rows($table,"`$afield`='$pid'")>0)$this->getpvala($table,$pfields,$jfield,$pid,$afield,$maxlen);
 		}
+	}
+}
+class DB{
+	
+	public static $tablename;
+	
+	public static function table($tab)
+	{
+		self::$tablename = ''.getconfig('.perfix.').$tab.'';
+	}
+	
+	public static function where($f, $v)
+	{
+		
 	}
 }

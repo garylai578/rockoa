@@ -1,5 +1,6 @@
 <script >
 $(document).ready(function(){
+	var istongbu=false;
 	var a = $('#view_{rand}').bootstable({
 		tablename:'chargems',url:js.getajaxurl('data','{mode}','{dir}'),
 		columns:[{
@@ -23,10 +24,14 @@ $(document).ready(function(){
 				if(v==2)s='<button onclick="upsho{rand}(2,'+d.id+',\''+d.key+'\')" class="btn btn-danger btn-sm" type="button">升级</button>';
 				if(v==0)s='<button onclick="upsho{rand}(0,'+d.id+',\''+d.key+'\')" class="btn btn-info btn-sm"  type="button">安装</button>';
 				if(v==0||v==2)$('#shiw_{rand}').html('有系统模块需要升级/安装！');
+				if(d.id==1&& v==1){
+					istongbu=true;
+				}
 				return '<span id="msg'+d.id+'_{rand}">'+s+'</span>';
 			}
 		}],
 		beforeload:function(){
+			istongbu=false;
 			$('#shiw_{rand}').html('');
 		}
 	});
@@ -61,14 +66,24 @@ $(document).ready(function(){
 		c.upshos(lx,id,kes);
 	}
 	js.initbtn(c);
+	
+	upfetwontbu=function(lx, o){
+		js.confirm('谨慎啊，确定要同步嘛？同步了将覆盖你原先配置好的流程哦！',function(jg){
+			if(jg=='yes')js.msg('msg','还未开放哦');
+		});
+	}
 });
 </script>
 <div>
-	<button class="btn btn-default" click="reloads"  type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp; 
+	<button class="btn btn-default" click="reloads"  type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp;  
 	<font color="red" id="shiw_{rand}"></font>
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="blank10"></div>
+<div>1、同步菜单，系统上操作菜单会和官网同步。<a onclick="upfetwontbu(0,this)" href="javascript:;">[同步]</a></div>
+<div>2、同步流程模块，流程模块会和官网同步。<a onclick="upfetwontbu(1,this)" href="javascript:;">[同步]</a></div>
+<div>3、同步应用，流程模块会和官网同步。<a onclick="upfetwontbu(2,this)" href="javascript:;">[同步]</a></div>
 <div class="blank10"></div>
 <div style="font-size:16px;line-height:35px">
 更多升级方法：<br>

@@ -9,7 +9,7 @@ class beifenClassAction extends Action
 		if($myext!='-1'){
 			echo '只有管理员才可以用';
 		}else{
-			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,items,log,logintoken,meet,reads,sjoin,work,todo,flow_bill,goodss,goods,customer,custsale,kqanay,kqdkjl,kqinfo,location,official,schedule,project,wx_agent,wx_chat,wx_dept,wx_user');
+			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,items,log,logintoken,meet,reads,sjoin,work,todo,flow_bill,goodss,goods,kqanay,kqdkjl,kqinfo,location,official,schedule,project,wx_agent,wx_chat,wx_dept,wx_user,userinfo,userract,hrpositive,hrredund,hrsalary,customer,custsale,custract,custfina');
 			$alltabls 	= $this->db->getalltable();
 			foreach($tables as $tabs){
 				$_tabs 	= ''.PREFIX.''.$tabs.'';

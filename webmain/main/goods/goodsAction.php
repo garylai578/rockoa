@@ -108,4 +108,57 @@ class goodsClassAction extends Action
 		if($aid!='0')m('goods')->setstock($aid);
 		echo 'success';
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public function addplgoodsAjax()
+	{
+		$rows  	= c('html')->importdata('name,typeid,price,unit,guige,xinghao','name,typeid');
+		$oi 	= 0;
+		$db 	= m('goods');
+		foreach($rows as $k=>$rs){
+			$rs['typeid'] 	= $this->gettypeid($rs['typeid']);
+			$odi 			= $db->rows("`typeid`=".$rs['typeid']." and `name`='".$rs['name']."'");
+			if($odi>0)continue;
+			$rs['price']	= floatval($rs['price']);
+			$rows[$k]		= $rs;
+			$rs['adddt']	= $this->now;
+			$rs['optdt']	= $this->now;
+			$rs['optid']	= $this->adminid;
+			$rs['optname']	= $this->adminname;
+			$db->insert($rs);
+			$oi++;
+		}
+		backmsg('','成功导入'.$oi.'条数据');
+	}
+	private	$getypsarr = array();
+	private function gettypeid($s)
+	{
+		if(isset($this->getypsarr[$s]))return $this->getypsarr[$s];
+		$sid = 0;
+		$s 	 = str_replace(',','/', $s);
+		$djid= $this->option->getval('goodstype','0',2);
+		$dsja= $djid;
+		$sarr= explode('/', $s);
+		foreach($sarr as $safs){
+			$pid 	= $djid;
+			$djid 	= (int)$this->option->getmou('id',"`pid`='$pid' and `name`='$safs'");
+			if($djid==0){
+				$djid = $this->option->insert(array(
+					'name' => $safs,
+					'pid'  => $pid,
+					'valid'  => 1,
+				));
+			}
+		}
+		if($djid != $dsja)$sid 	= $djid;
+		$this->getypsarr[$s] 	= $sid;
+		return $sid;
+	}
 }

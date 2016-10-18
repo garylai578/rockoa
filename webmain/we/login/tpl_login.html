@@ -71,6 +71,8 @@ function loginsubmit(lx){
 function loginsuccess(d){
 	js.setoption('adminface', d.face);
 	js.setoption('adminame',d.name);
+	js.setoption('deptallname',d.deptallname);
+	js.setoption('ranking',d.ranking);
 	js.setoption('adminid',d.uid);
 	if(js.request('ltype')=='1'){
 		history.back();

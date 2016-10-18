@@ -18,21 +18,26 @@ class loginClassAction extends ActionNot{
 		$jmpass	= $this->post('jmpass');
 		if($jmpass == 'true')$pass=$this->jm->uncrypt($pass);
 		$arr 	= m('login')->start($user, $pass, 'pc');
+		$barr 	= array();
 		if(is_array($arr)){
 			$uid 	= $arr['uid'];
 			$name 	= $arr['name'];
 			$user 	= $arr['user'];
 			$token 	= $arr['token'];
+			$face 	= $arr['face'];
 			m('login')->setsession($uid, $name, $token, $user);
 			$this->rock->savecookie('ca_adminuser', $user);
 			$this->rock->savecookie('ca_rempass', $rempass);
 			$ca_adminpass	= $this->jm->encrypt($pass);
 			if($rempass=='0')$ca_adminpass='';
 			$this->rock->savecookie('ca_adminpass', $ca_adminpass);
-			echo 'success';
+			$barr['success'] = true;
+			$barr['face']  	 = $face;
 		}else{
-			echo $arr;
+			$barr['success'] = false;
+			$barr['msg'] 	 = $arr;
 		}
+		$this->returnjson($barr);
 	}
 	
 	public function exitAction()

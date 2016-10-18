@@ -770,7 +770,9 @@ class reimClassModel extends Model
 	{
 		$runurl	= getconfig('localurl');
 		if($runurl=='')$runurl = URL;
-		$runurl .= 'api.php?m='.$m.'&a='.$a.'&adminid='.$this->adminid.'';
+		$key 	 = getconfig('asynkey');
+		if($key!='')$key = md5(md5($key));
+		$runurl .= 'api.php?m='.$m.'&a='.$a.'&adminid='.$this->adminid.'&asynkey='.$key.'';
 		if(is_array($can))foreach($can as $k=>$v)$runurl.='&'.$k.'='.$v.'';
 		return $this->pushserver('runurl', array(
 			'url' => $runurl,
@@ -985,7 +987,7 @@ class reimClassModel extends Model
 	
 	
 	
-	//
+	//微信消息回调
 	public function getwxchat($arr)
 	{
 		$this->rock->debugs(json_encode($arr),'cccc');if(!isset($arr['MsgType']))return;
@@ -996,6 +998,8 @@ class reimClassModel extends Model
 		if(!$urs)return;
 		$sendid			= $urs['id'];
 		$sendname		= $urs['name'];
+		$this->adminid	= $sendid;
+		$this->adminname= $sendname;
 		if($MsgType == 'event'){
 			$event	= $arr['Event'];
 			if($event=='create_chat')m('weixin:chat')->addchat($sendid, $sendname,$arr);
@@ -1034,6 +1038,11 @@ class reimClassModel extends Model
 		}
 		if($MsgType=='image'){
 			$cont = '[图片]';
+			$PicUrl = $this->rock->jm->encrypt($arr['PicUrl']);
+			$this->asynurl('asynrun','downwxpic', array(
+				'picurl' 	=> $PicUrl,
+				'msgid' 	=> $msgid,
+			));
 		}
 		if($MsgType=='link'){
 			if(isempt($arr['Title']))$arr['Title']='链接';
@@ -1044,5 +1053,23 @@ class reimClassModel extends Model
 			'optdt' => $optdt,
 			'msgid' => $msgid
 		));
+	}
+	
+	//下载微信上图片
+	public function downwximg($url, $msgid)
+	{
+		if($url=='' || $msgid=='')return;
+		$cont	= c('curl')->getcurl($url);
+		$barr 	= c('down')->createimage($cont,'jpg','微信图片');
+		if($barr){
+			$fileid 	= $barr['id'];
+			$filesize 	= $barr['filesizecn'];
+			$mors 		= $this->getone("`msgid`='$msgid'",'id');
+			if($mors){
+				$id = $mors['id'];
+				$this->update(array('fileid' => $fileid), $id);
+				m('file')->addfile($fileid, 'im_mess', $id);
+			}
+		}
 	}
 }

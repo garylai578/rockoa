@@ -2,6 +2,7 @@
 class inputAction extends ActionNot
 {
 	public $mid = 0;
+	public $flow;
 	
 	public function initAction()
 	{
@@ -29,8 +30,8 @@ class inputAction extends ActionNot
 		$id				= (int)$this->request('id');
 		$modenum		= $this->request('modenum');
 		$uid			= $this->adminid;
-		$this->moders 	= m('flow_set')->getone("`num`='$modenum'",'`num`,`name`,`id`,`table`,`tables`,`isflow`');
-		if(!$this->moders)$this->backmsg('流程模块不存在');
+		$this->flow		= m('flow')->initflow($modenum);
+		$this->moders	= $this->flow->moders;
 		$modeid			= $this->moders['id'];
 		$isflow			= $this->moders['isflow'];
 		$flownum		= $this->moders['num'];
@@ -73,6 +74,10 @@ class inputAction extends ActionNot
 					$farrs[$fid] = array('name' => $rs['name'].'id');
 				}
 			}
+			if($rs['fieldstype']=='num'){
+				$fid = $rs['fields'];
+				if($this->flow->rows("`$fid`='{$uaarr[$fid]}' and `id`<>$id")>0)$uaarr[$fid]=$this->flow->createbianhao($rs['data'], $fid);
+			}
 		}
 		
 		
@@ -110,10 +115,12 @@ class inputAction extends ActionNot
 		m('file')->addfile($this->post('fileid'), $table, $id);
 		
 		$this->savesubtable($id,'0', $addbo);//保存子表
-		
+
 		$this->saveafter($table,$uaarr, $id, $addbo);
 		$msg 	= '';
-		m('flow')->submit($modenum, $id, $subna);
+		$this->flow->loaddata($id, false);
+		$this->flow->submit($subna);
+		
 		$this->backmsg('', $msg, $id);
 	}
 	
@@ -231,9 +238,15 @@ class inputAction extends ActionNot
 		$num		= $this->jm->gettoken('num');
 		$mid		= (int)$this->jm->gettoken('mid');
 		$this->mid  = $mid;
-		$moders 	= m('flow_set')->getone("`num`='$num'",'`id`,`num`,`name`,`names`,`table`,`isflow`');
-		if(!$moders)exit('流程不存在!');
-		$this->smartydata['moders']	= $moders;
+		$this->flow = m('flow')->initflow($num);
+		$moders		= $this->flow->moders;
+		$this->smartydata['moders']	= array(
+			'num' 	=> $moders['num'],
+			'id' 	=> $moders['id'],
+			'name' 	=> $moders['name'],
+			'names' => $moders['names'],
+			'isflow'=> $moders['isflow'],
+		);
 		$modeid 	= $moders['id'];
 		if($mid==0){
 			$isadd = m('view')->isadd($modeid, $uid);
@@ -252,7 +265,7 @@ class inputAction extends ActionNot
 				$rs['value'] = $oldrs[$rs['fields']];
 			}
 			$this->fieldarr[$rs['fields']] = $rs;
-			if($rs['islu'])$modelu.='{'.$rs['fields'].'}';
+			if($rs['islu'] || $stwhe!='')$modelu.='{'.$rs['fields'].'}';
 		}
 		$this->smartydata['fieldsjson']	= json_encode($fieldarr);
 		$this->moders	= $moders;
@@ -347,10 +360,10 @@ class inputAction extends ActionNot
 		$str = $val ='';
 		if(isset($fida[1]))$xu0=$fida[1];
 		if($fid=='base_name'){
-			$str = '<input class="inputs" style="border:none" name="base_name" value="'.$this->adminname.'" readonly>';
+			$str = '<input class="inputs" style="border:none;background:none" name="base_name" value="'.$this->adminname.'" readonly>';
 		}
 		if($fid=='base_deptname'){
-			$str = '<input class="inputs" style="border:none" name="base_deptname" value="'.$this->urs['deptname'].'" readonly>';
+			$str = '<input class="inputs" style="border:none;background:none" name="base_deptname" value="'.$this->urs['deptname'].'" readonly>';
 		}
 		if($fid=='file_content'){
 			$str = '<input name="fileid" type="hidden" id="fileidview-inputEl"><div id="view_fileidview" style="width:97%;height:80px;border:1px #cccccc solid; background:white;overflow:auto"></div><div id="fileupaddbtn"><a href="javascript:;" class="blue" onclick="c.upload()"><u>＋添加文件</u></a></div>';
@@ -376,7 +389,14 @@ class inputAction extends ActionNot
 		if($a['isbt']==1)$fnams='*'.$fnams.'';
 		if($this->isempt($val))$val='';
 		if($this->isempt($attr))$attr='';
-		if($val!='')$val = str_replace(array('{now}','{date}','{admin}','{adminid}','{deptname}','{ranking}'),array($this->now,$this->date,$this->adminname,$this->adminid, $this->urs['deptname'], $this->urs['ranking']),$val);
+		if($val!=''){
+			$val = str_replace(array('{now}','{date}','{admin}','{adminid}','{deptname}','{ranking}','{month}'),array($this->now,$this->date,$this->adminname,$this->adminid, $this->urs['deptname'], $this->urs['ranking'],substr($this->date,0,7)),$val);
+			if($val=='{sericnum}')$val = $this->flow->createnum();
+		}
+		if($type=='num'){
+			$val = $this->flow->createbianhao($data, $fid);
+			$attr='readonly';
+		}
 		
 		$str 	= '<input class="inputs" value="'.$val.'" '.$attr.' name="'.$fname.'">';
 		
@@ -429,11 +449,11 @@ class inputAction extends ActionNot
 			if($type=='checkboxall')$str = $str1;
 		}
 		
-		if($type=='datetime'||$type=='date'||$type=='time'){
+		if($type=='datetime'||$type=='date'||$type=='time'||$type=='month'){
 			$str = '<input onclick="js.datechange(this,\''.$type.'\')" value="'.$val.'" '.$attr.' class="inputs datesss" inputtype="'.$type.'" readonly name="'.$fname.'">';
 		}
 		if($type=='number'||$type=='xuhao'){
-			$str = '<input class="inputs" '.$attr.' value="'.$val.'" type="number" onfocus="js.focusval=this.value" onblur="js.number(this)" name="'.$fname.'">';
+			$str = '<input class="inputs" '.$attr.' value="'.$val.'" type="number" onfocus="js.focusval=this.value" maxlength="10" onblur="js.number(this)" name="'.$fname.'">';
 			if($type=='xuhao')$str.='<input value="0" type="hidden" name="'.$a['fieldss'].$leox.'">';
 		}
 		if($type=='changeusercheck'||$type=='changeuser'||$type=='changedept'||$type=='changedeptusercheck'){

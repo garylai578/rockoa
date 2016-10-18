@@ -2,12 +2,14 @@
 class flowClassModel extends Model
 {
 	public $flow = null;
-	public function initflow($num,$mid=null)
+	public function initflow($num,$mid=null, $isqx=true)
 	{
 		$this->flow = m('flow:'.$num.'');
-		$this->flow->initdata($num, $mid);
+		$this->flow->initdata($num);
+		if($mid != null)$this->flow->loaddata($mid, $isqx);
 		return $this->flow;
 	}
+	
 	
 	public function opt($act,$num,$mid,$cs1='',$cs2='',$cs3='',$cs4='')
 	{
@@ -22,7 +24,26 @@ class flowClassModel extends Model
 	
 	public function submit($num, $mid, $na='', $sm='')
 	{
-		return $this->opt('submit', $num, $mid, $na, $sm);
+		$this->initflow($num,$mid, false);
+		return $this->flow->submit($na, $sm);
+	}
+	
+	public function deletebill($num, $mid, $sm='')
+	{
+		$this->initflow($num,$mid, false);
+		return $this->flow->deletebill($sm);
+	}
+	
+	public function getoptmenu($num, $mid, $lx=0)
+	{
+		$this->initflow($num,$mid, false);
+		return $this->flow->getoptmenu($lx);
+	}
+	
+	public function optmenu($num, $mid, $optid, $zt, $sm)
+	{
+		$this->initflow($num,$mid, false);
+		return $this->flow->optmenu($optid, $zt, $sm);
 	}
 	
 	public function getdataedit($num, $mid)

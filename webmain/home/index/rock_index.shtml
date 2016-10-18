@@ -33,6 +33,7 @@ $(document).ready(function(){
 				this.showicons(a.menuarr);
 			}
 			this.showgonglist(a.gongarr);
+			this.showapplylist(a.applyarr);
 			$('#guestbook_wd').html(a.todo+'');
 			for(var oi in a.total)this.showtotal(a.total[oi],oi);
 			var d = a.worklist;
@@ -93,6 +94,15 @@ $(document).ready(function(){
 				s+='<a onclick="openxiangs(\''+a1.typename+'\',\'gong\',\''+a1.id+'\');$(this).remove();" class="list-group-item">◇【'+a1.typename+'】'+a1.title+'['+a1.indate+']</a>';
 			}
 			$('#homegonglist').html(s);
+		},
+		showapplylist:function(a){
+			var s='',a1,i;
+			for(i=0;i<a.length;i++){
+				a1=a[i];
+				s+='<a onclick="openxiangs(\''+a1.modename+'\',\''+a1.modenum+'\',\''+a1.id+'\');" class="list-group-item">◇'+a1.cont+'</a>';
+			}
+			if(a1)$('#myapplylisttotal').html(a1.count);
+			$('#myapplylist').html(s);
 		}
 	}
 	
@@ -152,6 +162,14 @@ $(document).ready(function(){
 	moregonggao=function(){
 		addtabs({num:'gong',url:'system,infor,geren',icons:'volume-up',name:'通知公告'});
 	}
+	moemyapplylist=function(){
+		addtabs({num:'applymy',url:'main,fwork,bill,atype=my',icons:'align-left',name:'我的申请'});
+	}
+	
+	
+	
+	
+	js.importjs('web/res/mode/echarts/echarts.common.min.js');
 });
 </script>
 <style>
@@ -220,6 +238,14 @@ $(document).ready(function(){
 			</td>
 			
 			<td style="padding-left:20px;">
+				<div align="left" class="list-group">
+				<div class="list-group-item  list-group-item-info">
+					<i class="icon-align-left"></i> 我的申请(<span id="myapplylisttotal">0</span>)
+					<a style="float:right" onclick="moemyapplylist()">更多&gt;&gt;</a>
+				</div>
+				<span id="myapplylist"></span>
+				</div>
+				
 				<div class="panel panel-success">
 				  <div class="panel-heading">
 					<h3 class="panel-title">关于信呼</h3>

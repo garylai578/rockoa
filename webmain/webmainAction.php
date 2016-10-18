@@ -23,11 +23,16 @@ class Action extends mainAction
 		$this->adminname	= $this->getsession('adminname');
 		$this->admintoken	= $this->getsession('admintoken');
 		
-		$this->rock->adminid			= $this->adminid;
-		$this->rock->adminuser			= $this->adminuser;
-		$this->rock->adminname			= $this->adminname;
+		$this->setNowUser($this->adminid, $this->adminname, $this->adminuser);
 		if($lx==0)$this->logincheck();
-	}	
+	}
+
+	public function setNowUser($uid, $uname, $user='')
+	{
+		$this->rock->adminid	= $uid;
+		$this->rock->adminname	= $uname;
+		$this->rock->adminuser	= $user;
+	}
 	
 	protected function logincheck()
 	{
@@ -206,11 +211,20 @@ class Action extends mainAction
 				foreach($narr as $kv=>$vv)$bacarr[$kv]=$vv;
 			}
 		}
+		$statusarr = explode(',','<font color=blue>待审核</font>,<font color=green>已审核</font>,<font color=red>未通过</font>');
+		if($this->flow){
+			$rows = $bacarr['rows'];
+			foreach($rows as $k=>$rs){
+				if($this->flow->isflow==1 && isset($rs['status']))$rs['statustext'] 	= $statusarr[$rs['status']];
+				$rows[$k] 			= $this->flow->flowrsreplace($rs);
+			}
+			$bacarr['rows'] = $rows;
+		}
 		if($execldown == 'true'){
 			$this->exceldown($bacarr);
 			return;
 		}
-		echo json_encode($bacarr);
+		$this->returnjson($bacarr);
 	}
 	
 	public function publictreestoreAjax()

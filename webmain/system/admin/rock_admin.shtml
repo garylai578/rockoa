@@ -4,9 +4,9 @@ $(document).ready(function(){
 		tablename:'admin',modenum:'user',celleditor:true,sort:'sort',dir:'asc',fanye:true,
 		storebeforeaction:'beforeshow',modedir:'{mode}:{dir}',fieldsafteraction:'fieldsafters',
 		columns:[{
-			text:'头像',dataIndex:'face',renderer:function(v){
+			text:'头像',dataIndex:'face',renderer:function(v,d){
 				if(isempt(v))v='images/noface.png';
-				return '<img src="'+v+'" height="24" width="24">';
+				return '<img src="'+v+'" id="faceviewabc_'+d.id+'" height="24" width="24">';
 			}
 		},{
 			text:'用户名',dataIndex:'user'
@@ -73,12 +73,16 @@ $(document).ready(function(){
 		},
 		daochu:function(){
 			a.exceldown();
+		},
+		editface:function(){
+			editfacechang(a.changeid, a.changedata.name);
 		}
 	};
 	
 	function btn(bo){
 		get('del_{rand}').disabled = bo;
 		get('edit_{rand}').disabled = bo;
+		get('face_{rand}').disabled = bo;
 	}
 	
 	js.initbtn(c);
@@ -112,7 +116,8 @@ $(document).ready(function(){
 	<td align="right" nowrap>
 		<button class="btn btn-success" click="refresh" type="button"><i class="icon-refresh"></i> 更新数据</button> &nbsp; 
 		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
-		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>
+		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button> &nbsp; 
+		<button class="btn btn-info" id="face_{rand}" click="editface" disabled type="button"><i class="icon-picture"></i> 修改头像</button>
 	</td>
 </tr>
 </table>

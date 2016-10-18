@@ -13,6 +13,9 @@ $(document).ready(function(){
 			if(id==0)js.msg('success','成功添加帐号：'+h.form.user.value+'');
 			closenowtabs();
 			try{adminusermanage.reload();}catch(e){}
+		},
+		load:function(a){
+			
 		}
 	});
 	h.forminit();

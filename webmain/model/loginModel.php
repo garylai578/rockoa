@@ -22,7 +22,7 @@ class loginClassModel extends Model
 		$pass	= addslashes($pass);
 		$logins = '登录成功';
 		$msg 	= '';
-		$fields = '`pass`,`id`,`name`,`user`,`face`,`deptname`,`ranking`,`apptx`';
+		$fields = '`pass`,`id`,`name`,`user`,`face`,`deptname`,`deptallname`,`ranking`,`apptx`';
 		$arrs 	= array(
 			'user' 			=> $user,	
 			'status|eqi' 	=> 1,
@@ -62,9 +62,10 @@ class loginClassModel extends Model
 		if($msg==''){
 			$name 		= $us['name'];
 			$deptname	= $us['deptname'];
+			$deptallname= $us['deptallname'];
 			$ranking	= $us['ranking'];
 			$apptx		= $us['apptx'];
-			$face 	= $us['face'];
+			$face 		= $us['face'];
 			if(!$this->isempt($face))$face = URL.''.$face.'';
 			$face 	= $this->rock->repempt($face, 'images/noface.png');
 			$this->db->update('[Q]admin',"`loginci`=`loginci`+1", $uid);
@@ -100,6 +101,7 @@ class loginClassModel extends Model
 				'name' 	=> $name,
 				'user' 	=> $user,
 				'token' => $token,
+				'deptallname' => $deptallname,
 				'ranking' => $ranking,
 				'apptx' => $apptx,
 				'face' 	=> $face,

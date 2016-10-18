@@ -5,11 +5,8 @@ class dailyClassAction extends Action
 
 	public function dailyafter($table, $rows)
 	{
-		$flow 	= m('flow')->initflow('daily');
 		$log 	= m('log');
 		foreach($rows as $k=>$rs){
-			$rows[$k]['type']		= $flow->typearr[$rs['type']];
-			$rows[$k]['content']	= str_replace("\n",'<br>', $rs['content']);
 			$zt = $log->isread('daily', $rs['id'], $this->adminid);
 			$status = 1;
 			if($zt>0)$status=0;

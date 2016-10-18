@@ -260,7 +260,7 @@
 				d=b.store;
 				s+='<div><select style="width:'+wss+'px" id="inputedit_'+rand+'" class="input">';
 				len=b.store.length;for(i=0;i<len;i++){
-					sel='';if(d[i][0]==v)sel='selected';
+					sel='';if(d[i][0]==v||d[i][1]==v)sel='selected';
 					s+='<option value="'+d[i][0]+'" '+sel+'>'+d[i][1]+'</option>';
 				}
 				s+='</select></div>';
@@ -294,10 +294,11 @@
 		};
 		this._editforcuschen = function(o1, a){
 			var o1= get('inputedit_'+rand+'');
-			var v = o1.value,
-				ov = a.oldvalue;
+			var v = o1.value,ov = a.oldvalue;
 			if(a.type=='checkbox')if(!o1.checked)v='0';
-			if(v==ov){
+			var selv= v+'';
+			if(a.type=='select')selv=o1.options[o1.selectedIndex].text;
+			if(v==ov || selv==ov){
 				$('#edittable_'+rand+'').remove();
 				return;
 			}
@@ -315,6 +316,7 @@
 					var ohtml = a.obj.html();
 					ohtml	  = ohtml.replace(ov, v);
 					if(a.type=='checkbox')ohtml='<img height="20" width="20" src="images/checkbox'+v+'.png">';
+					if(a.type=='select')ohtml=selv;
 					a.obj.html(ohtml);
 					me.data[a.row][a.fields] = v;
 				},

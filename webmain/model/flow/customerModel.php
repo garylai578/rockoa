@@ -1,15 +1,22 @@
 <?php
 class flow_customerClassModel extends flowModel
 {
-	protected function flowinit(){
+	public function initModel()
+	{
 		$this->statearr		 = c('array')->strtoarray('停用|#888888,启用|green');
 	}
 	
-	protected function flowchangedata(){
-		$this->rs['statusid'] = $this->rs['status'];
-		$zt = $this->statearr[$this->rs['status']];
-		$this->rs['status']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+
+	
+	public function flowrsreplace($rs)
+	{
+		$zt = $this->statearr[$rs['status']];
+		$rs['status']	= '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+		$htshu = '';
+		$rs['htshu']	= $htshu;
+		return $rs;
 	}
+	
 	
 	protected function flowprintrows($rows)
 	{
@@ -64,20 +71,59 @@ class flow_customerClassModel extends flowModel
 	protected function flowbillwhere($uid, $lx)
 	{
 		$where 	= '`uid`='.$uid.' and `status`=1';
+		$key 	= $this->rock->post('key');
+		$lxa 	= explode('_', $lx);
+		$lxs 	= $lxa[0];
+		if(isset($lxa[1]))$lx = $lxa[1];
+		
+		if($lxs=='my'){
+			$where = '`uid`='.$uid.'';
+		}
+		if($lxs=='shatemy'){
+			$where	= $this->rock->dbinstr('shateid', $uid);
+		}
+		if($lxs=='down'){
+			$where = m('admin')->getdownwheres('uid', $uid, 1);
+		}
+		if($lxs=='dist'){
+			$where = '`fzid`='.$uid.'';
+		}
+		if($lx=='qy'){
+			$where.=' and `status`=1';
+		}
+		if($lx=='ting'){
+			$where.=' and `status`=0';
+		}
+		if($lx=='stat'){
+			$where.=' and `isstat`=1';
+		}
+		if($lx=='yfp'){
+			$where.=' and `uid`>0';
+		}
+		if($lx=='wfp'){
+			$where.=' and `uid`=0';
+		}
+		
 		if($lx=='myty'){
 			$where 	= '`uid`='.$uid.' and `status`=0';
 		}
+		
 		if($lx=='myall'){
 			$where 	= '`uid`='.$uid.'';
 		}
+		//共享给我
 		if($lx=='gxgw'){
 			$where	= $this->rock->dbinstr('shateid', $uid);
 		}
+		//我共享
 		if($lx=='mygx'){
 			$where 	= '`uid`='.$uid.' and `shateid` is not null';
 		}
+		if(!isempt($key))$where.=" and (`name` like '%$key%' or `unitname` like '%$key%' or `optname`='$key')";
+	
 		return array(
 			'where' => 'and '.$where,
+			'fields'=> 'id,name,status,laiyuan,isgys,optname,unitname,shate,tel,type',
 			'order' => 'status desc,optdt desc'
 		);
 	}

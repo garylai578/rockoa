@@ -6,10 +6,14 @@ class flow_custsaleClassModel extends flowModel
 		$this->statearr		 = c('array')->strtoarray('跟进中|blue,已成交|green,已丢失|#888888');
 	}
 	
-	protected function flowchangedata(){
-		$this->rs['stateid'] = $this->rs['state'];
-		$zt = $this->statearr[$this->rs['state']];
-		$this->rs['state']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+
+	
+	public function flowrsreplace($rs)
+	{
+		$zt = $this->statearr[$rs['state']];
+		$rs['state']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+		if($rs['htid']>0)$rs['state'].=',<font color=#888888>并建立合同</font>';
+		return $rs;
 	}
 	
 	protected function flowoptmenu($ors, $crs)
@@ -44,7 +48,16 @@ class flow_custsaleClassModel extends flowModel
 	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$where 	= '`uid`='.$uid.' and `state`=0';
+		$key 	= $this->rock->post('key');
+		$zt 	= $this->rock->post('zt');
+		$where 	= '`uid`='.$uid.'';
+		if($lx=='down'){
+			$where = m('admin')->getdownwheres('uid', $uid, 1);
+		}
+		
+		if($lx=='def'){
+			$where.=' and `state`=0';
+		}
 		if($lx=='saleycj'){
 			$where 	= '`uid`='.$uid.' and `state`=1';
 		}
@@ -54,8 +67,14 @@ class flow_custsaleClassModel extends flowModel
 		if($lx=='saleall'){
 			$where 	= '`uid`='.$uid.'';
 		}
+		
+		if($zt!='')$where.=" and `state`='$zt'";
+		if(!isempt($key)){
+			$where.=" and (`custname` like '%$key%' or `optname`='$key')";
+		}
 		return array(
 			'where' => 'and '.$where,
+			'fields'=> 'id,custname,laiyuan,optname,state,money,optdt,createname,`explain`,htid',
 			'order' => '`state`,`optdt` desc'
 		);
 	}

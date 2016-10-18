@@ -16,4 +16,9 @@ class taskClassAction extends Action
 			echo '无法启动';
 		}
 	}
+	
+	public function clearztAjax()
+	{
+		m('task')->update('state=0,lastdt=null,lastcont=null','1=1');
+	}
 }

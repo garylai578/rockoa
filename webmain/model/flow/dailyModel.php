@@ -8,15 +8,13 @@ class flow_dailyClassModel extends flowModel
 	
 	public function flowrsreplace($rs)
 	{
+		$rs['content'] 		= str_replace("\n",'<br>', $rs['content']);
+		$rs['plan'] 		= str_replace("\n",'<br>', $rs['plan']);
 		$rs['type'] 		= $this->typearr[$rs['type']];
 		return $rs;
 	}
 	
-	protected function flowchangedata(){
-		$this->rs['content'] 	= str_replace("\n",'<br>', $this->rs['content']);
-		$this->rs['plan'] 		= str_replace("\n",'<br>', $this->rs['plan']);
-		$this->rs['type'] 		= $this->typearr[$this->rs['type']];
-	}
+
 	
 	protected function flowgetoptmenu($opt)
 	{

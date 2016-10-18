@@ -1,6 +1,8 @@
 <?php
 class deptClassAction extends Action
 {
+	
+	
 	public function dataAjax()
 	{
 		$this->rows	= array();
@@ -30,6 +32,7 @@ class deptClassAction extends Action
 	{
 		$pid = (int)$cans['pid'];
 		if($pid>0 && m($table)->rows($pid)==0)return '上级ID不存在';
+		if($pid==0 && $id != 1)return '上级ID不能为0';
 		return '';
 	}
 	

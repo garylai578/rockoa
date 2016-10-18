@@ -13,9 +13,11 @@ class loginClassAction extends apiAction
 				'user'	=> $arr['user'],
 				'ranking'	=> $arr['ranking'],
 				'deptname'  => $arr['deptname'],
+				'deptallname' => $arr['deptallname'],
 				'face'  	=> $arr['face'],
 				'apptx'  	=> $arr['apptx'],
-				'token'  	=> $arr['token']
+				'token'  	=> $arr['token'],
+				'title'		=> getconfig('apptitle')
 			);
 			
 			$uid 	= $arr['uid'];

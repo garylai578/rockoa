@@ -130,11 +130,32 @@ var c={
 		get('AltS').disabled=true;
 		js.ajax(geturlact('save'),d,function(str){
 			var a = js.decode(str);
-			c.backsave(a);
+			c.backsave(a, str);
 		}, 'post', function(){
 			get('AltS').disabled=false;
 			js.setmsg('error:内部错误,可F12调试');
 		});
+	},
+	backsave:function(a,str){
+		var msg = a.msg;
+		if(a.success){
+			js.setmsg(msg,'green');
+			js.msg('success','保存成功');
+			this.formdisabled();
+			$('#AltS').hide();
+			form('id').value=a.data;
+			isedit=0;
+			this.callback(a.data);
+			try{
+			js.sendevent('reload', 'yingyong_mode_'+moders.num+'');
+			js.backla();}catch(e){}
+			savesuccess();
+		}else{
+			if(typeof(msg)=='undefined')msg=str;
+			get('AltS').disabled=false;
+			js.setmsg(msg);
+			js.msg('msg',msg);
+		}
 	},
 	showdata:function(){
 		var smid=form('id').value;
@@ -205,6 +226,7 @@ var c={
 			initbodys(form('id').value);
 			if(isedit==0){
 				this.formdisabled();
+				js.setmsg('无权编辑');
 			}else{
 				$('#AltS').show();
 				c.initdatelx();
@@ -218,25 +240,6 @@ var c={
 		}else{
 			get('AltS').disabled=true;
 			this.formdisabled();
-			js.setmsg(a.msg);
-			js.msg('msg',a.msg);
-		}
-	},
-	backsave:function(a){
-		if(a.success){
-			js.setmsg(a.msg,'green');
-			js.msg('success','保存成功');
-			this.formdisabled();
-			$('#AltS').hide();
-			form('id').value=a.data;
-			isedit=0;
-			this.callback(a.data);
-			try{
-			js.sendevent('reload', 'yingyong_mode_'+moders.num+'');
-			js.backla();}catch(e){}
-			savesuccess();
-		}else{
-			get('AltS').disabled=false;
 			js.setmsg(a.msg);
 			js.msg('msg',a.msg);
 		}

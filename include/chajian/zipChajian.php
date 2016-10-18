@@ -32,4 +32,35 @@ class zipChajian extends Chajian{
 		@$bos 			= file_put_contents($file_name,$file_content);
 		return $bos;
 	}
+	
+	
+	private function addFileToZip($path, $zip, $wz){
+		$handler = opendir($path); 
+		while(($filename=readdir($handler))!==false){
+			if($filename != '.' && $filename != '..'){
+				$addfile = $path.'/'.$filename;
+				if(is_dir($addfile)){
+					$this->addFileToZip($addfile, $zip, $wz);
+				}else{
+					$localwz = substr($addfile, $wz);
+					$zip->addFile($addfile, $localwz);
+				}
+			}
+		}
+		@closedir($path);
+	}
+	
+	/**
+	*	zip打包
+	*/
+	public function packzip($path, $topath)
+	{
+		$zip	=	new ZipArchive();
+		if($zip->open($topath, ZipArchive::OVERWRITE)=== TRUE){
+			$this->addFileToZip($path, $zip, strlen($path));
+			$zip->close();
+		}
+		if(!file_exists($topath))$topath='';
+		return $topath;
+	}
 }

@@ -3,7 +3,7 @@ $(document).ready(function(){
 	var modenum='userinfo';
 	var a = $('#view_{rand}').bootstable({
 		tablename:'userinfo',celleditor:true,fanye:true,modenum:modenum,modedir:'userinfo:main',
-		storeafteraction:'userinfoafterabc',storebeforeaction:'userinfobeforeabc',
+		storeafteraction:'userinfoafterabc',
 		columns:[{
 			text:'部门',dataIndex:'deptname',align:'left',sortable:true
 		},{
@@ -13,9 +13,11 @@ $(document).ready(function(){
 		},{
 			text:'职位',dataIndex:'ranking'
 		},{
-			text:'状态',dataIndex:'state',sortable:true
+			text:'状态',dataIndex:'state',sortable:true,editor:true,type:'select',store:js.arraystr('0|试用期,1|正式,2|实习生,3|兼职,4|临时工,5|离职')
 		},{
 			text:'入职日期',dataIndex:'workdate',sortable:true
+		},{
+			text:'转正日期',dataIndex:'positivedt',sortable:true,editor:true,type:'date'
 		},{
 			text:'电话',dataIndex:'tel'
 		},{
@@ -34,9 +36,13 @@ $(document).ready(function(){
 	function btn(bo){
 		get('xiang_{rand}').disabled = bo;
 		get('edit_{rand}').disabled = bo;
+		get('del_{rand}').disabled = bo;
 	}
 	
 	var c = {
+		del:function(){
+			a.del();
+		},
 		search:function(){
 			var s=get('key_{rand}').value;
 			a.setparams({key:s},true);
@@ -68,6 +74,7 @@ $(document).ready(function(){
 	<td width="90%"></td>
 	<td align="right" nowrap>
 		<button class="btn btn-default" id="xiang_{rand}" click="view" disabled type="button">详情</button> &nbsp; 
+		<button class="btn btn-default" id="del_{rand}" click="del" disabled type="button">删除</button> &nbsp; 
 		<button class="btn btn-default" id="edit_{rand}" click="edit" disabled type="button">编辑</button> &nbsp; 
 		<button class="btn btn-default" click="daochu,1" type="button">导出</button> 
 	</td>
@@ -76,4 +83,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
-<div class="tishi">添加人员请到用户管理那添加，人员信息会有一下个人信息，建议填写一些有用信息即可。</div>
+<div class="tishi">添加人员请到用户管理那添加，人员信息会有一下个人信息，建议填写一些有用信息即可，删除档案，需要先删除用户在删除档案。</div>

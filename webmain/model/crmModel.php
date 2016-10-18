@@ -58,7 +58,7 @@ class crmClassModel extends Model
 		if($ispay != $oispay || $symon!= $moneys || $isover != $ors['isover']){
 			$this->db->update('[Q]custract','`ispay`='.$ispay.',`moneys`='.$symon.',`isover`='.$isover.'', $htid);
 		}
-		return [$ispay, $symon];
+		return array($ispay, $symon);
 	}
 	
 	public function getmoneys($htid, $id=0)

@@ -44,6 +44,12 @@ class mode_hrsalaryClassAction extends inputAction{
 		$urs 	= m('admin')->getone($xuid,'quitdt,workdate');
 		if(contain($urs['workdate'],$month))$sm.=''.$urs['workdate'].'入职;';
 		if(contain($urs['quitdt'],$month))$sm.=''.$urs['quitdt'].'离职;';
+		$txrs 	= m('hrtrsalary')->getone("`uid`='$xuid' and `effectivedt` like '$month%' and `status`=1");
+		if($txrs)$sm.=''.$txrs['effectivedt'].'起调薪'.$txrs['floats'].';';
+		
+		$a['reward'] = floatval(m('reward')->getmou('sum(money)', "`objectid`='$xuid' and `status`=1 and `type`=0 and `applydt` like '$month%'"));
+		$a['punish'] = floatval(m('reward')->getmou('sum(money)', "`objectid`='$xuid' and `status`=1 and `type`=1 and `applydt` like '$month%'"));
+		
 		if($sm!='')$a['explain'] = $sm;
 		$this->returnjson($a);
 	}

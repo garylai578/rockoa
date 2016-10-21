@@ -290,9 +290,9 @@ class adminClassModel extends Model
 	/**
 	*	更新信息
 	*/
-	public function updateinfo()
+	public function updateinfo($where='')
 	{
-		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman from `[Q]admin` where id>0 order by `sort`");
+		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman from `[Q]admin` where id>0 $where order by `sort`");
 		$total	= $this->db->count;
 		$cl		= 0;
 		foreach($rows as $k=>$rs){

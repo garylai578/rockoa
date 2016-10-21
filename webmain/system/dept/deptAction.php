@@ -84,10 +84,10 @@ class deptClassAction extends Action
 				}
 				$children= array_merge($children, $usarr);
 			}
-			$ars['children']=$children;
+			if($pid==0)$expanded = true;
+			$ars['children']= $children;
 			$ars['name'] 	= $rs['name'];
 			$ars['id'] 		= 'd'.$rs['id'];
-			//$ars['icons'] 	= 'folder-close-alt';
 			$ars['did'] 	= $rs['id'];
 			$ars['type'] 	= 'd';
 			$ars['expanded'] = $expanded;

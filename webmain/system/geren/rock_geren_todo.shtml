@@ -11,11 +11,11 @@ $(document).ready(function(){
 				return s;
 			}
 		},{	
-			text:'信息内容',align:'left',dataIndex:'mess',renderer:function(v,d){
+			text:'信息内容',align:'left',dataIndex:'mess',renderer:function(v,d, oi){
 				var s = v;
 				if(d.status==1)s='<font color=#aaaaaa>'+v+'</font>';
-				if(d.table=='work'){
-					s+=' <a href="javascript:" onclick="return openwork(\''+d.mid+'\')">[查看]</a>';
+				if(!isempt(d.modenum) && d.mid>0){
+					s+=' <a href="javascript:;" onclick="chsksse{rand}('+oi+')">[查看]</a>';
 				}
 				return s;
 			}
@@ -39,7 +39,10 @@ $(document).ready(function(){
 			$('#guestbook_wd').html(''+a.getData('wdtotal'))
 		}
 	});
-	
+	chsksse{rand}=function(oi){
+		var d=a.getData(oi);
+		openxiangs(d.title,d.modenum,d.mid);
+	}
 	var c = {
 		del:function(){
 			a.del({checked:true});

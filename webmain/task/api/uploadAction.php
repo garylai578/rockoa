@@ -45,4 +45,11 @@ class uploadClassAction extends apiAction
 		}
 		$this->showreturn($data, $msg);
 	}
+	
+	public function getfileAction()
+	{
+		$fileid = (int)$this->post('fileid',0);
+		$rs 	= m('file')->getone($fileid);
+		$this->showreturn($rs);
+	}
 }

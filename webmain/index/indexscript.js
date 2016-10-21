@@ -41,19 +41,19 @@ function initbody(){
 		js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
 	}
 	if(a.length<=1)$('.topmenubg').html('');
+	var ddsata=[{
+		name:'<i class="icon-lock"></i> 修改密码',num:'pass',url:'system,geren,pass',names:'修改密码'
+	},{
+		name:'<i class="icon-bell"></i> 提醒信息',num:'todo',url:'system,geren,todo',names:'提醒信息'
+	},{
+		name:'<i class="icon-picture"></i> 修改头像',num:'face'
+	},{
+		name:'<i class="icon-user"></i> 帐号('+adminuser+')',num:'user'
+	}];
+	if(js.request('afrom')=='')ddsata.push({name:'<i class="icon-signout"></i> 退出',num:'exit'});
 	$('#indexuserl').rockmenu({
 		width:170,top:50,
-		data:[{
-			name:'<i class="icon-lock"></i> 修改密码',num:'pass',url:'system,geren,pass',names:'修改密码'
-		},{
-			name:'<i class="icon-bell"></i> 提醒信息',num:'todo',url:'system,geren,todo',names:'提醒信息'
-		},{
-			name:'<i class="icon-picture"></i> 修改头像',num:'face'
-		},{
-			name:'<i class="icon-user"></i> 帐号('+adminuser+')',num:'user'
-		},{
-			name:'<i class="icon-signout"></i> 退出',num:'exit'
-		}],
+		data:ddsata,
 		itemsclick:function(d){
 			if(d.num=='exit'){
 				js.confirm('确定要退出系统吗？',function(bn){

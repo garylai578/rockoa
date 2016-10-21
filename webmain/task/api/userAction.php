@@ -3,7 +3,7 @@ class userClassAction extends apiAction
 {
 	public function editpassAction()
 	{
-		if(getconfig('system')=='demo')$this->showreturn('演示上不要修改');
+		if(getconfig('systype')=='demo')$this->showreturn('演示上不要修改');
 		$id			= $this->adminid;
 		$oldpass	= $this->post('passoldPost');
 		$pasword	= $this->post('passwordPost');

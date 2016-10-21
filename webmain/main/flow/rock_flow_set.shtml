@@ -41,12 +41,21 @@ $(document).ready(function(){
 	});
 	function btn(bo, d){
 		get('edit_{rand}').disabled = bo;
-		get('del_{rand}').disabled = bo;
 		get('downbtn_{rand}').disabled = bo;
+		if(d && d.type=='系统')bo=true;
+		get('del_{rand}').disabled = bo;
 	}
 	var c = {
 		del:function(){
-			a.del();
+			js.confirm('确定要删除选中模块吗？删除了所有数据就都没了，不能恢复的哦',function(jg){
+				if(jg=='yes')c.delss();
+			});
+		},
+		delss:function(){
+			if(a.changeid==0)return;
+			js.ajax(js.getajaxurl('delmode','{mode}','{dir}'),{id:a.changeid},function(){
+				a.reload();
+			},'post',false,'删除中...,删除成功');
 		},
 		reload:function(){
 			a.reload();

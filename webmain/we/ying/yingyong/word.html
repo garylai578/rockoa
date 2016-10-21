@@ -186,19 +186,21 @@ var c = {
 	},
 	delfloadok:function(){
 		var d = this.tempda;
+		this.movedata=false;
 		js.ajax('word','delfile',{type:d.fileext,id:d.id},function(a){
 			$('#'+d.fileext+'_'+d.id+'').remove();
 			js.msg('success','删除成功');
 		});
 	},
-	wfenxx:function(){
-		this.getfile(this.typeid,'wfx');
+	wfenxx:function(lx){
+		this.getfile(this.typeid,lx);
 	}
 };
 yy.clickevent=function(d){
 	if(d.url=='create')c.create();
 	if(d.url=='up')c.up();
-	if(d.url=='shate')c.wfenxx();	
+	if(d.url=='shate')c.wfenxx('wfx');	
+	if(d.url=='fxgw')c.wfenxx('fxgw');	
 }
 </script>
 <div class="workheader" id="workheader" style="line-height:50px;height:50px; background-color:#ffffff;overflow:hidden"><span onclick="c.clickheadeer(0, this)">我的文档&gt;</span></div>

@@ -8,7 +8,7 @@ class indexClassAction extends Action{
 		if($myext != '-1'){	
 			$where	= ' and `id` in('.str_replace(array('[',']'), array('',''), $myext).')';
 		}
-		$mrows = m('menu')->getrows("`ishs`=1 $where ", "`id`,`num`,`name`,`url`,`color`,`icons`",'`sort`');
+		$mrows = m('menu')->getrows("`ishs`=1 and `status`=1 $where ", "`id`,`num`,`name`,`url`,`color`,`icons`",'`sort`');
 		return $mrows;
 	}
 	

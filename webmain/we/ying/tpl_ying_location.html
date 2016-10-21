@@ -41,7 +41,7 @@ function initbody(){
 				map: map
 			});
 			infoWin.open();
-			infoWin.setContent('打卡成功<br>地址：'+address+'');
+			infoWin.setContent('定位成功<br>地址：'+address+'');
 			infoWin.setPosition(center);
 			var data = {location_x:latitude,location_y:longitude,scale:scale,precision:accuracy,label:jm.base64encode(label)};
 			js.ajax('weixin','addlocation',data,function(ret){

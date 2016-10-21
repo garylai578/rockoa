@@ -140,7 +140,7 @@ class Action extends mainAction
 		$isadmin= (int)$this->getsession('isadmin');
 		if($modenum==''){
 			if($isadmin!=1)$this->showreturn('','只有管理员才能操作' , 201);
-			if(substr($table,0,5)=='flow_'||$table=='todo'||$table=='option'){
+			if(substr($table,0,5)=='flow_'||$table=='todo'||$table=='option'||$table=='menu'){
 				m($table)->delete("`id` in($id)");
 			}else{
 				$this->showreturn('','未设置删除权限' , 201);

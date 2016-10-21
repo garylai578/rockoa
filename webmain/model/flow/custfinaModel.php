@@ -6,7 +6,7 @@ class flow_custfinaClassModel extends flowModel
 	
 	public function flowrsreplace($rs)
 	{
-		$starrr			= ['收','付'];
+		$starrr			= array('收','付');
 		$ispay 			= '<font color=red>未'.$starrr[$rs['type']].'款</font>';
 		if($rs['ispay']==1)$ispay = '<font color=green>已'.$starrr[$rs['type']].'款</font>';
 		$rs['ispay']	 = $ispay;

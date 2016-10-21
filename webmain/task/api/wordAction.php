@@ -24,23 +24,24 @@ class wordClassAction extends apiAction
 	
 	private function getfolderid()
 	{
-		$num = "folder".$this->adminid."";
-		$id  = $this->option->setval($num,'','文件夹目录');
+		$id  = m('word')->getfolderid($this->adminid);
 		return $id;
 	}
 	
 	
 	public function getfileAction()
 	{
-		$typeid = (int)$this->post('typeid');
+		$typeid = (int)$this->post('typeid','0');
 		$pid	= $typeid;
 		if($pid==0)$pid 	= $this->getfolderid();
 		$slx 	= $this->post('slx');
 		$rows	= array();
 		if($slx=='')$rows 	= $this->option->getall("`pid`='$pid' and `valid`=1 order by `sort`,`id`");
-		
-		$where 	= " and a.optid=".$this->adminid." and a.typeid='$typeid'";
-		
+		if($typeid==0){
+			$where 	= " and a.optid=".$this->adminid." and a.typeid in($typeid, $pid)";
+		}else{
+			$where 	= " and a.optid=".$this->adminid." and a.typeid='$typeid'";
+		}
 		if($slx=='wfx')$where 	= " and a.optid=".$this->adminid." and a.shate is not null";
 		if($slx=='fxgw'){
 			$where 	= m('admin')->getjoinstrs('a.shateid', $this->adminid, 1);

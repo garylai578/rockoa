@@ -172,8 +172,8 @@
 		};
 		this._load = function(){
 			if(this.bool)return;
-			var h= obj.height(),
-			w= obj.width(),
+			var h= obj.height()-2,
+			w= obj.width()-2,
 			s = '';
 			s='<div id="modeshow_'+rand+'" style="filter:Alpha(opacity=20);opacity:0.2;height:'+h+'px;width:'+w+'px;overflow:hidden;z-index:3;position:absolute;left:0px;line-height:'+h+'px;top:0px;background:#000000;color:white" align="center"><img src="images/mloading.gif"  align="absmiddle"></div>';
 			$('#treebody_'+rand+'').append(s);
@@ -189,19 +189,24 @@
 					$('#modeshow_'+rand+'').remove();
 					me.bool = false;
 				},
-				error: function(){
+				error: function(e){
 					$('#modeshow_'+rand+'').remove();
+					js.msg('msg',e.responseText);
 					me.bool = false;
 				}
 			});
 		};
 		this._loaddataback = function(a){
-			can.data = a;
+			var d 	 = a.rows ? a.rows : a;
+			can.data = d;
 			this._create();
 			can.load(a, this);
 		};
 		this.reload = function(){
 			this._load();
+		};
+		this.loadData = function(d){
+			this._loaddataback(d);
 		}
 	};
 	

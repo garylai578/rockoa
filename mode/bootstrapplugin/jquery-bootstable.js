@@ -428,6 +428,9 @@
 			this._initfany();
 			can.load(a, this, this.loadci);
 		};
+		this.loadData = function(d){
+			this._loaddataback(d);
+		};
 		this._clickorder = function(o1){
 			if(this.loadci==0)return;
 			var o,oi,a,dir,sort;
@@ -474,6 +477,7 @@
 			this._loaddata(this.page);
 		};
 		this.del	= function(csa){
+			if(this.bool)return;
 			var a 	= js.apply({msg:'确定要删除选中的{s}条记录吗？',success:function(){},checked:false,check:function(){}},csa);
 			var s	= ''+this.changeid+'',xz;
 			if(a.checked)s=this.getchecked();
@@ -511,15 +515,23 @@
 			js.msg('wait','删除'+sid+'中...');
 			var url = ds.url;if(!url)url=js.getajaxurl('publicdel','index');
 			var ss 	= js.apply({modenum:can.modenum,table:can.tablename,id:sid},ds.params);
-			$.post(url,ss,function(a){
-				if(a.code==200){
-					js.msg('success','删除成功');
-					ds.success();
-					me.reload();
-				}else{
-					js.msg('msg',a.msg);
+			$.ajax({
+				url:url,type:'POST',data:ss,dataType:'json',
+				success:function(a1){
+					if(a1.code==200){
+						js.msg('success','删除成功');
+						ds.success();
+						me.reload();
+					}else{
+						js.msg('msg',a1.msg);
+					}
+					me.bool=false;
+				},
+				error:function(e){
+					js.msg('msg','err:'+e.responseText);
+					me.bool = false;
 				}
-			},'json');
+			});
 		};
 		
 		this._fanye	= function(){
@@ -663,10 +675,11 @@
 			rendertr:function(){return  ''},rowsbody:function(){return ''},
 			celldblclick:false
 		};
-
+		if(typeof(bootstableobj)=='undefined')bootstableobj={};
 		var can = $.extend({}, defaultVal, options);
 		var clsa = new bootstable($(this), can);
 		clsa.init();
+		if(can.modenum!='')bootstableobj[can.modenum]=clsa;
 		return clsa;
 	};
 })(jQuery);

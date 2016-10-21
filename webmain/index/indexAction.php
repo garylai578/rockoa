@@ -3,9 +3,7 @@ class indexClassAction extends Action{
 	
 	public function defaultAction()
 	{
-		//$this->getFilodes('./');
-		//exit;
-		
+		$afrom 			= $this->get('afrom');
 		$this->tpltype	= 'html';
 		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`type`');
 		$allmenuid	= '-1';
@@ -27,6 +25,7 @@ class indexClassAction extends Action{
 		
 		
 		$this->smartydata['my']			= $my;
+		$this->smartydata['afrom']		= $afrom;
 		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.png');
 	}
 	

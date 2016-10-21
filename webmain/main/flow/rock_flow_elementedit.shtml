@@ -7,8 +7,8 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_element',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'mid='+mid+''},
-		submitfields:'name,fields,fieldstype,dev,sort,islu,isbt,iszs,data,iszb,attr',
-		requiredfields:'name,fields,fieldstype',aftersaveaction:'elemensavefields',
+		submitfields:'name,fields,fieldstype,dev,sort,islu,isbt,iszs,data,iszb,attr,lens',
+		requiredfields:'name,fields,fieldstype,lens',aftersaveaction:'elemensavefields',
 		success:function(){
 			closenowtabs();
 			try{guanelementedit.reload();}catch(e){}
@@ -37,6 +37,10 @@ $(document).ready(function(){
 		var val = this.value;
 		val = val.replace(/[^a-zA-Z0-9+\_]/gi,'');
 		this.value = strreplace(val);
+	});
+	$(h.form.fieldstype).change(function(){
+		var val = this.value;
+		
 	});
 });
 
@@ -79,8 +83,8 @@ $(document).ready(function(){
 		<tr>
 			<td align="right">字段分类：</td>
 			<td class="tdinput"><select name="iszb" class="form-control"><option value="0">主表字段</option><option value="1">多行子表字段</option></select></td>
-			<td align="right">排序号：</td>
-			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
+			<td align="right">字段长度：</td>
+			<td class="tdinput"><input name="lens" value="0" maxlength="4" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
 		</tr>
 	
 		<tr>
@@ -90,7 +94,12 @@ $(document).ready(function(){
 	
 		<tr>
 			<td align="right">属性：</td>
-			<td class="tdinput" colspan="3"><textarea  name="attr" style="height:60px" class="form-control"></textarea></td>
+			<td class="tdinput" colspan="3"><textarea  name="attr" style="height:60px" class="form-control"></textarea><font color=#888888>如果只读填写：readonly</font></td>
+		</tr>
+		
+		<tr>
+			<td align="right">排序号：</td>
+			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
 		</tr>
 	
 		

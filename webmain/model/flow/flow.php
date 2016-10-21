@@ -27,6 +27,7 @@ class flowModel extends Model
 	protected function flowcheckfinsh($zt){}
 	protected function flowgetfields($lx){}
 	protected function flowgetoptmenu($opt){}
+	protected function flowcheckname($num){}
 	protected function flowoptmenu($ors, $crs){}
 	protected function flowisreadqx(){return false;}
 	protected function flowprintrows($r){return $r;}
@@ -840,6 +841,7 @@ class flowModel extends Model
 		if($pctx==0 && $mctx==0)$slx=3;
 		$cont	= $this->rock->reparr($cont, $this->rs);
 		if(contain($receid,'u') || contain($receid, 'd'))$receid = m('admin')->gjoin($receid);
+		m('todo')->addtodo($receid, $this->modename, $cont, $this->modenum, $this->id);
 		$reim->pushagent($receid, $gname, $cont, $title, $url, $slx);
 		if($wxtx==1 && $reim->isanwx()){
 			if($title=='')$title = $this->modename;

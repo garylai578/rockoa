@@ -80,7 +80,7 @@ $(document).ready(function(){
 			var mon = get('month_{rand}').value;
 			var option = {
 				title: {
-					text: ''+mon+'月份应收金额图标',
+					text: ''+mon+'月份应收金额图表',
 					left: 'center'
 				},
 				tooltip: {},

@@ -71,7 +71,15 @@ js.apiurl = function(m,a,cans){
 var c={
 	callback:function(cs){
 		var calb = js.request('callback');
-		if(!calb)return;
+		if(!calb){
+			try{
+			if(ismobile==0){
+			parent.bootstableobj[moders.num].reload();
+			parent.js.msg('success','处理成功');
+			parent.js.tanclose('winiframe');}
+			}catch(e){}
+			return;
+		}
 		try{parent[calb](cs);}catch(e){}
 		try{opener[calb](cs);}catch(e){}
 		try{parent.js.tanclose('winiframe');}catch(e){}

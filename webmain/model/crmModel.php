@@ -27,7 +27,7 @@ class crmClassModel extends Model
 	//读取我的合同
 	public function getmyract($uid, $id=0)
 	{
-		$where 	= '`uid`='.$uid.' and (`ispay`<>1 or `id`='.$id.')';
+		$where 	= '`uid`='.$uid.' and (`isover`=0 or `id`='.$id.')';
 		$rows 	= m('custract')->getrows($where, 'id,custid,custname,money,num');
 		return $rows;
 	}

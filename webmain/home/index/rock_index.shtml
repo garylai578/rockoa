@@ -168,8 +168,8 @@ $(document).ready(function(){
 	
 	
 	
-	
 	js.importjs('web/res/mode/echarts/echarts.common.min.js');
+	js.importjs('web/res/js/jquery-imgview.js');
 });
 </script>
 <style>

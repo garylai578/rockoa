@@ -8,6 +8,7 @@ class mode_custfinaClassAction extends inputAction{
 		$narr	= array();
 		$htid 	= (int)$arr['htid'];
 		$money 	= floatval($arr['money']);
+		if($money<=0)return '金额必须大于0';
 		if($htid>0){
 			$htrs = m('custract')->getone($htid);
 			$narr['htnum'] 		= $htrs['num'];

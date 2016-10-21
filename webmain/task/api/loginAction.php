@@ -17,7 +17,8 @@ class loginClassAction extends apiAction
 				'face'  	=> $arr['face'],
 				'apptx'  	=> $arr['apptx'],
 				'token'  	=> $arr['token'],
-				'title'		=> getconfig('apptitle')
+				'title'		=> getconfig('apptitle'),
+				'weblogo'	=> getconfig('weblogo'),
 			);
 			
 			$uid 	= $arr['uid'];

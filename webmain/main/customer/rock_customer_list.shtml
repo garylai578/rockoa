@@ -86,6 +86,10 @@ $(document).ready(function(){
 				}
 			}
 			setTimeout(function(){js.getuser(cans);},10);
+		},
+		search:function(){
+			var s=get('key_{rand}').value;
+			a.setparams({key:s},true);
 		}
 	};
 	js.initbtn(c);

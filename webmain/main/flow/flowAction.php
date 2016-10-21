@@ -349,6 +349,7 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$name 	= $cans['name'];
 		$mid 	= $cans['mid'];
 		$type 	= $cans['fieldstype'];
+		$lens 	= $cans['lens'];
 		$tables = m('flow_set')->getmou('`table`', $mid);
 		if(!isempt($tables) && $cans['iszb']==0 && substr($fields,0,5)!='temp_'){
 			$allfields = $this->db->getallfields('[Q]'.$tables.'');
@@ -403,5 +404,34 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 			if($shu>0)$rows[$k]['shu'] = $shu;
 		}
 		return array('rows'=>$rows);
+	}
+	
+	
+	
+	public function delmodeAjax()
+	{
+		if($this->getsession('isadmin')!='1')return;
+		$id = (int)$this->post('id','0');
+		$mrs = m('flow_set')->getone($id);
+		if(!$mrs)return;
+		if($mrs['type']=='系统')return;
+		$table = $mrs['table'];
+		m('flow_bill')->delete("`modeid`='$id'");
+		$where = $mrs['where'];
+		if(!isempt($where)){
+			$where = $this->rock->covexec($where);
+			$where = "and $where";
+		}
+		$rows  = m($table)->getrows('1=1 '.$where.'');
+		foreach($rows as $k=>$rs){
+			$ssid 	= $rs['id'];
+			$dwhere	= "`table`='$table' and `mid`='$ssid'";
+			m('flow_log')->delete($dwhere);
+			m('reads')->delete($dwhere);
+			m('file')->delfiles($table, $ssid);
+		}
+		m($table)->delete('1=1 '.$where.'');
+		m('flow_set')->delete("`id`='$id'");
+		$this->db->query("alter table `[Q]$table` AUTO_INCREMENT=1");
 	}
 }

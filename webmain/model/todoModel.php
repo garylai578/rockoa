@@ -21,6 +21,24 @@ class todoClassModel extends Model
 		}
 	}
 	
+	public function addtodo($receid, $title, $mess, $mode='', $mid=0)
+	{
+		if($receid=='')return;
+		$where 		= '';
+		if($receid!='all')$where = ' and `id` in('.$receid.')';
+		$rows 	= $this->db->getrows('[Q]admin','`status`=1 '.$where.'','id');
+		$uids 	= '';
+		foreach($rows as $k=>$rs)$uids.= ','.$rs['id'].'';
+		if($uids != ''){
+			$uids = substr($uids, 1);
+			if($mode!='' && $mid>0)$this->delete("`modenum`='$mode' and mid='$mid' and `uid` in($uids) and `status`=0");
+			$this->add($uids, $title, $mess, array(
+				'modenum' => $mode,
+				'mid'	  => $mid
+			));
+		}
+	}
+	
 	/**
 		添加唯一的通知
 	*/

@@ -101,18 +101,22 @@ class fileClassModel extends Model
 		if($this->rock->contain($filepath,'http')){
 			header('location:'.$filepath.'');
 		}else{
+			header('Content-type:application/vnd.ms-excel');
+			header('Content-type: text/plain');
+			header('Accept-Ranges: bytes');
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Pragma: no-cache');
+			header('Expires: 0');
+			header('Content-disposition:attachment;filename='.iconv("utf-8","gb2312",str_replace(' ','',$filename)).'');
 			if(substr($filepath,-4)=='temp'){
-				header('Content-type:application/vnd.ms-excel');
-				header('Content-type: text/plain');
-				header('Accept-Ranges: bytes');
-				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-				header('Pragma: no-cache');
-				header('Expires: 0');
-				header('Content-disposition:attachment;filename='.iconv("utf-8","gb2312",str_replace(' ','',$filename)).'');
 				$content	= file_get_contents($filepath);
 				echo base64_decode($content);
 			}else{
-				header('location:'.$filepath.'');
+				if($rs['filesize'] > 10*1024*1024){
+					header('location:'.$filepath.'');
+				}else{
+					echo file_get_contents($filepath);
+				}
 			}
 		}
 	}

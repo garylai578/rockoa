@@ -19,7 +19,7 @@ class gerenClassAction extends Action
 	public function editpassAjax()
 	{
 		$id			= $this->adminid;
-		if(getconfig('system')=='demo')exit('演示上不要修改');
+		if(getconfig('systype')=='demo')exit('演示上不要修改');
 		$oldpass	= $this->rock->post('passoldPost');
 		$pasword	= $this->rock->post('passwordPost');
 		$msg		= '';

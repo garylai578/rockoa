@@ -32,6 +32,12 @@ $(document).ready(function(){
 		},
 		search:function(o1){
 			a.setparams(this.getcans(), true);
+		},
+		clickwin:function(){
+			openinput('通知公告', 'gong');
+		},
+		daochu:function(){
+			a.exceldown();
 		}
 	};
 	
@@ -42,6 +48,9 @@ $(document).ready(function(){
 <div>
 	<table width="100%">
 	<tr>
+	<td id="btnbnts_{rand}" style="padding-right:10px" >
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+	</td>
 	 <td align="left" >
 		<input style="width:200px"  class="form-control" id="key_{rand}"  placeholder="类型/名称">
 	 </td>
@@ -49,7 +58,7 @@ $(document).ready(function(){
 		<button class="btn btn-default" click="search" type="button">搜索</button>
 	  </div>
 	  <td width="90%" align="right">  
-			
+				<button class="btn btn-default" click="daochu,1" type="button">导出</button> 
 	</td>
 	</tr>
 	</table>

@@ -9,6 +9,7 @@ class hrClassAction extends runtAction
 		$tiemss = strtotime($this->date);
 		$this->updatepositive($tiemss);
 		$this->updatehrredund($tiemss);
+		$this->updatehrtransfer($tiemss);
 		
 		
 		$flow 	= m('flow')->initflow('userract');
@@ -78,9 +79,10 @@ class hrClassAction extends runtAction
 	}
 	
 	//调动的
-	private function updatehrtransfer($mdb, $timess)
+	private function updatehrtransfer($timess)
 	{
 		$db		= m('hrtransfer');
+		$mdb	= m('admin');
 		$rows 	= $db->getall("`status`=1 and `isover`=0",'`id`,`uid`,`effectivedt`,`newdeptid`,`tranuid`,`newdeptname`,`newranking`');
 		$uids	= '0';
 		foreach($rows as $k=>$rs){
@@ -97,6 +99,6 @@ class hrClassAction extends runtAction
 				}	
 			}
 		}
-		if($uids != '0')m('admin')->updatedata("and `id` in($uids)");
+		if($uids != '0')$mdb->updateinfo("and `id` in($uids)");
 	}
 }

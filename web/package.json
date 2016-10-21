@@ -1,8 +1,8 @@
 ﻿{
 	"main": "login.html",
 	"name": "rockxinhu",
-	"description": "信呼，一款开源的工作办公软件，by http://xinhu.pw/",
-	"version": "1.0",
+	"description": "信呼，一款开源的工作办公软件，by http://xh829.com/",
+	"version": "1.1",
 	"node-remote":"http://127.0.0.1/",
 	"window": {
 		"title": "信呼",

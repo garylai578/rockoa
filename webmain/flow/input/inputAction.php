@@ -101,11 +101,14 @@ class inputAction extends ActionNot
 		}
 		$ss 	= '';
 		$befa 	= $this->savebefore($table, $uaarr, $id, $addbo);
-		if(isset($befa['msg']))$ss=$befa['msg'];
-		if(isset($befa['rows'])){
-			foreach($befa['rows'] as $bk=>$bv)$uaarr[$bk]=$bv;
+		if(is_string($befa)){
+			$ss = $befa;
+		}else{
+			if(isset($befa['msg']))$ss=$befa['msg'];
+			if(isset($befa['rows'])){
+				if(is_array($befa['rows']))foreach($befa['rows'] as $bk=>$bv)$uaarr[$bk]=$bv;
+			}
 		}
-		if(is_string($befa))$ss = $befa;
 		if(!$this->isempt($ss))$this->backmsg($ss);
 		
 		$bo = $db->record($uaarr, $where);;
@@ -426,7 +429,7 @@ class inputAction extends ActionNot
 				}
 				if(($type=='rockcombo' ||$type=='checkboxall') && !$fopt){
 					$_ars= explode(',', $datanum);
-					$fopt= $this->option->getmnum($_ars[0]);
+					$fopt= $this->option->getselectdata($_ars[0], isset($_ars[2]));
 					$fvad= 'name';
 					if(isset($_ars[1])&&($_ars[1]=='value'||$_ars[1]=='id'||$_ars[1]=='num'))$fvad=$_ars[1];
 					foreach($fopt as $k=>$rs){

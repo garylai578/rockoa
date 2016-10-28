@@ -33,7 +33,24 @@ class optionClassModel extends Model
 		return $this->getdata($num);
 	}
 	
-	public function setval($num, $val='', $name=null)
+	public function getselectdata($num, $tbo=false)
+	{
+		$arr = $this->getdata($num);
+		$rows= array();
+		foreach($arr as $k=>$rs){
+			$rows[] = $rs;
+			if($tbo){
+				$sarr = $this->getdata($rs['id']);
+				foreach($sarr as $k1=>$rs1){
+					$rs1['name'] = '&nbsp;&nbsp;├'.$rs1['name'].'';
+					$rows[] = $rs1;
+				}
+			}
+		}
+		return $rows;
+	}
+	
+	public function setval($num, $val='', $name=null, $isub=true)
 	{
 		$where  = "`num`='$num'";
 		$id 	= (int)$this->getmou('id', $where);
@@ -45,8 +62,31 @@ class optionClassModel extends Model
 			'optdt'	=> $this->rock->now
 		);
 		if($name!=null)$arr['name'] = $name;
-		$this->record($arr, $where);
+		if($id==0 || $isub)$this->record($arr, $where);
 		if($id==0)$id = $this->db->insert_id();
 		return $id;
+	}
+	
+	
+	public function gettreedata($pid)
+	{
+		$rows 	= $this->getfoldrowsss($pid);
+		return $rows;
+	}
+	
+	private function getfoldrowsss($pid)
+	{
+		$rows 	= $this->db->getall("select `id`,`pid`,`name`,`optdt`,`sort` from [Q]option where `pid`='$pid' and `valid`=1 order by `sort`,`id`");
+		foreach($rows as $k=>$rs){
+			$rows[$k]['expanded']	= true;
+			$rows[$k]['children'] 	= $this->getfoldrowsss($rs['id']);
+		}
+		return $rows;
+	}
+	
+	public function getnumtoid($num, $name='', $isub=true)
+	{
+		$idd = $this->setval($num,'', $name, $isub);
+		return $idd;
 	}
 }

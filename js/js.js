@@ -200,7 +200,7 @@ js.upload=function(call,can, glx){
 	if(!call)call='';
 	if(!can)can={};
 	js.uploadrand	= js.now('YmdHis')+parseInt(Math.random()*999999);
-	var url = 'mode/upload/upload.php?callback='+call+'&upkey='+js.uploadrand+'&p='+PROJECT+'';
+	var url = 'index.php?m=upload&d=public&callback='+call+'&upkey='+js.uploadrand+'';
 	for(var a in can)url+='&'+a+'='+can[a]+'';
 	if(glx=='url')return url;
 	var s='',tit=can.title;if(!tit)tit='上传文件';

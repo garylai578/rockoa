@@ -12,6 +12,8 @@ class upfileChajian extends Chajian{
 	public $maxsize; //上传大小(MB)
 	public $path;    //文件夹
 	
+	private $jpgallext		= '|jpg|png|gif|bmp|jpeg|';	//图片格式
+	
 	/**
 		初始化
 		@param	$ext string 上传类型
@@ -20,6 +22,7 @@ class upfileChajian extends Chajian{
 	*/
 	public function initupfile($ext,$path,$maxsize=1)
 	{
+		if($ext=='image')$ext = $this->jpgallext;
 		$this->ext		= $ext;
 		$this->maxsize	= $maxsize;
 		$this->path		= $path;
@@ -44,7 +47,7 @@ class upfileChajian extends Chajian{
 		
 		$file_img		= false;
 		$file_kup		= false;
-		$jpgallext		= '|jpg|png|gif|bmp|jpeg|';//图片格式
+		$jpgallext		= $this->jpgallext;
 		$upallfile		= $jpgallext.'doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|wma|chm|apk|';
 		
 		if($this->contain($jpgallext, '|'.$file_ext.'|'))$file_img = true;	

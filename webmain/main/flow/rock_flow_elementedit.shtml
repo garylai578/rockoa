@@ -7,7 +7,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_element',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'mid='+mid+''},
-		submitfields:'name,fields,fieldstype,dev,sort,islu,isbt,iszs,data,iszb,attr,lens',
+		submitfields:'name,fields,fieldstype,dev,savewhere,sort,islu,isbt,iszs,data,iszb,attr,lens',
 		requiredfields:'name,fields,fieldstype,lens',aftersaveaction:'elemensavefields',
 		success:function(){
 			closenowtabs();
@@ -95,6 +95,11 @@ $(document).ready(function(){
 		<tr>
 			<td align="right">属性：</td>
 			<td class="tdinput" colspan="3"><textarea  name="attr" style="height:60px" class="form-control"></textarea><font color=#888888>如果只读填写：readonly</font></td>
+		</tr>
+		
+		<tr>
+			<td align="right">保存条件：</td>
+			<td class="tdinput" colspan="3"><textarea  name="savewhere" style="height:60px" class="form-control"></textarea><font color=#888888>如截止时间比较大于开始：gt|{startdt}|提示，多个,分开。符号说明gt大于，egt大于等于，lt小于，elt小于等于，eg等于，neg不等于，{now}当前时间，{date}当前日期</font></td>
 		</tr>
 		
 		<tr>

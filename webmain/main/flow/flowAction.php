@@ -11,6 +11,13 @@ class flowClassAction extends Action
 		echo json_encode($arr);
 	}
 	
+	public function modeafter($table, $rows)
+	{
+		return array(
+			'qian' => PREFIX
+		);
+	}
+	
 	public function loaddatacourseAjax()
 	{
 		$id		= (int)$this->get('id');
@@ -68,8 +75,16 @@ class flowClassAction extends Action
 			}
 		}
 		
-		if($isflow==0 || isempt($tab))return;
+		if(isempt($tab))return;
 		if(!$alltabls)$alltabls 	= $this->db->getalltable();
+		if($isflow==0){
+			if(!in_array(''.PREFIX.''.$tab.'', $alltabls)){
+				$sql = "CREATE TABLE `[Q]".$tab."` (`id` int(11) NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`))ENGINE=MyISAM  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+				$bo = $this->db->query($sql);
+			}
+			return;
+		}
+		
 		if(!in_array(''.PREFIX.''.$tab.'', $alltabls)){
 			$sql = "CREATE TABLE `[Q]".$tab."` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -163,7 +178,44 @@ class flowClassAction extends Action
 	
 	
 	
-	
+	public function inputzsAction()
+	{
+		$setid	= $this->get('setid');
+		$atype	= (int)$this->get('atype','0');
+		$rs 	= m('flow_set')->getone("`id`='$setid'");
+		if(!$rs)exit('sorry!');
+		$this->smartydata['rs'] = $rs;
+		$this->title  = $rs['name'].'_展示页面设置';
+		$fleftarr 	= m('flow_element')->getrows("`mid`='$setid'",'*','`iszb`,`sort`');
+		$modenum	= $rs['num'];
+		$fleft[]= array('base_name', '申请人',0);
+		$fleft[]= array('base_deptname', '申请部门',0);
+		$fleft[]= array('base_sericnum', '单号',0);
+		$fleft[] = array('file_content', '相关文件',0);
+		$iszb 	= 0;
+		foreach($fleftarr as $k=>$brs){
+			$bt='';
+			if($brs['isbt']==1)$bt='*';
+			$iszbs = $brs['iszb'];
+			if($iszbs>0&&$iszb==0){
+				$fleft[]= array('', '<font color=#ff6600>—第'.$iszbs.'个多列子表—</font>', $iszbs);
+				$fleft[]= array('xuhao', '序号', $iszbs);
+			}
+			$iszb	= $iszbs;
+			$fleft[]= array($brs['fields'], $bt.$brs['name'], $iszb);
+		}
+
+		
+		$this->smartydata['fleft'] = $fleft;
+		$this->smartydata['atype'] = $atype;
+
+		$path 		= ''.P.'/flow/page/view_'.$modenum.'_'.$atype.'.html';
+		$content 	= '';
+		if(file_exists($path)){
+			$content = file_get_contents($path);
+		}
+		$this->smartydata['content'] = $content;
+	}
 	
 	
 	
@@ -264,6 +316,32 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		}
 	}
 	
+	public function viewsaveAjax()
+	{
+		$content = $this->post('content');
+		$num 	 = $this->post('num');
+		$atype 	 = $this->post('atype','0');
+		$path 	 = ''.P.'/flow/page/view_'.$num.'_'.$atype.'.html';
+		$bo 	 = $this->rock->createtxt($path, $content);
+		if(!$bo){
+			echo '无法写入文件:'.$path.'';
+		}else{
+			echo 'success';
+		}
+	}
+	
+	public function getinputAjax()
+	{
+		$num 	 = $this->post('num');
+		$path 	 = ''.P.'/flow/page/input_'.$num.'.html';
+		$cont 	 = '';
+		if(file_exists($path)){
+			$cont = file_get_contents($path);
+			$cont = str_replace('*','', $cont);
+		}
+		echo $cont;
+	}
+	
 	
 	
 	public function getsubtableAjax()
@@ -354,7 +432,7 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		if(!isempt($tables) && $cans['iszb']==0 && substr($fields,0,5)!='temp_'){
 			$allfields = $this->db->getallfields('[Q]'.$tables.'');
 			if(!in_array($fields, $allfields)){
-				$str = "ALTER TABLE [Q]".$tables." ADD $fields ";
+				$str = "ALTER TABLE `[Q]".$tables."` ADD `$fields` ";
 				if($type=='date' || $type=='datetime' || $type=='time'){
 					$str .= ' '.$type.'';
 				}else if($type=='number'){

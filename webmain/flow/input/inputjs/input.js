@@ -280,7 +280,7 @@ var c={
 			allowImageUpload : true,
 			formatUploadUrl:false,
 			allowFileManager:true,
-			uploadJson:'mode/kindeditor/kindeditor_upload.php',
+			uploadJson:'?m=upload&a=upimg&d=public',
 			minWidth:'300px',height:'250',
 			items : [
 				'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',

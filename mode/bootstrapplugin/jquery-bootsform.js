@@ -251,9 +251,9 @@
 						can.error();
 					}
 				},
-				error:function(da){
+				error:function(e){
 					o1.disabled = false;
-					me.setmsg('Error:'+da+'');
+					me.setmsg('Error:'+e.responseText+'');
 					can.error();
 				}
 			});

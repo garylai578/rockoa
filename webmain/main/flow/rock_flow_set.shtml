@@ -1,8 +1,9 @@
 <script >
 $(document).ready(function(){
+	var qianss='';
 	var a = $('#view_{rand}').bootstable({
 		tablename:'flow_set',dir:'asc',sort:'sort',celleditor:true,
-		url:publicstore('{mode}','{dir}'),fanye:true,pageSize:10,
+		url:publicstore('{mode}','{dir}'),fanye:true,pageSize:10,storeafteraction:'modeafter',
 		columns:[{
 			text:'类型',dataIndex:'type',sortable:true,editor:true
 		},{
@@ -37,11 +38,16 @@ $(document).ready(function(){
 		},
 		beforeload:function(){
 			btn(true);
+		},
+		load:function(d){
+			qianss=d.qian;
 		}
 	});
 	function btn(bo, d){
 		get('edit_{rand}').disabled = bo;
 		get('downbtn_{rand}').disabled = bo;
+		get('biaoge_{rand}').disabled = bo;
+		get('biaoges_{rand}').disabled = bo;
 		if(d && d.type=='系统')bo=true;
 		get('del_{rand}').disabled = bo;
 	}
@@ -91,6 +97,17 @@ $(document).ready(function(){
 		},
 		clearalldatas:function(id){
 			js.msg('msg','不允许清空');
+		},
+		biaoge:function(){
+			this.showtalbe(a.changedata.table);
+		},
+		biaoges:function(){
+			this.showtalbe(a.changedata.tables);
+		},
+		showtalbe:function(table){
+			if(!table)return;
+			var name=''+qianss+''+table+'';
+			addtabs({num:'tablefields'+name+'',url:'system,table,fields,table='+name+'',name:'['+name+']字段管理'});
 		}
 	};
 	js.initbtn(c);
@@ -122,6 +139,8 @@ $(document).ready(function(){
 		<button class="btn btn-warning" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
 		<button class="btn btn-primary" disabled id="downbtn_{rand}" type="button">模块开发管理 <i class="icon-angle-down"></i></button>&nbsp; 
 		<button class="btn btn-default" click="pipei" type="button">重新匹配流程</button>&nbsp; 
+		<button class="btn btn-default" id="biaoge_{rand}" disabled click="biaoge,1" type="button"><i class="icon-table"></i> 对应主表管理</button>
+		<button class="btn btn-default" id="biaoges_{rand}" disabled click="biaoges,1" type="button"><i class="icon-table"></i> 对应子表管理</button>
 	</td>
 	<td align="left"  style="padding:0px 10px;">
 		

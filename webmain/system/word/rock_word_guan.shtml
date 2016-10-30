@@ -14,7 +14,7 @@ $(document).ready(function(){
 			if(sspid==0){
 				typeid = d.pid;
 				sspid = d.pid;
-				c.loadfile(typeid,'根目录');
+				c.loadfile('0','所有文档');
 			}
 		},
 		itemdblclick:function(d){
@@ -81,7 +81,7 @@ $(document).ready(function(){
 		genmu:function(){
 			typeid = sspid;
 			at.changedata={};
-			this.loadfile(sspid,'根目录');
+			this.loadfile('0','所有文档');
 		},
 		savefile:function(tps, sid){
 			if(sid=='')return;
@@ -141,7 +141,9 @@ $(document).ready(function(){
 			return h;
 		},
 		typedel:function(o1){
-			at.del();
+			at.del({
+				url:js.getajaxurl('deloption','option','system'),params:{'stable':'word'}
+			});
 		},
 		del:function(){
 			a.del({url:js.getajaxurl('delword','{mode}','{dir}')});
@@ -161,6 +163,7 @@ $(document).ready(function(){
 	  <div  class="panel-footer">
 		<a href="javascript:" click="clicktypewin,0" onclick="return false"><i class="icon-plus"></i></a>&nbsp; &nbsp; 
 		<a href="javascript:" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp; 
+		<a href="javascript:" click="typedel" onclick="return false"><i class="icon-trash"></i></a>&nbsp; &nbsp; 
 		<a href="javascript:" click="reload" onclick="return false"><i class="icon-refresh"></i></a>
 	  </div>
 	</div>  
@@ -171,7 +174,7 @@ $(document).ready(function(){
 	<table width="100%"><tr>
 		<td align="left">
 			<button class="btn btn-primary" click="uploadfile"  type="button"><i class="icon-upload-alt"></i> 上传文件</button>&nbsp; 
-			<button class="btn btn-default" click="genmu"  type="button">根目录</button>&nbsp; 
+			<button class="btn btn-default" click="genmu"  type="button">所有文档</button>&nbsp; 
 			<span id="megss{rand}"></span>
 		</td>
 		

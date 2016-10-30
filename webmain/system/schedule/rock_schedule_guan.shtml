@@ -24,9 +24,6 @@ $(document).ready(function(){
 		},
 		beforeload:function(){
 			btn(true);
-		},
-		itemdblclick:function(d){
-			openxiang('schedule',d.id);
 		}
 	});
 	
@@ -47,7 +44,7 @@ $(document).ready(function(){
 		clickwin:function(o1,lx){
 			var id=0;
 			if(lx==1)id=a.changeid;
-			openinput('备忘记事','schedule',id,'wfhoew{rand}');
+			openinput('日程','schedule',id,'wfhoew{rand}');
 		}
 	};
 	wfhoew{rand}=function(){

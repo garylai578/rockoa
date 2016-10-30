@@ -3,7 +3,7 @@
 if(!ini_get('date.timezone') )date_default_timezone_set('Asia/Shanghai');
 header('Content-Type:text/html;charset=utf-8');
 define('ROOT_PATH',str_replace('\\','/',dirname(dirname(__FILE__))));
-define('DEBUG', true);
+define('DEBUG', false);
 include_once(''.ROOT_PATH.'/include/rockFun.php');
 include_once(''.ROOT_PATH.'/include/Chajian.php');
 include_once(''.ROOT_PATH.'/include/class/rockClass.php');

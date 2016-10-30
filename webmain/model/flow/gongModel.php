@@ -46,14 +46,18 @@ class flow_gongClassModel extends flowModel
 	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$s = m('admin')->getjoinstr('receid', $uid);
-		if($lx=='my'){
-			
+		$s 		= m('admin')->getjoinstr('receid', $uid);
+		$key 	= $this->rock->post('key');
+		if($lx=='wfb'){
+			$s =' and `optid`='.$this->adminid.'';
 		}
 		if($lx=='wexx'){
 			$ydid 	= m('log')->getread('infor', $uid);
 			$s 		= 'and id not in('.$ydid.') '.$s.' ';
 		}
+		
+		if(!isempt($key))$s.=" and (`title` like '%$key%' or `typename`='$key')";
+		
 		return array(
 			'where' => $s,
 			'order' => 'optdt desc',

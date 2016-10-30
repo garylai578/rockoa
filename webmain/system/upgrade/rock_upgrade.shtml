@@ -60,6 +60,12 @@ $(document).ready(function(){
 					c.upsho(lx,id,msg);
 				}
 			},kes);
+		},
+		tontbudata:function(lx, o){
+			o.innerHTML=js.getmsg('同步中...');
+			js.ajax(js.getajaxurl('tontbudata','{mode}','{dir}'),{lx:lx},function(s){
+				o.innerHTML=js.getmsg(s,'green');
+			});
 		}
 	};
 	upsho{rand}=function(lx,id,kes){
@@ -68,8 +74,12 @@ $(document).ready(function(){
 	js.initbtn(c);
 	
 	upfetwontbu=function(lx, o){
+		if(!istongbu){
+			js.alert('请先升级[系统基本文件]');
+			return;
+		}
 		js.confirm('谨慎啊，确定要同步嘛？同步了将覆盖你原先配置好的流程哦！',function(jg){
-			if(jg=='yes')js.msg('msg','还未开放哦');
+			if(jg=='yes')c.tontbudata(lx, o);
 		});
 	}
 });
@@ -82,8 +92,8 @@ $(document).ready(function(){
 <div id="view_{rand}"></div>
 <div class="blank10"></div>
 <div>1、同步菜单，系统上操作菜单会和官网同步。<a onclick="upfetwontbu(0,this)" href="javascript:;">[同步]</a></div>
+<div class="blank10"></div>
 <div>2、同步流程模块，流程模块会和官网同步。<a onclick="upfetwontbu(1,this)" href="javascript:;">[同步]</a></div>
-<div>3、同步应用，流程模块会和官网同步。<a onclick="upfetwontbu(2,this)" href="javascript:;">[同步]</a></div>
 <div class="blank10"></div>
 <div style="font-size:16px;line-height:35px">
 更多升级方法：<br>

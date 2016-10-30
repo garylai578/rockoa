@@ -83,4 +83,9 @@ class customerClassAction extends Action
 		if($sid==''||$sid=='')return;
 		m('crm')->movetouser($this->adminid, $sid, $toid);
 	}
+	
+	public function retotalAjax()
+	{
+		m('crm')->custtotal();
+	}
 }

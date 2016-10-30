@@ -16,7 +16,7 @@ class taskClassModel extends Model
 			$len = count($ate);
 			$rs['adminid'] 	= 1;
 			$rs['atype'] 	= 'runurl';
-			$rs['url'] 		= $this->getyunurl($rs['id']);
+			$rs['url'] 		= $this->showgeurl($rs['url'],$rs['id']);
 			for($i=0;$i<$len;$i++){
 				$rs['type'] = $ate[$i];
 				$rs['time'] = $ati[$i];
@@ -70,23 +70,28 @@ class taskClassModel extends Model
 		return $turl;
 	}
 	
+	/*
 	private function getyunurl($id)
 	{
 		$turl	= $this->gettaskurl();
 		$url 	= ''.$turl.'task.php?m=runt&a=run&mid='.$id.'';
 		return $url;
-	}
+	}*/
 	
+	//获取运行url
 	private function showgeurl($url, $id)
 	{
-		if(!$this->contain($url, 'http://')){
+		if(contain($url, 'http://') || contain($url, 'https://')){
+			
+		}else{
 			$aurl 	= explode(',', $url);
-			$turl	= getconfig('localurl', URL);
+			$turl	= $this->gettaskurl();
 			$url 	= ''.$turl.'task.php?m='.$aurl[0].'|runt&a='.$aurl[1].'&runid='.$id.'';
 		}
 		return $url;
 	}
 	
+	//基本运行 弃用
 	public function baserun($mid=0,$gtimes='')
 	{
 		$where  = '';
@@ -164,6 +169,7 @@ class taskClassModel extends Model
 		return $barr;
 	}
 	
+	//获取运行列表
 	public function getlistrun($dt)
 	{
 		$brun = $this->getrunlist($dt);

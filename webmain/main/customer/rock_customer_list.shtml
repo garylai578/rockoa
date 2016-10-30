@@ -25,6 +25,8 @@ $(document).ready(function(){
 		},{
 			text:'共享给',dataIndex:'shate'
 		},{
+			text:'待收',dataIndex:'moneyd'
+		},{
 			text:'创建人',dataIndex:'createname'
 		}],
 		itemclick:function(){

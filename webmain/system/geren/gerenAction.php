@@ -1,7 +1,30 @@
 <?php
 class gerenClassAction extends Action
 {
-
+	public function filebefore($table)
+	{
+		$key	= $this->post('key');
+		$atype	= $this->post('atype');
+		$where	 = 'and optid='.$this->adminid.'';
+		if($atype=='all'){
+			$where='';
+		}
+		if($key!=''){
+			$where.=" and (`optname` like '%$key%' or filename like '%$key%')";
+		}
+		return array(
+			'where' => $where,
+			'fields' => '`id`,fileext,filename,filesizecn,filepath,adddt,optname,downci,ip,web',
+		);
+	}
+	
+	public function delfileAjax()
+	{
+		$id = $this->post('id','0');
+		m('file')->delfile($id);
+		backmsg();
+	}
+	
 	public function defaultAction()
 	{
 		$this->title	= '修改头像';
@@ -13,6 +36,12 @@ class gerenClassAction extends Action
 		//$face			= $this->rock->repempt($face,'images/white.gif');
 		$this->smartydata['face']		= $face;
 		$this->smartydata['imgurl']		= $imgurl;
+	}
+	
+	public function changestyleAjax()
+	{
+		$style = $this->post('style','0');
+		m('admin')->update('`style`='.$style.'', 'id='.$this->adminid.'');
 	}
 
 

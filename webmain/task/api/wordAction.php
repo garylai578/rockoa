@@ -98,11 +98,11 @@ class wordClassAction extends apiAction
 		$id 	= (int)$this->post('id');
 		$type 	= $this->post('type');
 		if($type=='folder'){
-			$delbo = true;
-			if(m('word')->rows("`typeid`='$id'")>0)$delbo=false;
+			$delbo	= true;
 			if($delbo)if($this->option->rows("`pid`='$id'")>0)$delbo=false;
-			if(!$delbo)$this->showreturn('','非空文件夹不允许删除',201);
+			if(!$delbo)$this->showreturn('','有下级文件夹不允许删除',201);
 			$this->option->delete($id);
+			m('word')->update('`typeid`=0', "`typeid`='$id'");
 		}else{
 			m('file')->delfile($id);
 			m('word')->delete("`fileid`='$id' and `optid`='$this->adminid'");

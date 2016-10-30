@@ -28,9 +28,6 @@ class scheduleClassAction extends Action
 			if($rate=='d')$rate='每天';
 			if($rate=='m')$rate='每月'.$rs['rateval'].'号';
 			$rows[$k]['rate'] = $rate;
-			$txsj='不提醒';
-			if($rs['txsj']==1)$txsj='提醒';
-			$rows[$k]['txsj'] = $txsj;
 		}
 		return array('rows'=>$rows);
 	}

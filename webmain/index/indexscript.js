@@ -38,7 +38,7 @@ function initbody(){
 	});
 	loadmenu($("span[pmenuid]")[0]);
 	if(typeof(applicationCache)=='undefined'){
-		js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
+		//js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
 	}
 	if(a.length<=1)$('.topmenubg').html('');
 	var ddsata=[{
@@ -47,6 +47,8 @@ function initbody(){
 		name:'<i class="icon-bell"></i> 提醒信息',num:'todo',url:'system,geren,todo',names:'提醒信息'
 	},{
 		name:'<i class="icon-picture"></i> 修改头像',num:'face'
+	},{
+		name:'<i class="icon-magic"></i> 切换皮肤',num:'style',url:'system,geren,style',names:'切换皮肤'
 	},{
 		name:'<i class="icon-user"></i> 帐号('+adminuser+')',num:'user'
 	}];
@@ -168,11 +170,13 @@ function resizewh(){
 	viewwidth = w; 
 	viewheight = h-50-44; 
 	$('#indexcontent').css({width:''+viewwidth+'px',height:''+(viewheight)+'px'});
+	$('#tabsindexm').css({width:''+viewwidth+'px'});
 	var nh = h-50;
 	$('#indexmenu').css({height:''+nh+'px'});
 	$('#indexsplit').css({height:''+nh+'px'});
 	$('#indexmenuss').css({height:''+nh+'px'});
 	$('#menulist').css({height:''+(viewheight)+'px'});
+	_pdleftirng();
 }
 
 function clickmenu(o, i, k){
@@ -218,6 +222,7 @@ function closetabs(num){
 		changetabs(now);
 	}
 	coloebool = true;
+	_pdleftirng();
 	setTimeout('coloebool=false',10);
 }
 
@@ -227,10 +232,11 @@ function closenowtabs(){
 	closetabs(nu);
 }
 
-function changetabs(num){
+function changetabs(num,lx){
 	if(coloebool)return;
+	if(!lx)lx=0;
 	$("div[temp='content']").hide();
-	$("div[temp='tabs']").removeClass();
+	$("[temp='tabs']").removeClass();
 	var bo = false;
 	if(get('content_'+num+'')){
 		$('#content_'+num+'').show();
@@ -239,26 +245,43 @@ function changetabs(num){
 		bo = true;
 	}
 	opentabs.push(num);
+	if(lx==0)_changhhhsv(num);
 	return bo;
 }
-
+function _changhhhsv(num){
+	var o=$("[temp='tabs']"),i,w1=0;
+	for(i=0;i<o.length;i++){
+		if(o[i].id=='tabs_'+num+'')break;
+		w1=w1+o[i].scrollWidth;
+	}
+	$('#tabsindexm').animate({scrollLeft:w1});
+}
+function _changesrcool(lx){
+	var l = $('#tabsindexm').scrollLeft();
+	var w = l+200*lx;
+	$('#tabsindexm').animate({scrollLeft:w});
+}
+function _pdleftirng(){
+	var mw=get('tabs_title').scrollWidth;
+	if(mw>viewwidth){$('.jtcls').show();}else{$('.jtcls').hide();}
+}
 function addtabs(a){
 	var url = a.url,
 		num	= a.num;
 	if(isempt(url))return false;
-	if(url.indexOf('add,')==0){
-		openinput(a.name,url.substr(4));
-		return;
-	}
+	if(url.indexOf('add,')==0){openinput(a.name,url.substr(4));return;}
+	if(url.indexOf('http')==0){window.open(url);return;}
 	nowtabs = a;
 	if(changetabs(num))return true;
-	
-	var s = '<div temp="tabs" onclick="changetabs(\''+num+'\')" id="tabs_'+num+'" class="accive">';
+
+	var s = '<td temp="tabs" nowrap onclick="changetabs(\''+num+'\',1)" id="tabs_'+num+'" class="accive">';
 	if(a.icons)s+='<i class="icon-'+a.icons+'"></i>  ';
 	s+=a.name;
 	if(!a.hideclose)s+='<span onclick="closetabs(\''+num+'\')" class="icon-remove"></span>';
-	s+='</div>';
+	s+='</td>';
 	objtabs.append(s);
+	_changhhhsv(num);
+	_pdleftirng();
 	
 	var rand = js.getrand(),i,oi=2,
 		ura	= url.split(','),

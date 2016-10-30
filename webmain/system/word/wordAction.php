@@ -20,7 +20,7 @@ class wordClassAction extends Action
 		$pid 	= m('word')->getfolderid($this->adminid);
 		$where 	= " and a.optid=".$this->adminid."";
 		if($pid==$typeid || $typeid==0){
-			$where.=" and a.typeid in(0,$pid)";
+			//$where.=" and a.typeid in(0,$pid)";
 		}else{
 			$where.=" and a.typeid='$typeid'";
 		}
@@ -82,4 +82,5 @@ class wordClassAction extends Action
 		m('file')->delfile($fid);
 		backmsg();
 	}
+
 }

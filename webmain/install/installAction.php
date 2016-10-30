@@ -100,9 +100,10 @@ class installClassAction extends ActionNot{
 //系统配置文件		
 return array(
 	'url'		=> '$url',		//系统URL
-	'localurl'	=> '',			//本地系统URL
+	'localurl'	=> '',			//本地系统URL，用于服务器上浏览地址
 	'title'		=> '$title',	//系统默认标题
-	'apptitle'	=> '',			//APP上的标题
+	'apptitle'	=> '',			//APP上或PC客户端上的标题
+	'weblogo'	=> '',			//PC客户端上的logo图片
 	'db_host'	=> '$host',		//数据库地址
 	'db_user'	=> '$user',		//用户名
 	'db_pass'	=> '$pass',		//密码

@@ -5,7 +5,7 @@ class indexClassAction extends Action{
 	{
 		$afrom 			= $this->get('afrom');
 		$this->tpltype	= 'html';
-		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`type`');
+		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`type`,`style`');
 		$allmenuid	= '-1';
 		if($my['type'] != 1)$allmenuid	= $this->getuserext($this->adminid);
 		
@@ -27,6 +27,7 @@ class indexClassAction extends Action{
 		$this->smartydata['my']			= $my;
 		$this->smartydata['afrom']		= $afrom;
 		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.png');
+		$this->smartydata['style']		= $this->rock->repempt($my['style'], '0');
 	}
 	
 	

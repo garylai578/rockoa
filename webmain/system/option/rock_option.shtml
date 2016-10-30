@@ -5,7 +5,7 @@ $(document).ready(function(){
 	
 	var at = $('#optionview_{rand}').bootstable({
 		tablename:'option',celleditor:true,sort:'sort',dir:'asc',url:js.getajaxurl('getlist', 'option', 'system'),
-		params:{num:num},
+		params:{num:num,name:nowtabs.name},
 		columns:[{
 			text:'名称',dataIndex:'name',align:'left'
 		},{

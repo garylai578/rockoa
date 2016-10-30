@@ -2,7 +2,6 @@
 $(document).ready(function(){
 	var a = $('#view_{rand}').bootstable({
 		tablename:'infor',fanye:true,celleditor:true,params:{atype:'my'},modenum:'gong',
-		modedir:'{mode}:{dir}',storeafteraction:'inforafter',storebeforeaction:'inforbefore',
 		columns:[{
 			text:'类型',dataIndex:'typename',sortable:true
 		},{
@@ -38,6 +37,12 @@ $(document).ready(function(){
 		},
 		daochu:function(){
 			a.exceldown();
+		},
+		changlx:function(o1,lx){
+			$("button[id^='state{rand}']").removeClass('active');
+			$('#state{rand}_'+lx+'').addClass('active');
+			var as = ['my','wfb','wexx'];
+			a.setparams({'atype':as[lx]},true);
 		}
 	};
 	
@@ -57,9 +62,17 @@ $(document).ready(function(){
 	  <td style="padding-left:10px" align="left" >
 		<button class="btn btn-default" click="search" type="button">搜索</button>
 	  </div>
-	  <td width="90%" align="right">  
+	  <td  width="90%" style="padding-left:10px">
+		
+		<div id="stewwews{rand}" class="btn-group">
+		<button class="btn btn-default active" id="state{rand}_0" click="changlx,0" type="button">与我相关</button>
+		<button class="btn btn-default" id="state{rand}_1" click="changlx,1" type="button">我发布</button>
+		<button class="btn btn-default" id="state{rand}_2" click="changlx,2" type="button">我未读</button>
+		</div>	
+	</td> 
+	  <td> 
 				<button class="btn btn-default" click="daochu,1" type="button">导出</button> 
-	</td>
+		</td>
 	</tr>
 	</table>
 	

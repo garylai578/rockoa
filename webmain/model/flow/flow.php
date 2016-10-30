@@ -1,4 +1,7 @@
 <?php
+/**
+*	系统的核心文件之一，处理工作流程的！
+*/
 class flowModel extends Model
 {
 	public $modenum;
@@ -191,7 +194,7 @@ class flowModel extends Model
 		$arr['modenum']  = $this->modenum;
 		$arr['mid']  	 = $this->id;
 		$contview 	 	 = '';
-		$path 			 = ''.P.'/flow/view/vie'.$lx.'_'.$this->modenum.'.html';
+		$path 			 = ''.P.'/flow/page/view_'.$this->modenum.'_'.$lx.'.html';
 		$fstr			 = m('file')->getstr($this->mtable, $this->id,1);
 		$issubtabs		 = 0;
 		if($fstr != ''){
@@ -201,7 +204,7 @@ class flowModel extends Model
 		if(isset($this->rs['content']))$this->rs['content'] = str_replace("\n",'<br>', $this->rs['content']);
 		$subd 			= $this->getsubdata(0);
 		$issubtabs		= $subd['iscz'];
-		$data 			= $this->flowrsreplace($this->rs);
+		$data 			= $this->flowrsreplace($this->rs, 1);
 		if(file_exists($path)){
 			$contview 	 = file_get_contents($path);
 			$contview 	 = $this->rock->reparr($contview, $data);
@@ -294,13 +297,45 @@ class flowModel extends Model
 		}
 		$logarr = $this->getlog();
 		$nowcur = $this->nowcourse;
-		if($this->rock->arrvalue($this->nextcourse,'checktype')=='change')$ischange = 1;
+		if($this->rock->arrvalue($this->nextcourse,'checktype')=='change')$ischange = 1; //需要自己选择下一步处理人
 		$sarr['ischeck'] 		= $ischeck;
 		$sarr['ischange'] 		= $ischange;
 		$sarr['nowcourse'] 		= $nowcur;
 		$sarr['nextcourse'] 	= $this->nextcourse;
 		$sarr['nstatustext'] 	= $arr['nstatustext'];
 		
+		//读取当前审核表单
+		$_checkfields	= $this->rock->arrvalue($nowcur,'checkfields');
+		$checkfields	= array();
+		if($ischeck == 1 && !isempt($_checkfields)){
+			$inputobj			= c('input');
+			$inputobj->flow 	= $this;
+			$inputobj->mid 		= $this->id;
+			$inputobj->urs		= $this->urs;
+			$elwswhere			= "`mid`='$this->modeid' and `iszb`=0 and instr(',$_checkfields,', concat(',',`fields`,','))>0";
+			$infeidss  = $inputobj->initFields($elwswhere);
+			foreach($infeidss as $_fs=>$fsva){
+				$_sfes = $fsva['fields'];
+				$_type = $fsva['fieldstype'];
+				$checkfields[$_sfes] = array(
+					'inputstr' 	=> $inputobj->getfieldcont($_sfes),
+					'name' 		=> $fsva['name'],
+					'fieldstype'=> $_type,
+					'fieldsarr' => $fsva,
+					'showinpus' => 1
+				);
+				if(substr($_type,0,6)=='change' && !isempt($fsva['data'])){
+					$_sfes = $fsva['data'];
+					$checkfields[$_sfes] = array(
+						'inputstr' 	=> '',
+						'name' 		=> $fsva['name'].'id',
+						'fieldsarr' => false,
+						'showinpus' => 2
+					);
+				}
+			}
+		}
+		$sarr['checkfields']	= $checkfields;
 		if($this->rs['status']==2)$sarr['nstatustext'].=',<font color="#AB47F7">待提交人处理</font>';
 		$loglen 				= count($logarr);
 		foreach($logarr as $k=>$rs){
@@ -516,15 +551,17 @@ class flowModel extends Model
 			$rs['nowcheckid'] 	= $checkids;
 			$rs['nowcheckname'] = $checknames;
 			$rs['isnow'] 		= 0;
+			$rs['nowstep']	 	= $zongsetp;
 			
 			if($ischeck==0 && $nowstep==-1){
 				$rs['isnow']= 1;
 				$nowstep = $zongsetp;
-				$this->nowcourse = $rs;
+				$this->nowcourse = $rs;	//当前审核步骤信息
 				$nowcheckid		 = $checkids;
 				$nowcheckname	 = $checknames;
 			}
-			if($zongsetp==$nowstep+1)$this->nextcourse = $rs;
+			
+			if($nowstep>-1 && $zongsetp==$nowstep+1)$this->nextcourse = $rs; //下一步信息
 			$this->flowarr[]= $rs;
 		}
 		if($zongsetp>-1)$this->flowarr[$zongsetp]['islast']=1;
@@ -732,6 +769,42 @@ class flowModel extends Model
 		$this->checksmodel->insert($zyarr);
 	}
 	
+		
+	/**
+	*	判断保存的数据是否
+	*/
+	public function savedatastr($fval, $farr, $data=array())
+	{
+		$str 		= '';
+		if(!$farr)return $str;
+		$savewhere 	= $farr['savewhere'];
+		$name 		= $farr['name'];
+		$types 		= $farr['fieldstype'];
+		if(isempt($savewhere) || isempt($fval))return $str;
+		$savewhere	= str_replace(array('{0}','{date}','{now}'), array($name, $this->rock->date,$this->rock->now), $savewhere);
+		$savewhere	= $this->rock->reparr($savewhere, $data);
+		$saees		= explode(',', $savewhere);
+		if($types=='date' || $types=='datetime')$fval = strtotime($fval);
+		if($types=='number')$fval = floatval($fval);
+		foreach($saees as $saeess){
+			$fsaed 	= explode('|', $saeess);
+			$msg 	= isset($fsaed[2]) ? $fsaed[2] : ''.$name.'数据不符号';
+			$val 	= isset($fsaed[1]) ? $fsaed[1] : '';
+			$lfs 	= $fsaed[0];
+			if($val != ''){
+				if($types=='date' || $types=='datetime')$val = strtotime($val);
+				if($types=='number')$val = floatval($val);
+				if($lfs=='gt'){$bo = $fval>$val;if(!$bo)return $msg;}
+				if($lfs=='egt'){$bo = $fval>=$val;if(!$bo)return $msg;}
+				if($lfs=='lt'){$bo = $fval<$val;if(!$bo)return $msg;}
+				if($lfs=='elt'){$bo = $fval<=$val;if(!$bo)return $msg;}
+				if($lfs=='eg'){$bo = $fval==$val;if(!$bo)return $msg;}
+				if($lfs=='neg'){$bo = $fval!=$val;if(!$bo)return $msg;}
+			}
+		}
+		return $str;
+	}
+	
 	/**
 	*	处理
 	*/
@@ -760,11 +833,25 @@ class flowModel extends Model
 			$sm.='转给：'.$zyname.'';
 			$iszhuanyi 		 = 1;
 		}
-		$barr 		= $this->flowcheckbefore($zt, $sm);
+		$ufied 	= array();
+		if($iszhuanyi == 0 && $zt==1){
+			foreach($flowinfor['checkfields'] as $chef=>$chefv){
+				$ufied[$chef] = $this->rock->post('cfields_'.$chef.'');
+				if(isempt($ufied[$chef]))$this->echomsg(''.$chefv['name'].'不能为空');
+				$_str = $this->savedatastr($ufied[$chef], $chefv['fieldsarr'], $this->rs);
+				if($_str!='')$this->echomsg($_str);
+			}
+		}
+		$barr 		= $this->flowcheckbefore($zt, $ufied, $sm);
 		$msg 		= '';
-		if(isset($barr['msg']))$msg = $barr['msg'];
+		if(is_array($barr) && isset($barr['msg']))$msg = $barr['msg'];
 		if(is_string($barr))$msg = $barr;
 		if(!isempt($msg))$this->echomsg($msg);
+		
+		if($ufied){
+			$bo = $this->update($ufied, $this->id);
+			if(!$bo)$this->echomsg('dberr:'.$this->db->error());
+		}
 		
 		$courseact 	= $flowinfor['courseact'];
 		$act 		= $courseact[$zt];

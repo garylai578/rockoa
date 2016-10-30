@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="mode/bootstrap3.3/css/font-awesome.min.css">
 <!--[if IE 7 ]><link rel="stylesheet" type="text/css" href="mode/bootstrap3.3/css/font-awesome-ie7.min.css"><![endif]-->
 <link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/webmain.css"/>
+<link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/style<?=$da['style']?>.css" id="mainstylecss"/>
 <link rel="stylesheet" type="text/css" href="web/res/mode/menu/jquery-rockmenu.css"/>
 <link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
 <link rel="shortcut icon" href="favicon.ico" />
@@ -17,15 +18,7 @@
 <script type="text/javascript" src="<?=$da['p']?>/<?=$da['p']?>Script.js"></script>
 <script type="text/javascript" src="<?=$da['p']?>/<?=$da['d']?><?=$da['m']?>/<?=$da['m']?>script.js"></script>
 <script type="text/javascript" src="<?=$da['p']?>/<?=$da['d']?><?=$da['m']?>/<?=$da['m']?>public.js"></script>
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstable.js"></script>
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootsform.js"></script>
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstree.js"></script>
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstigger.js"></script>
 <script type="text/javascript" src="web/res/mode/menu/jquery-rockmenu.js"></script>
-<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
-<script type="text/javascript" src="mode/plugin/jquery-rockbase.js"></script>
-<script type="text/javascript" src="web/res/mode/calendar/jquery-rockcalendar.js"></script>
-<script type="text/javascript" src="web/res/mode/calendar/jquery-rocklunar.js"></script>
 <script type="text/javascript">
 js.servernow	= '<?=$da['now']?>';
 PROJECT			= '<?=$da['p']?>';
@@ -34,6 +27,7 @@ function globalbody(){
 	adminid		= '<?=$da['adminid']?>';
 	adminname	= '<?=$da['adminname']?>';
 	adminuser	= '<?=$da['adminuser']?>';
+	adminstyle	= '<?=$da['style']?>';
 }
 </script>
 </head>
@@ -68,7 +62,7 @@ function globalbody(){
 	<span onclick="openmobile()"><i class="icon-tablet"></i> 手机版</span>
 </div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
+<tr valign="top">
 	<td >
 		<div id="indexmenu" class="menubg">
 			<div class="menutoptext">
@@ -85,8 +79,10 @@ function globalbody(){
 		<div id="indexsplit" class="indexsplit" style="overflow:hidden;width:5px"></div>
 	</td>
 	<td width="100%">
-		<div style="overflow:hidden;">
-			<div class="tabsindex" id="tabs_title"></div>
+		<div style="overflow:hidden;position:relative;">
+			<div class="jtcls" id="jtcls_left" onclick="_changesrcool(1)">&gt;</div>
+			<div class="jtcls" id="jtcls_right" onclick="_changesrcool(-1)" style="left:0px">&lt;</div>
+			<div id="tabsindexm" class="tabsindex"><table border="0" cellspacing="0" cellpadding="0"><tr id="tabs_title"></tr></table></div>
 			<div id="indexcontent" style="overflow:auto;position:relative;">
 				<div id="content_allmainview" style="margin:10px;"></div>
 			</div>
@@ -94,5 +90,12 @@ function globalbody(){
 	</td>
 </tr>
 </table>
+
+<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstable.js"></script>
+<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootsform.js"></script>
+<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstree.js"></script>
+<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
+<script type="text/javascript" src="web/res/mode/calendar/jquery-rockcalendar.js"></script>
+<script type="text/javascript" src="web/res/mode/calendar/jquery-rocklunar.js"></script>
 </body>
 </html>

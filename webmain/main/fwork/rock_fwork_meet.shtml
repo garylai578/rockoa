@@ -117,3 +117,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="tishi">默认显示今日的会议，会议读取全部人员的</div>

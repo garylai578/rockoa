@@ -20,8 +20,8 @@ function initbody(){
 }
 function yunanimate(){
 	var whe=winWb();
-	$('#yun1').animate({'left':''+(whe)+'px'},10000);
-	$('#yun2').animate({'left':''+(whe)+'px'},20000);
+	//$('#yun1').animate({'left':''+(whe)+'px'},10000);
+	//$('#yun2').animate({'left':''+(whe)+'px'},20000);
 }
 function resizewh(){
 	var h = ($(document).height()-510)*0.5;

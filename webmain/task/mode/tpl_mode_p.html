@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
 <title><?=$da['pagetitle']?></title>
 <link rel="shortcut icon" href="favicon.ico" />
+<?php if($stype==''){?>
 <link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
@@ -14,6 +15,7 @@
 <script>
 var mid = '<?=$da['arr']['mid']?>',modenum='<?=$da['arr']['modenum']?>',ismobile=0;
 </script>
+<?php }?>
 <style>
 .stitle{padding:5px;border-bottom:1px #dddddd solid;font-size:14px;}
 .ydullist{display:inline-block;width:100%;}
@@ -34,30 +36,53 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 .pcont{line-height:27px;}
 .pcont p{text-indent:24pt;margin:10px 0px}
 .status{position: absolute;right:20px;top:10px;display:}
+
+.ke-zeroborder{border-spacing: 0;border-collapse: collapse;}
+.ys0{border:1px #888888 solid}
+.ys1{padding:5px 5px; border:1px #888888 solid;color:#555555;}
+.ys2{padding:5px 5px; border:1px #888888 solid;}
+.datesss{background:url(mode/icons/date.png) no-repeat right;cursor:pointer;width:50%}
+
+<?php
+if($stype!=''){
+?>
+*{font-size:14px}
+.tabled2 td{border-color:#000000}
+<?php }?>
 </style>
 </head>
 <body style="background:white">
 <div align="center">
-<div style="width:670px;position:relative" align="left">
-
+<div style="width:700px;position:relative" align="left">
+	<?php if($stype==''){?>
 	<div class="menulls"><a href="javascript:;" id="showmenu" style="background-color:#888888;font-size:12px" class="webbtn">操作V</a></div>
 	<div class="menullss"><ul><li lx="0">打印...</li>
+	<li lx="5">另存为word...</li>
 	<?php
 	if($da['arr']['isedit']==1)echo '<li lx="1">编辑</li>';
 	if($da['arr']['isdel']==1)echo '<li lx="2">删除...</li>';
 	?>
 	<li lx="3">关闭</li>
 	<li lx="4">刷新</li>
-	</ul></div>
+		</ul>
+	</div>
+	<?php }?>
 	
 	<?php
-	if($da['arr']['isflow']==1)echo '<div class="status"><img src="images/status'.$da['arr']['flowinfor']['nowstatus'].'.png"></div>';
+	if($da['arr']['isflow']==1 && $stype=='')echo '<div class="status"><img src="images/status'.$da['arr']['flowinfor']['nowstatus'].'.png"></div>';
 	
-	if(!isempt($da['title']))echo '<div class="ptitle">'.$da['title'].'</div>';
+	if(!isempt($da['title'])){
+		echo '<div class="ptitle">'.$da['title'].'</div>';
+	}
 	?>
 	
 	
-	<div class="padding10 pcont" align="left"><?=$da['arr']['contview']?></div>
+	<div class="padding10 pcont" align="left">
+	<?php 
+		$contview = $da['arr']['contview'];
+		if($stype!='')$contview=str_replace('cccccc','000000', $contview);
+		echo $contview;
+	?></div>
 
 	<div class="padding10">
 		<?php 
@@ -68,7 +93,11 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 		if($logarr){
 		?>
 		<div id="recordss">
-		<div class="stitle zhu" onclick="c.changeshow(0)" style="cursor:pointer">处理记录(<?=count($logarr)?>) <img align="absmiddle" height="16" width="16" src="images/xiangyou1.png"> <a temp="clo" href="javascript:;" onclick="$('#recordss').remove();">×</a></div>
+		<div class="stitle zhu" onclick="c.changeshow(0)" style="cursor:pointer">处理记录(<?=count($logarr)?>) 
+		<?php if($stype==''){?>
+		<img align="absmiddle" height="16" width="16" src="images/xiangyou1.png"> <a temp="clo" href="javascript:;" onclick="$('#recordss').remove();">×</a>
+		<?}?>
+		</div>
 		<div id="showrecord0" style="display:none">
 			<table border="0"  class="tabled2" style="border-collapse:collapse;" width="100%" cellspacing="0" cellpadding="0">
 				<tr bgcolor="#E1F4F0">
@@ -97,7 +126,7 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 		</div>
 		<?php }
 		
-		if($da['arr']['isflow']==1){
+		if($da['arr']['isflow']==1 && $stype==''){
 			$flowinfor = $da['arr']['flowinfor'];
 		?>
 		
@@ -133,6 +162,20 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 				</div></td>
 			</tr>
 			
+			<?php
+			foreach($flowinfor['checkfields'] as $chef=>$chefv){
+			if($chefv['showinpus']==1){
+			?>
+			<tr height="40">
+				<td class="tdys1"><div align="right" style="color:#555555"><font color=red>*</font><span fieidscheck="<?=$chef?>"><?=$chefv['name']?></span>：</div></td>
+				<td class="tdys1"><div align="left"><?=$chefv['inputstr']?></div></td>
+			</tr>
+			<?php
+			}else if($chefv['showinpus']==2){
+				echo '<tr style="display:none"><td><span fieidscheck="'.$chef.'">'.$chefv['name'].'</span></td></tr>';
+			}}
+			?>
+			
 			<tr>
 				<td class="tdys1"><div  align="right" style="color:#555555">转给：</div></td>
 				<td class="tdys1" style="padding:5px"><div align="left">
@@ -165,7 +208,11 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 			</div>
 			<div class="blank10"></div>
 		</div>
-		<?php }?>
+		<?php }
+		
+		if($stype==''){
+		?>
+		
 		
 		<div id="recordsss">
 		<div class="stitle zhu"><span onclick="location.reload()">查阅记录</span> <a temp="clo" href="javascript:;" onclick="$('#recordsss').remove();">×</a></div>
@@ -175,9 +222,13 @@ td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
 			}
 		?></ul></div>
 		</div>
+		
+		<?php }?>
 	</div>
 
 </div>
 </div>
+<link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
+<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
 </body>
 </html>

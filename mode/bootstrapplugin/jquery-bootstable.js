@@ -1,5 +1,9 @@
 /**
-	bootstable 表格
+*	bootstable 表格插件
+*	caratename：chenxihu
+*	caratetime：2014-04-06 21:40:00
+*	email:qqqq2900@126.com
+*	homepage:www.xh829.com
 */
 
 (function ($) {
@@ -43,22 +47,24 @@
 		};
 		this._init	= function(){
 			var sas = can.modedir;
-			if(sas!=''){
-				sas = sas.split(':');
-				can.url = js.getajaxurl('publicstore', sas[0], sas[1]);
-				can.cellurl = js.getajaxurl('publicsavevalue', sas[0], sas[1]);
-			}
-			var a,s,i;
-			for(i=0; i<can.columns.length; i++){
-				a = can.columns[i];
-				if(typeof(a.align)=='undefined')can.columns[i].align='center';
-				if(a.dataIndex=='caozuo')can.columns[i] = this._caozuochengs(a);
-			}
+			if(!sas)sas='index:';
+			sas 	= sas.split(':');
+			if(can.url=='')can.url = js.getajaxurl('publicstore', sas[0], sas[1]);
+			if(can.cellurl=='')can.cellurl = js.getajaxurl('publicsavevalue', sas[0], sas[1]);
+			this.setColumns(can.columns);
 			s='<div style="position:relative;'+can.bodyStyle+'" id="tablebody_'+rand+'"></div><div id="tablefanye_'+rand+'"></div>';
 			obj.html(s);
 			$('#tablebody_'+rand+'').scroll(function(){
 				me._scrollTopla($(this));
 			});
+		};
+		this.setColumns=function(cols){
+			can.columns=cols;var a,i;
+			for(i=0; i<can.columns.length; i++){
+				a = can.columns[i];
+				if(typeof(a.align)=='undefined')can.columns[i].align='center';
+				if(a.dataIndex=='caozuo')can.columns[i] = this._caozuochengs(a);
+			}
 		};
 		this._create	= function(){
 			var a	= can.columns;
@@ -424,6 +430,7 @@
 			this.json = a;
 			this.data = a.rows;
 			this.count = a.totalCount;
+			can.loadbefore(a, this);
 			this._create();
 			this._initfany();
 			can.load(a, this, this.loadci);
@@ -513,11 +520,13 @@
 		};
 		this._delok	= function(sid, ds){
 			js.msg('wait','删除'+sid+'中...');
+			this.bool=true;
 			var url = ds.url;if(!url)url=js.getajaxurl('publicdel','index');
 			var ss 	= js.apply({modenum:can.modenum,table:can.tablename,id:sid},ds.params);
 			$.ajax({
 				url:url,type:'POST',data:ss,dataType:'json',
 				success:function(a1){
+					me.bool=false;
 					if(a1.code==200){
 						js.msg('success','删除成功');
 						ds.success();
@@ -525,7 +534,6 @@
 					}else{
 						js.msg('msg',a1.msg);
 					}
-					me.bool=false;
 				},
 				error:function(e){
 					js.msg('msg','err:'+e.responseText);
@@ -666,11 +674,11 @@
 		var defaultVal = {
 			columns:[],selectColor:'#DFF0D8',
 			pageSize:15,bodyStyle:'',height:0,
-			url:js.getajaxurl('publicstore','index'),celleditor:false,cellautosave:true,celledittype:'dblclick',
+			url:'',celleditor:false,cellautosave:true,celledittype:'dblclick',
 			data:[],autoLoad:true,tree:false,itemdblclick:function(){},searchwidth:500,
 			defaultorder:'',where:'',hideHeaders:false,modename:'',modenum:'',statuschange:true,
-			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',fieldsafteraction:'',modedir:'',keywhere:'',params:{},cellurl:js.getajaxurl('publicsavevalue','index'),
-			tablename:'',selectcls:'success',itemclick:function(da, index, e){},beforeload:function(){},load:function(){},
+			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',fieldsafteraction:'',modedir:'',keywhere:'',params:{},cellurl:'',
+			tablename:'',selectcls:'success',itemclick:function(da, index, e){},beforeload:function(){},load:function(){},loadbefore:function(){},
 			outsearch:function(){return  ''},searchview:'',
 			rendertr:function(){return  ''},rowsbody:function(){return ''},
 			celldblclick:false

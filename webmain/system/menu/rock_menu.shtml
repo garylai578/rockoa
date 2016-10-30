@@ -39,7 +39,10 @@ $(document).ready(function(){
 	
 	var c = {
 		del:function(){
-			a.del({check:function(lx){if(lx=='yes')btn(true)}});
+			a.del();
+		},
+		reload:function(){
+			a.reload();
 		},
 		search:function(){
 			var s=get('key_{rand}').value;
@@ -92,7 +95,8 @@ $(document).ready(function(){
 <table width="100%"><tr>
 	<td nowrap>
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增顶级</button> &nbsp; 
-		<button class="btn btn-success" click="clickwin,2" id="down_{rand}" disabled type="button"><i class="icon-plus"></i> 新增下级</button>
+		<button class="btn btn-success" click="clickwin,2" id="down_{rand}" disabled type="button"><i class="icon-plus"></i> 新增下级</button>&nbsp; 
+		<button class="btn btn-default" click="reload" type="button">刷新</button>
 	</td>
 
 	<td  style="padding-left:10px">

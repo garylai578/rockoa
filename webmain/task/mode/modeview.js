@@ -29,7 +29,16 @@ function check(o1){
 			js.setmsg('请选择下一步处理人');return;
 		}
 	}
-	var ostr=othercheck();
+	if(!da.zynameid && da.zt=='1'){
+		var fobj=$('span[fieidscheck]'),i,fid,fiad;
+		for(i=0;i<fobj.length;i++){
+			fiad = $(fobj[i]);
+			fid	 = fiad.attr('fieidscheck');
+			da['cfields_'+fid]=form(fid).value;
+			if(da['cfields_'+fid]==''){js.setmsg(''+fiad.text()+'不能为空');return;}
+		}
+	}
+	var ostr=othercheck(da);
 	if(typeof(ostr)=='string'&&ostr!=''){js.setmsg(ostr);return;}
 	if(typeof(ostr)=='object')for(var csa in ostr)da[csa]=ostr[csa];
 	js.setmsg('处理中...');
@@ -98,14 +107,20 @@ var c={
 		if(lx=='2')c.delss();
 		if(lx=='3')c.close();
 		if(lx=='4')location.reload();
-		if(lx=='0'){
-			c.hideoth();
-			window.print();
-		}
+		if(lx=='0')c.clickprint();
+		if(lx=='5')c.daochuword();
 		if(lx=='1'){
 			var url='index.php?a=lu&m=input&d=flow&num='+modenum+'&mid='+mid+'';
-			location.href=url;
+			js.location(url);
 		}
+	},
+	clickprint:function(){
+		c.hideoth();
+		window.print();
+	},
+	daochuword:function(){
+		var url='task.php?a=p&num='+modenum+'&mid='+mid+'&stype=word';
+		js.location(url);
 	},
 	hideoth:function(){
 		$('.menulls').hide();

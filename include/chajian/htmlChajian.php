@@ -114,7 +114,7 @@ class htmlChajian extends Chajian{
 	{
 		if($lx=='')$lx='xls';
 		$sty 	= 'style="white-space:nowrap;border:.5pt solid #000000;font-size:12px;"';
-		$s 		= '';
+		$s 		= '<html><head><meta charset="utf-8"><title>'.$title.'</title></head><body>';
 		$s 	   .= '<table border="0" style="border-collapse:collapse;">';
 		$hlen 	= 1;
 		$s1='<tr height="30"><td '.$sty.'>序号</td>';
@@ -136,6 +136,8 @@ class htmlChajian extends Chajian{
 			$s.='</tr>';
 		}
 		$s.='</table>';
+		
+		$s.='</body></html>';
 		$mkdir 	= 'upload/'.date('Y-m').'';
 		if(!is_dir($mkdir))mkdir($mkdir);
 		

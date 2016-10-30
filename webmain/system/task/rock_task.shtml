@@ -19,7 +19,7 @@ $(document).ready(function(){
 		},{
 			text:'排序号',dataIndex:'sort',editor:true,sortable:true
 		},{
-			text:'最后运行',dataIndex:'lastdt',renderer:function(v){
+			text:'最后运行',dataIndex:'lastdt',sortable:true,renderer:function(v){
 				return v.replace(' ','<br>');
 			}
 		},{
@@ -101,6 +101,8 @@ $(document).ready(function(){
 			}
 			js.msg('wait','运行中...');
 			var url='task.php?m=runt&a=run&mid='+a.changeid+'';
+			var ase = a.changedata.url.split(',');
+			var url='task.php?m='+ase[0]+'|runt&a='+ase[1]+'&runid='+a.changeid+'';
 			js.ajax(url,{},function(s){
 				if(s=='success'){
 					js.msg('success','运行成功');

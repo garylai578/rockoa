@@ -533,7 +533,7 @@ abstract class mysql{
 	public function gettablefields($table, $base='')
 	{
 		if($base=='')$base = $this->db_base;
-		$sql	= "select COLUMN_NAME as `name`,DATA_TYPE as `type`,COLUMN_COMMENT as `explain`,COLUMN_TYPE as `types`,`COLUMN_DEFAULT` as dev,`IS_NULLABLE` as isnull from information_schema.COLUMNS where `TABLE_NAME`='$table' and `TABLE_SCHEMA` ='$base' order by `ORDINAL_POSITION`";
+		$sql	= "select COLUMN_NAME as `name`,DATA_TYPE as `type`,COLUMN_COMMENT as `explain`,COLUMN_TYPE as `types`,`COLUMN_DEFAULT` as dev,`IS_NULLABLE` as isnull,`CHARACTER_MAXIMUM_LENGTH` as lens from information_schema.COLUMNS where `TABLE_NAME`='$table' and `TABLE_SCHEMA` ='$base' order by `ORDINAL_POSITION`";
 		return $this->getall($sql);
 	}
 	

@@ -5,9 +5,26 @@ class runtAction extends ActionNot
 	public $runrs;
 	public function initAction()
 	{
-		$this->runid	= $this->get('runid','0');
+		$this->runid	= (int)$this->get('runid','0');
 		$this->runrs	= m('task')->getone($this->runid);
 		$this->display 	= false;
+	}
+	
+	/**
+	*	运行完成后判断运行状态
+	*/
+	public function afterAction()
+	{
+		if($this->runid > 0){
+			$state	= 2;
+			$cont  	= ob_get_contents();	
+			if($cont=='success')$state=1;
+			m('task')->update(array(
+				'lastdt'	=> $this->rock->now,
+				'lastcont' 	=> $cont,
+				'state' 	=> $state
+			), $this->runid);
+		}
 	}
 }
 class runtClassAction extends runtAction

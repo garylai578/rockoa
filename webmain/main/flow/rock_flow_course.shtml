@@ -38,6 +38,8 @@ $(document).ready(function(){
 		},{
 			text:'审核人',dataIndex:'checktypename'
 		},{
+			text:'处理表单',dataIndex:'checkfields'
+		},{
 			text:'说明',dataIndex:'explain'
 		},{
 			text:'排序号',dataIndex:'sort',editor:true
@@ -113,6 +115,9 @@ $(document).ready(function(){
 	</div>
 	<div class="blank10"></div>
 	<div id="view_{rand}"></div>
+	<div class="blank10"></div>
+	<div style="background:url(images/cropbg.gif);height:600px;border:1px #cccccc solid;display:none"></div>
+	
 </td>
 </tr>
 </table>

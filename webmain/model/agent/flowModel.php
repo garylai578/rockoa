@@ -21,6 +21,29 @@ class agent_flowClassModel extends agentModel
 	
 	protected function agentdata($uid, $lx)
 	{
+		if($lx=='moreapply'){
+			$viewobj 	= m('view');
+			$applyarr	= m('mode')->getmoderows($uid,'and islu=1');
+			$modearr	= array();
+			$otyle		= '';
+			$oi 		= 0;
+			foreach($applyarr as $k=>$rs){
+				if(!$viewobj->isadd($rs['id'], $this->adminid))continue;
+				if($otyle!=$rs['type']){
+					$oi = 0;
+					$modearr[] = array(
+						'showtype' 	=> 'line',
+						'title'		=> $rs['type']
+					);
+				}
+				$otyle = $rs['type'];
+				$oi++;
+				$modearr[]=array('modenum'=>$rs['num'],'type'=>'applybill','name'=>$rs['name'],'title'=>''.$oi.'.'.$rs['name']);
+			}
+			$arr['rows']= $modearr;
+			return $arr;
+		}
+		
 		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $this->page, $this->limit);
 		return $arr;
 	}

@@ -19,7 +19,7 @@ class kaoqinClassAction extends Action
 	}
 	public function kqdkjlaftershow($table, $rows)
 	{
-		$types = explode(',','在线打卡,考勤机,手机定位,手动添加,异常添加,数据导入');
+		$types = explode(',','在线打卡,考勤机,手机定位,手动添加,异常添加,数据导入,接口导入');
 		$dtobj = c('date');
 		foreach($rows as $k=>$rs){
 			$rows[$k]['type'] = $types[$rs['type']];

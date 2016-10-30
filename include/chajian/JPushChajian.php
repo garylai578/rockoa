@@ -70,11 +70,12 @@ class JPushChajian extends Chajian{
 			$result = json_encode($result, true);
 		}else{
 			$client = new JPush($this->app_key, $this->master_secret);
-			$obj 	= $client->push()->setPlatform('android');
+			$obj 	= $client->push()->setPlatform('all');
 			$obj->addAlias($alias);
 			$result	= $obj
 				->setNotificationAlert($cont)
 				->addAndroidNotification($cont, $title, 1, array())
+				->addIosNotification($cont)
 				->send();
 		}		
 		$this->db->update('[Q]admin',"`lastpush`='".$this->rock->now."'", "id in($uids)");

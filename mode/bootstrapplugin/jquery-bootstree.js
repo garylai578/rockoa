@@ -207,7 +207,40 @@
 		};
 		this.loadData = function(d){
 			this._loaddataback(d);
-		}
+		};
+		
+		this.del	= function(csa){
+			if(this.bool)return;
+			var a 	= js.apply({msg:'确定要删除选中的记录吗？',success:function(){},checked:false,check:function(){},id:this.changeid,url:'',params:{}},csa);
+			if(!a.id ||a.url==''||a.id=='0')return;
+			js.confirm(a.msg,function(lx){
+				if(lx=='yes'){
+					me._delok(a);
+				}
+			});
+		};
+		this._delok	= function(ds){
+			js.msg('wait','删除中...');
+			this.bool=true;
+			var url = ds.url,ss = js.apply({id:ds.id},ds.params);
+			$.ajax({
+				url:url,type:'POST',data:ss,dataType:'json',
+				success:function(a1){
+					me.bool=false;
+					if(a1.code==200){
+						js.msg('success','删除成功');
+						ds.success();
+						me.reload();
+					}else{
+						js.msg('msg',a1.msg);
+					}
+				},
+				error:function(e){
+					js.msg('msg','err:'+e.responseText);
+					me.bool = false;
+				}
+			});
+		};
 	};
 	
 	

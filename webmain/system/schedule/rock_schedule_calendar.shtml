@@ -11,7 +11,7 @@ $(document).ready(function(){
 			mobj.nowmonth();
 		},
 		plusadd:function(){
-			openinput('备忘记事','schedule','','wfhoew{rand}');
+			openinput('日程','schedule','','wfhoew{rand}');
 		},
 		loadschedule:function(){
 			$.get(js.getajaxurl('loadschedule','{mode}','{dir}', {month:month}), function(da){
@@ -25,7 +25,7 @@ $(document).ready(function(){
 			},'json');
 		},
 		guanli:function(){
-			addtabs({num:'guanlieschedule',url:'{dir},{mode},guan',name:'备忘记事管理'});
+			addtabs({num:'guanlieschedule',url:'{dir},{mode},guan',name:'日程管理'});
 		}
 	};
 	wfhoew{rand}=function(){

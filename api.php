@@ -27,5 +27,9 @@ if($_paths){
 	if(isset($_pa[1])&&$_pa[1])$m=$_pa[1];
 	if(isset($_pa[2])&&$_pa[2])$a=$_pa[2];
 }
-$m 	= ''.$m.'|api';
+if(substr($m,0,4)=='open'){
+	$m 	= ''.$m.'|openapi';
+}else{
+	$m 	= ''.$m.'|api';
+}
 include_once('include/View.php');

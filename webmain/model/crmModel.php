@@ -128,4 +128,35 @@ class crmClassModel extends Model
 			m('custfina')->update($uarr, "`uid`='$uid' and `custid`='$id'");
 		}
 	}
+	
+	//客户统计
+	public function custtotal($ids='')
+	{
+		$wher	= '';
+		$ustr 	= '`moneyz`=0,`moneyd`=0,`htshu`=0';
+		if($ids!=''){
+			$wher=' and `custid` in('.$ids.')';
+			$this->update($ustr,'id in('.$ids.')');
+		}else{
+			$this->update($ustr,'id>0');
+		}
+		$rows 	= $this->db->getall('SELECT custid,sum(money)as moneys,ispay FROM `[Q]custfina` where `type`=0 '.$wher.' GROUP BY custid,ispay');
+		$arr 	= array();
+		foreach($rows as $k=>$rs){
+			$custid = $rs['custid'];
+			if(!isset($arr[$custid]))$arr[$custid] = array(0,0,0);
+			$arr[$custid][0]+=$rs['moneys'];
+			if($rs['ispay']==0)$arr[$custid][1]+=$rs['moneys'];
+		}
+		foreach($arr as $id=>$rs){
+			$uarr['moneyz'] = $rs[0];
+			$uarr['moneyd'] = $rs[1];
+			$this->update($uarr, $id);
+		}
+		$rows 	= $this->db->getall('SELECT custid,count(1)htshu FROM `[Q]custract` where id>0 '.$wher.' GROUP BY custid');
+		foreach($rows as $k=>$rs){
+			$custid = $rs['custid'];
+			$this->update('htshu='.$rs['htshu'].'', $custid);
+		}
+	}
 }

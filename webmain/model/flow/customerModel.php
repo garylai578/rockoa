@@ -12,8 +12,9 @@ class flow_customerClassModel extends flowModel
 	{
 		$zt = $this->statearr[$rs['status']];
 		$rs['status']	= '<font color="'.$zt[1].'">'.$zt[0].'</font>';
-		$htshu = '';
-		$rs['htshu']	= $htshu;
+		if($rs['htshu']==0)$rs['htshu']='';
+		if($rs['moneyz']==0)$rs['moneyz']='';
+		if($rs['moneyd']==0)$rs['moneyd']='';
 		return $rs;
 	}
 	
@@ -119,11 +120,17 @@ class flow_customerClassModel extends flowModel
 		if($lx=='mygx'){
 			$where 	= '`uid`='.$uid.' and `shateid` is not null';
 		}
+		
+		//客户统计一览
+		if($lx=='totolall'){
+			$where = '1=1';
+		}
+		
 		if(!isempt($key))$where.=" and (`name` like '%$key%' or `unitname` like '%$key%' or `optname`='$key')";
 	
 		return array(
 			'where' => 'and '.$where,
-			'fields'=> 'id,name,status,laiyuan,isgys,optname,unitname,shate,tel,type',
+			'fields'=> 'id,name,status,laiyuan,isgys,optname,unitname,shate,tel,type,adddt,moneyz,moneyd,htshu',
 			'order' => 'status desc,optdt desc'
 		);
 	}

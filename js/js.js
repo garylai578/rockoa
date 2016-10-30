@@ -540,8 +540,9 @@ js.confirm	= function(txt,fun, tcls, tis, lx,ostr){
 		return false;
 	}
 	$('#confirm_btn1').click(backl);
+	if(get('confirm_btn')){
 	$('#confirm_btn').click(backl);
-	get('confirm_btn').focus();
+	get('confirm_btn').focus();}
 	if(lx==1)get('confirm_input').focus();
 }
 js.prompt = function(tit,txt,fun, msg, ostr){
@@ -740,8 +741,12 @@ js.selectdate=function(o1,inp,lx){
 	return false;
 }
 js.importjs=function(url,fun){
+	var sid = jm.encrypt(url);
+	if(!fun)fun=function(){};
+	if(get(sid)){fun();return;}
 	var scr = document.createElement('script');
-	scr.src = url;if(!fun)fun=function(){};
+	scr.src = url;
+	scr.id 	= sid;
 	if(isIE){
 		scr.onreadystatechange = function(){
 			if(this.readyState=='loaded' || this.readyState=='complete'){fun(this);}

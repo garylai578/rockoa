@@ -41,7 +41,7 @@ class modeClassAction extends ActionNot
 		if($pagetitle=='')$pagetitle = $arr['modename'];
 		$this->smartydata['arr'] = $arr;
 		
-		$spagepath 	= P.'/flow/view/vie1_'.$num.'_spage.html';
+		$spagepath 	= P.'/flow/page/viewpage_'.$num.'_1.html';
 		if(!file_exists($spagepath)){
 			$spagepath = '';
 		}
@@ -59,20 +59,25 @@ class modeClassAction extends ActionNot
 		
 		$mid 	 = (int)$this->get('mid');
 		if($num=='' || $mid==0)exit('无效请求');
-		
+		$stype 			= $this->get('stype');
 		
 		$arr 	 		= m('flow')->getdatalog($num, $mid, 0);
+		
 		$pagetitle 		= $arr['title'];
 		$this->title 	= $arr['title'];
 		if($pagetitle=='')$pagetitle = $arr['modename'];
 		$this->smartydata['arr'] = $arr;
 		
-		$spagepath 	= P.'/flow/view/vie0_'.$num.'_spage.html';
+		$spagepath 	= P.'/flow/page/viewpage_'.$num.'_0.html';
 		if(!file_exists($spagepath)){
 			$spagepath = '';
 		}
 		$this->smartydata['spagepath']		= $spagepath;
 		$this->smartydata['pagetitle']		= $pagetitle;
+		$this->assign('stype', $stype);
+		if($stype=='word'){
+			m('file')->fileheader($arr['modename'].'.doc');
+		}
 	}
 	
 	public function downAction()

@@ -8,11 +8,12 @@ class flowbillClassModel extends Model
 	
 	public function getrecord($uid, $lx, $page, $limit)
 	{
+		$srows	= array();
 		$where	= 'uid='.$uid.'';
 		$isdb	= 0;
 		//未通过
 		if($lx=='flow_wtg'){
-			$where .= ' and `nstatus`=2';
+			$where .= ' and `status`=2';
 		}
 		
 		if($lx=='flow_dcl'){
@@ -42,7 +43,7 @@ class flowbillClassModel extends Model
 		
 		$arr 	= $this->getlimit('`isdel`=0 and '.$where, $page,'*','`optdt` desc', $limit);
 		$rows 	= $arr['rows'];
-		$srows	= array();
+		
 		$modeids= '0';
 		foreach($rows as $k=>$rs)$modeids.=','.$rs['modeid'].'';
 		$modearr= array();

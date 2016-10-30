@@ -7,7 +7,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_course',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'optdt={now}'},
-		submitfields:'setid,name,num,checktype,checktypeid,checktypename,sort,whereid,explain,status,courseact,checkshu',
+		submitfields:'setid,name,num,checktype,checktypeid,checktypename,checkfields,sort,whereid,explain,status,courseact,checkshu',
 		requiredfields:'name',
 		success:function(){
 			closenowtabs();
@@ -149,6 +149,10 @@ $(document).ready(function(){
 			<td class="tdinput" colspan="3"><input name="courseact" class="form-control"><div style="padding-top:0px" class="tishi">默认是：通过,不通过。多个,分开</div></td>
 		</tr>
 		
+		<tr>
+			<td  align="right" >审核处理表单：</td>
+			<td class="tdinput" colspan="3"><input name="checkfields" class="form-control"><div style="padding-top:0px" class="tishi">需要处理表单元素必须在【表单元素管理】上，输入字段名，多个用, 分开</div></td>
+		</tr>
 		<tr>
 			<td  align="right" >说明：</td>
 			<td class="tdinput" colspan="3"><textarea  name="explain" style="height:60px" class="form-control"></textarea></td>

@@ -66,7 +66,7 @@ $(document).ready(function(){
 		loadcharts:function(){
 			if(atype!='down')return;
 			if(!myChart){
-				$('#view_{rand}').after('<div class="blank20"></div><div id="main_show{rand}" style="width:700px;height:400px;"></div>');
+				$('#view_{rand}').after('<div class="blank20"></div><div id="main_show{rand}" style="width:98%;height:500px;"></div>');
 				myChart = echarts.init(get('main_show{rand}'));
 			}
 			var rows = a.getData('rows'),i,len=rows.length,v;

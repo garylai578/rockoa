@@ -51,6 +51,9 @@ function changeok(sna,sid){
 .createtable{width:98%}
 .status{position: absolute;left:5px;top:5px;display:}
 td.tdys1{border:1px #e5e5e5 solid;text-align:center;padding:0px 5px}
+.divinput{padding:0px}
+.datesss{background:url(mode/icons/date.png) no-repeat right;cursor:pointer;}
+
 </style>
 
 </head>
@@ -106,6 +109,20 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 			</div></td>
 		</tr>
 		
+		<?php
+		foreach($flowinfor['checkfields'] as $chef=>$chefv){
+		if($chefv['showinpus']==1){
+		?>
+		<tr>
+			<td class="tdys1"><div align="right" style="color:#555555"><font color=red>*</font><span fieidscheck="<?=$chef?>"><?=$chefv['name']?></span>：</div></td>
+			<td class="tdys1" style="padding:5px;" ><div align="left"><?=$chefv['inputstr']?></div></td>
+		</tr>
+		<?php
+		}else if($chefv['showinpus']==2){
+			echo '<tr style="display:none"><td><span fieidscheck="'.$chef.'">'.$chefv['name'].'</span></td></tr>';
+		}}
+		?>
+		
 		<tr>
 			<td class="tdys1"><div  align="right" style="color:#555555">转给：</div></td>
 			<td class="tdys1" style="padding:5px"><div align="left">
@@ -123,7 +140,7 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 		<?php }?>
 		
 		<tr>
-			<td class="tdys1"><div  align="right" style="color:#555555">说明:</div></td>
+			<td class="tdys1"><div  align="right" style="color:#555555">说明：</div></td>
 			<td class="tdys1" style="padding:5px"><div align="left"><textarea class="inputb" name="check_explain" style="width:95%;height:60px;"></textarea></div></td>
 		</tr>
 		
@@ -180,6 +197,7 @@ if($isheader==1)echo '<div class="header"><span onclick="js.back()" class="heade
 		}
 	?>	
 </div>
-
+<link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
+<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
 </body>
 </html>

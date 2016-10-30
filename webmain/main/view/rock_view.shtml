@@ -2,7 +2,7 @@
 $(document).ready(function(){
 	var bools=false,mid=0;
 	var a = $('#view_{rand}').bootstable({
-		tablename:'flow_extent',celleditor:true,fanye:true,
+		tablename:'flow_extent',celleditor:true,fanye:true,sort:'id',dir:'desc',
 		url:publicstore('{mode}','{dir}'),storeafteraction:'afterstroesss',
 		columns:[{
 			text:'针对对象',dataIndex:'recename'
@@ -15,6 +15,10 @@ $(document).ready(function(){
 			}
 		},{
 			text:'条件',dataIndex:'whereid'
+		},{
+			text:'并条件',dataIndex:'wherestr',renderer:function(v){
+				return jm.base64decode(v);
+			}
 		},{
 			text:'说明',dataIndex:'explain'
 		},{

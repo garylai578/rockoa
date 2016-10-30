@@ -57,6 +57,9 @@ var yy={
 			o1.html(v);
 		}
 	},
+	regetdata:function(o,p){
+		this.getdata(this.nowevent,p);
+	},
 	getdata:function(st,p){
 		this.nowevent=st;
 		js.ajax('index','getyydata',{'page':p,'event':st,'num':this.num},function(ret){
@@ -74,8 +77,12 @@ var yy={
 	suboptmenu:{},
 	showmenu:function(oi){
 		var a = this.data[oi-1],ids = a.id,i;
-		if(!ids)return;
 		var nus=a.modenum;if(!nus||nus=='undefined')nus = this.num;
+		if(a.type=='applybill' && nus){
+			var url='index.php?a=lum&m=input&d=flow&num='+nus+'&show=we';
+			js.location(url);return;
+		}
+		if(!ids)return;
 		this.tempid 	= ids;
 		this.tempnum 	= nus;
 		this.temparr 	= {oi:oi};
@@ -182,7 +189,7 @@ var yy={
 		if(count>0){
 			s = '<div class="showblank" id="showblank">共'+count+'条记录';
 			if(a.maxpage>1)s+=',当前'+a.maxpage+'/'+a.page+'页';
-			if(a.page<a.maxpage)s+=', <a onclick="agentobj.'+this.num+'.regetdata(this,'+(a.page+1)+')" href="javascript:;">点击加载</a>';
+			if(a.page<a.maxpage)s+=', <a onclick="yy.regetdata(this,'+(a.page+1)+')" href="javascript:;">点击加载</a>';
 			s+= '</div>';
 			this.showobj.append(s);
 			if(a.count==0)$('#showblank').html('');

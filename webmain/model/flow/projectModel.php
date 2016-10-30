@@ -33,8 +33,13 @@ class flow_projectClassModel extends flowModel
 		}
 	}
 	
+	public function flowisreadqx()
+	{
+		return $this->flowgetoptmenu('');
+	}
+	
 	//显示操作菜单判断
-	protected function flowg1221etoptmenu($num)
+	protected function flowgetoptmenu($num)
 	{
 		$fuzeid 	= $this->rs['fuzeid'];
 		$runuserid 	= $this->rs['runuserid'];

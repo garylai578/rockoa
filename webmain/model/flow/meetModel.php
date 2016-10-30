@@ -49,6 +49,7 @@ class flow_meetClassModel extends flowModel
 		if($lx=='my' || $lx=='mybz' || $lx=='myall'){
 			$where	= m('admin')->getjoinstr('joinid', $uid);
 		}
+		$where	= 'and 1=1';
 		if($lx=='my'){
 			$where.=" and startdt like '{$this->rock->date}%'";
 		}

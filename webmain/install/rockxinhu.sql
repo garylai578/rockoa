@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50610
 File Encoding         : 65001
 
-Date: 2016-10-30 14:23:49
+Date: 2016-10-30 14:33:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -56,7 +56,7 @@ CREATE TABLE `xinhu_admin` (
 -- ----------------------------
 -- Records of xinhu_admin
 -- ----------------------------
-INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '835', '1', '1', '男', '0592-123456', 'upload/face/1.jpg', '2', '开发部', '信呼开发团队/开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-01', 'admin@rockoa.com', '2016-10-23 18:57:21', null, 'chenxihu829', null, '2');
+INSERT INTO `xinhu_admin` VALUES ('1', null, 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '836', '1', '1', '男', '0592-123456', 'upload/face/1.jpg', '2', '开发部', '信呼开发团队/开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-01', 'admin@rockoa.com', '2016-10-23 18:57:21', null, 'chenxihu829', null, '2');
 INSERT INTO `xinhu_admin` VALUES ('2', null, 'diaochan', '貂蝉', 'e10adc3949ba59abbe56e057f20f883e', '54', '1', '0', '女', null, 'upload/face/2.jpg', '3', '财务部', '信呼开发团队/财务部', '5', '磐石', '财务总监', '0', '[1],[3]', '[5]', null, '15800000007', '1', '2016-08-08', null, null, null, null, null, '0');
 INSERT INTO `xinhu_admin` VALUES ('3', null, 'xiaoqiao', '小乔', 'e10adc3949ba59abbe56e057f20f883e', '66', '1', '0', '女', null, 'upload/face/3.jpg', '3', '财务部', '信呼开发团队/财务部', '2', '貂蝉', '出纳', '0', '[1],[3]', '[5],[2]', null, '15800000001', '1', null, null, '2016-08-30 20:34:23', null, null, null, '0');
 INSERT INTO `xinhu_admin` VALUES ('4', null, 'daqiao', '大乔', 'e10adc3949ba59abbe56e057f20f883e', '82', '1', '0', '女', null, 'upload/face/4.jpg', '4', '行政人事部', '信呼开发团队/行政人事部', '5', '磐石', '人事主管', '0', '[1],[4]', '[5]', null, '15800000002', '1', null, null, '2016-10-20 22:27:51', null, null, null, '0');
@@ -2788,7 +2788,7 @@ CREATE TABLE `xinhu_option` (
   `optdt` datetime DEFAULT NULL,
   `optid` smallint(6) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=236 DEFAULT CHARSET=utf8 COMMENT='系统选项';
+) ENGINE=MyISAM AUTO_INCREMENT=234 DEFAULT CHARSET=utf8 COMMENT='系统选项';
 
 -- ----------------------------
 -- Records of xinhu_option
@@ -2967,6 +2967,7 @@ INSERT INTO `xinhu_option` VALUES ('193', '辞退', '190', null, null, '0', null
 INSERT INTO `xinhu_option` VALUES ('194', '降职', '190', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('195', '张飞文件夹目录', null, 'folder6', null, '0', null, '1', '2016-10-24 21:27:22', '6');
 INSERT INTO `xinhu_option` VALUES ('196', '个人经历', '195', null, null, '0', null, '1', null, '0');
+INSERT INTO `xinhu_option` VALUES ('197', '知识分类', null, 'knowledgetype', null, '0', null, '1', '2016-10-27 21:10:24', '1');
 INSERT INTO `xinhu_option` VALUES ('198', '工作指南', '197', '', null, '0', null, '1', '2016-10-24 21:32:57', '1');
 INSERT INTO `xinhu_option` VALUES ('199', '工作效率', '198', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('200', '工作目标', '198', null, null, '0', null, '1', null, '0');
@@ -2994,10 +2995,12 @@ INSERT INTO `xinhu_option` VALUES ('221', '车辆品牌', '62', 'carbrand', null
 INSERT INTO `xinhu_option` VALUES ('222', '奔驰', '221', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('223', '奥迪', '221', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('224', '夏利', '221', null, null, '0', null, '1', null, '0');
+INSERT INTO `xinhu_option` VALUES ('226', '题库分类', null, 'knowtikutype', null, '0', null, '1', '2016-10-27 21:17:22', '1');
 INSERT INTO `xinhu_option` VALUES ('227', '官网知识', '226', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('228', 'OA题库', '226', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('229', '会议室1', '29', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('230', '会议室2', '29', null, null, '0', null, '1', null, '0');
+INSERT INTO `xinhu_option` VALUES ('231', '图书分类', null, 'booktype', null, '0', null, '1', '2016-10-28 23:15:11', '1');
 INSERT INTO `xinhu_option` VALUES ('232', '计算机', '231', null, null, '0', null, '1', null, '0');
 INSERT INTO `xinhu_option` VALUES ('233', '管理书籍', '231', null, null, '0', null, '1', null, '0');
 

@@ -1,4 +1,12 @@
 <?php
+/**
+*	来自：信呼开发团队
+*	作者：磐石(rainrock)
+*	网址：http://xh829.com/
+*	系统默认配置文件，请不要去修改，欢迎研究学习
+*	要修改配置文件在：webmain/webmainConfig.php
+*	调试模式行14上修改，ture调试模式，false上线模式
+*/
 @session_start();
 if(!ini_get('date.timezone') )date_default_timezone_set('Asia/Shanghai');
 header('Content-Type:text/html;charset=utf-8');

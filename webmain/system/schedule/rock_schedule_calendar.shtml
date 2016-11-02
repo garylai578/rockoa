@@ -20,7 +20,7 @@ $(document).ready(function(){
 					for(i=0;i<d.length;i++){
 						s+='<div style="height:20px;line-height20px;overflow:hidden">'+(i+1)+'.['+d[i].time.substr(11,5)+']'+d[i].title+'</div>';
 					}
-					$('#s'+d1+'_{rand}').html('<div style="border-top:1px #eeeeee solid;margin-top:3px;height:40px;overflow:hidden">'+s+'</div>');
+					$('#s'+d1+'_{rand}').html('<div style="border-top:1px #eeeeee solid;margin-top:3px;">'+s+'</div>');
 				}
 			},'json');
 		},

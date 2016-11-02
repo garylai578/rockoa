@@ -64,9 +64,9 @@ js.request=function(name,dev,url){
 	if(!name)return dev;
 	if(!url)url=location.href;
 	if(url.indexOf('\?')<0)return dev;
-	neurl=url.split('\?')[1];
+	var neurl=url.split('\?')[1];
 	neurl=neurl.split('&');
-	var value=dev;
+	var value=dev,i,val;
 	for(i=0;i<neurl.length;i++){
 		val=neurl[i].split('=');
 		if(val[0].toLowerCase()==name.toLowerCase()){

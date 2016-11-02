@@ -103,6 +103,9 @@ class indexClassAction extends Action{
 	public function testAction()
 	{
 		$this->display = false;
+		
+		//c('JPush')->send(1, '标题', '推手是谁');
+		
 		//echo m('view')->viewwhere(3,3);
 		//m('beifen')->start();
 		//m('flow')->submit('leave', '1', '提交');

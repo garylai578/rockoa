@@ -16,8 +16,8 @@ class scheduleClassModel extends Model
 			$endtime = 2999999999;
 			if(!isempt($rs['enddt']))$endtime = strtotime($rs['enddt']);
 			$rows[$k]['endtime'] 	= $endtime;
-			$rows[$k]['starttime'] 	= strtotime($rs['startdt']);
-			$rows[$k]['time']  		= explode('-', date('Y-m-d-H-i-s', $rows[$k]['starttime']));
+			$rows[$k]['time']  		= explode('-', date('Y-m-d-H-i-s', strtotime($rs['startdt'])));
+			$rows[$k]['starttime'] 	= strtotime(substr($rs['startdt'],0,10));
 		}
 		for($i=0;$i<$jg; $i++){
 			if($i==0)$dt= $startdt;
@@ -31,6 +31,7 @@ class scheduleClassModel extends Model
 				$rate = $rs['rate'];
 				$uid  = $rs['uid'];
 				$ratev= ','.$rs['rateval'].',';
+				if($dttime<$rs['starttime'])continue;
 				if($rs['endtime']<$dttime)continue;
 				$dts  = $rs['time'];
 				$time = '';
@@ -80,7 +81,7 @@ class scheduleClassModel extends Model
 			}
 			if($str!=''){
 				$flow->id = $sid;
-				$flow->push($uid, '', substr($str, 1));
+				$flow->push($uid, '', substr($str, 1), '日程提醒');
 			}
 		}
 	}

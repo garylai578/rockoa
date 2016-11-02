@@ -29,7 +29,7 @@ class flow_assetmClassModel extends flowModel
 		return array(
 			'where' => $where,
 			'order' => 'optdt desc',
-			'fields'=> 'id,title,num,brand,optdt,usename,state'
+			'fields'=> 'id,title,num,brand,optdt,usename,state,ckid'
 		);
 	}
 }

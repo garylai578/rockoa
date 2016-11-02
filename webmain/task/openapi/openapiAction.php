@@ -21,4 +21,11 @@ class openapiAction extends ActionNot
 		}
 		if(isset($GLOBALS['HTTP_RAW_POST_DATA']))$this->postdata = $GLOBALS['HTTP_RAW_POST_DATA'];
 	}
+	
+	public function getvals($nae, $dev='')
+	{
+		$sv = $this->rock->jm->base64decode($this->post($nae));
+		if($this->isempt($sv))$sv=$dev;
+		return $sv;
+	}
 }

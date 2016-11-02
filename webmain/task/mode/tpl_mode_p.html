@@ -86,7 +86,7 @@ if($stype!=''){
 
 	<div class="padding10">
 		<?php 
-		if($da['spagepath']!=''){
+		if($da['spagepath']!='' && $stype==''){
 			include_once($da['spagepath']);
 		}
 		$logarr = $da['arr']['logarr'];
@@ -228,7 +228,12 @@ if($stype!=''){
 
 </div>
 </div>
+
+<?php
+if($stype==''){
+?>
 <link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
 <script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
+<?php }?>
 </body>
 </html>

@@ -82,5 +82,12 @@ class wordClassAction extends Action
 		m('file')->delfile($fid);
 		backmsg();
 	}
-
+	
+	//移动
+	public function movefileAjax()
+	{
+		$fid	= $this->post('fid','0');
+		$tid	= $this->post('tid','0');
+		m('word')->update("`typeid`='$tid'","`optid`='$this->adminid' and `fileid` in ($fid)");
+	}
 }

@@ -14,7 +14,7 @@ class loginClassModel extends Model
 		$device= $this->rock->request('device', $device);
 		$ip	   = $this->rock->request('ip', $this->rock->ip);
 		$web   = $this->rock->request('web', $this->rock->web);
-		$cfroar= explode(',', 'pc,reim,weixin,appandroid,appiphone,mweb');
+		$cfroar= explode(',', 'pc,reim,weixin,appandroid,appios,mweb');
 		if(!in_array($cfrom, $cfroar))return 'not found cfrom';
 		if($user=='')return '用户名不能为空';
 		if($pass==''&&strlen($token)<8)return '密码不能为空';

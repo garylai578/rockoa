@@ -70,5 +70,67 @@ class fworkClassAction extends Action
 		);
 	}
 	
-
+	
+	
+	public function meetqingkbefore($table)
+	{
+		$pid = $this->option->getval('hyname','-1', 2);
+		return array(
+			'where' => "and `pid`='$pid'",
+			'order' => 'sort',
+			'field' => 'id,name',
+		);
+	}
+	
+	public function meetqingkafter($table, $rows)
+	{
+		$dtobj 		= c('date');
+		$startdt	= $this->post('startdt', $this->date);
+		$enddt		= $this->post('enddt');
+		if($enddt=='')$enddt = $dtobj->adddate($startdt,'d',7);
+		$jg 		= $dtobj->datediff('d',$startdt, $enddt);
+		if($jg>30)$jg = 30;
+		$flow 		= m('flow:meet');
+		$data 		= m('meet')->getall("`status`=1 and `type`=0 and `startdt`<='$enddt 23:59:59' and `enddt`>='$startdt' order by `startdt` asc",'hyname,title,startdt,enddt,state,joinname,optname');
+		$datss 		= array();
+		foreach($data as $k=>$rs){
+			$rs 	= $flow->flowrsreplace($rs);
+			$key 	= substr($rs['startdt'],0,10).$rs['hyname'];
+			if(!isset($datss[$key]))$datss[$key] = array();
+			$str 	= '['.substr($rs['startdt'],11,5).'→'.substr($rs['enddt'],11,5).']'.$rs['title'].'('.$rs['joinname'].') '.$rs['state'].'';
+			$datss[$key][] = $str;
+		}
+		
+		$columns	= $rows;
+		$barr 		= array();
+		$dt 		= $startdt;
+		for($i=0; $i<=$jg; $i++){
+			if($i>0)$dt = $dtobj->adddate($dt,'d',1);
+			$w 		= $dtobj->cnweek($dt);
+			$status	= 1;
+			if($w=='六'||$w=='日')$status	= 0;
+			$sbarr	= array(
+				'dt' 		=> '星期'.$w.'<br>'.$dt.'',
+				'status' 	=> $status
+			);
+			foreach($rows as $k=>$rs){
+				$key 	= $dt.$rs['name'];
+				$str 	= '';
+				if(isset($datss[$key])){
+					foreach($datss[$key] as $k1=>$strs){
+						$str.= ''.($k1+1).'.'.$strs.'<br>';
+					}
+				}
+				$sbarr['meet_'.$rs['id'].''] = $str;
+			}
+			$barr[] = $sbarr;
+		}
+		$arr['columns'] = $columns;
+		$arr['startdt'] = $startdt;
+		$arr['enddt'] 	= $enddt;
+		$arr['rows'] 	= $barr;
+		$arr['totalCount'] 	= $jg+1;
+		
+		return $arr;
+	}
 }

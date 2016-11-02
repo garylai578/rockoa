@@ -1,7 +1,7 @@
 <script >
 $(document).ready(function(){
 	{params};
-	var num = params.num,pid,optlx=0;
+	var num = params.num,pid,optlx=0,movefid='';
 	var typeid=0,sspid=0;
 	var at = $('#optionview_{rand}').bootstree({
 		url:js.getajaxurl('getmywordtype','word','system'),
@@ -20,6 +20,9 @@ $(document).ready(function(){
 		itemdblclick:function(d){
 			typeid = d.id;
 			c.loadfile(d.id,d.name);
+		},
+		itemclick:function(d){
+			c.typeclidks(d);
 		}
 	});;
 	
@@ -114,6 +117,29 @@ $(document).ready(function(){
 				a.reload();
 			},'post',false, '取消共享中...,取消成功');
 		},
+		movefile:function(){
+			var fid = a.getchecked();
+			if(fid==''){js.msg('msg','没有选中');return;}
+			movefid=fid;
+			js.msg('success','已选中，请在5秒内选择左边类型确认移动');
+			clearTimeout(this.cmoeefese);
+			this.cmoeefese=setTimeout(function(){movefid='';},5000);
+		},
+		typeclidks:function(d){
+			if(movefid=='')return;
+			js.confirm('确定将选中的文件移动到【'+d.name+'】下吗？',function(jg){
+				if(jg=='yes'){
+					c.movefiles(d.id, movefid);
+				}
+			});
+		},
+		movefiles:function(tid, moid){
+			if(moid=='')return;
+			movefid='';
+			js.ajax(js.getajaxurl('movefile','{mode}','{dir}'),{'fid':moid,'tid':tid},function(s){
+				a.reload();
+			},'post',false, '移动中...,移动成功');
+		},
 		clicktypeeidt:function(){
 			var d = at.changedata;
 			if(d.id)c.clicktypewin(false, 1, d);
@@ -181,6 +207,7 @@ $(document).ready(function(){
 		<td align="right">
 			<button class="btn btn-default" click="sharefile" type="button"><i class="icon-share-alt"></i> 共享</button>&nbsp; 
 			<button class="btn btn-default" click="qxsharefile" type="button">取消共享</button>&nbsp; 
+			<button class="btn btn-default" click="movefile" type="button">移动</button>&nbsp; 
 			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>
 		</td>
 	</tr></table>

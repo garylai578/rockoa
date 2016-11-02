@@ -323,6 +323,7 @@ function addtabs(a){
 		error:function(){
 			$('#mainloaddiv').remove();
 			var s = 'Error:加载出错喽,'+url+'';
+			if(num=='home')s+='<br><h3>你的服务器不支持shtml文件的类型，请设置添加，后缀名：.shtml，MIME类型：text/html</h3>';
 			$('#content_'+num+'').html(s);
 		}
 	});

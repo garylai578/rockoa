@@ -38,6 +38,8 @@ $(document).ready(function(){
 		},{
 			text:'品牌',dataIndex:'brand'
 		},{
+			text:'仓库',dataIndex:'ckid'
+		},{
 			text:'使用人',dataIndex:'usename'
 		}],
 		itemclick:function(){

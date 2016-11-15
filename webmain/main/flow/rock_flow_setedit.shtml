@@ -7,7 +7,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_set',
 		url:publicsave('{mode}','{dir}'),url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'optdt={now}'},aftersaveaction:'flowsetsaveafter',beforesaveaction:'flowsetsavebefore',
-		submitfields:'name,tables,type,num,table,sort,status,where,summary,summarx,pctx,mctx,isflow,sericnum,receid,recename,names',
+		submitfields:'name,tables,type,num,table,sort,status,where,summary,summarx,pctx,mctx,emtx,isflow,sericnum,receid,recename,names',
 		requiredfields:'name,type,num,table',
 		success:function(){
 			closenowtabs();
@@ -116,6 +116,7 @@ cont:
 			<td class="tdinput" colspan="3">
 				<label><input name="isflow" value="1" type="checkbox"> 有流程?</label>&nbsp; &nbsp; 
 				<label><input name="pctx" value="1" type="checkbox"> PC端提醒</label>&nbsp; &nbsp; 
+				<label><input name="emtx" value="1" type="checkbox"> 邮件提醒</label>&nbsp; &nbsp; 
 				<label><input name="mctx" value="1" type="checkbox"> 移动端提醒</label>&nbsp; &nbsp; 
 				<label><input name="status" value="1" checked type="checkbox"> 启用</label>&nbsp; &nbsp; 
 			</td>

@@ -195,7 +195,7 @@ class flowModel extends Model
 		$arr['mid']  	 = $this->id;
 		$contview 	 	 = '';
 		$path 			 = ''.P.'/flow/page/view_'.$this->modenum.'_'.$lx.'.html';
-		$fstr			 = m('file')->getstr($this->mtable, $this->id,1);
+		$fstr			 = m('file')->getstr($this->mtable, $this->id, 1);
 		$issubtabs		 = 0;
 		if($fstr != ''){
 			$this->rs['file_content'] 	= $fstr;
@@ -377,9 +377,10 @@ class flowModel extends Model
 	public function getlog()
 	{
 		if($this->getlogrows)return $this->getlogrows;
-		$rows = $this->db->getrows('[Q]flow_log',$this->mwhere, '`checkname` as `name`,`checkid`,`name` as actname,`optdt`,`explain`,`statusname`,`courseid`,`color`','`id` desc');
+		$rows = $this->db->getrows('[Q]flow_log',$this->mwhere, '`checkname` as `name`,`checkid`,`name` as actname,`optdt`,`explain`,`statusname`,`courseid`,`color`,`id`','`id` desc');
 		$uids = '';
 		$dts  = c('date');
+		$fo   = m('file');
 		foreach($rows as $k=>$rs){
 			$uids.=','.$rs['checkid'].'';
 			$col = $rs['color'];
@@ -387,6 +388,10 @@ class flowModel extends Model
 			if(contain($rs['statusname'],'不'))$col='red';
 			$rows[$k]['color'] = $col;
 			$rows[$k]['optdt'] = $dts->stringdt($rs['optdt'], 'G(周w) H:i:s');
+			/*
+			$fstr 			   = $fo->getstr('flow_log', $rs['id'], 1);
+			if($fstr!='')if(!isempt($rs['explain'])){$rs['explain'].='<br>'.$fstr.'';}else{$rs['explain']=$fstr;}
+			$rows[$k]['explain']= $rs['explain'];*/
 		}
 		if($uids!=''){
 			$rows = m('admin')->getadmininfor($rows, substr($uids, 1), 'checkid');
@@ -413,7 +418,9 @@ class flowModel extends Model
 		m('flow_log')->insert($addarr);
 		$ssid = $this->db->insert_id();
 		if($fileid!='')m('file')->addfile($fileid, $this->mtable, $this->id);
-		$addarr['id'] = $ssid;
+		$logfileid		= $this->rock->post('logfileid');
+		if($logfileid!='')m('file')->addfile($logfileid, $this->mtable, $this->id);
+		$addarr['id'] 	= $ssid;
 		$this->flowaddlog($addarr);
 		return $ssid;
 	}
@@ -916,13 +923,15 @@ class flowModel extends Model
 		$reim	= m('reim');
 		$url 	= ''.URL.'task.php?a=p&num='.$this->modenum.'&mid='.$this->id.'';
 		$wxurl 	= ''.URL.'task.php?a=x&num='.$this->modenum.'&mid='.$this->id.'';
+		$emurl 	= ''.URL.'task.php?a=a&num='.$this->modenum.'&mid='.$this->id.'';
 		if($this->id==0){
-			$url = '';$wxurl = '';
+			$url = '';$wxurl = '';$emurl='';
 		}
 		$slx	= 0;
 		$pctx	= $this->moders['pctx'];
 		$mctx	= $this->moders['mctx'];
 		$wxtx	= $this->moders['wxtx'];
+		$emtx	= $this->moders['emtx'];
 		if($pctx==0 && $mctx==1)$slx=2;
 		if($pctx==1 && $mctx==0)$slx=1;
 		if($pctx==0 && $mctx==0)$slx=3;
@@ -930,8 +939,19 @@ class flowModel extends Model
 		if(contain($receid,'u') || contain($receid, 'd'))$receid = m('admin')->gjoin($receid);
 		m('todo')->addtodo($receid, $this->modename, $cont, $this->modenum, $this->id);
 		$reim->pushagent($receid, $gname, $cont, $title, $url, $slx);
+		
+		
+		if($title=='')$title = $this->modename;
+		//邮件提醒发送不发送全体人员的，太多了
+		if($emtx == 1 && $receid != 'all'){
+			$emcont = '您好：<br>'.$cont.'(邮件由系统自动发送)';
+			if($emurl!=''){
+				$emcont.='<br><a href="'.$emurl.'" target="_blank" style="color:blue"><u>详情&gt;&gt;</u></a>';
+			}
+			m('email')->sendmail($title, $emcont, $receid);
+		}
+		
 		if($wxtx==1 && $reim->isanwx()){
-			if($title=='')$title = $this->modename;
 			$wxarra  = $this->flowweixinarr;
 			$wxarr	 = array(
 				'title' 		=> $title,

@@ -15,7 +15,7 @@ class agent_dailyClassModel extends agentModel
 	public function getwdtotal($uid)
 	{
 		$ydid  	= m('log')->getread('daily', $uid);
-		$whe1w 	= m('view')->viewwhere($this->modeid, $uid);
+		$whe1w 	= 'and '.m('admin')->getdownwheres('uid', $uid, 1);
 		$where	= "id not in($ydid) $whe1w ";
 		$stotal	= m('daily')->rows($where);
 		return $stotal;

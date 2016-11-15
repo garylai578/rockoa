@@ -118,7 +118,13 @@ var yy={
 		this.changdatsss = d;
 		if(lx==2 || lx==3){
 			var clx='changeuser';if(lx==3)clx='changeusercheck';
-			changeuser('',clx);
+			$('body').chnageuser({
+				'changetype':clx,
+				'titlebool':get('header_title'),
+				'onselect':function(sna,sid){
+					yy.xuanuserok(sna,sid);
+				}
+			});
 			return;
 		}
 		if(lx==1 || lx==9 || lx==10){
@@ -197,21 +203,4 @@ var yy={
 			this.showobj.html('<div class="notrecord" id="notrecord">暂无记录</div>');
 		}
 	}
-}
-
-function changeuser(na,lx){
-	if(!lx)lx='';
-	var url='task.php?fn=dept&changetype='+lx+'';
-	var s='<div style="height:100%;width:100%;position:fixed;top:0px;left:0px;z-index:99; background:rgba(0,0,0,0.6)"  align="center" id="changmodddid">';
-	s+='<div style="max-width:300px;height:100%;max-height:450px;margin-top:5%; background:while;border:1px #dddddd solid">';
-	s+='<iframe style="background:white" name="changdept" height="100%" frameborder="0" scrolling="auto" marginheight="0" marginwidth="0" width="100%" src="'+url+'"></iframe>';
-	s+='</div>';
-	s+='</div>';
-	$('body').append(s);
-}
-function changecancel(){
-	$('#changmodddid').remove();
-}
-function changeok(sna,sid){
-	yy.xuanuserok(sna,sid);
 }

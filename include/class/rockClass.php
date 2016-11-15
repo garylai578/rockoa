@@ -32,8 +32,8 @@ final class rockClass
 		$this->host		= isset($_SERVER['HTTP_HOST'])		? $_SERVER['HTTP_HOST']		: '' ;
 		$this->url		= '';
 		$this->win		=  php_uname();
-		$this->web		= isset($_SERVER['HTTP_USER_AGENT'])? $_SERVER['HTTP_USER_AGENT']	: '' ;
-		$this->web		= $this->getbrowser($this->web);
+		$this->HTTPweb	= isset($_SERVER['HTTP_USER_AGENT'])? $_SERVER['HTTP_USER_AGENT']	: '' ;
+		$this->web		= $this->getbrowser();
 		$this->unarr	= explode(',','1,2');
 		$this->now		= $this->now();
 		$this->date		= date('Y-m-d');
@@ -115,9 +115,9 @@ final class rockClass
 			$this->debug(''.$na.'《'.$s.'》error:包含非法字符《'.$v1.'》','params');
 			$s = str_replace($v1,'', $str);
 		}
+	
 		return $s;
 	}
-	
 	public function debug($txt, $lx)
 	{
 		if(!DEBUG)return;
@@ -250,7 +250,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		
 	public function getbrowser()
 	{
-		$web	= $this->web;
+		$web 	= $this->HTTPweb;
 		$val	= 'IE';
 		$parr	= array(
 			array('MSIE 5'),array('MSIE 6'),array('MSIE 7'),array('MSIE 8'),array('MSIE 9'),array('MSIE 10'),array('MSIE 11'),array('rv:11','MSIE 11'),array('MSIE 12'),array('MicroMessenger','wxbro'),
@@ -264,6 +264,17 @@ URL：'.$_SERVER['QUERY_STRING'].'
 			}
 		}
 		return $val;
+	}
+	
+	public function ismobile()
+	{
+		$web 	= strtolower($this->HTTPweb);
+		$bo 	= false;
+		$strar	= explode(',','micromessenger,android,mobile,iphone');
+		foreach($strar as $str){
+			if(contain($web, $str))return true;
+		}
+		return $bo;
 	}
 	
 	public function script($daima)

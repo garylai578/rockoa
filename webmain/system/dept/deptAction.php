@@ -31,8 +31,9 @@ class deptClassAction extends Action
 	public function publicbeforesave($table, $cans, $id)
 	{
 		$pid = (int)$cans['pid'];
-		if($pid>0 && m($table)->rows($pid)==0)return '上级ID不存在';
 		if($pid==0 && $id != 1)return '上级ID不能为0';
+		if($pid!=0 && $id == 1)return '顶级禁止修改上级ID';
+		if($pid>0 && m($table)->rows($pid)==0)return '上级ID不存在';
 		return '';
 	}
 	
@@ -106,5 +107,14 @@ class deptClassAction extends Action
 			$rows[]	= $ars;
 		}
 		return $rows;
+	}
+	
+	public function deptuserjsonAjax()
+	{
+		$deptarr 	= m('dept')->getdata();
+		$userarr 	= m('admin')->getuser(1);
+		$arr['deptjson']	= json_encode($deptarr);
+		$arr['userjson']	= json_encode($userarr);
+		$this->showreturn($arr);
 	}
 }

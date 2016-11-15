@@ -768,9 +768,9 @@ class reimClassModel extends Model
 	*/
 	public function asynurl($m, $a,$can=array(), $runtime=0)
 	{
-		$runurl	= getconfig('localurl');
+		$runurl		= getconfig('localurl');
 		if($runurl=='')$runurl = URL;
-		$key 	 = getconfig('asynkey');
+		$key 	 	= getconfig('asynkey');
 		if($key!='')$key = md5(md5($key));
 		$runurl .= 'api.php?m='.$m.'&a='.$a.'&adminid='.$this->adminid.'&asynkey='.$key.'';
 		if(is_array($can))foreach($can as $k=>$v)$runurl.='&'.$k.'='.$v.'';

@@ -1,0 +1,79 @@
+<script >
+$(document).ready(function(){
+
+	var a = $('#view_{rand}').bootstable({
+		tablename:'knowledge',celleditor:true,autoLoad:false,modenum:'knowledge',checked:true,
+		columns:[{
+			text:'标题',dataIndex:'title',editor:false,align:'left'
+		},{
+			text:'发件人',dataIndex:'adddt'
+		},{
+			text:'收件人',dataIndex:'optdt'
+		},{
+			text:'发件时间',dataIndex:'optdt'
+		},{
+			text:'ID',dataIndex:'id'
+		},{
+			text:'',dataIndex:'opt',renderer:function(v,d,oi){
+				return '<a href="javascript:;" onclick="openxiangs(\'邮件\',\'email\','+d.id+')">查看</a>';
+			}
+		}]
+	});
+
+
+	var c = {
+		
+	};
+	js.initbtn(c);
+});
+</script>
+
+
+<table width="100%">
+<tr valign="top">
+<td width="180">
+	<div>
+		<div style="width:100%" class="btn-group">
+		<button style="width:50%" class="btn btn-default" type="button"><i class="icon-pencil"></i> 写信</button>
+		<button style="width:50%" class="btn btn-default" type="button"><i class="icon-download-alt"></i> 收信</button>
+		</div>	
+	</div>
+	<div class="blank10"></div>
+	<div align="left" class="list-group">
+		<div class="list-group-item">收件箱</div>
+		<div class="list-group-item">草稿箱</div>
+		<div class="list-group-item">已发送</div>
+		<div class="list-group-item">已删除</div>
+	</div>
+</td>
+<td width="10"></td>
+<td>	
+	<div>
+	<table width="100%"><tr>
+		<td  style="padding-right:10px">
+			<div style="width:140px"  class="input-group">
+				<input placeholder="日期" readonly class="form-control" id="dt2_{rand}" >
+				<span class="input-group-btn">
+					<button class="btn btn-default" onclick="js.changedate(this,'dt2_{rand}')" type="button"><i class="icon-calendar"></i></button>
+				</span>
+			</div>	
+		</td>
+		<td>
+		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="标题/发件人">
+		</td>
+		<td style="padding-left:10px">
+			<button class="btn btn-default" click="search" type="button">搜索</button> 
+		</td>
+		<td width="90%">
+			 &nbsp;<font color=red>此功能还在开发。。。</font>
+		</td>
+		<td align="right">
+			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>
+		</td>
+	</tr></table>
+	</div>
+	<div class="blank10"></div>
+	<div id="view_{rand}"></div>
+</td>
+</tr>
+</table>

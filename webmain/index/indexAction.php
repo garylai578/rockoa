@@ -24,6 +24,7 @@ class indexClassAction extends Action{
 		
 		
 		
+		$this->smartydata['showkey']	= $this->jm->base64encode($this->jm->getkeyshow());
 		$this->smartydata['my']			= $my;
 		$this->smartydata['afrom']		= $afrom;
 		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.png');
@@ -40,7 +41,7 @@ class indexClassAction extends Action{
 			$this->menuwhere	= ' and `id` in('.str_replace(array('[',']'), array('',''), $myext).')';
 		}
 		$arr	= $this->getmenu($pid);
-		echo json_encode($arr);
+		$this->returnjson($arr);
 	}
 	
 	private function getmenu($pid)
@@ -67,7 +68,7 @@ class indexClassAction extends Action{
 	
 	
 	/**
-		查看菜单权限
+	*	查看菜单权限
 	*/	
 	private function getuserext($uid)
 	{
@@ -100,24 +101,6 @@ class indexClassAction extends Action{
 		return $guid;
 	}
 	
-	public function testAction()
-	{
-		$this->display = false;
-		
-		//c('JPush')->send(1, '标题', '推手是谁');
-		
-		//echo m('view')->viewwhere(3,3);
-		//m('beifen')->start();
-		//m('flow')->submit('leave', '1', '提交');
-		//$a = m('reim')->asynurl('asynrun','index', false, time()+12);
-		//$body = c('curl')->getcurl('http://www.rockoa.com/images/web/weblogo1.png');
-		//file_put_contents('we.png',$body);
-		//echo m('weixin:media')->upload('we.png');
-		
-		//$mid = m('kaoqin')->kqanay($this->adminid, '2016-08-03');
-		//m('schedule')->getdtdata();
-		//print_r($mid);
-	}
 	
 	public function downAction()
 	{
@@ -126,46 +109,13 @@ class indexClassAction extends Action{
 		m('file')->show($id);
 	}
 	
-	public function getFilodes($path, $lx=0)
+	/**
+	*	单页显示
+	*/
+	public function showAction()
 	{
-		$arr	= array();
-		$paths	= $path;
-		if(!is_dir($paths))return ;
-		$d 		= opendir($paths);
-		$farrs	= array();
-		$farra	= array();
-		$str 	= '';
-		for($i=0;$i<$lx;$i++)$str.='&nbsp;├ ';
-		
-		while( false !== ($file = readdir($d))){
-			if($file != '.'  &&  $file!='..'){//遍历目录下文件夹
-				$pafile	= $paths.'\\'.$file;
-				
-				//echo $file;
-				//echo '<br>';
-				if(is_dir($pafile)){
-					$farrs[] = $file;
-					
-				}
-				if(is_file($pafile)){	
-					$farra[] = $file;
-				}
-			}
-		}
-		
-		foreach($farrs as $f){
-			echo $str;
-			echo $f;
-			echo '<br>';
-			$apath   = $path.''.$f.'/';
-			$this->getFilodes($apath, $lx+1);
-		}
-		
-		foreach($farra as $f){
-			echo $str;
-			echo $f;
-			echo '<br>';
-		}
-		
+		$url 	= $this->get('url');
+		if($url=='')exit('无效请求');
+		$this->defaultAction();
 	}
 }

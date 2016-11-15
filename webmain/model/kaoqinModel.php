@@ -69,6 +69,16 @@ class kaoqinClassModel extends Model
 		return $isw;
 	}
 	
+	/**
+	*	读取人员今天定位打卡位置
+	*/
+	public function dwdkrs($uid, $dt)
+	{
+		$s 		= m('admin')->getjoinstr('receid', $uid);
+		$rows  	= $this->getall("`status`=1 and `type`=1 and '$dt' between `startdt` and `enddt` $s ");
+		$mid 	= $this->getpipeimid($uid, $rows, 'mid', 0);
+	}
+	
 	public function getpipeimid($uid=0, $garrs, $esfi='mid', $momid=1, $dt='')
 	{
 		$mid 	= $momid;

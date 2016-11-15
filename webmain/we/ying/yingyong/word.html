@@ -59,8 +59,11 @@ var c = {
 	up:function(){
 		c.upobj.click();
 	},
+	
 	getfile:function(pid,slx){
 		this.typeid = pid;if(!slx)slx='';
+		if(pid==0)this.movedata=false;
+		this.ssslx = slx;
 		js.ajax('word','getfile',{typeid:pid,slx:slx},function(a){
 			c.data=[];
 			c.showdata(a);
@@ -85,7 +88,7 @@ var c = {
 		s1='<div id="filename_'+oi+'">'+d.name+'</div>';
 		if(d.fileid){
 			s1+='<div style="font-size:12px;color:#888888">大小：'+d.filesizecn+'';
-			if(!isempt(d.shate))s1+='，分享给：'+d.shate+'';
+			if(!isempt(d.shate))s1+='，共享给：'+d.shate+'';
 			s1+='</div>';
 		}
 		if(d.fileext=='folder'){
@@ -108,15 +111,18 @@ var c = {
 		var d = this.data[oi-1];
 		this.tempoi = oi;
 		this.tempda = d;
-		var a = [{name:(d.fileext=='folder')?'打开':'下载',lx:0},{name:'重命名',lx:1}];
-		if(d.fileext=='folder'){
-			if(this.movedata)a.push({name:'['+this.movedata.name+']移动到这',lx:3});
-		}else{
-			a.push({name:'移动',lx:2});
+		var a = [{name:(d.fileext=='folder')?'打开':'下载',lx:0}];
+		if(!this.ssslx){
+			a.push({name:'重命名',lx:1});
+			if(d.fileext=='folder'){
+				if(this.movedata)a.push({name:'['+this.movedata.name+']移动到这',lx:3});
+			}else{
+				a.push({name:'移动',lx:2});
+			}
+			a.push({name:'删除',lx:4});
 		}
-		a.push({name:'删除',lx:4});
 		if(d.fileext!='folder'){
-			//a.push({name:'分享给...',lx:5});
+			//a.push({name:'共享给...',lx:5});
 			//a.push({name:'转发给...',lx:6});
 		}
 		js.showmenu({data:a,onclick:function(d){c.clickmenuss(d)}});

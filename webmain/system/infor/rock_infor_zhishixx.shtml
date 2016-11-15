@@ -4,9 +4,9 @@ $(document).ready(function(){
 	var num = params.num,pid,optlx=0;
 	var typeid=0,sspid=0;
 	var at = $('#optionview_{rand}').bootstree({
-		url:js.getajaxurl('gettreedata','option','system',{'num':'knowtikutype'}),
+		url:js.getajaxurl('gettreedata','option','system',{'num':'knowledgetype'}),
 		columns:[{
-			text:'题库分类',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%'
+			text:'知识分类',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%'
 		},{
 			text:'ID',dataIndex:'id',width:'20%'
 		}],
@@ -14,7 +14,7 @@ $(document).ready(function(){
 			if(sspid==0){
 				typeid = d.pid;
 				sspid = d.pid;
-				c.loadfile('0','所有题库');
+				c.loadfile('0','所有知识');
 			}
 		},
 		itemdblclick:function(d){
@@ -22,27 +22,26 @@ $(document).ready(function(){
 			c.loadfile(d.id,d.name);
 		}
 	});;
-	var modenum='knowtiku';
+	
 	var a = $('#view_{rand}').bootstable({
-		tablename:modenum,celleditor:false,autoLoad:false,modenum:modenum,fanye:true,params:{atype:'xuexi'},
+		tablename:'knowledge',celleditor:true,autoLoad:false,modenum:'knowledge',
 		columns:[{
-			text:'题名',dataIndex:'title',editor:false,align:'left'
+			text:'标题',dataIndex:'title',editor:false,align:'left'
 		},{
-			text:'类型',dataIndex:'type'
+			text:'添加时间',dataIndex:'adddt'
 		},{
-			text:'A',dataIndex:'ana'
+			text:'操作时间',dataIndex:'optdt'
 		},{
-			text:'B',dataIndex:'anb'
+			text:'操作人',dataIndex:'optname'
 		},{
-			text:'C',dataIndex:'anc'
+			text:'ID',dataIndex:'id'
 		},{
-			text:'D',dataIndex:'and'
-		},{
-			text:'答案',dataIndex:'answer',renderer:function(v,d,oi){
-				return '<a href="javascript:;" onclick="openxiangs(\'知识学习\',\'knowtiku\','+d.id+')">查看</a>';
+			text:'',dataIndex:'opt',renderer:function(v,d,oi){
+				return '<a href="javascript:;" onclick="openxiangs(\'知识\',\'knowledge\','+d.id+')">查看</a>';
 			}
 		}]
 	});
+
 
 	var c = {
 		reload:function(){
@@ -55,7 +54,7 @@ $(document).ready(function(){
 		genmu:function(){
 			typeid = sspid;
 			at.changedata={};
-			this.loadfile('0','所有题库');
+			this.loadfile('0','所有知识');
 		},
 		daochu:function(){
 			a.exceldown();
@@ -86,12 +85,12 @@ $(document).ready(function(){
 	<div>
 	<table width="100%"><tr>
 		<td align="left" nowrap>
-			<button class="btn btn-default" click="genmu"  type="button">所有题库</button>&nbsp; 
+			<button class="btn btn-default" click="genmu"  type="button">所有知识</button>&nbsp; 
 			
 		</td>
 		
 		<td style="padding-left:10px">
-		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="题名">
+		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="标题">
 		</td>
 		<td style="padding-left:10px">
 			<button class="btn btn-default" click="search" type="button">搜索</button> 

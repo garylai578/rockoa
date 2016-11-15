@@ -11,8 +11,6 @@ class workClassAction extends Action
 	public function workafter($table,$rows)
 	{
 		foreach($rows as $k=>$rs){
-			$zt = $this->statearr[$rs['state']];
-			$rows[$k]['state'] = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
 			$title 		= $rs['title'];
 			$projectid 	= (int)$rs['projectid'];
 			if($projectid>0){

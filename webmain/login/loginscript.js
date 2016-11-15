@@ -16,7 +16,6 @@ function initbody(){
 		changeuserface(this.value);
 	});
 	yunanimate();
-	
 }
 function yunanimate(){
 	var whe=winWb();
@@ -66,7 +65,7 @@ function loginsubmit(){
 	js.ajax(url,data,function(a){
 		if(a.success){
 			var ltype=js.request('ltype');
-			if(ltype=='1'){
+			if(ltype=='1' && history.length>1){
 				history.back();
 			}else{
 				js.setmsg('登录成功,跳转中..','green');

@@ -9,10 +9,12 @@ class flowoptClassAction extends Action
 		$name 	= $this->post('name');
 		$zt 	= $this->post('zt');
 		$ztid 	= $this->post('ztid','1');
+		$ztcolor= $this->post('ztcolor');
 		m('flow')->addlog($modenum, $mid,$name,array(
 			'explain' 		=> $sm,
 			'statusname' 	=> $zt,
-			'status' 		=> $ztid
+			'status' 		=> $ztid,
+			'color' 		=> $ztcolor
 		));
 		$this->showreturn('ok');
 	}

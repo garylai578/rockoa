@@ -17,9 +17,13 @@ $(document).ready(function(){
 		},{
 			text:'针对人员',dataIndex:'recename'
 		},{
+			text:'状态',dataIndex:'status',type:'checkbox',editor:true,sortable:true
+		},{
 			text:'有流程',dataIndex:'isflow',type:'checkbox',sortable:true
 		},{
 			text:'PC端提醒',dataIndex:'pctx',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'邮件提醒',dataIndex:'emtx',type:'checkbox',editor:true,sortable:true
 		},{
 			text:'APP提醒',dataIndex:'mctx',type:'checkbox',editor:true,sortable:true
 		},{
@@ -28,8 +32,6 @@ $(document).ready(function(){
 			text:'录入',dataIndex:'islu',type:'checkbox',editor:true,sortable:true
 		},{
 			text:'编号规则',dataIndex:'sericnum'
-		},{
-			text:'状态',dataIndex:'status',type:'checkbox',editor:true,sortable:true
 		},{
 			text:'ID',dataIndex:'id'
 		}],

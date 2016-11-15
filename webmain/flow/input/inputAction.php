@@ -23,8 +23,18 @@ class inputAction extends ActionNot
 	
 	//保存后处理，主要用于判断是否可以保存
 	protected function saveafter($table,$arr, $id, $addbo){}
-
-
+	
+	//过滤html代码
+	private function xxsstolt($uaarr)
+	{
+		foreach($uaarr as $k=>$v){
+			$vss = strtolower($v);
+			if(contain($vss, '<script')){
+				$uaarr[$k] = str_replace(array('<','>'),array('&lt;','&gt;'), $v);
+			}
+		}
+		return $uaarr;
+	}
 	public function saveAjax()
 	{
 		$id				= (int)$this->request('id');
@@ -120,7 +130,7 @@ class inputAction extends ActionNot
 			}
 		}
 		if(!$this->isempt($ss))$this->backmsg($ss);
-		
+		$uaarr	= $this->xxsstolt($uaarr);//过滤特殊文字
 		$bo = $db->record($uaarr, $where);;
 		if(!$bo)$this->backmsg($this->db->error());
 		

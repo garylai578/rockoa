@@ -17,7 +17,7 @@ $(document).ready(function(){
 			text:'地址',dataIndex:'label'
 		},{
 			text:'',dataIndex:'opt',renderer:function(v,d){
-				return '<a onclick="mapxiang{rand}('+d.id+')" href="javascript:;">地图上打开</a>';
+				return '<a onclick="js.locationshow('+d.id+')" href="javascript:;">地图上打开</a>';
 			}
 		}]
 	});
@@ -33,9 +33,6 @@ $(document).ready(function(){
 			a.exceldown();
 		}
 	};
-	mapxiang{rand}=function(id){
-		openxiangs('地图上查看地址','?m=kaoqin&d=main&a=location&id='+id+'');
-	}
 	js.initbtn(c);
 });
 </script>

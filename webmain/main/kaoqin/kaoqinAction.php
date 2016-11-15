@@ -145,13 +145,18 @@ class kaoqinClassAction extends Action
 		$id 	= (int)$this->post('id');
 		if($id==1 && $type!=3)showreturn('','此记录不能删除',201);
 		if($type==0)m('kqsjgz')->delete("`id`='$id' or pid='$id'");
-		if($type==1)m('kqdist')->delete("`id`='$id'");
+		if($type==1)m('kqdist')->delete("`id`='$id'"); //分配的
 		if($type==2)m('kqxxsj')->delete("`id`='$id' or pid='$id'");
 		if($type==3)m('kqxxsj')->delete("`id`='$id'");
 		showreturn();
 	}
 	
-	
+	public function kqdwdkdatadelAjax()
+	{
+		$id 	= (int)$this->post('id');
+		m('kqdw')->delete("`id`='$id'");
+		showreturn();
+	}
 	
 	
 	
@@ -171,15 +176,18 @@ class kaoqinClassAction extends Action
 		$type	= (int)$this->post('type','0');
 		$db 	= m('kqsjgz');
 		if($type==1)$db = m('kqxxsj');
+		if($type==2)$db = m('kqdw');
 		foreach($rows as $k=>$rs){
-			
 			$rows[$k]['mid'] 	= $db->getmou('name', $rs['mid']);
 			$rows[$k]['mids'] 	= $rs['mid'];
 		}
+		$gzdata = array();
 		if($type==0){
 			$gzdata	= $db->getall('pid=0','id,name','`sort`');
-		}else{
+		}else if($type==1){
 			$gzdata	= $db->getall('pid=0','id,name','`id`');
+		}else if($type==2){
+			$gzdata	= $db->getall('1=1','id,name','`id`');
 		}
 		return array(
 			'rows' 		=> $rows,
@@ -426,7 +434,14 @@ class kaoqinClassAction extends Action
 		return $a;
 	}
 	
-	
+	public function savaweizzAjax()
+	{
+		$id = (int)$this->post('id');
+		$uarr['location_x'] = $this->post('x');
+		$uarr['location_y'] = $this->post('y');
+		$uarr['scale'] 		= $this->post('zoom');
+		m('kqdw')->update($uarr, $id);
+	}
 	
 	
 	
@@ -442,5 +457,17 @@ class kaoqinClassAction extends Action
 		if(!$rs)exit('not found record');
 		if($rs['scale']<=0)$rs['scale']=12;
 		$this->smartydata['rs'] = $rs;
+	}
+	
+	public function locationchangeAction()
+	{
+		$callback 	= $this->get('callback');
+		$location_x = $this->get('location_x','24.528153');
+		$location_y = $this->get('location_y','118.167806');
+		$scale 		= $this->get('scale',12);
+		$this->assign('callback', $callback);
+		$this->assign('location_x', $location_x);
+		$this->assign('location_y', $location_y);
+		$this->assign('scale', $scale);
 	}
 }

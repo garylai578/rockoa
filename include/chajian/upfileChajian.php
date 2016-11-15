@@ -42,20 +42,21 @@ class upfileChajian extends Chajian{
 		$file_type		= $_FILES[$name]['type'];
 		$file_error		= $_FILES[$name]['error'];
 		$file_tmp_name	= $_FILES[$name]['tmp_name'];
+		if($file_size<=0){
+			return '文件大小0字节，不能上传';
+		}
 		$file_sizecn	= $this->formatsize($file_size);
 		$file_ext		= strtolower(substr($file_name,strrpos($file_name,'.')+1));	//文件扩展名
 		
 		$file_img		= false;
 		$file_kup		= false;
 		$jpgallext		= $this->jpgallext;
-		$upallfile		= $jpgallext.'doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|wma|chm|apk|';
+		$upallfile		= $jpgallext.'doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|mp4|flv|wma|chm|apk|';
 		
 		if($this->contain($jpgallext, '|'.$file_ext.'|'))$file_img = true;	
 		if($this->contain($upallfile, '|'.$file_ext.'|'))$file_kup = true;	
 		
-		if($file_size<=0){
-			return '文件大小0字节，不能上传';
-		}
+		
 		
 		if($file_error>0){
 			$rrs = $this->geterrmsg($file_error);

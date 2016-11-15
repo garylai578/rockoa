@@ -5,13 +5,13 @@
 *	网址：http://xh829.com/
 *	系统默认配置文件，请不要去修改，欢迎研究学习
 *	要修改配置文件在：webmain/webmainConfig.php
-*	调试模式行14上修改，ture调试模式，false上线模式
+*	调试模式行14上修改，true调试模式，false上线模式
 */
 @session_start();
 if(!ini_get('date.timezone') )date_default_timezone_set('Asia/Shanghai');
 header('Content-Type:text/html;charset=utf-8');
 define('ROOT_PATH',str_replace('\\','/',dirname(dirname(__FILE__))));
-define('DEBUG', false);
+define('DEBUG', true);
 include_once(''.ROOT_PATH.'/include/rockFun.php');
 include_once(''.ROOT_PATH.'/include/Chajian.php');
 include_once(''.ROOT_PATH.'/include/class/rockClass.php');

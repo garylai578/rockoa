@@ -3,11 +3,13 @@ $(document).ready(function(){
 	{params};
 	var id = params.id;
 	if(!id)id = 0;
+	var submitfields = 'status,sort,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate,weixinid';
+	if(adminid=='1')submitfields+=',type';
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'admin',
 		url:js.getajaxurl('publicsave','admin','system'),
 		params:{int_filestype:'status,type,sort',add_otherfields:'adddt={now}',md5_filestype:'pass'},
-		submitfields:'status,type,sort,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate,weixinid',
+		submitfields:submitfields,
 		requiredfields:'name,user,ranking,deptname',
 		success:function(){
 			if(id==0)js.msg('success','成功添加帐号：'+h.form.user.value+'');
@@ -20,7 +22,7 @@ $(document).ready(function(){
 	});
 	h.forminit();
 	h.load(js.getajaxurl('loadadmin','admin','system',{id:id}));
-	
+	if(adminid!='1')h.form.type.disabled=true;
 	var c = {
 		getdept:function(){
 			js.getuser({

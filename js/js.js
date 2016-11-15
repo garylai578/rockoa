@@ -1,5 +1,5 @@
 var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='';
-var windows	= null;
+var windows	= null,ismobile=0;
 function initbody(){}
 function globalbody(){}
 $(document).ready(function(){
@@ -211,6 +211,22 @@ js.upload=function(call,can, glx){
 	winiframe.location.href=url;
 	return false;
 }
+js.locationshow=function(sid){
+	var url = 'index.php?m=kaoqin&d=main&a=location&id='+sid+'';
+	if(ismobile==1){js.location(url);return;}
+	js.winiframe('地图位置查看', url);
+	return false;
+}
+js.winiframe=function(tit, url){
+	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
+	var wi = winWb()-150;if(wi>900)wi=900;if(wi<700)wi=700;
+	js.tanbody('winiframe',tit,wi,410,{
+		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
+		bbar:'none'
+	});
+	openinputiframe.location.href=url;
+	return false;	
+}
 js.downshow=function(id){
 	js.open('?id='+id+'&a=down',600,350);
 	return false;
@@ -249,6 +265,13 @@ js.downupshow=function(a, showid){
 		o.append(s);
 	}
 	js.downupdel(0, showid, false);
+}
+js.apiurl = function(m,a,cans){
+	var url='api.php?m='+m+'&a='+a+'';
+	url+='&cfrom=pc';
+	if(!cans)cans={};
+	for(var i in cans)url+='&'+i+'='+cans[i]+'';
+	return url;
 }
 js.getajaxurl=function(a,m,d,can){
 	if(!can)can={};
@@ -393,7 +416,7 @@ js.tanbody=function(act,title,w,h,can1){
 	$('#'+mid+'').remove();
 	var posta= 'fixed';
 	if(js.path == 'admin')posta='absolute';
-	s+='<div id="'+mid+'" style="position:'+posta+';background-color:#ffffff;left:'+l+'px;width:'+w+'px;top:'+t+'px;z-index:'+this.tanbodyindex+';box-shadow:0px 0px 10px rgba(0,0,0,0.3);">';
+	s+='<div id="'+mid+'" tanbody="rock" style="position:'+posta+';background-color:#ffffff;left:'+l+'px;width:'+w+'px;top:'+t+'px;z-index:'+this.tanbodyindex+';box-shadow:0px 0px 10px rgba(0,0,0,0.3);">';
 	s+='	<div class="title '+can.titlecls+'" style="-moz-user-select:none;-webkit-user-select:none;user-select:none;">';
 	s+='		<table border="0"  width="100%" cellspacing="0" cellpadding="0"><tr>';
 	s+='			<td height="34" style="font-size:16px; font-weight:bold;color:white; padding-left:8px" width="100%" onmousedown="js.move(\''+mid+'\')" id="'+act+'_title">'+title+'</td>';
@@ -441,6 +464,7 @@ js.tanclose=function(act, guan){
 js.xpbody=function(act,type){
 	if(type=='none'){
 		$("div[xpbody='"+act+"']").remove();
+		if(!get('xpbg_bodydds'))$('div[tanbody]').remove();
 		return;
 	}
 	if(get('xpbg_bodydds'))return false;
@@ -513,29 +537,33 @@ js.debug	= function(s){
 js.alert = function(txt,tit,fun){
 	js.confirm(txt, fun, '', tit, 2, '');
 }
-js.confirm	= function(txt,fun, tcls, tis, lx,ostr){
+js.confirm	= function(txt,fun, tcls, tis, lx,ostr,bstr){
 	if(!lx)lx=0;
-	var h = '<div style="padding:20px;line-height:30px" align="center">';
+	var h = '<div style="padding:20px;line-height:30px" align="center">',w=320;
 	if(lx==1){
-		if(!tcls)tcls='';if(!ostr)ostr='';
+		w=350;
+		if(!tcls)tcls='';if(!ostr)ostr='';if(!bstr)bstr='';
 		h='<div style="padding:10px;" align="center">'+ostr+'';
 		h+='<div align="left" style="padding-left:10px">'+txt+'</div>';
-		h+='<div ><textarea class="input" id="confirm_input" style="width:280px;height:60px">'+tcls+'</textarea></div>';
+		h+='<div ><textarea class="input" id="confirm_input" style="width:310px;height:60px">'+tcls+'</textarea></div>'+bstr+'';
 	}else{
 		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
 	}
 	h+='</div>';
-	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a>';
-	if(lx!=2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <a sattr="no" class="btn btn-danger webbtn" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a>';
+	h+='<div style="padding:10px" align="center"><button id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" type="button"><i class="icon-ok"></i>&nbsp;确定</button>';
+	if(lx!=2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <button sattr="no" class="btn btn-danger webbtn" id="confirm_btn" type="button"><i class="icon-remove"></i>&nbsp;取消</button>';
 	h+='</div>';
 	h+='<div class="blank10"></div>';
 	if(!tcls)tcls='danger';if(lx==1)tcls='info';
 	if(!tis)tis='<i class="icon-question-sign"></i>&nbsp;系统提示';
-	js.tanbody('confirm', tis, 320, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
+	js.tanbody('confirm', tis, w, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
 	function backl(e){
 		var jg	= $(this).attr('sattr'),val=$('#confirm_input').val();
 		if(val==null)val='';
-		if(typeof(fun)=='function')fun(jg, val);
+		if(typeof(fun)=='function'){
+			var cbo = fun(jg, val);
+			if(cbo)return false;
+		}
 		js.tanclose('confirm');
 		return false;
 	}
@@ -545,8 +573,8 @@ js.confirm	= function(txt,fun, tcls, tis, lx,ostr){
 	get('confirm_btn').focus();}
 	if(lx==1)get('confirm_input').focus();
 }
-js.prompt = function(tit,txt,fun, msg, ostr){
-	js.confirm(txt, fun, msg, tit, 1, ostr);
+js.prompt = function(tit,txt,fun, msg, ostr,bstr){
+	js.confirm(txt, fun, msg, tit, 1, ostr,bstr);
 }
 js.msg = function(lx, txt,sj){
 	clearTimeout(this.msgshowtime);
@@ -560,7 +588,7 @@ js.msg = function(lx, txt,sj){
 		sj	= 60;
 	}
 	if(lx=='msg')txt='<font color=red>'+txt+'</font>';var t=10;
-	var s = '<div onclick="$(this).remove()" id="msgshowdivla" style="position:fixed;top:'+t+'px;z-index:20;" align="center"><div style="padding:8px 20px;background:rgba(0,0,0,0.7);color:white;font-size:16px;">'+txt+'</div></div>';
+	var s = '<div onclick="$(this).remove()" id="msgshowdivla" style="position:fixed;top:'+t+'px;z-index:200;" align="center"><div style="padding:8px 20px;background:rgba(0,0,0,0.7);color:white;font-size:16px;">'+txt+'</div></div>';
 	$('body').append(s);
 	var w=$('#msgshowdivla').width(),l=(winWb()-w)*0.5;
 	$('#msgshowdivla').css('left',''+l+'px');
@@ -655,10 +683,10 @@ js.setoption=function(k,v){
 		if(isempt(v)){
 			localStorage.removeItem(k);
 		}else{
-			localStorage.setItem(k, v);
+			localStorage.setItem(k, escape(v));
 		}
 	}catch(e){
-		js.savecookie(k,v);
+		js.savecookie(k,escape(v));
 	}
 	return true;
 }
@@ -666,6 +694,7 @@ js.getoption=function(k,dev){
 	var s = '';
 	k=QOM+k;
 	try{s = localStorage.getItem(k);}catch(e){s=js.cookie(k);}
+	if(s)s=unescape(s);
 	if(isempt(dev))dev='';
 	if(isempt(s))s=dev;
 	return s;
@@ -692,16 +721,27 @@ js.isimg = function(lx){
 	if(ftype.indexOf('|'+lx+'|')>-1)bo=true;
 	return bo;
 }
-js.changeuser=function(na, lx){
-	this.backnana=na;
-	var h = winHb()-70;
-	if(h>400)h=400;
-	js.tanbody('changeaction','请选择...',350,h,{
-		html:'<div style="height:'+h+'px"><iframe src="" name="winiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
+js.changeuser=function(na, lx, tits,ocans){
+	var h = winHb()-70;if(!ocans)ocans={};
+	if(h>400)h=400;if(!tits)tits='请选择...';
+	js.tanbody('changeaction',tits,350,h,{
+		html:'<div id="showuserssvie" style="height:'+h+'px"><iframe src="" name="winiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
 	});
-	var url='task.php?fn=dept&changetype='+lx+'';
-	winiframe.location.href=url;
+	var can = {
+		'changetype': lx,
+		'showview' 	: 'showuserssvie',
+		'titlebool'	:false,
+		'oncancel'	:function(){
+			js.tanclose('changeaction');
+		}
+	};
+	if(na){
+		can.idobj = get(na+'_id');
+		can.nameobj = get(na);
+	}
+	for(var i in ocans)can[i]=ocans[i];
+	$('#showuserssvie').chnageuser(can);
 	return false;
 }
 js.back=function(){
@@ -711,15 +751,6 @@ js.changeclear=function(na){
 	get(na).value='';
 	get(na+'_id').value='';
 	get(na).focus();
-}
-function changeok(na,naid){
-	if(!js.backnana)return;
-	get(js.backnana).value=na;
-	get(js.backnana+'_id').value=naid;
-	get(js.backnana).focus();
-}
-function changecancel(){
-	js.tanclose('changeaction');
 }
 js.changedate=function(o1,id,v){
 	if(!v)v='date';

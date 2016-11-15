@@ -59,6 +59,7 @@ agentobj.word.initagent = function(){
 		},
 		getfile:function(pid,slx){
 			this.typeid = pid;if(!slx)slx='';
+			this._tesslx= slx;
 			modeltabs();
 			js.ajax('word','getfile',{typeid:pid,slx:slx},function(a){
 				c.data=[];
@@ -85,7 +86,7 @@ agentobj.word.initagent = function(){
 			var s='';
 			s+='<tr id="'+d.fileext+'_{rand}_'+d.id+'" onclick="agentobj.word.clicksse('+oi+',event,this)" oncontextmenu="agentobj.word.rightsheowa('+oi+',event,this)" ondblclick="agentobj.word.celdblckc('+oi+')">';
 			s1='<div id="filename_{rand}_'+oi+'">'+d.name+'</div>';
-			if(!isempt(d.shate)&&d.optid==adminid)s1+='<div style="font-size:12px;color:#888888">分享给：'+d.shate+'</div>';
+			if(!isempt(d.shate)&&d.optid==adminid)s1+='<div style="font-size:12px;color:#888888">共享给：'+d.shate+'</div>';
 			
 			if(d.fileext=='folder'){
 				s+='<td align="center" width="30"><img src="images/folder.png" height="24" width="24"></td><td>'+s1+'</td><td>文件夹</td><td></td><td>'+d.optdt+'</td><td></td>';
@@ -129,7 +130,7 @@ agentobj.word.initagent = function(){
 				a.push({name:'删除',lx:4});
 			}
 			if(d.fileext!='folder'){
-				if(d.optid==adminid)a.push({name:'分享给...',lx:5});
+				if(d.optid==adminid)a.push({name:'共享给...',lx:5});
 				a.push({name:'转发给...',lx:6});
 			}
 			this.rightobj.setData(a);
@@ -190,10 +191,14 @@ agentobj.word.initagent = function(){
 			});
 		},
 		fenxiang:function(){
-			js.changeuser('changedeptusercheck','gefenshow{rand}','','分享给...');
+			js.changeusers('共享给...','changedeptusercheck', function(sna,sid){
+				c.fenxiangok(sna,sid);
+			});
 		},
 		zhuanfagei:function(){
-			js.changeuser('changeusercheck','gefenshowz{rand}','','转发给...');
+			js.changeusers('转发给...','changeusercheck', function(sna,sid){
+				c.zhuanfageiok(sna,sid);
+			});
 		},
 		zhuanfageiok:function(sna,sid){
 			im.forward(sid, 'user','', this.tempda.id);
@@ -202,7 +207,7 @@ agentobj.word.initagent = function(){
 			if(sid=='')return;
 			var d = this.tempda;
 			js.ajax('word','shatefile',{type:d.fileext,id:d.id,shateid:sid,shate:jm.base64encode(sna)},function(a){
-				js.msg('success','已分享给【'+sna+'】');
+				js.msg('success','已共享给【'+sna+'】');
 			});
 		},
 		wfenxx:function(lx){
@@ -233,12 +238,6 @@ agentobj.word.initagent = function(){
 	};
 	this.clicksse=function(oi,e,o1){
 		c.chentcolor(oi,e,o1);
-	}
-	gefenshow{rand}=function(sna,sid){
-		c.fenxiangok(sna,sid);
-	}
-	gefenshowz{rand}=function(sna,sid){
-		c.zhuanfageiok(sna,sid);
 	}
 	c.init();
 }

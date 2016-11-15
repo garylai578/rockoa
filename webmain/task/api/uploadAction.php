@@ -8,10 +8,11 @@ class uploadClassAction extends apiAction
 		if(!$_FILES)exit('sorry!');
 		$upimg	= c('upfile');
 		$maxsize= (int)$this->get('maxsize', 50);
-		$uptypes= '|jpg|png|gif|jpeg|bmp|docx|doc|zip|rar|xls|xlsx|ppt|pptx|pdf|mp3|';
+		$uptypes= '|jpg|png|gif|jpeg|bmp|docx|doc|zip|rar|xls|xlsx|ppt|pptx|pdf|mp3|mp4|flv|swf|';
 		$uptypes= '*';
 		$upimg->initupfile($uptypes, 'upload|'.date('Y-m').'', $maxsize);
 		$upses	= $upimg->up('file');
+		if(!is_array($upses))exit($upses);
 		$arr 	= c('down')->uploadback($upses);
 		$this->returnjson($arr);
 	}

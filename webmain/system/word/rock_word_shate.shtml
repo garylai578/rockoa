@@ -17,8 +17,6 @@ $(document).ready(function(){
 		},{
 			text:'创建人',dataIndex:'optname',sortable:true
 		},{
-			text:'下载次数',dataIndex:'downci',sortable:true
-		},{
 			text:'',dataIndex:'opt',renderer:function(v,d,oi){
 				return '<a href="javascript:;" onclick="showvies{rand}('+oi+')">查看</a>';
 			}

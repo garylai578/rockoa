@@ -65,8 +65,8 @@ $(document).ready(function(){
 			addtabs({num:'admindkjlpl',url:'main,kaoqin,dkjlpl',name:'导入打卡记录'});
 		}
 	};
+	if(atype=='all')$('#btnss{rand}').show();
 	
-
 	js.initbtn(c);
 });
 </script>
@@ -100,7 +100,7 @@ $(document).ready(function(){
 		<button class="btn btn-default" click="daochu,1" type="button">导出</button>
 	</td>
 	<td width="80%"></td>
-	<td align="right" nowrap>
+	<td align="right" id="btnss{rand}" style="display:none" nowrap>
 		<button class="btn btn-default" click="daoru" type="button">导入</button>&nbsp;
 		<button class="btn btn-default" click="adddaka" type="button">新增</button>
 	</td>

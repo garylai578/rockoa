@@ -63,14 +63,23 @@ function _getaolvw(na){
 	return v;
 }
 
-function _submitother(nae,zt,ztid,ocan,las){
+/**
+*	nae记录名称 
+*	zt状态名称 
+*	ztid 状态id 
+*	ztcol 状态颜色 
+*	ocan 其他参数
+*	las 说明字段Id默认other_explain
+*/
+function _submitother(nae,zt,ztid,ztcol,ocan,las){
 	if(!las)las='other_explain';
 	if(!nae||!get(las)){js.setmsg('sorry;不允许操作','','msgview_spage');return;}
 	var sm=$('#'+las+'').val();
+	if(!ztcol)ztcol='';
 	if(!zt)zt='';if(!ocan)ocan={};
 	if(!ztid){js.setmsg('没有选择状态','','msgview_spage');return;}
 	if(!sm){js.setmsg('没有输入备注/说明','','msgview_spage');return;}
-	var da = js.apply({'name':nae,'mid':mid,'modenum':modenum,'zt':zt,'ztid':ztid,'sm':sm},ocan);
+	var da = js.apply({'name':nae,'mid':mid,'modenum':modenum,'ztcolor':ztcol,'zt':zt,'ztid':ztid,'sm':sm},ocan);
 	js.setmsg('处理中...','','msgview_spage');
 	js.ajax(c.gurl('addlog'),da,function(s){
 		js.setmsg('处理成功','green', 'msgview_spage');
@@ -97,10 +106,10 @@ var c={
 		try{parent.js.tanclose('winiframe');}catch(e){}
 	},
 	other:function(nae,las){
-		_submitother(nae,'','1',las);
+		_submitother(nae,'','1','',las);
 	},
-	others:function(nae,zt,ztid,ocan,las){
-		_submitother(nae,zt,ztid,ocan,las);
+	others:function(nae,zt,ztid,ztcol,ocan,las){
+		_submitother(nae,zt,ztid,ztcol,ocan,las);
 	},
 	mencc:function(o1){
 		var lx=$(o1).attr('lx');

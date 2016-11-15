@@ -43,4 +43,20 @@ class asynrunClassAction extends apiAction
 		$msgid  = $this->get('msgid');
 		m('reim')->downwximg($picurl, $msgid);
 	}
+	
+	//异步发送邮件
+	public function sendemailAction()
+	{
+		$id    = (int)$this->get('id');
+		m('email')->sendemailcont($id);
+	}
+	
+	//异步微信发送提醒
+	public function wxsendmsgAction()
+	{
+		$body = $this->get('body');
+		if($body=='')return;
+		$body	= $this->jm->base64decode($body);
+		m('weixin:index')->sendbody($body);
+	}
 }

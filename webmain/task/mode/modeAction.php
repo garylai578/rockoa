@@ -7,11 +7,7 @@ class modeClassAction extends ActionNot
 		$token 	= $this->get('token');
 		$aid 	= m('login')->autologin($aid, $token);
 		if($aid==0){
-			if(A=='x'){
-				$this->mweblogin(1);
-			}else{
-				exit('sorry,请先<a href="index.php?m=login&ltype=1">[登录]</a>系统...');
-			}
+			$this->mweblogin(1);
 		}
 		$this->getlogin(1);
 	}
@@ -26,6 +22,7 @@ class modeClassAction extends ActionNot
 		$this->displayfile = $path;
 	}
 	
+	//移动端页面详情
 	public function xAction()
 	{
 		$num = $this->get('modenum');
@@ -52,6 +49,7 @@ class modeClassAction extends ActionNot
 		$this->smartydata['pagetitle']		= $pagetitle;
 	}
 	
+	//pc端页面详情
 	public function pAction()
 	{
 		$num = $this->get('modenum');
@@ -80,6 +78,7 @@ class modeClassAction extends ActionNot
 		}
 	}
 	
+	//下载
 	public function downAction()
 	{
 		$this->display = false;
@@ -95,7 +94,7 @@ class modeClassAction extends ActionNot
 	
 	
 	
-	
+	//导出页面
 	public function eAction()
 	{
 		$num	= $this->get('num');
@@ -113,5 +112,16 @@ class modeClassAction extends ActionNot
 			header('Content-type:application/vnd.ms-excel');
 			header('Content-disposition:attachment;filename='.iconv("utf-8","gb2312",$filename).'.'.$stype.'');
 		}
+	}
+	
+	//邮件上打开详情
+	public function aAction()
+	{
+		$num = $this->get('num');
+		$mid = $this->get('mid');
+		$act = 'p';
+		if($this->rock->ismobile())$act='x';
+		$url = 'task.php?a='.$act.'&num='.$num.'&mid='.$mid.'';
+		$this->rock->location($url);
 	}
 }

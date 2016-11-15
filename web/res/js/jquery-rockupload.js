@@ -10,8 +10,8 @@
 
 	function rockupload(opts){
 		var me = this;
-		var opts=js.apply({inputfile:'',uptype:'*',maxsize:50,onchange:function(){},onprogress:function(){},onsuccess:function(){},xu:0,fileallarr:[],autoup:true,
-		onerror:function(){},
+		var opts=js.apply({inputfile:'',uptype:'*',maxsize:20,onchange:function(){},onprogress:function(){},onsuccess:function(){},xu:0,fileallarr:[],autoup:true,
+		onerror:function(){},fileidinput:'fileid',
 		onabort:function(){},
 		allsuccess:function(){}
 		},opts);
@@ -26,6 +26,7 @@
 			});
 		};
 		this.reset=function(){
+			if(!this.autoup)return;
 			document['form_'+this.inputfile+''].reset();
 		};
 		this.click=function(lx){
@@ -35,11 +36,16 @@
 		};
 		this.change=function(o1){
 			if(!o1.files){
-				js.msg('msg','当前浏览器不支持1');
+				js.msg('msg','当前浏览器不支持上传1');
 				return;
 			}
 			var f = o1.files[0];
 			var a = {filename:f.name,filesize:f.size,filesizecn:js.formatsize(f.size)};
+			if(a.filesize<=0){
+				js.msg('msg',''+f.name+'不存在');
+				return;
+			}
+			if(this.isfields(a))return;
 			if(f.size>this.maxsize*1024*1024){
 				this.reset();
 				js.msg('msg','文件不能超过'+this.maxsize+'MB,当前文件'+a.filesizecn+'');
@@ -55,6 +61,7 @@
 					return;
 				}
 			}
+			
 			a.fileext	 = fileext;
 			a.isimg		 = js.isimg(fileext);
 			a.xu		 = this.xu;
@@ -71,6 +78,15 @@
 			this.reset();
 			this._startup(f);
 		};
+		this.isfields=function(a){
+			var bo = false,i,d=this.fileallarr;
+			for(i=0;i<d.length;i++){
+				if(this.fileviewxu(d[i].xu) && d[i].filename==a.filename && d[i].filesize==a.filesize){
+					return true;
+				}
+			}
+			return bo;
+		};
 		this.sendbase64=function(nr){
 			this.filearr={filename:'截图.png',filesize:0,filesizecn:'',isimg:true,fileext:'png'};
 			this._startup(false, nr);
@@ -84,31 +100,40 @@
 				var a = this.fileallarr;
 				for(var i=0;i<a.length;i++)if(a[i].id)ids+=','+a[i].id+'';
 				if(ids!='')ids=ids.substr(1);
-				form('fileid').value=ids;
-				this.allsuccess(this.fileallarr);
+				try{if(form(this.fileidinput))form(this.fileidinput).value=ids;}catch(e){};
+				this.allsuccess(this.fileallarr, ids);
 				return;
 			}
+			this.nowoi = oi;
 			var f=this.fileallarr[oi];
-			if(!f){
+			if(!f || !this.fileviewxu(f.xu)){
 				this.startss(this.nowoi+1);
 				return;
 			}
 			this.filearr = f;
-			this.nowoi = oi;
 			this.onsuccess=function(f,str){
 				var dst= js.decode(str);
-				this.fileallarr[this.nowoi].id=dst.id;
-				this.fileallarr[this.nowoi].filepath=dst.filepath;
+				if(dst.id){
+					this.fileallarr[this.nowoi].id=dst.id;
+					this.fileallarr[this.nowoi].filepath=dst.filepath;
+				}else{
+					js.msg('msg', str);
+					this.fileviewxu(this.nowoi, '<font color=red>失败1</font>');
+				}
 				this.startss(this.nowoi+1);
 			}
 			this.onprogress=function(f,bil){
-				$('#'+this.fileview+'_'+this.nowoi+'').html(''+bil+'%');
+				this.fileviewxu(this.nowoi, ''+bil+'%');
 			}
 			this.onerror=function(){
-				$('#'+this.fileview+'_'+this.nowoi+'').html('<font color=red>失败</font>');
+				this.fileviewxu(this.nowoi, '<font color=red>失败0</font>');
 				this.startss(this.nowoi+1);
 			}
 			this._startup(f.f);
+		};
+		this.fileviewxu=function(oi,st){
+			if(typeof(st)=='string')$('#'+this.fileview+'_'+oi+'').html(st);
+			return get(''+this.fileview+'_'+oi+'');
 		};
 		this._startup=function(fs, nr){
 			this.upbool = true;
@@ -139,10 +164,10 @@
 			this.upbool = false;
 			this.onsuccess(this.filearr,o.response,o);
 		};
-		this._error=function(o){
+		this._error=function(xr){
 			this.upbool = false;
-			js.getarr(o);
-			this.onerror(this);
+			js.getarr(xr);
+			this.onerror('上传内部错误');
 		};
 		this._statechange=function(o){
 			

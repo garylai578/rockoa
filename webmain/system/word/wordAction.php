@@ -14,21 +14,25 @@ class wordClassAction extends Action
 		$this->returnjson($rows);
 	}
 	
-	public function getwordAjax()
+	public function wordbeforeaction($table)
 	{
 		$typeid = (int)$this->post('typeid',0);
 		$pid 	= m('word')->getfolderid($this->adminid);
 		$where 	= " and a.optid=".$this->adminid."";
 		if($pid==$typeid || $typeid==0){
-			//$where.=" and a.typeid in(0,$pid)";
+			
 		}else{
 			$where.=" and a.typeid='$typeid'";
 		}
-		$rows 	= $this->db->getall("select b.id,a.shate,a.typeid,b.filepath,a.optname,a.optid,a.optdt,b.filename,b.fileext,b.filesizecn,b.downci from `[Q]word` a left join `[Q]file` b on a.fileid=b.id where b.id is not null $where order by a.`id` desc");
-		$this->returnjson(array(
-			'rows' => $rows
-		));
+		
+		return array(
+			'table' => '`[Q]word` a left join `[Q]file` b on a.fileid=b.id',
+			'fields'=> 'b.id,a.shate,a.typeid,b.filepath,a.optname,a.optid,a.optdt,b.filename,b.fileext,b.filesizecn,b.downci',
+			'where'	=> "and b.id is not null $where",
+			'order'	=> 'a.id desc'
+		);
 	}
+
 	
 	public function savefileAjax()
 	{

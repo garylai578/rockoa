@@ -1,61 +1,11 @@
 ﻿function initbody(){
+	jm.setJmstr(jm.base64decode(show_key));
 	objcont = $('#content_allmainview');
 	objtabs = $('#tabs_title');
 	resizewh();
 	$(window).resize(resizewh);
 	clickhome();
 
-	var a = $("span[pmenuid]");
-	a.click(function(){
-		if(js.ajaxbool)return;
-		a.removeClass();
-		loadmenu(this);
-	});
-	loadmenu($("span[pmenuid]")[0]);
-	if(typeof(applicationCache)=='undefined'){
-		//js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
-	}
-	if(a.length<=1)$('.topmenubg').html('');
-	var ddsata=[{
-		name:'<i class="icon-lock"></i> 修改密码',num:'pass',url:'system,geren,pass',names:'修改密码'
-	},{
-		name:'<i class="icon-bell"></i> 提醒信息',num:'todo',url:'system,geren,todo',names:'提醒信息'
-	},{
-		name:'<i class="icon-picture"></i> 修改头像',num:'face'
-	},{
-		name:'<i class="icon-magic"></i> 切换皮肤',num:'style',url:'system,geren,style',names:'切换皮肤'
-	},{
-		name:'<i class="icon-user"></i> 帐号('+adminuser+')',num:'user'
-	}];
-	if(js.request('afrom')=='')ddsata.push({name:'<i class="icon-signout"></i> 退出',num:'exit'});
-	$('#indexuserl').rockmenu({
-		width:170,top:50,
-		data:ddsata,
-		itemsclick:function(d){
-			if(d.num=='exit'){
-				js.confirm('确定要退出系统吗？',function(bn){
-					if(bn=='yes')js.location('?m=login&a=exit');
-				});
-				return;
-			}
-			if(d.num=='face'){
-				editfacechang(adminid, adminname);
-				return;
-			}
-			if(d.num=='user')return;
-			addtabs({num:d.num,url:d.url,name:d.names});
-		}
-	});
-	$('#reordershla').click(function(){
-		$('#indexmenu').hide();
-		$('#indexmenuss').show();
-		resizewh();
-	});
-	$('#indexmenuss').click(function(){
-		$('#indexmenu').show();
-		$('#indexmenuss').hide();
-		resizewh();
-	});
 	$('body').keydown(function(e){
 		var code	= e.keyCode;
 		if(code==27){
@@ -69,36 +19,6 @@
 	});
 }
 
-function loadmenu(o){
-	var o1 = $(o);
-	o1.addClass('spanactive');
-	var id = o1.attr('pmenuid');
-	$('#menulisttop').html(o1.html());
-	$('#menulist').html('<div style="padding:30px;" align="center"><img src="images/mloading.gif"></div>');
-	js.ajax(js.getajaxurl('getmenu','index'),{pid:id}, function(da){
-		showmenula(da);
-	});
-}
-function showmenula(da){
-	var a = js.decode(da);
-	menuarr = a;
-	var i,s='',j,child;
-	for(i=0; i<a.length; i++){
-		s+='<div temp="menu"  onClick="clickmenu(this,'+i+',-1)" id="menu_list_'+a[i].num+'" class="menuone"><font><i class="icon-'+a[i].icons+'"></i></font> '+a[i].name+'';
-		if(a[i].stotal>0)s+='<span id="menu_down_isons_'+a[i].num+'" class="icon-caret-down"></span>';
-		s+='</div>';
-		if(a[i].stotal>0){
-			child = a[i].children;
-			s+='<div class="menulist" id="menu_down_'+a[i].num+'" style="display:none">';
-			for(j=0; j<child.length; j++){
-				s+='<div temp="menu" id="menu_list_'+child[j].num+'" onClick="clickmenu(this,'+i+','+j+')" class="menutwo"><i class="icon-'+child[j].icons+'"></i> '+child[j].name+'</div>';
-			}
-			s+='</div>';
-		}
-	}
-	$('#menulist').html(s);
-}
-
 function opentixiang(){
 	addtabs({num:'todo',url:'system,geren,todo',icons:'bell',name:'提醒信息'});
 	return false;
@@ -110,14 +30,11 @@ function clickhome(){
 }
 
 function resizewh(){
-	var _lw = $('#indexmenu').width();
-	if(get('indexmenu').style.display=='none'){
-		_lw = $('#indexmenuss').width();
-	}
+	var _lw = 0;
 	var w = winWb()-_lw-5;
 	var h = winHb();
 	viewwidth = w; 
-	viewheight = h-50-44; 
+	viewheight = h-44; 
 	$('#indexcontent').css({width:''+viewwidth+'px',height:''+(viewheight)+'px'});
 	$('#tabsindexm').css({width:''+viewwidth+'px'});
 	var nh = h-50;

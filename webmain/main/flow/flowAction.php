@@ -47,32 +47,40 @@ class flowClassAction extends Action
 		if($cans['isflow']==1 && isempt($cans['sericnum'])) return '有流程必须有写编号规则，请参考其他模块填写';
 	}
 	
+	private function setsubtsta($tabs, $alltabls, $tab)
+	{
+		if(isempt($tabs))return;
+		if(!in_array(''.PREFIX.''.$tabs.'', $alltabls)){
+			$sql = "CREATE TABLE `[Q]".$tabs."` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`mid` smallint(6) DEFAULT '0' COMMENT '对应主表".$tab.".id',
+`sort` smallint(6) DEFAULT '0' COMMENT '排序号',
+PRIMARY KEY (`id`),KEY `mid` (`mid`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+			$bo = $this->db->query($sql);
+		}else{
+			$fields = $this->db->getallfields(''.PREFIX.''.$tabs.'');
+			$str 	= '';
+			if(!in_array('mid', $fields))$str.=",add `mid` smallint(6) DEFAULT '0' COMMENT '对应主表".$tab.".id'";
+			if(!in_array('sort', $fields))$str.=",add `sort` smallint(6) DEFAULT '0' COMMENT '排序号'";
+			if($str!=''){
+				$sql = 'alter table `'.PREFIX.''.$tabs.'` '.substr($str,1).'';
+				$this->db->query($sql);
+			}
+		}
+	}
+	
 	public function flowsetsaveafter($table, $cans)
 	{
 		$isflow = $cans['isflow'];
 		$tab  	= $cans['table'];
 		$tabs  	= $cans['tables'];
 		$alltabls = array();
+		//创建保存多行子表
 		if(!isempt($tabs)){
 			$alltabls 	= $this->db->getalltable();
-			if(!in_array(''.PREFIX.''.$tabs.'', $alltabls)){
-				$sql = "CREATE TABLE `[Q]".$tabs."` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `mid` smallint(6) DEFAULT '0' COMMENT '对应主表".$tab.".id',
-  `sort` smallint(6) DEFAULT '0' COMMENT '排序号',
-  PRIMARY KEY (`id`),KEY `mid` (`mid`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
-				$bo = $this->db->query($sql);
-			}else{
-				$fields = $this->db->getallfields(''.PREFIX.''.$tabs.'');
-				$str 	= '';
-				if(!in_array('mid', $fields))$str.=",add `mid` smallint(6) DEFAULT '0' COMMENT '对应主表".$tab.".id";
-				if(!in_array('sort', $fields))$str.=",add `sort` smallint(6) DEFAULT '0' COMMENT '排序号'";
-				if($str!=''){
-					$sql = 'alter table `'.PREFIX.''.$tabs.'` '.substr($str,1).'';
-					$this->db->query($sql);
-				}
-			}
+			$tabsa 		= explode(',', $tabs);
+			foreach($tabsa as $tabsas)$this->setsubtsta($tabsas, $alltabls, $tab);
 		}
 		
 		if(isempt($tab))return;

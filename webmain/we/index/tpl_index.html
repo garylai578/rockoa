@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-<title>信呼</title>
+<title><?=$da['title']?></title>
 <link rel="stylesheet" type="text/css" href="mode/weui/weui.min.css"/>
 <link rel="stylesheet" type="text/css" href="mode/bootstrap3.3/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="webmain/css/rui.css">
@@ -12,6 +12,7 @@
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/jswx.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
+<script type="text/javascript" src="web/res/js/jquery-changeuser.js"></script>
 <style>
 body,html{height:100%;-webkit-tap-highlight-color:transparent}
 body{overflow-x:hidden;background-color:#fbf9fe}
@@ -47,11 +48,11 @@ function initbody(){
 	$('#myshow_deptname').html(js.getoption('deptallname'));
 	$('#myshow_ranking').html(js.getoption('ranking'));
 	
-	var url=location.href,oi=0;
-	if(url.indexOf('#yy')>0)oi=1;
-	if(url.indexOf('#user')>0)oi=2;
-	if(url.indexOf('#my')>0)oi=3;
-	if(oi!=0)im.changetab(oi);
+	try{
+	var site = sessionStorage.getItem('nowtabs');
+	if(!site)site=0;
+	im.changetab(site);
+	}catch(e){}
 }
 var agentarr={};
 var im={
@@ -61,9 +62,10 @@ var im={
 		$('#main_index'+lx+'').show();
 		$('.weui_tabbar a').removeClass('weui_bar_item_on');
 		$('.weui_tabbar a:eq('+lx+')').addClass('weui_bar_item_on');
-		var tass=['信呼','应用','联系人',adminame];
+		var tass=['<?=$da['title']?>','应用','联系人',adminame];
 		$('.r-header-text').html(tass[lx]);
 		this.index = lx;
+		try{sessionStorage.setItem('nowtabs', lx);}catch(e){}
 		if(lx==2)this.showuserlist();
 	},
 	init:function(){
@@ -405,21 +407,21 @@ var im={
 
 <div style="height:60px; overflow:hidden"></div>	
 <div class="weui_tabbar">
-	<a href="#xh" onclick="im.changetab(0)" class="weui_tabbar_item weui_bar_item_on">
+	<a href="javascript:;" onclick="im.changetab(0)" class="weui_tabbar_item weui_bar_item_on">
 		<span id="stotal_ss0" class="badge"></span>
 		<div class="weui_tabbar_icon">
 			<i class="icon-comment-alt"></i>
 		</div>
 		<p class="weui_tabbar_label">会话</p>
 	</a>
-	<a href="#yy" onclick="im.changetab(1)" class="weui_tabbar_item">
+	<a href="javascript:;" onclick="im.changetab(1)" class="weui_tabbar_item">
 		<span id="stotal_ss1" class="badge"></span>
 		<div class="weui_tabbar_icon">
 			<i class="icon-th-large"></i>
 		</div>
 		<p class="weui_tabbar_label">应用</p>
 	</a>
-	<a href="#user" onclick="im.changetab(2)" class="weui_tabbar_item">
+	<a href="javascript:;" onclick="im.changetab(2)" class="weui_tabbar_item">
 		<div class="weui_tabbar_icon">
 			<i class="icon-group"></i>
 		</div>

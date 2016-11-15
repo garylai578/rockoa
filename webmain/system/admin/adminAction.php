@@ -92,6 +92,7 @@ class adminClassAction extends Action
 		if(getconfig('systype')=='demo'){
 			m('weixin:user')->optuserwx($id);
 		}
+		$this->updatess('and id='.$id.'');
 	}
 	
 	public function updatedataAjax()
@@ -100,9 +101,9 @@ class adminClassAction extends Action
 		echo '总'.$a[0].'条记录,更新了'.$a[1].'条';
 	}
 	
-	public function updatess()
+	public function updatess($whe='')
 	{
-		return m('admin')->updateinfo();
+		return m('admin')->updateinfo($whe);
 	}
 	
 	
@@ -142,14 +143,6 @@ class adminClassAction extends Action
 		if($oi>0)$this->updatess();
 		backmsg('','成功导入'.$oi.'个用户');
 	}
-	
-	private function adtewe($a, $len){
-		for($i=0;$i<$len;$i++){
-			if(!isset($a[$i]))$a[$i] = '';
-		}
-		return $a;
-	}
-	
 	
 	//修改头像
 	public function editfaceAjax()

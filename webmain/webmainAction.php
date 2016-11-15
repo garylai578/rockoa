@@ -433,7 +433,7 @@ class ActionNot extends Action
 			$uid = (int)$this->getcookie('mo_adminid');
 			if($uid>0){
 				$db   = m('login');
-				$onrs = $db->getone("`uid`=$uid and `cfrom`='mweb' and `online`=1",'`name`,`token`,`id`');
+				$onrs = $db->getone("`uid`=$uid and `cfrom` in('mweb','pc','reim') and `online`=1",'`name`,`token`,`id`');
 				if($onrs){
 					$db->setsession($uid, $onrs['name'], $onrs['token']);
 					$db->update("moddt='$this->now'", $onrs['id']);
@@ -446,7 +446,12 @@ class ActionNot extends Action
 			if(isajax()){
 				echo 'sorry! not sign';
 			}else{
-				$this->rock->location('index.php?m=login&d=we&ltype='.$lx.'');
+				if($this->rock->ismobile()){
+					$lurl = 'index.php?m=login&d=we&ltype='.$lx.'';
+				}else{
+					$lurl = 'index.php?m=login&ltype='.$lx.'';
+				}
+				echo 'login...<script>setTimeout(function(){location.href="'.$lurl.'"},0);</script>';
 			}
 			exit();
 		}

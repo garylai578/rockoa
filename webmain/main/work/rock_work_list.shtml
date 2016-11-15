@@ -14,13 +14,17 @@ $(document).ready(function(){
 		},{
 			text:'等级',dataIndex:'grade'
 		},{
-			text:'分配给',dataIndex:'dist'
+			text:'执行人',dataIndex:'dist'
 		},{
-			text:'开始时间',dataIndex:'startdt'
+			text:'开始时间',dataIndex:'startdt',sortable:true
 		},{
 			text:'截止时间',dataIndex:'enddt'
 		},{
-			text:'状态',dataIndex:'state'
+			text:'状态',dataIndex:'state',sortable:true
+		},{
+			text:'分数',dataIndex:'score'
+		},{
+			text:'得分',dataIndex:'mark'
 		},{
 			text:'创建人',dataIndex:'optname'
 		}],
@@ -83,7 +87,7 @@ $(document).ready(function(){
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
 	</td>
 	<td>
-		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="名称">
+		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="名称/执行人">
 	</td>
 	<td style="padding-left:10px">
 		<button class="btn btn-default" click="search" type="button">搜索</button> 

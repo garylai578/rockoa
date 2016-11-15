@@ -64,8 +64,7 @@ class flow_dailyClassModel extends flowModel
 		
 		//全部下属
 		if($lx == 'undall' || $lx == 'undwd'){
-			$ss = $this->rock->dbinstr('superid', $uid);
-			$where  = 'and uid in(select id from [Q]admin where '.$ss.')';
+			$where  = 'and '.m('admin')->getdownwheres('uid', $uid, 1);
 			if($lx == 'undwd'){
 				$ydid  	= m('log')->getread('daily', $uid); 
 				$where.=' and id not in('.$ydid.')';

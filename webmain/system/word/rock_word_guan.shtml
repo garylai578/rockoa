@@ -27,7 +27,7 @@ $(document).ready(function(){
 	});;
 	
 	var a = $('#view_{rand}').bootstable({
-		tablename:'file',celleditor:true,autoLoad:false,url:js.getajaxurl('getword','{mode}','{dir}'),checked:true,
+		tablename:'word',celleditor:true,autoLoad:false,checked:true,modedir:'{mode}:{dir}',storebeforeaction:'wordbeforeaction',fanye:true,
 		columns:[{
 			text:'类型',dataIndex:'fileext',renderer:function(v){
 				var lxs = js.filelxext(v);

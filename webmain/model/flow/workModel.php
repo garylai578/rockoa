@@ -134,7 +134,9 @@ class flow_workClassModel extends flowModel
 		$key 	= $this->rock->post('key');
 		$zt 	= $this->rock->post('zt');
 		if($zt!='')$where.=' and `state`='.$zt.'';
-		if(!isempt($key))$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `dist` like '$key%' or `grade` like '%$key%')";
+		if(!isempt($key)){
+			$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `dist` like '$key%' or `grade` like '%$key%' or `projectid` in (select `id` from `[Q]project` where `title` like '%$key%'))";
+		}
 		
 		return array(
 			'where' => $where,

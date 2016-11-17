@@ -68,6 +68,13 @@ abstract class mysql{
 			$this->tranend();
 			$this->close();
 		}
+		//记录访问sql日志
+		if(getconfig('sqllog')){
+			$sql = '';
+			$filstr = 'sql'.time().'_'.$this->rock->adminid.'_'.str_shuffle('abcefghijklmn').'.log';
+			foreach($this->sqlarr as $sql1)$sql.="\n\n$sql1;";
+			if($sql!='')$this->rock->createtxt('upload/sqllog/'.date('Y-m-d').'/'.$filstr.'', "时间[".$this->rock->now."],用户[".$this->rock->adminid.".".$this->rock->adminname."],IP[".$this->rock->ip."],WEB[".$this->rock->web."],URL[".$this->rock->nowurl()."]".$sql);
+		}
 	}
 
 	protected function connect(){}

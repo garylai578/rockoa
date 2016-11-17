@@ -26,13 +26,13 @@ class apiAction extends ActionNot
 		if(!$boss && HOST!='127.0.0.1'){
 			if($this->isempt($this->token))$this->showreturn('','token invalid', 299);
 			$to = m('logintoken')->rows("`token`='$this->token' and `uid`='$this->adminid' and `online`=1");
-			if($to==0)$this->showreturn('','access invalid', 199);
+			if($to==0)$this->showreturn('','登录失效，请重新登录', 199);
 		}
 		$this->userrs = m('admin')->getone("`id`='$this->adminid' and `status`=1", '`name`,`user`,`id`,`ranking`,`deptname`,`deptid`');
 		if(!$this->userrs && !$boss){
 			$this->showreturn('', 'not found user', 199);
 		}
-		$this->adminname 	= $this->userrs['name'];
+		$this->adminname 		= $this->userrs['name'];
 		$this->rock->adminid	= $this->adminid;
 		$this->rock->adminname 	= $this->adminname;
 	}

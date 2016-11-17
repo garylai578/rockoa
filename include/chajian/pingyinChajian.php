@@ -433,7 +433,7 @@ class pingyinChajian extends Chajian
 	
 	public function get($str,$type=''){
 		$ret	= '';
-		$str	= iconv('utf-8','gb2312',$str);
+		@$str	= iconv('utf-8','gb2312',$str);
 		for($i=0;$i<strlen($str);$i++){
 			$p=ord(substr($str,$i,1));
 			if($p>160){

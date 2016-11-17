@@ -59,6 +59,7 @@ class cogClassAction extends Action
 		$arr['openkey'] 	= getconfig('openkey');
 		$arr['db_drive'] 	= getconfig('db_drive');
 		$arr['asynsend'] 	= getconfig('asynsend') ? '1' : '0';
+		$arr['sqllog'] 		= getconfig('sqllog') ? '1' : '0';
 		$this->returnjson($arr);
 	}
 	
@@ -97,6 +98,8 @@ class cogClassAction extends Action
 		
 		$asynsend 		 = $this->post('asynsend');
 		$arr['asynsend'] = $asynsend=='1';
+		
+		$arr['sqllog'] 	 = $this->post('sqllog')=='1';
 		
 		if($asynsend == '1' && isempt($puurl))exit('未安装或开启服务端不能使用异步发送消息');
 		

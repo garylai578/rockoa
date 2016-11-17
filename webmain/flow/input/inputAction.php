@@ -337,7 +337,7 @@ class inputAction extends ActionNot
 		$course			= array();
 		if($moders['isflow']==1){
 			$course[]= array('name'=>'提交','id'=>0);
-			$courses = m('flow_course')->getall('setid='.$modeid.'','name,checktype,id,checktypename,`explain`');
+			$courses = m('flow_course')->getall('setid='.$modeid.' and `status`=1','name,checktype,id,checktypename,`explain`','`sort`,id asc');
 			foreach($courses as $k=>$rs1){
 				$na = $rs1['name'];
 				if(!$this->isempt($rs1['explain']))$na.= '<br><span style="font-size:12px">('.$rs1['explain'].')</span>';

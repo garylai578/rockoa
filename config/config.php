@@ -37,6 +37,7 @@ $config		= array(
 	'version'	=> require('version.php'),
 	'path'		=> 'index',
 	'dbencrypt'	=> false,
+	'sqllog'	=> true,	//是否记录访问sql日志
 	'db_drive'	=> 'mysqli'
 );
 

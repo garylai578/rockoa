@@ -77,17 +77,17 @@ $(document).ready(function(){
 		$('#wense_{rand}').remove();
 		$('#btngroup{rand}').hide();
 	}
-	if(atype!='my' && atype!='mycj')$('#wense_{rand}').remove();
+	if(atype!='my' && atype!='wcj')$('#wense_{rand}').remove();
 });
 </script>
 <div>
 	<table width="100%">
 	<tr>
 	<td id="wense_{rand}" style="padding-right:10px">
-		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 创建任务</button>
 	</td>
 	<td>
-		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="名称/执行人">
+		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="名称/项目名称/执行人">
 	</td>
 	<td style="padding-left:10px">
 		<button class="btn btn-default" click="search" type="button">搜索</button> 

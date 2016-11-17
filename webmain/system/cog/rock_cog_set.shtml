@@ -102,6 +102,11 @@ $(document).ready(function(){
 			<font color="#888888">提醒消息发送微信消息提示发送，邮件提醒发送等。选择[异步发送]需安装服务端，异步发送能大大提高效率。</font></td>
 		</tr>
 		
+		<tr>
+			<td  align="right">是否记录访问sql日志：</td>
+			<td class="tdinput"><select id="sqllog_{rand}"  class="form-control"><option value="0">否</option><option value="1">是</option></select><font color="#888888">开启了日志将记录在目录upload/sqllog下</font></td>
+		</tr>
+		
 		
 		<tr>
 			<td  align="right"></td>

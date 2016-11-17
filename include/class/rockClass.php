@@ -121,13 +121,10 @@ final class rockClass
 	public function debug($txt, $lx)
 	{
 		if(!DEBUG)return;
-		$_dt 	= date('Y-m');
-		$fdir	= ''.ROOT_PATH.'/upload/'.$_dt.'';
-		if(!file_exists($fdir))mkdir($fdir);
 $txt	= ''.$txt.'
 URL：'.$_SERVER['QUERY_STRING'].'
 ';
-		$this->createtxt('upload/'.$_dt.'/'.$lx.''.date('YmdHis').'_'.rand(1000,9000).'.log', $txt);
+		$this->createtxt('upload/'.date('Y-m').'/'.$lx.''.date('YmdHis').'_'.rand(1000,9000).'.log', $txt);
 	}
 	
 	private function isjm($s)
@@ -431,10 +428,11 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	}
 	
 	/**
-		采集字符串截取
+	*	写入文件
 	*/
 	public function createtxt($path, $txt)
 	{
+		$this->createdir($path);
 		$path	= ''.ROOT_PATH.'/'.$path.'';
 		@$file	= fopen($path,'w');
 		$bo 	= false;
@@ -444,6 +442,25 @@ URL：'.$_SERVER['QUERY_STRING'].'
 			fclose($file);
 		}
 		return $bo;
+	}
+	
+	/**
+	*	创建文件夹
+	*/
+	public function createdir($path, $oi=1)
+	{
+		$zpath	= explode('/', $path);
+		$len    = count($zpath);
+		$mkdir	= '';
+		for($i=0; $i<$len-$oi; $i++){
+			if(!isempt($zpath[$i])){
+				$mkdir.='/'.$zpath[$i].'';
+				$wzdir = ROOT_PATH.''.$mkdir;
+				if(!is_dir($wzdir)){
+					mkdir($wzdir);
+				}
+			}
+		}
 	}
 	
 	public function stringformat($str, $arr=array())
@@ -495,7 +512,6 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		if(!DEBUG)return;
 		$msg 	= '['.$this->now.']:'.$str.'';
 		$mkdir 	= 'upload/'.date('Y-m').'';
-		if(!is_dir($mkdir))mkdir($mkdir);
 		$this->createtxt(''.$mkdir.'/'.$lxs.''.time().'_'.rand(100,999).'.log', $msg);
 	}
 	

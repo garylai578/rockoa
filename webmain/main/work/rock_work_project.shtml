@@ -88,7 +88,7 @@ $(document).ready(function(){
 	<table width="100%">
 	<tr>
 	<td id="wense_{rand}" style="padding-right:10px">
-		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 创建项目</button>
 	</td>
 	<td>
 		<input class="form-control" style="width:180px" id="key_{rand}"   placeholder="名称/负责人">

@@ -47,7 +47,7 @@ class flow_workClassModel extends flowModel
 			$isaddlog = 1;
 		}
 		
-		$arr['isaddlog'] = $isaddlog;
+		$arr['isaddlog'] = $isaddlog; //是否可以添加日志记录
 		$arr['state'] 	 = $this->rs['stateid'];
 		
 		//判断是否可以督导评分
@@ -55,7 +55,7 @@ class flow_workClassModel extends flowModel
 		if($this->rows("`id`='$this->id' and `state`=1 and `status`=1 and `mark`=0 $where")==1){
 			$ispingfen		= 1;
 		}
-		$arr['ispingfen'] 	= $ispingfen;
+		$arr['ispingfen'] 	= $ispingfen; //是否可以评分
 		$arr['score'] 		= $this->rs['score'];
 		return $arr;
 	}
@@ -133,6 +133,8 @@ class flow_workClassModel extends flowModel
 		
 		$key 	= $this->rock->post('key');
 		$zt 	= $this->rock->post('zt');
+		$projcetid 	= (int)$this->rock->post('projcetid');
+		if($projcetid>0)$where.=' and `projectid`='.$projcetid.'';
 		if($zt!='')$where.=' and `state`='.$zt.'';
 		if(!isempt($key)){
 			$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `dist` like '$key%' or `grade` like '%$key%' or `projectid` in (select `id` from `[Q]project` where `title` like '%$key%'))";

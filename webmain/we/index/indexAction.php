@@ -11,5 +11,8 @@ class indexClassAction extends ActionNot{
 		$this->title = getconfig('apptitle','信呼');
 	}
 	
-	
+	public function editpassAction()
+	{
+		
+	}
 }

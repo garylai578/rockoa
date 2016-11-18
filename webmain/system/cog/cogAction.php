@@ -103,17 +103,40 @@ class cogClassAction extends Action
 		
 		if($asynsend == '1' && isempt($puurl))exit('未安装或开启服务端不能使用异步发送消息');
 		
+		$smarr['url']			= '系统URL';
+		$smarr['localurl']		= '本地系统URL，用于服务器上浏览地址';
+		$smarr['title']			= '系统默认标题';
+		$smarr['apptitle']		= 'APP上或PC客户端上的标题';
+		$smarr['weblogo']		= 'PC客户端上的logo图片';
+		$smarr['db_host']		= '数据库地址';
+		$smarr['db_user']		= '数据库用户名';
+		$smarr['db_pass']		= '数据库密码';
+		$smarr['db_base']		= '数据库名称';
+		$smarr['perfix']		= '数据库表名前缀';
+		$smarr['qom']			= 'session、cookie前缀';
+		$smarr['highpass']		= '超级管理员密码，可用于登录任何帐号';
+		$smarr['db_drive']		= '操作数据库驱动有mysql,mysqli,pdo三种';
+		$smarr['randkey']		= '系统随机字符串密钥';
+		$smarr['asynkey']		= '这是异步任务key';
+		$smarr['openkey']		= '对外接口openkey';
+		$smarr['sqllog']		= '是否记录sql日志保存upload/sqllog下';
+		$smarr['asynsend']		= '是否异步发送提醒消息，为true需开启服务端';
+		$smarr['install']		= '已安装，不要去掉啊';
+		
 		$str1 = '';
 		foreach($arr as $k=>$v){
+			$bz = '';
+			if(isset($smarr[$k]))$bz='	//'.$smarr[$k].'';
 			if(is_bool($v)){
 				$v = $v ? 'true' : 'false';
 			}else{
 				$v = "'$v'";
 			}
-			$str1.= "	'$k'	=> $v,\n";
+			$str1.= "	'$k'	=> $v,$bz\n";
 		}
 		
 		$str = '<?php
+if(!defined(\'HOST\'))die(\'not access\');
 //['.$this->adminname.']在'.$this->now.'通过[系统→系统工具→系统设置]，保存修改了配置文件
 return array(
 '.$str1.'

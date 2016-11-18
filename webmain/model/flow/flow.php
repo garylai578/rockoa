@@ -1,45 +1,77 @@
 <?php
 /**
-*	系统的核心文件之一，处理工作流程的！
+*	来自：信呼开发团队
+*	作者：磐石(rainrock)
+*	网址：http://xh829.com/
+*	系统的核心文件之一，处理工作流程模块的。
 */
 class flowModel extends Model
 {
-	public $modenum;
-	public $id		= 0;
-	public $moders;
-	public $modeid;
-	public $modename;
-	public $sericnum;
-	public $rs		= array();
-	public $urs		= array();
-	public $mwhere;
-	public $mtable;
-	public $uname;
-	public $uid		= 0;
-	public $optid	= 0;
-	public $isflow	= 0;
+	public $modenum;		//当前模块编号
+	public $id		= 0;	//当前单据ID
+	public $moders;			//当前模块数组
+	public $modeid;			//当前模块Id
+	public $modename;		//当前模块名称
+	public $sericnum;		//当前单据单号
+	public $rs		= array();	//当前单据记录信息
+	public $urs		= array();	//当前单据对应用户
+	public $mwhere;				
+	public $mtable;				//当前模块对应表
+	public $uname;				//当前单据对应用户姓名
+	public $uid		= 0;		//当前单据对应用户Id
+	public $optid	= 0;		//当前当街对应操作用Id，如提交人Id
+	public $isflow	= 0;		//当前模块是否有流程审核步骤
 	
+	
+	//当初始化模块后调用
 	protected function flowinit(){}
+	
+	//当初始化单据调用
 	protected function flowchangedata(){}
+	
+	//删除单据时调用，$sm删除说明
 	protected function flowdeletebill($sm){}
+	
+	//提交时调用
 	protected function flowsubmit($na, $sm){}
+	
+	//添加日志记录调用$arr 添加数组
 	protected function flowaddlog($arr){}
+	
 	protected function flowdatalog($arr){}
+	
+	//审核之前调用$zt 状态， $sm说明
 	protected function flowcheckbefore($zt, $sm){}
+	
+	//审核完成后调用
 	protected function flowcheckafter($zt, $sm){}
+	
+	//流程全部完成后调用
 	protected function flowcheckfinsh($zt){}
+	
+	
 	protected function flowgetfields($lx){}
 	protected function flowgetoptmenu($opt){}
+	
+	//自定义审核人重新的方法$num 步骤单号
 	protected function flowcheckname($num){}
+	
+	//操作单据
 	protected function flowoptmenu($ors, $crs){}
+	
+	//自定义是否可查看本单据
 	protected function flowisreadqx(){return false;}
+	
+	
 	protected function flowprintrows($r){return $r;}
+	
+	//单据判断条件从写$lx类型，$uid用户Id
 	protected function flowbillwhere($lx, $uid){return '';}
 	
 	protected $flowweixinarr	= array();
 	protected $flowviewufieds	= 'uid';
 	
-	
+	//初始化单据可替换其他属性
 	public function flowrsreplace($rs){return $rs;}
 	
 	public function echomsg($msg)

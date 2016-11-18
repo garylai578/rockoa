@@ -19,7 +19,10 @@ class userClassAction extends apiAction
 		if($msg == ''){
 			if(!$this->db->record($this->T('admin'), "`pass`='".md5($pasword)."'", "`id`='$id'"))$msg	= $this->db->error();
 		}
-		if($msg=='')$msg='success';
-		$this->showreturn($msg);
+		if($msg==''){
+			$this->showreturn('success');
+		}else{
+			$this->showreturn('',$msg, 201);
+		}
 	}
 }

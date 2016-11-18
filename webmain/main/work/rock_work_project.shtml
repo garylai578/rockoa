@@ -23,7 +23,9 @@ $(document).ready(function(){
 		},{
 			text:'状态',dataIndex:'state'
 		},{
-			text:'任务数',dataIndex:'worklist',tooltip:'任务数：未完成/总任务数'
+			text:'任务数',dataIndex:'worklist',tooltip:'任务数：未完成/总任务数',renderer:function(v,d,i){
+				return ''+v+'&nbsp;<a href="javascript:;" onclick="viespere{rand}('+i+')">查看</a>';
+			}
 		},{
 			text:'进度',dataIndex:'progress',renderer:function(v){
 				return '<div class="progress" style="margin:0;width:120px;"><div class="progress-bar progress-bar-success" style="width:'+v+'%;color:#000000;">'+v+'%</div></div>';
@@ -82,6 +84,11 @@ $(document).ready(function(){
 	}
 	
 	if(atype!='my' && atype!='mycj')$('#wense_{rand}').remove();
+	
+	viespere{rand}=function(id){
+		var d = a.getData(id);
+		var bo = addtabs({name:'项目['+d.title+']的任务',url:'main,work,list,atype=all,projcetid='+d.id+'',num:'projcetidwork'+d.id+''});
+	}
 });
 </script>
 <div>

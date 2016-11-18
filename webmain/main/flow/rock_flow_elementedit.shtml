@@ -129,7 +129,16 @@ $(document).ready(function(){
 		<div class="tishi" align="left">
 		<b>字段类型</b>：<br>
 		1、系统选项下拉框，数据源添加，【流程模块→数据选项】下对应的编号。<br>
-		2、下拉框，数据源填写，如：男,女，用,分开，也可以自定义数据源，写flow\input\mode_对应模块编号Action.php下方法返回数据源<br>
+		2、下拉框：数据源填写，如：男,女，用,分开，也可以自定义数据源，写webmain/flow/input/mode_对应模块编号Action.php下方法返回数据源，自定义数据源方法abc，写在对应页面上如下：<br>
+<pre>
+public function abc(){
+	$rows[] = array(
+		'value' => 1,
+		'name' => '第一个下拉框',
+	);
+	return $rows;
+}
+</pre>		
 		3、编号，数据源填写编号规则，Ymd代表年月日，如：HTYmd，生成的编号为HT201610120001<br>
 		</div>
 </div>

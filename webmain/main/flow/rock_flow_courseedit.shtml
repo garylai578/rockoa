@@ -185,6 +185,20 @@ $(document).ready(function(){
 		
 		</table>
 		</form>
-	
+		
+		<div class="tishi" align="left">
+		<b>审核人员类型</b>：<br>1、自定义(写代码上)，需要定义一个编号如：abc，写在webmain/model/flow/对应模块编号Model.php下，重写方法flowcheckname($num){}。如下代码<br>
+<pre>
+protected function flowcheckname($num){
+	$sid = ''; //审核人Id
+	$sna = ''; //审核人
+	if($num=='abc'){
+		$sid = 1;
+		$sna = '管理员';
+	}
+	return array($sid, $sna);
+}
+</pre>
+		</div>
 </div>
 </div>

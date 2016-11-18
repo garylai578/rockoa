@@ -1,9 +1,10 @@
 <script >
 $(document).ready(function(){
 	{params}
-	var atype=params.atype;
+	var atype=params.atype,projcetid=params.projcetid;
+	if(!projcetid)projcetid='0';
 	var a = $('#view_{rand}').bootstable({
-		tablename:'work',params:{'atype':atype},fanye:true,modenum:'work',modename:'任务',
+		tablename:'work',params:{'atype':atype,'projcetid':projcetid},fanye:true,modenum:'work',modename:'任务',
 		celleditor:true,storeafteraction:'workafter',modedir:'{mode}:{dir}',
 		columns:[{
 			text:'操作',dataIndex:'caozuo'

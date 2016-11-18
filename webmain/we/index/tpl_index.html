@@ -221,13 +221,19 @@ var im={
 				name:'<img src="'+adminface+'" align="absmiddle" height="30" width="30"> '+adminame+'',lx:0
 			},{
 				name:'刷新数据',lx:1
+			},{
+				name:'修改密码',lx:2
 			}],
 			onclick:function(a){
 				var lx=a.lx;
 				if(lx==0)im.changetab(3);
 				if(lx==1)im.reload();
+				if(lx==2)im.editpass();
 			}
 		});
+	},
+	editpass:function(){
+		js.location('?m=index&d=we&a=editpass');
 	},
 	changeuser:function(lx){
 		$("#userlx div").removeClass('active');

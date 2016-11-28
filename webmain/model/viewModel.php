@@ -69,7 +69,7 @@ class viewClassModel extends Model
 			return $count>0;
 		}
 		if($type== 0 && $count==0 && $this->isflow==1){
-			$rows[] = array('wherestr'=>$this->rock->jm->base64encode('uid={uid}'));
+			$rows[] = array('wherestr'=>$this->rock->jm->base64encode('uid={uid}'),'whereid'=>0);
 		}
 		$wheeobj 	= m('where');
 		foreach($rows as $k=>$rs){

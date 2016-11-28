@@ -1,6 +1,10 @@
 <?php
 class beifenClassModel extends Model
 {
+	/**
+	*	创建备份使用加密的字符串
+	*	每个安装的系统备份的数据是不一样，即使得到备份文件也无法打开数据
+	*/
 	public function start()
 	{
 		$alltabls 	= $this->db->getalltable();
@@ -15,8 +19,26 @@ class beifenClassModel extends Model
 		}
 		$rnd  = str_shuffle('abcedfghijk').rand(1000,9999);
 		$file = 'databat_'.date('Ymd').'_'.$rnd.'.json';
-		$this->rock->createtxt('upload/data/'.$file.'', json_encode($data));
+		$str  = $this->rock->jm->mcrypt_encrypt(json_encode($data));
+		$this->rock->createtxt('upload/data/'.$file.'', $str);
 		return true;
+	}
+	
+	/**
+	*	获取备份的数据
+	*/
+	public function getbfdata($file)
+	{
+		$str 	= array();
+		$file	= ''.ROOT_PATH.'/upload/data/'.$file.'';
+		if(file_exists($file)){
+			$cont = file_get_contents($file);
+			if(substr($cont, 0, 2) != '{"'){
+				$cont = $this->rock->jm->mcrypt_decrypt($cont);
+			}
+			$str  = json_decode($cont, true);
+		}
+		return $str;
 	}
 	
 	

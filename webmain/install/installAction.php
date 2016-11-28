@@ -97,7 +97,9 @@ class installClassAction extends ActionNot{
 		$db->query("delete from `".$perfix."option` where `name` is null");
 		$rand	= $this->rock->jm->getRandkey();
 		$asynkey= md5($this->rock->jm->getRandkey());
+		$openkey= md5($this->rock->jm->getRandkey());
 		$txt 	= "<?php
+if(!defined('HOST'))die('not access');
 //系统配置文件		
 return array(
 	'url'		=> '$url',		//系统URL
@@ -106,15 +108,18 @@ return array(
 	'apptitle'	=> '',			//APP上或PC客户端上的标题
 	'weblogo'	=> '',			//PC客户端上的logo图片
 	'db_host'	=> '$host',		//数据库地址
-	'db_user'	=> '$user',		//用户名
-	'db_pass'	=> '$pass',		//密码
+	'db_user'	=> '$user',		//数据库用户名
+	'db_pass'	=> '$pass',		//数据库密码
 	'db_base'	=> '$base',		//数据库名称
-	'perfix'	=> '$perfix',	//表名前缀
+	'perfix'	=> '$perfix',	//数据库表名前缀
 	'qom'		=> '$qom',		//session、cookie前缀
 	'highpass'	=> '',			//超级管理员密码，可用于登录任何帐号
-	'db_drive'	=> '$dbtype',	//操作数据库驱动
-	'randkey'	=> '$rand',		//这是个随机字符串
+	'db_drive'	=> '$dbtype',	//操作数据库驱动有mysql,mysqli,pdo三种
+	'randkey'	=> '$rand',		//系统随机字符串密钥
 	'asynkey'	=> '$asynkey',	//这是异步任务key
+	'openkey'	=> '$openkey',	//对外接口openkey
+	'sqllog'	=> false,		//是否记录sql日志保存upload/sqllog下
+	'asynsend'	=> false,		//是否异步发送提醒消息，为true需开启服务端
 	'install'	=> true			//已安装，不要去掉啊
 );";
 		$this->rock->createtxt($paths, $txt);

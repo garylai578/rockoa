@@ -3,7 +3,7 @@
 */
 
 body,html{height:100%;-webkit-tap-highlight-color:transparent}
-body{overflow-x:hidden;background-color:#fbf9fe}
+body{overflow-x:hidden;background-color:#fbf9fe;-webkit-overflow-scrolling:touch}
 
 table{border-spacing: 0;border-collapse: collapse;}
 
@@ -11,6 +11,8 @@ input,select,textarea{resize: none;outline:none}
 input:focus{border-color:#1abc9c}
 
 a:link,a:visited{TEXT-DECORATION:none;color:#0572AD}
+
+.r-touch{-webkit-overflow-scrolling:touch;overflow-scrolling:touch;overflow-y:auto;overflow-x:hidden}
 
 .r-zhu-bgcolor{background-color:#1abc9c;}
 
@@ -28,7 +30,7 @@ a:link,a:visited{TEXT-DECORATION:none;color:#0572AD}
 .blank50{height:50px;overflow:hidden}
 .r-input{height:30px;width:97%;border:1px #cccccc solid;padding:2px}
 
-.r-border-t,.r-border-b,.r-border-l,.r-border-r{position: relative;}
+.r-border-t,.r-border-b,.r-border-l,.r-border-r,.r-border{position: relative;}
 
 .r-border-t:after {
   content: " ";
@@ -44,6 +46,23 @@ a:link,a:visited{TEXT-DECORATION:none;color:#0572AD}
           transform-origin: 0 0;
   -webkit-transform: scaleY(0.5);
           transform: scaleY(0.5);
+}
+
+.r-border:after {
+  content: '';
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: 200%;
+  border: 1px solid #cccccc;
+  color: #cccccc;
+  -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
+  -webkit-transform: scale(0.5);
+		transform: scale(0.5);
+    pointer-events: none;
 }
 
 .r-border-b:before {

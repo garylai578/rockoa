@@ -31,34 +31,59 @@ class indexClassAction extends Action{
 		$this->smartydata['style']		= $this->rock->repempt($my['style'], '0');
 	}
 	
-	
-	public function getmenuAjax()
+	private function menuwheres()
 	{
-		$pid 	= $this->get('pid');
 		$this->menuwhere = '';
 		$myext	= $this->getsession('adminallmenuid');
 		if($myext != '-1'){	
 			$this->menuwhere	= ' and `id` in('.str_replace(array('[',']'), array('',''), $myext).')';
 		}
-		$arr	= $this->getmenu($pid);
+	}
+	
+	/**
+	*	搜索菜单
+	*/
+	public function getmenusouAjax()
+	{
+		$key = $this->post('key');
+		$this->menuwheres();
+		$this->addmenu = m('menu')->getall("`status`=1 $this->menuwhere and `name` like '%$key%' and ifnull(`url`,'')<>'' order by `pid`,`sort` limit 10",'`id`,`num`,`url`,`icons`,`name`,`pid`');
+		$arr	= $this->getmenu(0, 1);
 		$this->returnjson($arr);
 	}
 	
-	private function getmenu($pid)
+	/**
+	*	获取菜单
+	*/
+	public function getmenuAjax()
 	{
-		$menu	= m('menu')->getall("`pid`='$pid' and `status`=1 $this->menuwhere order by `sort`",'id,num,url,icons,name');
+		$pid 	= $this->get('pid');
+		$this->menuwheres();
+		$this->addmenu = m('menu')->getall("`status`=1 $this->menuwhere order by `sort`",'`id`,`num`,`url`,`icons`,`name`,`pid`');
+		$arr	= $this->getmenu($pid,0);
+		$this->returnjson($arr);
+	}
+	
+	private function getmenu($pid, $lx=0)
+	{
+		$menu	= $this->addmenu;
 		$rows	= array();
 		foreach($menu as $k=>$rs){
+			if($lx == 0 && $pid != $rs['pid'])continue;
 			$num			= $rs['num'];
 			$sid			= $rs['id'];
 			$icons			= $rs['icons'];
-			if($this->rock->isempt($num))$num = 'num_'.$sid;
-			if($this->rock->isempt($icons))$icons = 'bookmark-empty';
+			if(isempt($num))$num 		= 'num_'.$sid;
+			if(isempt($icons))$icons 	= 'bookmark-empty';
 			$rs['icons']	= $icons;
 			$rs['num']		= $num;
-			$children		= $this->getmenu($sid);
-			$rs['children']	= $children;
-			$rs['stotal']	= count($children);
+			if($lx == 0){
+				$children		= $this->getmenu($sid);
+				$rs['children']	= $children;
+				$rs['stotal']	= count($children);
+			}else{
+				$rs['stotal']	= 0;
+			}
 			$rows[] = $rs;
 		}
 		return $rows;
@@ -73,7 +98,6 @@ class indexClassAction extends Action{
 	private function getuserext($uid)
 	{
 		$guid 	= '-1';
-		if($this->adminuser=='admin')return $guid;
 		$gasql	= " ( id in( select `sid` from `[Q]sjoin` where `type`='ug' and `mid`='$uid') or id in( select `mid` from `[Q]sjoin` where `type`='gu' and `sid`='$uid') )";//用户所在组id
 		$gsql	= "select `id` from `[Q]group` where $gasql ";
 		$owhe	= " and (`id` in(select `sid` from `[Q]sjoin` where ((`type`='um' and `mid`='$uid') or (`type`='gm' and `mid` in($gsql) ) ) ) or `id` in(select `mid` from `[Q]sjoin` where ((`type`='mu' and `sid`='$uid') or (`type`='mg' and `sid` in($gsql) )) ))";

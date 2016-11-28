@@ -7,7 +7,10 @@ class reimClassAction extends apiAction
 		$type 		= $this->post('type');
 		$gid 		= (int)$this->post('gid');
 		$minid 		= (int)$this->post('minid');
-		$arr 		= m('reim')->getrecord($type, $uid, $gid, $minid);
+		$lastdt 	= (int)$this->post('lastdt');
+		$lastdts	= '';
+		if($lastdt>0)$lastdts = date('Y-m-d H:i:s', $lastdt);
+		$arr 		= m('reim')->getrecord($type, $uid, $gid, $minid, $lastdts);
 		$this->showreturn($arr);
 	}
 	

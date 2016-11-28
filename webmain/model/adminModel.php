@@ -79,6 +79,55 @@ class adminClassModel extends Model
 		return $s;
 	}
 	
+	/**
+	*	获取对应部门负责人
+	*/
+	public function getdeptheadman($id, $lx=0)
+	{
+		$drs 	= $this->db->getone('[Q]dept','id='.$id.'');
+		if(!$drs)return false;
+		$cuid 	= $drs['headid'];
+		$name 	= $drs['headman'];
+		if(isempt($cuid)){
+			if($lx==0){
+				$lbar = $this->getdeptheadman($drs['pid'], 1);
+				if($lbar){
+					$cuid 	= $lbar[0];
+					$name 	= $lbar[1];
+				}
+			}
+		}
+		if(isempt($cuid))return false;
+		return array($cuid, $name);
+	}
+	
+	/**
+	*	获取某个人的上级主管或者领导
+	*	返回 array(id,$name)
+	*/
+	public function getsuperman($uid)
+	{
+		$b 		= array();
+		$urs 	= $this->getone($uid,'`superid`,`superman`,`deptid`');
+		if(!$urs)return $b;
+		$cuid 	= $urs['superid'];
+		$name 	= $urs['superman'];
+		if(isempt($cuid)){
+			$deptid  = (int)$urs['deptid'];
+			if($deptid > 0){
+				$drs = $this->getdeptheadman($deptid);
+				if($drs){
+					$cuid = $drs[0];
+					$name = $drs[1];
+				}
+			}
+		}
+		if(!isempt($cuid)){
+			$b = array($cuid, $name);
+		}
+		return $b;
+	}
+	
 	public function getjoinstrs($fids, $us, $slx=0, $lx=0)
 	{
 		return $this->getjoinstr($fids, $us, $lx, $slx);
@@ -132,8 +181,7 @@ class adminClassModel extends Model
 	*/
 	public function getdown($uid, $lx=0)
 	{
-		$where = "instr(superpath,'[$uid]')>0";
-		if($lx==1)$where=$this->rock->dbinstr('superid', $uid);
+		$where = $this->getdowns($uid, $lx);
 		$rows = $this->getall($where, 'id');
 		$s	  = '';
 		foreach($rows as $k=>$rs)$s.=','.$rs['id'];
@@ -141,6 +189,22 @@ class adminClassModel extends Model
 		return $s;
 	}
 	
+	/**
+	*	获取下级人员id
+	*	$lx 0 全部下级，1直属下级
+	*	return 字符串条件
+	*/
+	public function getdowns($uid, $lx=0)
+	{
+		$where = "instr(superpath,'[$uid]')>0";
+		if($lx==1)$where=$this->rock->dbinstr('superid', $uid);
+		return $where;
+	}
+	
+	/**
+	*	获取下属人员Id条件记录,如我下属任务
+	*	返回如( distid in(1) or uid in(2) )
+	*/
 	public function getdownwhere($fid, $uid, $lx=0)
 	{
 		$bstr = $this->getdown($uid, $lx);
@@ -156,7 +220,7 @@ class adminClassModel extends Model
 		return $where;
 	}
 	
-	//返回我下属字符串条件
+	//返回我下属字符串条件如： instr(',1,2,3,', 字段)>0;
 	public function getdownwheres($fid, $uid, $lx=0)
 	{
 		$bstr = $this->getdown($uid, $lx);
@@ -233,7 +297,7 @@ class adminClassModel extends Model
 		return $arrs;
 	}
 	
-	private function getface($face, $mr='')
+	public function getface($face, $mr='')
 	{
 		if($mr=='')$mr 	= 'images/noface.png';
 		if(substr($face,0,4)!='http' && !$this->isempt($face))$face = URL.''.$face.'';
@@ -243,11 +307,13 @@ class adminClassModel extends Model
 	
 	public function getuser($lx=0)
 	{
-		$rows = $this->getall("`status`=1",'id,name,deptid,deptname,deptallname,ranking,tel,face,sex,email','sort,name');
+		$rows = $this->getall("`status`=1",'id,name,deptid,deptname,deptallname,ranking,tel,face,sex,email,pingyin','sort,name');
 		$py   = c('pingyin');
 		foreach($rows as $k=>$rs){
 			$rows[$k]['face'] = $this->getface($rs['face']);
-			if($lx==1)$rows[$k]['pingyin'] = $py->get($rs['name'],1);
+			if($lx==1){
+				if(isempt($rs['pingyin']))$rows[$k]['pingyin'] = $py->get($rs['name'],1);
+			}
 		}
 		return $rows;
 	}
@@ -292,7 +358,7 @@ class adminClassModel extends Model
 	*/
 	public function updateinfo($where='')
 	{
-		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman from `[Q]admin` where id>0 $where order by `sort`");
+		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman from `[Q]admin` a where id>0 $where order by `sort`");
 		$total	= $this->db->count;
 		$cl		= 0;
 		foreach($rows as $k=>$rs){
@@ -302,13 +368,13 @@ class adminClassModel extends Model
 				$cl++;
 			}
 		}
-		$this->updateuserinfo();
+		$this->updateuserinfo($where);
 		return array($total, $cl);
 	}
-	public function updateuserinfo()
+	public function updateuserinfo($whe='')
 	{
 		$db 	= m('userinfo');
-		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id');
+		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id where a.id>0 '.$whe.' ');
 		foreach($rows as $k=>$rs){
 			$uparr = array(
 				'id' 		=> $rs['id'],
@@ -360,5 +426,19 @@ class adminClassModel extends Model
 		}
 		m('file')->delfile($fid);
 		return $face;
+	}
+	
+	//根据邮箱获取人员姓名
+	private $emailtoursarr = array();
+	public function emailtours($email)
+	{
+		$key  = 'rock'.$email.'';
+		if(!isset($this->emailtoursarr[$key])){
+			$urs 	= $this->getone("`email`='$email'",'`id`,`name`');
+			$this->emailtoursarr[$key] = $urs;
+		}else{
+			$urs	= $this->emailtoursarr[$key];
+		}
+		return $urs;
 	}
 }

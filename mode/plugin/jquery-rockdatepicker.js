@@ -61,13 +61,13 @@
 			this.todate		= this.shijienges(this.todatetext);
 			var val			= obj.val();
 			if(can.inputid!='')val=$('#'+can.inputid+'').val();
-			if(can.view.indexOf('date')>-1){
+			if(can.view.indexOf('date')>-1 && val){
 				if(!this.isdate(val))val	= this.todatetext;
 			}
 			if(can.view=='time'){
 				if(val==''){val=js.now('now');}else{val=js.now('Y-m-d')+' '+val;}
-			}	
-			if(val=='')val = this.formdt(can.format, val);
+			}
+			if(val=='')val 	= this.formdt(can.view=='datetime' ? 'Y-m-d H:i:00' : can.format, val);
 			this.nowtext= val;
 			this.now 	= this.shijienges(val);
 		};
@@ -165,10 +165,10 @@
 			s+='		<span><input min="0" max="59" readOnly id="rockdatepicker_input_s'+rand+'" style="width:24px;text-align:center;height:20px;line-height:16px;border:1px #cccccc solid;background:none" value="00" maxlength="2"></span>';
 			s+=		'</div>';
 			s+='	<div style="height:30px;overflow:hidden;text-align:right;background:#eeeeee;line-height:28px">';
-			s+='		<a href="javascript:" class="a" id="rockdatepicker_clear'+rand+'">清空</a>&nbsp; ';
-			s+='		<a href="javascript:" class="a" id="rockdatepicker_now'+rand+'">现在</a>&nbsp; ';
-			s+='		<a href="javascript:" class="a" id="rockdatepicker_queding'+rand+'">确定</a>&nbsp; ';
-			s+='		<a href="javascript:" class="a" id="rockdatepicker_close'+rand+'">关闭</a>&nbsp; ';
+			s+='		<a href="javascript:;" class="a" id="rockdatepicker_clear'+rand+'">清空</a>&nbsp; ';
+			s+='		<a href="javascript:;" class="a" id="rockdatepicker_now'+rand+'">现在</a>&nbsp; ';
+			s+='		<a href="javascript:;" class="a" id="rockdatepicker_queding'+rand+'">确定</a>&nbsp; ';
+			s+='		<a href="javascript:;" class="a" id="rockdatepicker_close'+rand+'">关闭</a>&nbsp; ';
 			s+='	</div>';
 			
 			
@@ -488,17 +488,17 @@
 			var ma	= parseFloat(o1.attr('max'));
 			o.select();
 			$('#rockdatepicker_spanselfaei'+rand+'').remove();
-			var s='<div style="bottom:52px;position:absolute;right:1px;padding:2px;border:1px #cccccc solid;background-color:#ffffff; text-align:left" id="rockdatepicker_spanselfaei'+rand+'">';
+			var s='<div style="bottom:52px;position:absolute;right:1px;padding:2px;border:1px #cccccc solid;background-color:#ffffff;font-size:14px;text-align:left" id="rockdatepicker_spanselfaei'+rand+'">';
 			this.inputhis=o;
 			for(var a=mi;a<=ma;a++){
 				var ai	= this.sa(a);
 				if(ai==o.value)ai='<span style="color:#ff0000">'+ai+'</span>';
-				s+='<a onclick="return false" style="margin:2px">'+ai+'</a>';
+				s+='<font style="margin:2px">'+ai+'</font>';
 				if((a+1)%10==0)s+='<br>';
 			}
 			s+='</div>';
 			$('#rockdatepicker_'+rand+'').append(s);
-			$('#rockdatepicker_spanselfaei'+rand+'').find('a').click(function(){
+			$('#rockdatepicker_spanselfaei'+rand+'').find('font').click(function(){
 				var x	= $(this).text();
 				o.value	= x;
 			});

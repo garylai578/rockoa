@@ -75,4 +75,30 @@ class fileChajian extends Chajian
 			}
 		}
 	}
+	
+	/**
+	*	获取某个目录下所有文件
+	*/
+	public function getfilerows($path)
+	{
+		$rows	= array();
+		if(!is_dir($path))return $rows;
+		@$d 	= opendir($path);
+		$nyunf	= array('.', '..');
+		while( false !== ($file = readdir($d))){
+			if(!in_array($file, $nyunf)){
+				$filess = $path.'/'.$file;
+				if(is_file($filess)){
+					$editdt = filectime($filess);//上次修改时间
+					$lastdt = filemtime($filess);//最后修改的时间
+					$rows[] = array(
+						'filename' 	=> $file,
+						'editdt' 	=> date('Y-m-d H:i:s', $editdt),
+						'lastdt' 	=> date('Y-m-d H:i:s', $lastdt),
+					);
+				}
+			}
+		}
+		return $rows;
+	}
 }                                                                                                                                                            

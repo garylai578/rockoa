@@ -68,7 +68,7 @@ class agentModel extends Model
 			'maxpage'	=> 0
 		);
 		if(is_array($narr))foreach($narr as $k=>$v)$arr[$k]=$v;
-		$arr['rows'] 	= $this->agentrows($arr['rows'],$arr['rowd'], $uid);
+		$arr['rows'] 	= $this->showrowsface($this->agentrows($arr['rows'],$arr['rowd'], $uid));
 		$arr['stotal']	= $this->agenttotals($uid);
 		unset($arr['rowd']);
 		return $arr;
@@ -98,6 +98,7 @@ class agentModel extends Model
 		$suarr  = $this->zhaiyaoar($this->flow->moders['summarx']);
 		foreach($rows as $k=>$rs){
 			$jarr 	= array('id'=>$rs['id']);
+			if(isset($rs['uid']))$jarr['uid'] = $rs['uid'];
 			$rs 	= $this->flow->flowrsreplace($rs);
 			foreach($suarr as $f=>$nr){
 				$str  		= $this->rock->reparr($nr, $rs);
@@ -139,5 +140,27 @@ class agentModel extends Model
 			$s1 = str_replace('@', "\n", substr($s1, 1));
 		}
 		return $s1;
+	}
+	
+	/**
+	*	显示人员对应头像
+	*/
+	private function showrowsface($rows)
+	{
+		$uids	= '0';
+		foreach($rows as $k=>$rs){
+			if(isset($rs['uid']))$uids		.=','.$rs['uid'].'';
+		}
+		if($uids!='0'){
+			$adb	= m('admin');
+			$uarr 	= $this->db->getarr('[Q]admin','id in('.$uids.')','`face`,`name`');
+			foreach($rows as $k=>$rs){
+				if(!isset($rs['uid']))continue;
+				if(isset($uarr[$rs['uid']])){
+					$rows[$k]['face'] = $adb->getface($uarr[$rs['uid']]['face']);
+				}
+			}
+		}
+		return $rows;
 	}
 }

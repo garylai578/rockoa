@@ -5,23 +5,24 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
 <title><?=$da['title']?></title>
 <link rel="stylesheet" type="text/css" href="mode/weui/weui.min.css"/>
-<link rel="stylesheet" type="text/css" href="mode/bootstrap3.3/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="web/res/fontawesome/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="web/res/iconfont/iconfont.css">
 <link rel="stylesheet" type="text/css" href="webmain/css/rui.css">
 <link rel="shortcut icon" href="favicon.ico" />
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/jswx.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
-<script type="text/javascript" src="web/res/js/jquery-changeuser.js"></script>
 <style>
-body,html{height:100%;-webkit-tap-highlight-color:transparent}
-body{overflow-x:hidden;background-color:#fbf9fe}
+html,body{overflow:hidden;background-color:#fbf9fe}
 .weui_tabbar_icon{text-align:center;color:#888888;font-size:20px;}
 .weui_tabbar_item{padding-top:2px;margin-bottom:5px;position:relative}
-.weui_media_box.weui_media_appmsg .weui_media_hd {height:50px;width:50px;line-height:50px}
+.weui_media_box{padding:10px 15px}
+.weui_media_box.weui_media_appmsg .weui_media_hd {height:40px;width:40px;line-height:40px}
 .weui_media_box .weui_media_desc{height:20px;line-height:20px;padding-right:20px}
 .weui_bar_item_on .weui_tabbar_icon{color:#09BB07}
-.weui_grid_icon{width:40px;height:40px}
+.weui_grid_icon{width:40px;height:40px;text-align:center}
+.weui_grid_icon i{font-size:32px}
 .weui_grid_icon span{position:absolute;top:5px;left:10px}
 .weui_tabbar_item span{position:absolute;right:5px;top:2px}
 .weui_media_bd span{position:absolute;right:10px;top:20px}
@@ -34,7 +35,7 @@ body{overflow-x:hidden;background-color:#fbf9fe}
 .fadein{-webkit-animation:fadein 1s;-moz-animation:fadein 1s}
 
 .weui_media_box:before{left:0}
-.yingshright{position:absolute;right:0px;bottom:0px;font-size:12px;color:#cccccc;height:10px;width:10px;display:block; background:url(web/images/rboot.png)}
+.yingshright{position:absolute;right:0px;bottom:0px;display:block; width: 0;height: 0;border-bottom: 15px solid #dedede;border-left: 15px solid transparent;}
 </style>
 <script>
 function initbody(){
@@ -48,27 +49,68 @@ function initbody(){
 	$('#myshow_deptname').html(js.getoption('deptallname'));
 	$('#myshow_ranking').html(js.getoption('ranking'));
 	
+	im.touchobj = $('#mainbody').rockdoupull({
+		downbool:true,
+		ondownsuccess:function(){
+			im.reload('none');
+		},
+		ondownbefore:function(){
+			return im.index<3;
+		},
+		ondrayrlend:function(lx){
+			if(lx<-60)im.changetab(im.index+1);
+			if(lx>60)im.changetab(im.index-1);
+		}
+	});
+	
 	try{
 	var site = sessionStorage.getItem('nowtabs');
 	if(!site)site=0;
 	im.changetab(site);
 	}catch(e){}
 }
+js.location = function(url){
+	js.wx.load();
+	location.href = url;
+}
 var agentarr={};
 var im={
 	index:0,
+	changetabci:0,
 	changetab:function(lx){
-		$("[temp='main']").hide();
-		$('#main_index'+lx+'').show();
+		lx	= parseFloat(lx);
+		if(lx<0)lx=3;
+		if(lx>3)lx=0;
+		$("[index='main']").hide();
+		var sid = 'main_index'+lx+'';
+		$('#'+sid+'').show();
 		$('.weui_tabbar a').removeClass('weui_bar_item_on');
 		$('.weui_tabbar a:eq('+lx+')').addClass('weui_bar_item_on');
 		var tass=['<?=$da['title']?>','应用','联系人',adminame];
 		$('.r-header-text').html(tass[lx]);
 		this.index = lx;
 		try{sessionStorage.setItem('nowtabs', lx);}catch(e){}
-		if(lx==2)this.showuserlist();
+		im.touchobj.hidescrolls();
+		if(lx==2){
+			this.showuserlist();
+		}
+		if(lx==3)this.showmyinfo();
+		this.changetabci++;
+	},
+	getheight:function(ss){
+		var hei = 0;if(!ss)ss=0;
+		if(get('header_title'))hei+=50;
+		if(get('footerdiv'))hei+=55;
+		return $(window).height()-hei+ss;
+	},
+	resiezess:function(){
+		var hei = im.getheight();
+		$('#mainbody').css('height',''+hei+'px');
+		if(im.touchobj)im.touchobj.resize();
 	},
 	init:function(){
+		this.resiezess();
+		$(window).resize(im.resiezess);
 		var agentjson 	= js.getoption('agentjson');
 		var hisjson 	= js.getoption('historyjson');
 		if(agentjson=='' || hisjson==''){
@@ -78,20 +120,34 @@ var im={
 			im.showagent(js.decode(agentjson));
 			im.showhistory(js.decode(hisjson));
 		}
+		this.initsearch();
 	},
-	reloadss:function(){
+	qihuendrap:function(yd){
+		if(yd>100 && this.index>0)this.changetab(this.index-1);
+		if(yd<-100 && this.index!=3)this.changetab(this.index+1);
+	},
+	reloadss:function(lx){
 		js.ajax('indexreim','mwebinit',false,function(ret){
 			js.setoption('agentjson', ret.agentjson);
 			js.setoption('historyjson', ret.historyjson);
 			im.showagent(js.decode(ret.agentjson));
 			im.showhistory(js.decode(ret.historyjson));
+			im.reloadok();
+		}, lx, false, function(){
+			im.showerror();
 		});
 	},
-	reload:function(){
+	showerror:function(){
+		if(this.touchobj)this.touchobj.ondownerror();
+	},
+	reloadok:function(){
+		if(this.touchobj)this.touchobj.ondownok();
+	},
+	reload:function(lx){
 		if(this.index==2){
-			this.reloaduser();
+			this.reloaduser(lx);
 		}else{
-			this.reloadss();
+			this.reloadss(lx);
 		}
 	},
 	showagent:function(a){
@@ -105,7 +161,11 @@ var im={
 		var s1=d.stotal;if(s1==0)s1='';
 		s='<a href="javascript:;" onclick="im.openagent('+d.id+')" class="weui_grid">';
 		s+='<div class="weui_grid_icon">';
-		s+='	<img src="'+d.face+'">';
+		if(isempt(d.iconfont)){
+			s+='	<img src="'+d.face+'">';
+		}else{
+			s+='	<i style="color:'+d.iconcolor+'" class="icon iconfont icon-'+d.iconfont+'"></i>';
+		}
 		s+='	<span id="agentstotal_'+d.id+'" class="badge">'+s1+'</span>';
 		s+='</div>';
 		s+='<p class="weui_grid_label">';
@@ -168,8 +228,8 @@ var im={
 		var ops = d.optdt.substr(11,5);
 		if(d.optdt.indexOf(date)!=0)ops=d.optdt.substr(5,5);
 		ty	= d.type;
-		s='<a onclick="im.clickitems(\''+ty+'\','+d.receid+',this)"onclick="im.click" class="weui_media_box weui_media_appmsg">';
-		s+='<div class="weui_media_hd">';
+		s='<a id="index_'+num+'" onclick="im.clickitems(\''+ty+'\','+d.receid+',this)" class="weui_media_box weui_media_appmsg">';
+		s+='	<div class="weui_media_hd">';
 		s+='		<img class="weui_media_appmsg_thumb" src="'+d.face+'">';
 		s+='	</div>';
 		s+='	<div class="weui_media_bd">';
@@ -199,6 +259,9 @@ var im={
 				}
 			}
 		});
+	},
+	openuinfo:function(id){
+		js.location('?a=userinfo&d=we&uid='+id+'');
 	},
 	openguser:function(ty,id){
 		js.location('?m=chat&d=we&type='+ty+'&uid='+id+'');
@@ -252,7 +315,7 @@ var im={
 			im.showgroupall();
 		}		
 	},
-	reloaduser:function(){
+	reloaduser:function(lx){
 		js.ajax('dept','data',false,function(ret){
 			js.setoption('deptjson', ret.deptjson);
 			js.setoption('userjson', ret.userjson);
@@ -262,18 +325,22 @@ var im={
 			grouparr=js.decode(ret.groupjson);
 			im.showuserall();
 			im.showgroupall();
+			im.reloadok();
+		}, lx, false, function(){
+			im.showerror();
 		});
 	},
 	showuserall:function(){
 		var i,len=userarr.length;
 		$('#list').html('');
+		$('#userstotal').html('('+len+')');
 		for(i=0;i<len;i++){
 			this.showlist(userarr[i], true);
 		}
 	},
 	showlist:function(a, cbo){
-		var s='<a onclick="im.openguser(\'user\','+a.id+')" class="weui_media_box weui_media_appmsg">';
-		s+='<div class="weui_media_hd">';
+		var s='<a temp="user_'+a.id+'" onclick="im.openuinfo('+a.id+')" class="weui_media_box weui_media_appmsg">';
+		s+='	<div class="weui_media_hd">';
 		s+='		<img class="weui_media_appmsg_thumb" src="'+a.face+'">';
 		s+='	</div>';
 		s+='	<div class="weui_media_bd">';
@@ -296,123 +363,186 @@ var im={
 		s+=' 	<div class="weui_cell_bd weui_cell_primary"><p>'+a.name+'</p></div>';
 		s+='</a>';
 		$('#grouplist').append(s);
+	},
+	initsearch:function(){
+		$('#search_input').keydown(function(){
+			im.sousousou();
+		});
+		$('#search_input').keyup(function(){
+			im.sousousou();
+		});
+	},
+	searchuser:function(){
+		$('#search_bar').addClass('weui_search_focusing');
+		$('#search_input').focus();
+	},
+	blursou:function(){
+		var val = $('#search_input').val();
+		if(val==''){
+			$('#search_bar').removeClass('weui_search_focusing');
+			$('a[temp]').show();
+		}
+	},
+	searchcancel:function(){
+		$('#search_input').val('').blur();
+		this.blursou();
+	},
+	souclear:function(){
+		$('#search_input').val('').focus();
+	},
+	sousousou:function(){
+		clearTimeout(this.sousousoutime);
+		this.sousousoutime=setTimeout('im.sousousous()',500);
+	},
+	sousousous:function(){
+		var val = $('#search_input').val();
+		if(val==''){
+			$('a[temp]').show();
+			return;
+		}
+		$('a[temp]').hide();
+		var i,a=userarr,len=a.length;
+		for(i=0;i<len;i++){
+			if(a[i].name.indexOf(val)>-1 || a[i].deptname.indexOf(val)>-1 || a[i].ranking.indexOf(val)>-1 || a[i].pingyin.indexOf(val)==0){
+				$('a[temp="user_'+a[i].id+'"]').show();
+			}
+		}
+	},
+	showmyinfo:function(){
+		js.ajax('indexreim','showmyinfo', false,function(ret){
+			js.setoption('deptallname',ret.deptallname);
+			js.setoption('ranking',ret.ranking);
+			adminface	= ret.face;
+			js.setoption('adminface',adminface);
+			adminame 	= ret.name;
+			js.setoption('adminame',adminame);
+			get('myface').src=adminface;
+			$('#myname').html(adminame);
+			$('#myshow_name').html(adminame);
+			$('#myshow_deptname').html(ret.deptallname);
+			$('#myshow_ranking').html(ret.ranking);
+		},'none');
+	},
+	changewxtx:function(o1){
+		var tx = o1.checked ? '1' : '0';
+		js.ajax('indexreim','changewxtx', {tx:tx},function(){
+			
+		},'none',false,false,'get');
 	}
 };
 </script>
 </head>
 
 
-<body>
+<body scroll="no" style="overflow:hidden">
 <?php if($web!='wxbro'){?>
 <div>
 	<div class="r-header">
-		<div class="r-header-text">信呼</div>
+		<div class="r-header-text" onclick="location.reload()" id="header_title">信呼</div>
 		<span onclick="im.showmenu()" class="r-position-right r-header-btn"><i class="icon-plus"></i></span>
 	</div>
 	<div class="blank50"></div>
 </div>
 <?php }?>
 
-<div temp="main" id="main_index0">
-	<div  class="weui_panel"><div id="historylist"></div></div>
-	<div id="historylist_tems" style="padding-top:50px;text-align:center;color:#cccccc"><span style="font-size:40px"><i class="icon-comment-alt"></i></span><br>暂无消息</div>
-</div>
-	
-<div temp="main" style="background-color:white;display:none"  id="main_index1" class="weui_grids"></div>
-<div temp="main" style="background-color:white;display:none"  id="main_index2">
-	<div class="weui_search_bar" id="search_bar">
-        <form class="weui_search_outer">
-            <div class="weui_search_inner">
-                <i class="weui_icon_search"></i>
-                <input type="search" class="weui_search_input" id="search_input" placeholder="搜索联系人/会话/应用" required/>
-                <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
-            </div>
-            <label for="search_input" onclick="location.reload()" class="weui_search_text" id="search_text">
-                <i class="weui_icon_search"></i>
-                <span>搜索联系人/会话/应用</span>
-            </label>
-        </form>
-        <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
-    </div>
-	
-	<div id="userlx" class="r-tab">
-        <div id="userlx_0" onclick="im.changeuser(0)" class="r-tab-item active">联系人</div>
-        <div id="userlx_1" onclick="im.changeuser(1)" class="r-tab-item">会话<span id="groupstotal">(0)</span></div>
-        
-    </div>
-	
-	<div class="weui_panel weui_panel_access" temp="user" style="margin-top:0">
-		<div class="weui_panel_bd">
-			<div id="list"></div>
-		</div>	
+
+<div id="mainbody" class="r-touch" style="height:350px;position:relative;">
+
+	<div index="main" id="main_index0">
+		<div  class="weui_panel"><div id="historylist"></div></div>
+		<div id="historylist_tems" style="padding-top:50px;text-align:center;color:#cccccc"><span style="font-size:40px"><i class="icon-comment-alt"></i></span><br>暂无消息</div>
 	</div>
-	<div class="weui_panel" temp="user" style="margin-top:0;display:none">
-		<div class="weui_panel_bd r-border-t">
-            <div class="weui_media_box weui_media_small_appmsg">
-                <div id="grouplist" class="weui_cells weui_cells_access"></div>
+	
+	<div index="main" style="background-color:white;display:none" id="main_index1" class="weui_grids"></div>
+	<div index="main" style="background-color:white;display:none" id="main_index2">
+
+		<div class="weui_search_bar" id="search_bar">
+			<form onclick="im.searchuser()" class="weui_search_outer" onsubmit="im.sousousou();return false;">
+				<div class="weui_search_inner">
+					<i class="weui_icon_search"></i>
+					<input type="search" onblur="im.blursou()" class="weui_search_input" id="search_input" placeholder="搜索联系人" >
+					<a onclick="im.souclear()" class="weui_icon_clear"></a>
+				</div>
+				<label for="search_input" class="weui_search_text" id="search_text">
+					<i class="weui_icon_search"></i>
+					<span>搜索联系人</span>
+				</label>
+			</form>
+			<a onclick="im.searchcancel()" style="color:#1abc9c" class="weui_search_cancel">取消</a>
+		</div>
+		
+		<div id="userlx" class="r-tab">
+			<div id="userlx_0" onclick="im.changeuser(0)" class="r-tab-item active">联系人<span id="userstotal">(0)</span></div>
+			<div id="userlx_1" onclick="im.changeuser(1)" class="r-tab-item">会话<span id="groupstotal">(0)</span></div>
+			
+		</div>
+		
+		<div id="userlistdiv" class="weui_panel weui_panel_access" temp="user" style="margin-top:0">
+			<div class="weui_panel_bd">
+				<div id="list"></div>
+			</div>	
+		</div>
+		<div class="weui_panel" temp="user" style="margin-top:0;display:none">
+			<div class="weui_panel_bd r-border-t">
+				<div class="weui_media_box weui_media_small_appmsg">
+					<div id="grouplist" class="weui_cells weui_cells_access"></div>
+				</div>
 			</div>
 		</div>
+		<div class="weui_panel" temp="user" style="margin-top:0;display:none"><div id="showdept"></div></div>
 	</div>
-	<div class="weui_panel" temp="user" style="margin-top:0;display:none"><div id="showdept"></div></div>
-</div>
 
-<div temp="main" style="display:none"  id="main_index3">
-	<div class="hd">
-		<div><img id="myface" onclick="location.reload();" src="images/logo.png"></div>
-	</div>
-	
-	<div class="weui_panel">
-        
-        <div class="weui_panel_bd">
-            <div class="weui_media_box weui_media_small_appmsg">
-                <div class="weui_cells weui_cells_access">
-                    <a class="weui_cell" href="javascript:;">
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p style="color:#888888">部门</p>
-                        </div>
-                        <span id="myshow_deptname" class="weui_cell_right"></span>
-                    </a>
-					<a class="weui_cell" href="javascript:;">
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p style="color:#888888">职位</p>
-                        </div>
-                        <span id="myshow_ranking" class="weui_cell_right"></span>
-                    </a>
-                    <a class="weui_cell" href="javascript:;">
+	<div index="main" style="display:none"  id="main_index3">
+		<div class="hd">
+			<div><img id="myface" onclick="location.reload();" src="images/logo.png"></div>
+		</div>
+		
+		<div class="weui_cells weui_cells_access">
+			<a class="weui_cell" href="javascript:;">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p style="color:#888888">部门</p>
+				</div>
+				<span id="myshow_deptname" class="weui_cell_right"></span>
+			</a>
+			<a class="weui_cell" href="javascript:;">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p style="color:#888888">职位</p>
+				</div>
+				<span id="myshow_ranking" class="weui_cell_right"></span>
+			</a>
+			<a class="weui_cell" href="javascript:;">
 
-                        <div class="weui_cell_bd weui_cell_primary">
-                            <p style="color:#888888">姓名</p>
-                        </div>
-                        <span id="myshow_name" class="weui_cell_right"></span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-	
-	<div class="weui_cells weui_cells_checkbox">
-        <label class="weui_cell weui_check_label" for="s11">
-            <div class="weui_cell_hd">
-                <input type="checkbox" class="weui_check" name="checkbox1" id="s11" checked="checked">
-                <i class="weui_icon_checked"></i>
-            </div>
-            <div class="weui_cell_bd weui_cell_primary">
-                <p>微信开启推送提醒</p>
-            </div>
-        </label>
-       
-    </div>
-	
-	
-	
-	<div class="weui_btn_area">
-		<input class="weui_btn weui_btn_warn" type="button" onclick="im.loginout()" value="退出登录">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p style="color:#888888">姓名</p>
+				</div>
+				<span id="myshow_name" class="weui_cell_right"></span>
+			</a>
+		</div>
+		
+		<div class="weui_cells weui_cells_checkbox">
+			<label class="weui_cell weui_check_label" for="wxtxchecked">
+				<div class="weui_cell_hd">
+					<input type="checkbox" disabled class="weui_check" id="wxtxchecked" checked="checked">
+					<i class="weui_icon_checked"></i>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>微信接收推送提醒</p>
+				</div>
+			</label>
+		</div>
+
+		
+		<div class="weui_btn_area">
+			<input class="weui_btn weui_btn_warn" type="button" onclick="im.loginout()" value="退出登录">
+		</div>
 	</div>
 </div>
+
+
 	
 
-<div style="height:60px; overflow:hidden"></div>	
-<div class="weui_tabbar">
+<div style="height:55px; overflow:hidden"></div>	
+<div id="footerdiv" style="height:55px;overflow:hidden" class="weui_tabbar">
 	<a href="javascript:;" onclick="im.changetab(0)" class="weui_tabbar_item weui_bar_item_on">
 		<span id="stotal_ss0" class="badge"></span>
 		<div class="weui_tabbar_icon">
@@ -440,6 +570,7 @@ var im={
 		<p class="weui_tabbar_label">更多</p>
 	</a>
 </div>
-
+<script type="text/javascript" src="mode/plugin/jquery-rockdoupull.js"></script>
+<script type="text/javascript" src="web/res/js/jquery-changeuser.js"></script>
 </body>
 </html>

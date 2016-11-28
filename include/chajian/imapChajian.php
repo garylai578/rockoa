@@ -2,6 +2,7 @@
 /**
 *	imap 收邮件扩展
 */
+set_time_limit(1800);
 class imapChajian extends Chajian
 {
 	private $supportbool = true;
@@ -21,39 +22,30 @@ class imapChajian extends Chajian
 	{
 		if(!$this->supportbool)exit('系统不支持imap收邮件扩展');
 		
-		//以腾讯企业邮箱做了测试
-		$mailServer="imap.exmail.qq.com"; //IMAP主机
-
-		$mailLink="{{$mailServer}:143}INBOX" ; //imagp连接地址：不同主机地址不同
-
-		$mailUser = 'admin@rockoa.com'; //邮箱用户名
-
-		$mailPass = 'a111111A'; //邮箱密码
+		$mailServer	= "imap.exmail.qq.com"; //IMAP主机
+		$mailLink	= "{{$mailServer}:143}INBOX" ; //imagp连接地址：不同主机地址不同
+		$mailUser 	= 'admin@rockoa.com'; //邮箱用户名
+		$mailPass 	= 'a123456A'; //邮箱密码
 
 		$this->marubox 		= imap_open($mailLink,$mailUser,$mailPass); //开启信箱imap_open
 		if(!$this->marubox)exit('不能连接收件服务器');
-
-		$totalrows = imap_num_msg($this->marubox); //取得信件数
+		//$wdboxarr 			= imap_search($this->marubox, 'UNSEEN');//未读
+		//$wdboxarr 			= imap_search($this->marubox, "SINCE ");//指定日期之后
 		
+		//print_r($wdboxarr);exit;
+		
+		$totalrows 	= imap_num_msg($this->marubox); //取得信件数
+		$rows 		= array();
 		for ($i=1;$i<=$totalrows;$i++){
-			echo "--------------------------------------------<br>\n\n\n";
-			$imap_uid	=  imap_uid($this->marubox, $i);//取得信件 UID
-			//echo $imap_uid;
-		
-
-			$headers = $this->getheader($i); //获取某信件的标头信息
-			print_r($headers);
-
-		
-			
-			//$mailBody = imap_fetchbody($this->marubox, $i, 1); //获取信件正文
-			//$mailBody = imap_body($this->marubox, $i); //获取信件正文
-			$mailBody = $this->getBody($i); //获取信件正文
-			
-			echo $mailBody;
+			$headers 	= $this->getheader($i); //获取某信件的标头信息
+			$body 		= $this->getBody($i); 	//获取信件正文
+			$headers['body']	= $body;
+			$headers['num']		= $i;
+			$rows[] = $headers;
 		}
+		imap_close($this->marubox, CL_EXPUNGE);
 		
-		imap_close($this->marubox, CL_EXPUNGE);  
+		return $rows;
 	}
 	
 	/**
@@ -65,32 +57,55 @@ class imapChajian extends Chajian
 
 		$arr['subject'] 	= $this->_imap_utf8($headers->subject);//标题
 		$arr['message_id'] 	= $headers->message_id;	//邮件ID
+		$arr['size'] 		= $headers->Size;	//邮件大小
 		$arr['date'] 		= date('Y-m-d H:i:s', strtotime($headers->date));
 		//发给
 		$arr['to']			= $headers->to;
 		foreach($arr['to'] as $k=>$rs){
 			$arr['to'][$k]->personal = $this->_imap_utf8($rs->personal);
+			$arr['to'][$k]->email 	 = ''.$rs->mailbox.'@'.$rs->host.'';
 		}
+		$arr['toemail']		= $this->stremail($arr['to']);
 		
 		//发件人
 		$arr['from']			= $headers->from;
 		foreach($arr['from'] as $k=>$rs){
-			$arr['from'][$k]->personal = $this->_imap_utf8($rs->personal);
+			$arr['from'][$k]->personal 	= $this->_imap_utf8($rs->personal);
+			$arr['from'][$k]->email 	= ''.$rs->mailbox.'@'.$rs->host.'';
 		}
+		$arr['fromemail']		= $this->stremail($arr['from']);
+		
 		//回复的邮件
 		$arr['reply_to']			= $headers->reply_to;
 		foreach($arr['reply_to'] as $k=>$rs){
-			$arr['reply_to'][$k]->personal = $this->_imap_utf8($rs->personal);
+			$arr['reply_to'][$k]->personal 	= $this->_imap_utf8($rs->personal);
+			$arr['reply_to'][$k]->email 	= ''.$rs->mailbox.'@'.$rs->host.'';
 		}
+		$arr['reply_toemail']		= $this->stremail($arr['reply_to']);
+		
 		//抄送
 		$arr['cc']					= array();
 		if(isset($headers->cc)){
 			$arr['cc']			= $headers->cc;
 			foreach($arr['cc'] as $k=>$rs){
 				$arr['cc'][$k]->personal = $this->_imap_utf8($rs->personal);
+				$arr['cc'][$k]->email 	 = ''.$rs->mailbox.'@'.$rs->host.'';
 			}
 		}
+		$arr['ccemail']		= $this->stremail($arr['cc']);
+		
+		$arr['headers'] 		= $headers;
 		return $arr;
+	}
+	
+	private function stremail($arr)
+	{
+		$str = '';
+		if(is_array($arr))foreach($arr as $k=>$rs){
+			$str.=','.$rs->personal.'('.$rs->mailbox.'@'.$rs->host.')';
+		}
+		if($str!='')$str = substr($str, 1);
+		return $str;
 	}
 	
 	

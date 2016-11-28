@@ -1,5 +1,5 @@
 *{font-family:微软雅黑,Verdana, Geneva, sans-serif;padding:0px;margin:0px;}
-body{color:#222222;margin:0px;border:0;font-size:14px;}
+body{color:#222222;margin:0px;border:0;font-size:14px;-webkit-overflow-scrolling:touch;overflow-scrolling:touch;}
 td,button{ font-size:14px}
 a,c,.cursor{cursor:pointer;}
 p{text-indent:24pt;margin:10px 0px}

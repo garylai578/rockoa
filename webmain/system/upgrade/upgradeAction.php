@@ -30,7 +30,7 @@ class upgradeClassAction extends Action
 				$key= $ors['key'];
 			}
 			$view = '<a href="'.$wet.'view_'.$rs['num'].'.html" target="_blank" class="a">介绍</a>';
-			if($state==0 && $rs['price']>0)$view.=',<a href="http://www.rockoa.com/view_xinhu'.$rs['num'].'.html" target="_blank" style="color:red">去购买</a>';
+			if($state==0 && $rs['price']>0)$view.=',<a href="'.$wet.'view_'.$rs['num'].'.html" target="_blank" style="color:red">去购买</a>';
 			$rows[] = array(
 				'id' 	=> $id,
 				'name' 	=> $rs['name'],

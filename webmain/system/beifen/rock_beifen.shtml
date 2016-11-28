@@ -32,7 +32,14 @@ $(document).ready(function(){
 			});
 		},
 		huifu:function(){
-			js.msg('msg', '还在开发...');
+			js.confirm('建议：恢复数据前请先备份一下数据啊！是否去备份？',function(jg){
+				if(jg=='yes'){
+					c.beifen();
+				}else{
+					addtabs({name:'数据恢复',num:'huifu',url:'system,beifen,huifu'});
+				}
+			});
+			
 		}
 	}
 	js.initbtn(c);

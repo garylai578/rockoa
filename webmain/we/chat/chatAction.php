@@ -1,5 +1,11 @@
 <?php 
 class chatClassAction extends ActionNot{
+	
+	public function initAction()
+	{
+		$this->mweblogin(0, true);
+	}
+	
 	public function defaultAction()
 	{
 		$type 	= $this->get('type');

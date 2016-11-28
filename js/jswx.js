@@ -46,7 +46,7 @@ js.apiurl = function(m,a,cans){
 	for(var i in cans)url+='&'+i+'='+cans[i]+'';
 	return url;
 }
-js.ajax  = function(m,a,d,funs, mod,checs, erfs){
+js.ajax  = function(m,a,d,funs, mod,checs, erfs, glx){
 	if(js.ajaxbool && !js.ajaxwurbo)return;
 	clearTimeout(js.ajax_time);
 	var url = js.apiurl(m,a);
@@ -71,7 +71,7 @@ js.ajax  = function(m,a,d,funs, mod,checs, erfs){
 		js.ajaxbool = false;
 		erfs(ts);
 	}
-	var type=(!d)?'get':'post';
+	var type=(!d)?'get':'post';if(glx)type=glx;
 	var ajaxcan={
 		type:type,dataType:'json',data:d,url:url,
 		success:function(ret){
@@ -86,8 +86,8 @@ js.ajax  = function(m,a,d,funs, mod,checs, erfs){
 				funs(ret.data);
 			}
 		},
-		error:function(){
-			errsoers('内部出错');
+		error:function(e){
+			errsoers('内部出错:'+e.responseText+'');
 		}
 	};
 	$.ajax(ajaxcan);
@@ -100,7 +100,7 @@ js.ajax  = function(m,a,d,funs, mod,checs, erfs){
 js.wx.load=function(txt){
 	this.unload();
 	if(txt=='none')return;
-	if(!txt)txt='数据加载中...';
+	if(!txt)txt='加载中...';
 	var s='';
 	s+='<div id="loadingToastsss" class="weui_loading_toast">'+
     '<div class="weui_mask_transparent"></div>'+
@@ -143,7 +143,7 @@ js.wx.msgok=function(txt,fun,ms){
 	this.msgtime=setTimeout(function(){
 		$('#toastssss').remove();
 		if(typeof(fun)=='function')fun();
-		
+
 	}, ms*1000);
 }
 
@@ -156,7 +156,7 @@ js.showmenu=function(d){
 	if(h2>h1)h1=h2;
 	var col='';
 	var s='<div onclick="$(this).remove();" align="center" id="menulistshow" style="background:rgba(0,0,0,0.6);height:'+h1+'px;width:100%;position:absolute;left:0px;top:0px;z-index:9999" >';
-	s+='<div id="menulistshow_s" style="width:'+d.width+'px;margin-top:'+d.top+';position:fixed" class="menulist r-border-r r-border-l">';
+	s+='<div id="menulistshow_s" style="width:'+d.width+'px;margin-top:'+d.top+';position:fixed;-webkit-overflow-scrolling:touch" class="menulist r-border-r r-border-l">';
 	for(var i=0;i<a.length;i++){
 		s+='<div oi="'+i+'" style="text-align:'+d.align+';color:'+a[i].color+'" class="r-border-t">';
 		s1=d.renderer(a[i]);
@@ -166,7 +166,12 @@ js.showmenu=function(d){
 	s+='</div>';
 	s+='</div>';
 	$('body').append(s);
-	var l=($(window).width()-d.width)*0.5,o1 = $('#menulistshow_s'),t = ($(window).height()-o1.height()-10)*0.5;
+	var mh = $(window).height();
+	var l=($(window).width()-d.width)*0.5,o1 = $('#menulistshow_s'),t = (mh-o1.height()-10)*0.5;
+	if(t<10){
+		t = 10;
+		o1.css({height:''+(mh-20)+'px','overflow':'auto'});
+	}
 	o1.css({'left':''+l+'px','margin-top':''+t+'px'});
 	$('#menulistshow div[oi]').click(function(){
 		var oi=parseFloat($(this).attr('oi'));

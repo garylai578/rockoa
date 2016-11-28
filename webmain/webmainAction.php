@@ -60,7 +60,7 @@ class Action extends mainAction
 		$token = $this->admintoken;
 		if($this->isempt($token))exit('sorry1');
 		$lastt = date('Y-m-d H:i:s',time()-24*3600);
-		$rs = m('logintoken')->getone("`uid`='$this->adminid' and `token`='$token' and `cfrom` in('pc','reim') and `moddt`>='$lastt'",'`moddt`');
+		$rs = m('logintoken')->getone("`uid`='$this->adminid' and `token`='$token' and `cfrom` in('pc','reim','mweb') and `moddt`>='$lastt'",'`moddt`');
 		if(!$rs)$this->backmsg('登录失效，请重新登录');
 	}
 	
@@ -426,7 +426,7 @@ class ActionNot extends Action
 	public function publictreestoreAjax(){}
 	protected function logincheck(){}
 	
-	protected function mweblogin($lx=0)
+	protected function mweblogin($lx=0, $ismo=false)
 	{
 		$uid = $this->adminid;
 		if($uid==0){
@@ -446,12 +446,16 @@ class ActionNot extends Action
 			if(isajax()){
 				echo 'sorry! not sign';
 			}else{
-				if($this->rock->ismobile()){
+				if($this->rock->ismobile() || $ismo){
 					$lurl = 'index.php?m=login&d=we&ltype='.$lx.'';
 				}else{
 					$lurl = 'index.php?m=login&ltype='.$lx.'';
 				}
-				echo 'login...<script>setTimeout(function(){location.href="'.$lurl.'"},0);</script>';
+				if($lx==1){
+					echo 'login...<script>setTimeout(function(){location.href="'.$lurl.'"},0);</script>';
+				}else{
+					$this->rock->location($lurl);
+				}
 			}
 			exit();
 		}

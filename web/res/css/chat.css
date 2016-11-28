@@ -52,3 +52,7 @@
 	background:#B2E866;
 	border:1px #85CC2E solid
 }
+
+.progresscls{height:12px;overflow:hidden;line-height:12px;border:0px #eeeeee solid; position:relative;;width:99%;background-color:#f1f1f1;margin-top:3px}
+.progressclssse{background-color:#B0D6FC;height:12px;overflow:hidden;width:5%;position:absolute;z-index:0;left:0px;top:0px}
+.progressclstext{font-size:10px;color:#0556A8;height:12px;overflow:hidden;line-height:12px;text-align:left;position:absolute;z-index:1;left:5px;top:0px}

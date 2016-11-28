@@ -64,6 +64,7 @@
 			
 			a.fileext	 = fileext;
 			a.isimg		 = js.isimg(fileext);
+			if(a.isimg)a.imgviewurl = this.getimgview(o1);
 			a.xu		 = this.xu;
 			a.f 		 = f;
 			this.filearr = a;
@@ -77,6 +78,11 @@
 			this.onchange(a);
 			this.reset();
 			this._startup(f);
+		};
+		this.getimgview=function(o1){
+			try{
+				return URL.createObjectURL(o1.files.item(0));
+			}catch(e){return false;}
 		};
 		this.isfields=function(a){
 			var bo = false,i,d=this.fileallarr;
@@ -162,11 +168,15 @@
 		};
 		this._onsuccess=function(o){
 			this.upbool = false;
-			this.onsuccess(this.filearr,o.response,o);
+			var bstr 	= o.response;
+			if(bstr.indexOf('id')<0){
+				this.onerror(bstr);
+			}else{
+				this.onsuccess(this.filearr,bstr,o);
+			}
 		};
 		this._error=function(xr){
 			this.upbool = false;
-			js.getarr(xr);
 			this.onerror('上传内部错误');
 		};
 		this._statechange=function(o){
@@ -180,6 +190,7 @@
 		};
 		this.abort=function(){
 			this.xhr.abort();
+			this.upbool = false;
 			this.onabort();
 		};
 		this._init();

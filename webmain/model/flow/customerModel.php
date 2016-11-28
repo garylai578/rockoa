@@ -130,7 +130,7 @@ class flow_customerClassModel extends flowModel
 	
 		return array(
 			'where' => 'and '.$where,
-			'fields'=> 'id,name,status,laiyuan,isgys,optname,unitname,shate,tel,type,adddt,moneyz,moneyd,htshu',
+			'fields'=> 'id,name,status,laiyuan,isgys,createname,optname,unitname,shate,tel,type,adddt,moneyz,moneyd,htshu',
 			'order' => 'status desc,optdt desc'
 		);
 	}

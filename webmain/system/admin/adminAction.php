@@ -32,7 +32,11 @@ class adminClassAction extends Action
 		$fields = '`id`,`name`,`deptallname`,`ranking`,`tel`,`mobile`,`email`,`type`,`sort`,`face`';
 		$s 		= 'and `status`=1';
 		$key 	= $this->post('key');
-		
+		$zt 	= $this->post('zt');
+		//我直属下属
+		if($zt == '0'){
+			$s.= ' and '.m('admin')->getdowns($this->adminid,1);
+		}
 		if($key!=''){
 			$s .= " and (`name` like '%$key%'  or `ranking` like '%$key%' or `deptallname` like '%$key%') ";
 		}
@@ -58,10 +62,12 @@ class adminClassAction extends Action
 		$check= c('check');
 		$mobile 	= $cans['mobile'];
 		$weixinid 	= $cans['weixinid'];
+		$pingyin 	= $cans['pingyin'];
 		$msg  = '';	
 		if(is_numeric($user))return '用户名不能是数字';
 		if($check->isincn($user))return '用户名不能有中文';
 		if(!isempt($email) && !$check->isemail($email))return '邮箱格式有误';
+		if(!isempt($pingyin) && $check->isincn($pingyin))return '名字拼音不能有中文';
 		if(!isempt($mobile)){
 			if(!$check->ismobile($mobile))return '手机格式有误';
 		}
@@ -79,9 +85,11 @@ class adminClassAction extends Action
 			$sup  = $cans['superid'];
 			$rows = $db->getpath($did, $sup);
 		}
-		$rows['user'] = $user;
-		$rows['name'] = $name;
-		$rows['email'] = $email;
+		if(isempt($pingyin))$pingyin = c('pingyin')->get($name,1);
+		$rows['pingyin'] = $pingyin;
+		$rows['user'] 	= $user;
+		$rows['name'] 	= $name;
+		$rows['email'] 	= $email;
 		$arr = array('msg'=>$msg, 'rows'=>$rows);
 		return $arr;
 	}
@@ -92,7 +100,7 @@ class adminClassAction extends Action
 		if(getconfig('systype')=='demo'){
 			m('weixin:user')->optuserwx($id);
 		}
-		$this->updatess('and id='.$id.'');
+		$this->updatess('and a.id='.$id.'');
 	}
 	
 	public function updatedataAjax()
@@ -115,6 +123,7 @@ class adminClassAction extends Action
 		$db 	= m('admin');
 		$sort 	= (int)$db->getmou('max(`sort`)', '`id`>0');
 		$dbs	= m('dept');
+		$py 	= c('pingyin');
 		foreach($rows as $k=>$rs){
 			$user = $rs['user'];
 			$name = $rs['name'];;
@@ -124,7 +133,9 @@ class adminClassAction extends Action
 			$oi++;
 			$arr['user'] = $user;
 			$arr['name'] = $name;
-			$arr['sex']  = $rs['sex'];
+			
+			$arr['pingyin'] 	= $py->get($name,1);
+			$arr['sex']  		= $rs['sex'];
 			$arr['ranking']  	= $rs['ranking'];
 			$arr['deptname']  	= $rs['deptname'];
 			$arr['mobile']  	= $rs['mobile'];

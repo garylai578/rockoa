@@ -292,7 +292,7 @@ class reimClassModel extends Model
 		if($uid==0)$uid = $this->adminid;
 		$where	= m('admin')->getjoinstr('receid', $this->adminid);
 		if($whe=='')$whe=' and `pid`='.$pid.'';
-		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where $whe",'`id`,`name`,`url`,`face`,`num`,`pid`','`sort`');
+		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where $whe",'`id`,`name`,`url`,`face`,`num`,`pid`,`iconfont`,`iconcolor`','`sort`');
 		$dbs 	= m('im_menu');
 		$barr	= array();
 		foreach($rows as $k=>$rs){
@@ -396,17 +396,18 @@ class reimClassModel extends Model
 	}
 	
 	
-	public function getrecord($type, $uid, $gid, $minid=0)
+	public function getrecord($type, $uid, $gid, $minid=0, $lastdt='')
 	{
 		$arr = array();
 		$rows= array();
 		if($type == 'user'){
-			$arr 	= $this->getuserinfor($uid, $gid, $minid);
+			$arr 	= $this->getuserinfor($uid, $gid, $minid, $lastdt);
 		}
 		if($type=='group'){
-			$arr 	= $this->getgroupinfor($uid, $gid, $minid);
+			$arr 	= $this->getgroupinfor($uid, $gid, $minid, $lastdt);
 		}
 		$arr['receinfor'] = $this->getreceinfor($type, $gid);
+		$arr['nowdt'] 	  = time();
 		if(isset($arr['rows']))$arr['rows'] = $this->replacefileid($arr['rows']);
 		m('im_history')->update('stotal=0',"`type`='$type' and `receid`='$gid' and `uid`='$uid'");
 		return $arr;
@@ -464,18 +465,20 @@ class reimClassModel extends Model
 	*	获取人员信息
 	*	$uid 当前用户
 	*/
-	public function getuserinfor($uid, $receid, $minid=0)
+	public function getuserinfor($uid, $receid, $minid=0, $lastdt='')
 	{
 		$type 	= 'user';
 		$whes	= $this->rock->dbinstr('receuid', $uid);
 		
+		$wdtotal= 0;
 		$where1	= "`type`='$type' and `zt`=0 and `receid`='$uid' and `sendid`='$receid' and $whes";
-		$wdtotal= $this->rows($where1);
+		if($lastdt=='')$wdtotal= $this->rows($where1);
 		
 		if($wdtotal > 0){
 			$where	= "$where1 order by `id` desc limit 10";
 		}else{
 			$where 	= "`type`='$type' and ((`receid`='$uid' and `sendid`='$receid') or (`sendid`='$uid' and `receid`='$receid')) and $whes ";
+			if($lastdt != '')$where .= " and `optdt`>='$lastdt' and `sendid`<>'$uid'";
 			if($minid==0){
 				$where .= ' order by `id` desc limit 5';
 			}else{
@@ -502,17 +505,20 @@ class reimClassModel extends Model
 		);
 	}
 	
-	public function getgroupinfor($uid, $receid, $minid=0)
+	public function getgroupinfor($uid, $receid, $minid=0, $lastdt='')
 	{
 		$whes		= $this->rock->dbinstr('receuid', $uid);
 		$order 		= '';
 		$type		= 'group';
-		$wdtotal= $this->getweitotal($uid, $type, $receid);
-		$wdwhere= $this->getweitotal($uid, $type, $receid, 1);
+		$wdtotal	= 0;
+		if($lastdt=='')$wdtotal	= $this->getweitotal($uid, $type, $receid);
+		
+		$wdwhere	= $this->getweitotal($uid, $type, $receid, 1);
 		if($wdtotal > 0){
 			$zwhere = " $wdwhere order by `id` desc limit 10";
 		}else{
 			$zwhere = " `receid`='$receid' and `type`='$type' and $whes";
+			if($lastdt != '')$zwhere .= " and `optdt`>='$lastdt' and `sendid`<>'$uid'";
 			if($minid==0){
 				$zwhere .= ' order by `id` desc limit 5';
 			}else{

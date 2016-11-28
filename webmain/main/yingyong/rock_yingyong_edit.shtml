@@ -8,7 +8,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'im_group',
 		url:publicsave('{mode}','{dir}'),beforesaveaction:'beforesave',
 		params:{int_filestype:'sort',otherfields:'type=2'},
-		submitfields:'sort,name,recename,receid,url,face,valid,num,pid',
+		submitfields:'sort,name,recename,iconfont,iconcolor,receid,url,face,valid,num,pid',
 		requiredfields:'name',
 		success:function(){
 			closenowtabs();
@@ -90,7 +90,14 @@ $(document).ready(function(){
 			<td  align="right" >图标地址：</td>
 			<td class="tdinput"><input name="face" class="form-control"></td>
 		</tr>
-
+		<tr>
+			<td  align="right" >字体图标：</td>
+			<td class="tdinput"><input name="iconfont" class="form-control"></td>
+		</tr>
+		<tr>
+			<td  align="right" >字体图标颜色：</td>
+			<td class="tdinput"><input name="iconcolor" class="form-control"></td>
+		</tr>
 		<tr>
 			<td  align="right" >可用人员：</td>
 			<td class="tdinput">

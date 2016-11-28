@@ -9,11 +9,13 @@ class taskClassAction extends Action
 	}
 	public function starttaskAjax()
 	{
+		$url = getconfig('localurl');
+		if($url=='')exit('请先设置系统本地地址');	
 		$msg = m('task')->starttask();
 		if(contain($msg, 'ok')){
 			echo 'ok';
 		}else{
-			echo '无法启动';
+			echo '无法启动可能未开启服务端';
 		}
 	}
 	

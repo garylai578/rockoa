@@ -36,10 +36,13 @@ class flowbillClassModel extends Model
 			$where	= $this->rock->dbinstr('allcheckid', $uid);
 		}
 		
+		//我直属下级申请
 		if($lx=='daiban_myxia'){
-			$ss 	= $this->rock->dbinstr('superid', $uid);
-			$where	= "uid in(select id from `[Q]admin` where $ss)";
+			$where 	= m('admin')->getdownwheres('uid', $uid, 1);
 		}
+		
+		$key 	= $this->rock->post('key');
+		if(!isempt($key))$where.=" and (`optname` like '%$key%' or `modename` like '%$key%' or `sericnum` like '$key%')";
 		
 		$arr 	= $this->getlimit('`isdel`=0 and '.$where, $page,'*','`optdt` desc', $limit);
 		$rows 	= $arr['rows'];
@@ -88,11 +91,11 @@ class flowbillClassModel extends Model
 			if(!isempt($rs['nstatustext']))$cont.='<br>状态：'.$rs['nstatustext'].'';
 			if(!isempt($rs['checksm']))$cont.='<br>处理说明：'.$rs['checksm'].'';
 			
-			
 			$srows[]= array(
 				'title' => $title,
 				'cont' 	=> $cont,
 				'id' 	=> $rs['mid'],
+				'uid' 	=> $rs['uid'],
 				'optdt' 	=> $rs['optdt'],
 				'sericnum' 	=> $rs['sericnum'],
 				'applydt' 	=> $rs['applydt'],
@@ -102,7 +105,6 @@ class flowbillClassModel extends Model
 				'modename'		=> $modename
 			);
 		}
-		
 		$arr['rows'] 	= $srows;
 		
 		return $arr;

@@ -1062,7 +1062,7 @@ var chatclass = function(opts){
 			contss = '[图片 '+a.filesizecn+']';
 		}else{
 			$('#progresstext_'+this._sssnuid+'').html('上传成功');
-			contss = '['+f.filename+' '+f.filesizecn+']'
+			contss = '['+f.filename+' '+f.filesizecn+']';
 		}
 		this.sendconts(jm.base64encode(contss), this._sssnuid, this._sssoptdt, a.id);
 	};

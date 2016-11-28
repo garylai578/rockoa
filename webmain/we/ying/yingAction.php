@@ -3,7 +3,7 @@ class yingClassAction extends ActionNot{
 	
 	public function initAction()
 	{
-		$this->mweblogin();
+		$this->mweblogin(0, true);
 	}
 	
 	public function defaultAction()

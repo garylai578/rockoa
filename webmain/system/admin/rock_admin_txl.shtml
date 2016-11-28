@@ -32,6 +32,11 @@ $(document).ready(function(){
 		},
 		daochu:function(){
 			a.exceldown();
+		},
+		changlx:function(o1,lx){
+			$("button[id^='state{rand}']").removeClass('active');
+			$('#state{rand}_'+lx+'').addClass('active');
+			a.setparams({zt:lx},true);
 		}
 	};
 	js.initbtn(c);
@@ -53,9 +58,13 @@ $(document).ready(function(){
 		</div>
 	</td>
 	<td  style="padding-left:10px">
-		
 	</td>
-	<td width="80%"></td>
+	<td width="80%">
+		<div class="btn-group" id="btngroup{rand}">
+		<button class="btn btn-default active" id="state{rand}_" click="changlx," type="button">全部</button>
+		<button class="btn btn-default" id="state{rand}_0" click="changlx,0" type="button">我直属下属</button>
+		</div>	
+	</td>
 	<td align="right" nowrap>
 		<button class="btn btn-default" click="daochu,1" type="button">导出</button>
 	</td>

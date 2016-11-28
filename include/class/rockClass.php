@@ -108,6 +108,9 @@ final class rockClass
 				if($jmbo)$s = $this->jm->uncrypt($s);
 			}
 		}
+		if(substr($s, 0, 7)=='basejm_'){
+			$s = $this->jm->base64decode(substr($s,7));
+		}
 		$s=str_replace("'", '&#39', $s);
 		if($lx==2)$s=str_replace(array('{','}'), array('[H1]','[H2]'), $s);
 		$str = strtolower($s);
@@ -522,9 +525,14 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		return $val;
 	}
 	
+	/*
+	*	获取当前访问url
+	*/
 	public function nowurl()
 	{
-		$url='http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+		if(!isset($_SERVER['HTTP_HOST']))return '';
+		$url = 'http://'.$_SERVER['HTTP_HOST'];
+		if(isset($_SERVER['REQUEST_URI']))$url.= $_SERVER['REQUEST_URI'];
 		return $url;
 	}
 }

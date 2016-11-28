@@ -5,28 +5,24 @@ class menuClassAction extends Action
 	public function dataAjax()
 	{
 		$this->rows	= array();
-		$where 	= $this->rock->covexec($this->post('where','',1));
-		$this->getmenu(0, 1, $where);
-		
+		$this->getmenu(0, 1);
 		echo json_encode(array(
 			'totalCount'=> 0,
 			'rows'		=> $this->rows
 		));
 	}
 	
-	private function getmenu($pid, $oi, $wh='')
+	private function getmenu($pid, $oi)
 	{
 		$db		= m('menu');
-		$menu	= $db->getall("`pid`='$pid' $wh order by `sort`",'*');
+		$menu	= $db->getall("`pid`='$pid' order by `sort`",'*');
 		foreach($menu as $k=>$rs){
 			$sid			= $rs['id'];
 			$rs['level']	= $oi;
-			$rs['stotal']	= $db->rows("`pid`='$sid'  $wh ");
-			$this->rows[] = $rs;
+			$rs['stotal']	= $db->rows("`pid`='$sid'");
 			
-			$this->getmenu($sid, $oi+1, $wh);
+			$this->rows[] 	= $rs;
+			$this->getmenu($sid, $oi+1);
 		}
 	}
-	
-	
 }

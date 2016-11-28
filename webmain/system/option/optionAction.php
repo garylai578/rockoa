@@ -6,7 +6,7 @@ class optionClassAction extends Action
 		$num	= $this->request('num');
 		$name	= $this->request('name');
 		$id		= $this->option->getnumtoid($num, $name, false);
-		$rows	= $this->option->getall("`pid`='$id' order by `sort`, `id`");
+		$rows	= $this->db->getall("select *,(select count(1) from `[Q]option` where pid=a.id)as stotal from `[Q]option` a where a.`pid`='$id' order by a.`sort`, a.`id`");
 		
 		echo json_encode(array(
 			'totalCount'=> $this->db->count,

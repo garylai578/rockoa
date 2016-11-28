@@ -71,4 +71,19 @@ class indexreimClassAction extends apiAction
 		m('login')->uplastdt();
 		$this->showreturn($arr);
 	}
+	
+	public function changewxtxAction()
+	{
+		$tx = (int)$this->post('tx','1');
+		m('admin')->update('wxtx='.$tx.'', $this->adminid);
+		$this->showreturn('');
+	}
+	
+	public function showmyinfoAction()
+	{
+		$arr = m('admin')->getone($this->adminid,'`id`,`deptallname`,`ranking`,`face`,`name`');
+		if(!$arr)$this->showreturn('','not user', 201);
+		if(isempt($arr['face']))$arr['face']='images/notface.png';
+		$this->showreturn($arr);
+	}
 }

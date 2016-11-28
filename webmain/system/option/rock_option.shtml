@@ -1,7 +1,7 @@
 <script >
 $(document).ready(function(){
 	{params};
-	var num = params.num,pid,optlx=0;
+	var num = params.num,pid,optlx=0,dpid=0;
 	
 	var at = $('#optionview_{rand}').bootstable({
 		tablename:'option',celleditor:true,sort:'sort',dir:'asc',url:js.getajaxurl('getlist', 'option', 'system'),
@@ -15,12 +15,16 @@ $(document).ready(function(){
 		},{
 			text:'ID',dataIndex:'id'
 		}],
+		itemclick:function(ad,oi,e){
+			//c.showmenu(ad,e);
+		},
 		itemdblclick:function(ad,oi,e){
 			$('#downshow_{rand}').html('<b>['+ad.id+'.'+ad.name+']</b>的下级选项');
 			a.search("and `pid`="+ad.id+"");
 		},
 		load:function(ad){
 			pid = ad.pid;
+			if(dpid==0)dpid=pid;
 		}
 	});
 	
@@ -46,13 +50,47 @@ $(document).ready(function(){
 		}
 	});
 	var c = {
+		showmenu:function(d,e){
+			if(!this.menuobj)this.menuobj = $.rockmenu({data:[],width:150,itemsclick:function(d){
+				c.cliemmenus(d);
+			}});
+			this.optdata = d;
+			var da = [{name:'打开选项',lx:0},{name:'编辑',lx:3}];
+			if(d.stotal>0)da.push({name:'管理下级',lx:1});
+			if(d.pid!=dpid)da.push({name:'↑回到上级',lx:2});
+			this.menuobj.setData(da);
+			setTimeout(function(){c.menuobj.showAt(e.clientX,e.clientY);},0);
+		},
+		cliemmenus:function(d){
+			var ad = this.optdata;
+			if(d.lx==0){
+				$('#downshow_{rand}').html('<b>['+ad.id+'.'+ad.name+']</b>的下级选项');
+				a.search("and `pid`="+ad.id+"");
+			}
+			if(d.lx==1){
+				c.xiajili();
+			}
+			if(d.lx==2){
+				this.showdwon(num);
+			}
+			if(d.lx==3){
+				this.clicktypeeidt();
+			}
+		},
 		reload:function(){
 			at.reload();
 		},
 		xiajili:function(){
 			if(at.changeid==0)return;
 			var bh = at.changedata.num;
+			this.showdwon(bh);
+		},
+		showdwon:function(bh){
+			if(isempt(bh))return;
 			at.setparams({num:bh},true);
+		},
+		dingji:function(bh){
+			this.showdwon(num);
 		},
 		clickwin:function(o, lx){
 			var a = this.clicktypewin(false, 0);
@@ -114,7 +152,8 @@ $(document).ready(function(){
 		<a href="javascript:" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp; 
 		<a href="javascript:" click="reload" onclick="return false"><i class="icon-refresh"></i></a>
 		&nbsp; 
-		<a href="javascript:" click="xiajili" onclick="return false">[管理下级]</a>
+		<a href="javascript:" click="xiajili" onclick="return false">[管理下级]</a>&nbsp; 
+		<a href="javascript:" click="dingji" onclick="return false">[回到顶级]</a>
 		<!--<a href="javascript:" style="float:right" click="typedel" onclick="return false"><i class="icon-trash"></i></a>-->
 	  </div>
 	</div>
@@ -125,7 +164,7 @@ $(document).ready(function(){
 	<ul class="floats">
 		<li class="floats70">
 			<button class="btn btn-primary" click="clickwin,0" disabled id="add_{rand}" type="button"><i class="icon-plus"></i> 新增对应下级</button>&nbsp;&nbsp;
-			<span id="downshow_{rand}"></span>
+			<span id="downshow_{rand}">双击左边选项列表行打开选项</span>
 		</li>
 		<li class="floats30" style="text-align:right">
 			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>

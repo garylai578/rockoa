@@ -276,17 +276,18 @@ class flowModel extends Model
 		$tables 		= $this->moders['tables'];
 		$iszb			= $xu+1;
 		$fields			= 'subdata'.$xu.'';
-		$subrows 		= $this->db->getrows('[Q]flow_element','`mid`='.$this->modeid.' and iszb=1 and iszs=1','`fields`,`name`','`sort`');
+		$subrows 		= $this->db->getrows('[Q]flow_element','`mid`='.$this->modeid.' and `iszb`='.$iszb.' and `iszs`=1','`fields`,`name`','`sort`');
 		if($this->db->count>0){
 			$iscz		= 1;
-			$headstr	= '';
+			$headstr	= 'xuhaos,,center';
 			foreach($subrows as $k=>$rs)$headstr.='@'.$rs['fields'].','.$rs['name'].'';
 			if(!isset($this->rs[$fields])){
 				$rows    	= $this->db->getall('select * from `[Q]'.$tables.'` where mid='.$this->id.' order by sort');
+				foreach($rows as $k=>$rs)$rows[$k]['xuhaos'] = $k+1;
 			}else{
 				$rows		= $this->rs[$fields];
 			}
-			$this->rs[$fields] 				= c('html')->createrows($rows, substr($headstr,1), '#cccccc', 'noborder');
+			$this->rs[$fields] 				= c('html')->createrows($rows, $headstr, '#cccccc', 'noborder');
 			$this->rs[''.$fields.'_style'] 	= 'padding:0';
 		}
 		return array(

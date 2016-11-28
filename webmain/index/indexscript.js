@@ -67,6 +67,21 @@
 			return false;
 		}
 	});
+	$('#indesearchmenu').click(function(){
+		_searchmenus();
+	});
+}
+
+function _searchmenus(){
+	js.prompt('搜索菜单','请输入搜索菜单名：',function(jg,txt){
+		if(jg=='yes' && txt){
+			$('#menulisttop').html('搜索结果');
+			$('#menulist').html('<div style="padding:30px;" align="center"><img src="images/mloading.gif"></div>');
+			js.ajax(js.getajaxurl('getmenusou','index'),{key:txt}, function(da){
+				showmenula(da);
+			},'post,json');
+		}
+	});
 }
 
 function loadmenu(o){
@@ -77,10 +92,9 @@ function loadmenu(o){
 	$('#menulist').html('<div style="padding:30px;" align="center"><img src="images/mloading.gif"></div>');
 	js.ajax(js.getajaxurl('getmenu','index'),{pid:id}, function(da){
 		showmenula(da);
-	});
+	},'get,json');
 }
-function showmenula(da){
-	var a = js.decode(da);
+function showmenula(a){
 	menuarr = a;
 	var i,s='',j,child;
 	for(i=0; i<a.length; i++){
@@ -96,6 +110,7 @@ function showmenula(da){
 			s+='</div>';
 		}
 	}
+	if(s=='')s='<div style="padding:30px;color:#cccccc" align="center">暂无</div>';
 	$('#menulist').html(s);
 }
 

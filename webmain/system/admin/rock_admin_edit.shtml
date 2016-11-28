@@ -3,7 +3,7 @@ $(document).ready(function(){
 	{params};
 	var id = params.id;
 	if(!id)id = 0;
-	var submitfields = 'status,sort,user,name,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate,weixinid';
+	var submitfields = 'status,sort,user,name,pingyin,pass,superid,superman,deptname,mobile,sex,tel,deptid,ranking,email,workdate,weixinid';
 	if(adminid=='1')submitfields+=',type';
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'admin',
@@ -151,7 +151,8 @@ $(document).ready(function(){
 	<tr>
 			<td align="right">微信号：</td>
 			<td class="tdinput"><input placeholder="手机号不能作为微信号" name="weixinid" class="form-control"></td>
-			
+			<td align="right">姓名拼音：</td>
+			<td class="tdinput"><input placeholder="拼音全拼(方便人员搜索)" name="pingyin" class="form-control"></td>
 		</tr>
 		
 		

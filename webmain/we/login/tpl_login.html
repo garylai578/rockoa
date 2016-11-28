@@ -11,8 +11,8 @@
 <script type="text/javascript" src="js/jswx.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
 <style>
-body,html{-webkit-tap-highlight-color:transparent}
-body{overflow-x:hidden;background-color:#fbf9fe}
+body,html{overflow:hidden;}
+body{background-color:#fbf9fe}
 .page_desc{text-align:center;color:#888;font-size:14px}
 .hd{padding:2em 0; text-align:center}
 .hd img{height:100px;width:100px;border-radius:50px}
@@ -40,6 +40,12 @@ function initbody(){
 			loginsubmit(0);
 		}
 	}
+	$('#adminuser').keyup(function(e){
+		if(e.keyCode==13 && this.value)$('#adminpass').focus();
+	});
+	$('#adminpass').keyup(function(e){
+		if(e.keyCode==13 && this.value)loginsubmit(0);
+	});
 }
 function loginsubmit(lx){
 	if(js.ajaxbool)return false;
@@ -97,7 +103,7 @@ function yanzdengl(){
 	<div class="weui_cell">
 		<div class="weui_cell_hd"><label class="weui_label">用户名</label></div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input" type="text" id="adminuser" maxlength="20"  placeholder="请输入用户名"/>
+			<input class="weui_input" type="text" id="adminuser" maxlength="20" placeholder="请输入用户名/姓名"/>
 		</div>
 	</div>
 	
@@ -107,7 +113,6 @@ function yanzdengl(){
 			<input class="weui_input" id="adminpass" type="password" placeholder="请输入密码"/>
 		</div>
 	</div>
-	
 </div>
 
 <div class="weui_btn_area">

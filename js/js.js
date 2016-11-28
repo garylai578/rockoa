@@ -1,6 +1,7 @@
 var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='';
 var windows	= null,ismobile=0;
 function initbody(){}
+function bodyunload(){}
 function globalbody(){}
 $(document).ready(function(){
 	$(window).scroll(js.scrolla);
@@ -10,6 +11,9 @@ $(document).ready(function(){
 	initbody();
 	$('body').click(function(e){
 		js.downbody(this, e);
+	});
+	$(window).unload(function(){
+		bodyunload();
 	});
 });
 var js={path:'index',url:'',bool:false,login:{},initdata:{},scroll:function(){}};
@@ -530,12 +534,14 @@ js.chao=function(obj,shuzi,span,guo){
 	if(span)get(span).innerHTML=obj.value.length;
 }
 js.debug	= function(s){
-	if(!DEBUG)return;
 	if(typeof(console)!='object')return;
 	console.log(s);
 }
 js.alert = function(txt,tit,fun){
 	js.confirm(txt, fun, '', tit, 2, '');
+}
+js.wait	= function(txt,tit,fun){
+	js.confirm(txt, fun, '', tit, 3, '');
 }
 js.confirm	= function(txt,fun, tcls, tis, lx,ostr,bstr){
 	if(!lx)lx=0;
@@ -546,12 +552,15 @@ js.confirm	= function(txt,fun, tcls, tis, lx,ostr,bstr){
 		h='<div style="padding:10px;" align="center">'+ostr+'';
 		h+='<div align="left" style="padding-left:10px">'+txt+'</div>';
 		h+='<div ><textarea class="input" id="confirm_input" style="width:310px;height:60px">'+tcls+'</textarea></div>'+bstr+'';
+	}else if(lx==3){
+		h+='<img src="images/mloading.gif" height="32" width="32" align="absmiddle">&nbsp; '+txt+'';
 	}else{
 		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
 	}
 	h+='</div>';
-	h+='<div style="padding:10px" align="center"><button id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" type="button"><i class="icon-ok"></i>&nbsp;确定</button>';
-	if(lx!=2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <button sattr="no" class="btn btn-danger webbtn" id="confirm_btn" type="button"><i class="icon-remove"></i>&nbsp;取消</button>';
+	h+='<div style="padding:10px" align="center">';
+	h+='	<button id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" type="button"><i class="icon-ok"></i>&nbsp;确定</button>';
+	if(lx<2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <button sattr="no" class="btn btn-danger webbtn" id="confirm_btn" type="button"><i class="icon-remove"></i>&nbsp;取消</button>';
 	h+='</div>';
 	h+='<div class="blank10"></div>';
 	if(!tcls)tcls='danger';if(lx==1)tcls='info';

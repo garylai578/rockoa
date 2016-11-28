@@ -60,7 +60,7 @@ ul,li,a{ list-style-type:none}
 .header{height:46px; overflow:hidden;line-height:46px; text-align:center; border-bottom:1px #cccccc solid;font-size:18px; position:fixed;width:100%;top:0px;left:0px; background:white;z-index:10}
 .header .back{position:absolute;top:5px;left:5px}
 .header .back img{height:24px;width:24px}
-.header-back{width:46px;height:46px;display:block; background:url(../../images/back.png) no-repeat 7px 7px;position:absolute;left:0px;top:0px; cursor:pointer}
+.header-back{width:46px;height:46px;display:block; background:url(../../images/back.png) no-repeat 7px 7px;position:absolute;left:0px;top:0px; cursor:default}
 .header-back:active{opacity:0.5}
 .divinput{padding:8px; background-color:white;}
 .padding10{padding:10px;}

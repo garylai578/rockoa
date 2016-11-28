@@ -84,7 +84,7 @@ class jmChajian extends Chajian{
 
 	public function base64encode($str)
 	{
-		if($this->rock->isempt($str))return '';
+		if(isempt($str))return '';
 		$str	= base64_encode($str);
 		$str	= str_replace(array('+', '/', '='), array('!', '.', ':'), $str);
 		return $str;
@@ -92,7 +92,7 @@ class jmChajian extends Chajian{
 	
 	public function base64decode($str)
 	{
-		if($this->rock->isempt($str))return '';
+		if(isempt($str))return '';
 		$str	= str_replace(array('!', '.', ':'), array('+', '/', '='), $str);
 		$str	= base64_decode($str);
 		return $str;
@@ -214,5 +214,22 @@ class jmChajian extends Chajian{
 			$s = $this->encrypt(substr($s, 1));
 		}
 		return $s;
+	}
+	
+	public function mcrypt_encrypt($str)
+	{
+		if(isempt($str))return '';
+		$key		= substr(md5($this->jmsstr),0,8);
+		$getstr 	= mcrypt_encrypt(MCRYPT_DES, $key, $str, MCRYPT_MODE_ECB);
+		return $this->base64encode($getstr);
+	}
+	
+	public function mcrypt_decrypt($str)
+	{
+		if(isempt($str))return '';
+		$str 		= $this->base64decode($str);
+		$key		= substr(md5($this->jmsstr),0,8);
+		$getstr 	= mcrypt_decrypt(MCRYPT_DES, $key, $str, MCRYPT_MODE_ECB);
+		return trim($getstr);
 	}
 }

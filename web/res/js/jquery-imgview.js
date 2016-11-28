@@ -22,6 +22,9 @@
 			if(this.mheiht<sed)this.mheiht=sed;
 			this.showview();
 		};
+		this.remove=function(){
+			$('#imgview_main').remove();
+		};
 		this.showview=function(){
 			var s='<div id="imgview_main" style="position:absolute;left:0px;top:0px;width:100%;height:100%;z-index:800">';
 			s+='<div style="position:absolute;z-index:0;left:0px;top:0px;width:100%;height:'+this.mheiht+'px;background-color:rgba(0,0,0,0.6)" id="imgview_mask"></div>';
@@ -53,7 +56,7 @@
 				me.initmove();
 			}
 			img.onerror=function(e){
-				$('#imgview_span').html('图片不存在');
+				$('#imgview_span').html('无图');
 			}
 			$('#imgview_zoom-out').click(function(){
 				me.bilixxx(-0.1);
@@ -148,21 +151,30 @@
 		this.movehammer=function(){
 			var o = get('imgview_spanmask');
 			var x=0,y=0,oldl,oldt;
+			this.touchci = 0;
 			o.addEventListener('touchstart',function(e){
+				me.touchci++;
 				x=e.touches[0].clientX;
 				y=e.touches[0].clientY;
 				var o1=get('imgview_span');
 				oldl = parseInt(o1.style.left);
 				oldt = parseInt(o1.style.top);
 				me.movebo=true;
+				clearTimeout(me.touctimes);
+				me.touctimes = setTimeout(function(){me.touchci=0},200);
 			}); 
 			o.addEventListener('touchmove',function(e){
+				e.preventDefault();
 				if(!me.movebo)return;
 				var _x = e.touches[0].clientX-x,_y=e.touches[0].clientY-y;
 				$('#imgview_span').css({left:''+(oldl+_x)+'px',top:''+(oldt+_y)+'px'});
 			}); 
 			o.addEventListener('touchend',function(e){
 				me.movebo=false;
+				if(me.touchci==2){
+					me.bilixxx(0.1);
+					me.touchci=0;
+				}
 			}); 
 		}
 	}

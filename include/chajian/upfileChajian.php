@@ -28,6 +28,29 @@ class upfileChajian extends Chajian{
 		$this->path		= $path;
 	}
 	
+	public function getmaxupsize()
+	{
+		$iniMax = strtolower(ini_get('upload_max_filesize'));
+        if ('' === $iniMax) {
+            return PHP_INT_MAX;
+        }
+        $max = ltrim($iniMax, '+');
+        if (0 === strpos($max, '0x')) {
+            $max = intval($max, 16);
+        } elseif (0 === strpos($max, '0')) {
+            $max = intval($max, 8);
+        } else {
+            $max = (int) $max;
+        }
+        switch (substr($iniMax, -1)) {
+            case 't': $max *= 1024;
+            case 'g': $max *= 1024;
+            case 'm': $max *= 1024;
+            case 'k': $max *= 1024;
+        }
+        return $max;
+	}
+	
 	/**
 		上传
 		@param	$name	string	对应文本框名称
@@ -42,8 +65,9 @@ class upfileChajian extends Chajian{
 		$file_type		= $_FILES[$name]['type'];
 		$file_error		= $_FILES[$name]['error'];
 		$file_tmp_name	= $_FILES[$name]['tmp_name'];
-		if($file_size<=0){
-			return '文件大小0字节，不能上传';
+		$zongmax		= $this->getmaxupsize();	
+		if($file_size<=0 || $file_size > $zongmax){
+			return '文件为0字节/超过'.$this->formatsize($zongmax).'，不能上传';
 		}
 		$file_sizecn	= $this->formatsize($file_size);
 		$file_ext		= strtolower(substr($file_name,strrpos($file_name,'.')+1));	//文件扩展名

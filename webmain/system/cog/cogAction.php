@@ -17,7 +17,8 @@ class cogClassAction extends Action
 			'upload_max_filesize'	=> '最大上传大小',
 			'post_max_size'	=> 'POST最大',
 			'memory_limit'	=> '使用最大内存',
-			'curl'			=> '是否支持CURL'
+			'curl'			=> '是否支持CURL',
+			'max_execution_time'			=> 'PHP执行超时时间',
 			
 		);
 		
@@ -35,6 +36,7 @@ class cogClassAction extends Action
 			'upload_max_filesize'	=> ini_get('upload_max_filesize'),
 			'post_max_size'			=> ini_get('post_max_size'),
 			'memory_limit'			=> ini_get('memory_limit'),
+			'max_execution_time'			=> ini_get('max_execution_time').'秒',
 			
 		);
 		if(!function_exists('curl_init')){

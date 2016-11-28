@@ -24,8 +24,8 @@ class imapChajian extends Chajian
 		
 		$mailServer	= "imap.exmail.qq.com"; //IMAP主机
 		$mailLink	= "{{$mailServer}:143}INBOX" ; //imagp连接地址：不同主机地址不同
-		$mailUser 	= 'admin@rockoa.com'; //邮箱用户名
-		$mailPass 	= 'a123456A'; //邮箱密码
+		$mailUser 	= ''; //邮箱用户名
+		$mailPass 	= ''; //邮箱密码
 
 		$this->marubox 		= imap_open($mailLink,$mailUser,$mailPass); //开启信箱imap_open
 		if(!$this->marubox)exit('不能连接收件服务器');

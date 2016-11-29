@@ -98,7 +98,7 @@ class flow_workClassModel extends flowModel
 	{
 		$downid = m('admin')->getdown($uid, 1);
 		$where  = 'and `ddid`='.$uid.'';
-		if($downid!='')$where  = 'and ((`ddid`='.$uid.') or (`ddid`=0 and `distid` in('.$downid.')) or (`ddid`=0 and `optid`='.$uid.'))';
+		if($downid!='')$where  = 'and (('.$uid.' in(`ddid`)) or (ifnull(`ddid`,\'0\')=\'0\' and `distid` in('.$downid.')) or (ifnull(`ddid`,\'0\')=\'0\' and `optid`='.$uid.'))';
 		return $where;
 	}
 	

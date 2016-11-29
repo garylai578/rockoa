@@ -17,6 +17,8 @@ $(document).ready(function(){
 		},{
 			text:'日志内容',dataIndex:'content',align:'left'
 		},{
+			text:'分数',dataIndex:'mark',sortable:true
+		},{
 			text:'新增时间',dataIndex:'adddt',sortable:true,renderer:function(v){
 				return v.replace(' ','<br>');
 			}

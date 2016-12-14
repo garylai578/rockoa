@@ -270,6 +270,8 @@
 					s+='<option value="'+d[i][0]+'" '+sel+'>'+d[i][1]+'</option>';
 				}
 				s+='</select></div>';
+			}else if(b.type=='date'){	
+				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" class="input datesss" onclick="js.datechange(this)" readonly value="'+v+'"></div>';
 			}else{
 				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" class="input" value="'+v+'"></div>';
 			}

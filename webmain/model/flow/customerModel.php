@@ -84,7 +84,7 @@ class flow_customerClassModel extends flowModel
 			$where	= $this->rock->dbinstr('shateid', $uid);
 		}
 		if($lxs=='down'){
-			$where = m('admin')->getdownwheres('uid', $uid, 1);
+			$where = m('admin')->getdownwheres('uid', $uid, 0);
 		}
 		if($lxs=='dist'){
 			$where = '`fzid`='.$uid.'';

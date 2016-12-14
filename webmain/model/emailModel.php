@@ -6,19 +6,23 @@ class emailClassModel extends Model
 		$this->settable('email_cog');
 	}
 	/**
-	*	发送邮件
-	*	$num 默认帐号
+	*	系统邮件发送邮件
 	*	$to_uid 发送给。。。
 	*	$rows	内容
 	*/
-	public function sendmail($title, $body, $to_uid, $rows=array(), $num='', $zjsend=0)
+	public function sendmail($title, $body, $to_uid, $rows=array(), $zjsend=0)
 	{
-		if($num=='')$num = 'default';
+		$setrs		= m('option')->getpidarr(-1);
+		if(!$setrs)return '未设置发送邮件';
 		
-		$setrs	= $this->getone("`num`='$num' or `id`='$num'");
-		if(!$setrs)return ''.$num.'邮箱不存在';
+		$serversmtp 	= $this->rock->arrvalue($setrs, 'email_sendhost');
+		$emailuser  	= $this->rock->arrvalue($setrs, 'email_sysuser');
+		$emailname  	= $this->rock->arrvalue($setrs, 'email_sysname');
+		$emailpass  	= $this->rock->arrvalue($setrs, 'email_syspass');
+		$serverport  	= $this->rock->arrvalue($setrs, 'email_sendport');
+		$emailsecure  	= $this->rock->arrvalue($setrs, 'email_sendsecure');
 		
-		if(isempt($setrs['serversmtp']) || isempt($setrs['emailname']))return '未设置发送帐号';
+		if(isempt($serversmtp) || isempt($serverport) || isempt($emailuser)|| isempt($emailpass))return '未设置发送帐号';
 
 		$to_em	= $to_mn = $to_id 	= '';
 		
@@ -43,42 +47,60 @@ class emailClassModel extends Model
 		$msg 	= 'ok';
 		
 		if(!getconfig('asynsend') || $zjsend==1){
-			$pass	= $this->rock->jm->uncrypt($setrs['emailpass']);
-			$mail	= c('mailer');
-			$mail->setHost($setrs['serversmtp'], $setrs['serverport'], $this->rock->repempt($setrs['secure']));
-			$mail->setUser($setrs['emailname'], $pass);
-			$mail->setFrom($setrs['emailname'], $setrs['name']);
-			$mail->addAddress($to_em, $to_mn);
-			$mail->sendMail($title, $body);
-			$bo		= $mail->isSuccess();
+			$bo 	= $this->sendddddd(array(
+				'emailpass' 	=> $emailpass,
+				'serversmtp' 	=> $serversmtp,
+				'serverport' 	=> $serverport,
+				'emailsecure' 	=> $emailsecure,
+				'emailuser' 	=> $emailuser,
+				'emailname' 	=> $emailname,
+				'receemail' 	=> $to_em,
+				'recename' 		=> $to_mn,
+				'title' 		=> $title,
+				'body' 			=> $body,
+			), true);
 			if(!$bo)$msg = '发送失败';
 		}else{
 			//异步发送邮件
-			$uarr['emailid'] 	= $setrs['id'];
 			$uarr['title'] 		= $title;
 			$uarr['body'] 		= $body;
 			$uarr['receid'] 	= $to_id;
 			$uarr['recename'] 	= $to_mn;
+			$uarr['receemail'] 	= $to_em;
 			$uarr['optdt'] 		= $this->rock->now();
 			$uarr['optid'] 		= $this->adminid;
 			$uarr['optname'] 	= $this->adminname;
 			$uarr['status'] 	= 0;
 			$sid 	= m('email_cont')->insert($uarr);
 			m('reim')->asynurl('asynrun','sendemail', array(
-				'id' => $sid
+				'id' 	=> $sid,
+				'stype' => 0
 			));
 		}
 		return $msg;
 	}
 	
+	private function sendddddd($arr, $jbs)
+	{
+		extract($arr);
+		$pass	= $emailpass;
+		if($jbs)$pass	= $this->rock->jm->uncrypt($pass);
+		$mail	= c('mailer');
+		$mail->setHost($serversmtp, $serverport, $this->rock->repempt($emailsecure));
+		$mail->setUser($emailuser, $pass);
+		$mail->setFrom($emailuser, $emailname);
+		$mail->addAddress($receemail, $recename);
+		$mail->sendMail($title, $body);
+		$bo		= $mail->isSuccess();
+		return $bo;
+	}
+	
 	/**
 	*	测试发送邮件
 	*/
-	public function sendmail_test($id)
+	public function sendmail_test()
 	{
-		$rs 	= $this->getone($id);
-		$num 	= $rs['num'];
-		return $this->sendmail('测试邮件帐号','这只是一个测试邮件帐号，不要紧张！<br>来自：'.TITLE.'<br>发送人：'.$this->adminname.'<br>发送时间：'.$this->rock->now().'', $this->adminid, array(), $num, 1);
+		return $this->sendmail('测试邮件帐号','这只是一个测试邮件帐号，不要紧张！<br>来自：'.TITLE.'<br>发送人：'.$this->adminname.'<br>网址：'.URL.'<br>发送时间：'.$this->rock->now().'', $this->adminid, array(),1);
 	}
 	
 	/**
@@ -88,7 +110,12 @@ class emailClassModel extends Model
 	{
 		$rs 	= m('email_cont')->getone($id);
 		if(!$rs)return;
-		$msg 	= $this->sendmail($rs['title'],$rs['body'], $rs['receid'], array(), $rs['emailid'], 1);
+		$stype	= (int)$this->rock->get('stype');
+		if($stype == 0){
+			$msg 	= $this->sendmail($rs['title'],$rs['body'], $rs['receid'], array(), 1);
+		}else{
+			$msg 	= $this->sendemailout($rs['optid'],$rs['title'],$rs['body'], $rs['receemail'], $rs['recename'], 1);
+		}
 		$status = '2';
 		if($msg=='ok')$status = '1';
 		$uarr['status'] = $status;
@@ -96,4 +123,58 @@ class emailClassModel extends Model
 		m('email_cont')->update($uarr, $id);
 	}
 	
+	
+	/**
+	*	用户自己外发发送
+	*/
+	public function sendemailout($sendid, $title, $body, $to_em, $to_mn, $zjsend=0)
+	{
+		$setrs			= m('option')->getpidarr(-1);
+		if(!$setrs)return '未设置发送邮件';
+		$serversmtp 	= $this->rock->arrvalue($setrs, 'email_sendhost');
+		$serverport  	= $this->rock->arrvalue($setrs, 'email_sendport');
+		$emailsecure  	= $this->rock->arrvalue($setrs, 'email_sendsecure');
+		$myuser 		= m('admin')->getone($sendid,'name,email,emailpass');
+		if(!$myuser)return '发送人不存在';
+
+		$emailuser  	= $this->rock->arrvalue($myuser, 'email');
+		$emailname  	= $this->rock->arrvalue($myuser, 'name');
+		$emailpass  	= $this->rock->arrvalue($myuser, 'emailpass');
+		
+		if(isempt($serversmtp) || isempt($serverport) || isempt($emailuser)|| isempt($emailpass))return '用户未设置邮件帐号密码';
+		
+		$msg 	= 'ok';
+		if(!getconfig('asynsend') || $zjsend==1){
+			$bo 	= $this->sendddddd(array(
+				'emailpass' 	=> $emailpass,
+				'serversmtp' 	=> $serversmtp,
+				'serverport' 	=> $serverport,
+				'emailsecure' 	=> $emailsecure,
+				'emailuser' 	=> $emailuser,
+				'emailname' 	=> $emailname,
+				'receemail' 	=> $to_em,
+				'recename' 		=> $to_mn,
+				'title' 		=> $title,
+				'body' 			=> $body,
+			), false);
+			if(!$bo)$msg = '发送失败';
+		}else{
+			//异步发送邮件
+			$uarr['title'] 		= $title;
+			$uarr['body'] 		= $body;
+			$uarr['receid'] 	= '';
+			$uarr['recename'] 	= $to_mn;
+			$uarr['receemail'] 	= $to_em;
+			$uarr['optdt'] 		= $this->rock->now();
+			$uarr['optid'] 		= $this->adminid;
+			$uarr['optname'] 	= $this->adminname;
+			$uarr['status'] 	= 0;
+			$sid 	= m('email_cont')->insert($uarr);
+			m('reim')->asynurl('asynrun','sendemail', array(
+				'id' 	=> $sid,
+				'stype' => 1
+			));
+		}
+		return $msg;
+	}
 }

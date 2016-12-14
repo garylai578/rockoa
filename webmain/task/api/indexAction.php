@@ -6,6 +6,9 @@ class indexClassAction extends apiAction
 		$this->showreturn('','error', 203);
 	}
 	
+	/**
+	*	手机app读取
+	*/
 	public function indexinitAction()
 	{
 		$dbs 			= m('reim');

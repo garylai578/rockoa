@@ -7,13 +7,14 @@ class optionClassModel extends Model
 	public function getval($num, $dev='', $lx=0)
 	{
 		$val= '';
-		$rs = $this->getone("`num`='$num'", '`name`,`value`,`id`');
+		$rs = $this->getone("`num`='$num'", '`name`,`value`,`id`,`optdt`');
 		if($rs){
 			if($lx==0)$val=$rs['value'];
 			if($lx==1)$val=$rs['name'];
 			if($lx==2)$val=$rs['id'];
+			if($lx==3)$val=$rs['optdt'];
 		}
-		if($this->rock->isempt($val))$val=$dev;
+		if(isempt($val))$val=$dev;
 		return $val;
 	}
 	
@@ -52,6 +53,8 @@ class optionClassModel extends Model
 	
 	public function setval($num, $val='', $name=null, $isub=true)
 	{
+		$numa	= explode('@', $num);
+		$num 	= $numa[0];
 		$where  = "`num`='$num'";
 		$id 	= (int)$this->getmou('id', $where);
 		if($id==0)$where='';
@@ -61,7 +64,8 @@ class optionClassModel extends Model
 			'optid'	=> $this->adminid,
 			'optdt'	=> $this->rock->now
 		);
-		if($name!=null)$arr['name'] = $name;
+		if(isset($numa[1]))$arr['pid'] 	= $numa[1];
+		if($name!=null)$arr['name'] 	= $name;
 		if($id==0 || $isub)$this->record($arr, $where);
 		if($id==0)$id = $this->db->insert_id();
 		return $id;
@@ -88,5 +92,16 @@ class optionClassModel extends Model
 	{
 		$idd = $this->setval($num,'', $name, $isub);
 		return $idd;
+	}
+	
+	//获取一组设置
+	public function getpidarr($pid, $lx=0)
+	{
+		$rows = $this->getall("`pid`='$pid'");
+		$barr = array();
+		foreach($rows as $k=>$rs){
+			$barr[$rs['num']] = $rs['value'];
+		}
+		return $barr;
 	}
 }

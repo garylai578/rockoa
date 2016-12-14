@@ -23,6 +23,10 @@ var c = {
 			},
 			onsuccess:function(a,str){
 				c.onsuccess(a,str);
+			},
+			onerror:function(str){
+				js.msg('msg', str);
+				$('#progresstext_heheheh').html('<font color=red>上传失败</font>');
 			}
 		});
 	},
@@ -209,5 +213,5 @@ yy.clickevent=function(d){
 	if(d.url=='fxgw')c.wfenxx('fxgw');	
 }
 </script>
-<div class="workheader" id="workheader" style="line-height:50px;height:50px; background-color:#ffffff;overflow:hidden"><span onclick="c.clickheadeer(0, this)">我的文档&gt;</span></div>
+<div class="workheader" id="workheader" style="line-height:50px; background-color:#ffffff;overflow:hidden"><span onclick="c.clickheadeer(0, this)">我的文档&gt;</span></div>
 <div id="mainbody_show"></div>

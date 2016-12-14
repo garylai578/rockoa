@@ -44,7 +44,7 @@ class flow_custractClassModel extends flowModel
 		$where 	= '`uid`='.$uid.'';
 		$lxa 	= explode('_', $lx);
 		if($lxa[0]=='down'){
-			$where = m('admin')->getdownwheres('uid', $uid, 1);
+			$where = m('admin')->getdownwheres('uid', $uid, 0);
 		}
 		$lx 	= $lxa[1];
 		$key	= $this->rock->post('key');

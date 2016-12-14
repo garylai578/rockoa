@@ -19,6 +19,7 @@ class loginClassAction extends apiAction
 				'token'  	=> $arr['token'],
 				'title'		=> getconfig('apptitle'),
 				'weblogo'	=> getconfig('weblogo'),
+				'maxsize'	=> c('upfile')->getmaxzhao()
 			);
 			
 			$uid 	= $arr['uid'];

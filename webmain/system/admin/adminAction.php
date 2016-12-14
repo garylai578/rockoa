@@ -15,11 +15,11 @@ class adminClassAction extends Action
 
 	public function beforeshow($table)
 	{
-		$fields = 'id,name,`user`,deptname,`type`,status,tel,workdate,ranking,superman,loginci,sex,sort,face';
+		$fields = 'id,name,`user`,deptname,`type`,`num`,status,tel,workdate,ranking,superman,loginci,sex,sort,face';
 		$s 		= '';
 		$key 	= $this->post('key');
 		if($key!=''){
-			$s = " and (`name` like '%$key%' or `user` like '%$key%' or `ranking` like '%$key%' or `deptallname` like '%$key%') ";
+			$s = m('admin')->getkeywhere($key);
 		}
 		return array(
 			'fields'=> $fields,
@@ -38,7 +38,7 @@ class adminClassAction extends Action
 			$s.= ' and '.m('admin')->getdowns($this->adminid,1);
 		}
 		if($key!=''){
-			$s .= " and (`name` like '%$key%'  or `ranking` like '%$key%' or `deptallname` like '%$key%') ";
+			$s .= m('admin')->getkeywhere($key);
 		}
 		return array(
 			'fields'=> $fields,
@@ -58,6 +58,7 @@ class adminClassAction extends Action
 	{
 		$user = strtolower(str_replace(' ','',$cans['user']));
 		$name = str_replace(' ','',$cans['name']);
+		$num  = str_replace(' ','',$cans['num']);
 		$email= str_replace(' ','',$cans['email']);
 		$check= c('check');
 		$mobile 	= $cans['mobile'];
@@ -68,6 +69,7 @@ class adminClassAction extends Action
 		if($check->isincn($user))return '用户名不能有中文';
 		if(!isempt($email) && !$check->isemail($email))return '邮箱格式有误';
 		if(!isempt($pingyin) && $check->isincn($pingyin))return '名字拼音不能有中文';
+		if(!isempt($num) && $check->isincn($num))return '编号不能有中文';
 		if(!isempt($mobile)){
 			if(!$check->ismobile($mobile))return '手机格式有误';
 		}
@@ -77,6 +79,8 @@ class adminClassAction extends Action
 			if($check->isincn($weixinid))return '微信号不能有中文';
 		}
 		$db  = m($table);
+		
+		if($msg=='' && $num!='')if($db->rows("`num`='$num' and `id`<>'$id'")>0)$msg ='编号['.$num.']已存在';
 		if($msg=='')if($db->rows("`user`='$user' and `id`<>'$id'")>0)$msg ='用户名['.$user.']已存在';
 		if($msg=='')if($db->rows("`name`='$name' and `id`<>'$id'")>0)$msg ='姓名['.$name.']已存在';
 		$rows = array();

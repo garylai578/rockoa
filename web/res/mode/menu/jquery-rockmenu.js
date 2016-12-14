@@ -32,6 +32,7 @@ var rockmenuobj	= null;
 			if(can.autoremove)o.remove();
 		};
 		this.setcontent	= function(){
+			$('.rockmenu').remove();
 			rockmenuobj	= this;
 			can.beforeshow(this);
 			if(json.length<=0)return false;

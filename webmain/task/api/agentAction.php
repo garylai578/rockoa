@@ -1,6 +1,9 @@
 <?php 
 class agentClassAction extends apiAction
 {
+	/**
+	*	手机app读取应用
+	*/
 	public function dataAction()
 	{
 		$agentarr			= m('reim')->getagent($this->adminid);

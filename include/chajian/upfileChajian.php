@@ -28,9 +28,9 @@ class upfileChajian extends Chajian{
 		$this->path		= $path;
 	}
 	
-	public function getmaxupsize()
+	private function _getmaxupsize($lx)
 	{
-		$iniMax = strtolower(ini_get('upload_max_filesize'));
+		$iniMax = strtolower(ini_get($lx));
         if ('' === $iniMax) {
             return PHP_INT_MAX;
         }
@@ -49,6 +49,21 @@ class upfileChajian extends Chajian{
             case 'k': $max *= 1024;
         }
         return $max;
+	}
+	
+	public function getmaxupsize()
+	{
+		$post = $this->_getmaxupsize('post_max_size');
+		$upmx = $this->_getmaxupsize('upload_max_filesize');
+		if($post < $upmx)$upmx = $post;
+		return $upmx;
+	}
+	
+	public function getmaxzhao()
+	{
+		$size = $this->getmaxupsize();
+		$size = $size / 1024 / 1024;
+		return (int)$size;
 	}
 	
 	/**
@@ -173,8 +188,8 @@ class upfileChajian extends Chajian{
 	//返回文件大小
 	public function formatsize($size)
 	{
-		$arr = array('Byte', 'KB', 'MB', 'GB', 'TB', 'PB');
-		$e = floor(log($size)/log(1024));
+		$arr 	= array('Byte', 'KB', 'MB', 'GB', 'TB', 'PB');
+		$e 		= floor(log($size)/log(1024));
 		return number_format(($size/pow(1024,floor($e))),2,'.','').' '.$arr[$e];
 	}
 }

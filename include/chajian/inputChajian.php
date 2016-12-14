@@ -67,8 +67,9 @@ class inputChajian extends Chajian
 		$attr 	= $a['attr'];
 		$fnams 	= @$a['name'];
 		if($a['isbt']==1)$fnams='*'.$fnams.'';
-		if($this->isempt($val))$val='';
-		if($this->isempt($attr))$attr='';
+		$val	= $this->rock->get('def_'.$fname.'', $val);
+		if(isempt($val))$val='';
+		if(isempt($attr))$attr='';
 		if($val!=''){
 			$val = str_replace(array('{now}','{date}','{admin}','{adminid}','{deptname}','{ranking}','{month}'),array($this->now,$this->date,$this->adminname,$this->adminid, $this->urs['deptname'], $this->urs['ranking'],substr($this->date,0,7)),$val);
 			if($val=='{sericnum}' && $this->flow!=null)$val = $this->flow->createnum();
@@ -76,6 +77,11 @@ class inputChajian extends Chajian
 		if($type=='num'){
 			if($this->flow != null)$val = $this->flow->createbianhao($data, $fid);
 			$attr='readonly';
+		}
+		
+		if($objs != null && method_exists($objs, 'inputfieldsval')){
+			$_vals = $objs->inputfieldsval($fname, $a);
+			if(!isempt($_vals))$val = $_vals;
 		}
 		
 		$str 	= '<input class="inputs" value="'.$val.'" '.$attr.' name="'.$fname.'">';
@@ -137,8 +143,10 @@ class inputChajian extends Chajian
 			if($type=='xuhao')$str.='<input value="0" type="hidden" name="'.$a['fieldss'].$leox.'">';
 		}
 		if($type=='changeusercheck'||$type=='changeuser'||$type=='changedept'||$type=='changedeptusercheck'){
-			$str = '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:98%" id="change'.$fname.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" id="change'.$fname.'_id" type="hidden"></td>';
-			$str .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
+			$_vals  = explode(',', $val);$_vals0 = $_vals[0];
+			$_vals1 = isset($_vals[1]) ? $_vals[0] : '';
+			$str 	= '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:98%" id="change'.$fname.'" value="'.$_vals0.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" value="'.$_vals1.'" id="change'.$fname.'_id" type="hidden"></td>';
+			$str   .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
 		}
 		if($type=='htmlediter'){
 			$str = '<textarea class="textarea" style="height:130px" '.$attr.' name="'.$fname.'">'.$val.'</textarea>';
@@ -147,6 +155,11 @@ class inputChajian extends Chajian
 			$chk = '';
 			if($val=='1'||$val=='true')$chk='checked';
 			$str = '<input name="'.$fname.'" '.$chk.' '.$attr.' type="checkbox" value="1"> ';
+		}
+		if($type=='uploadimg'){
+			$str = '<input name="'.$fname.'" type="hidden">';
+			$str.= '<img src="images/noimg.jpg" onclick="c.showviews(this)" id="imgview_'.$fname.'" height="100">';
+			$str.= '<div style="display:none" tnam="'.$fname.'" id="filed_'.$fname.'"><input type="file" style="width:120px" accept="image/*" id="filed_'.$fname.'_inp"></div>';
 		}
 		if($type=='auto'){
 			$datanum = $data;

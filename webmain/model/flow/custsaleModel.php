@@ -52,7 +52,7 @@ class flow_custsaleClassModel extends flowModel
 		$zt 	= $this->rock->post('zt');
 		$where 	= '`uid`='.$uid.'';
 		if($lx=='down'){
-			$where = m('admin')->getdownwheres('uid', $uid, 1);
+			$where = m('admin')->getdownwheres('uid', $uid, 0);
 		}
 		
 		if($lx=='def'){

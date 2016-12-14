@@ -15,7 +15,7 @@ class agent_dailyClassModel extends agentModel
 	public function getwdtotal($uid)
 	{
 		$ydid  	= m('log')->getread('daily', $uid);
-		$whe1w 	= 'and '.m('admin')->getdownwheres('uid', $uid, 1);
+		$whe1w 	= 'and '.m('admin')->getdownwheres('uid', $uid, 0);
 		$where	= "id not in($ydid) $whe1w ";
 		$stotal	= m('daily')->rows($where);
 		return $stotal;
@@ -31,7 +31,7 @@ class agent_dailyClassModel extends agentModel
 	protected function agentrows($rows, $rowd, $uid){
 		$ydarr	= explode(',', m('log')->getread('daily', $uid));
 		foreach($rowd as $k=>$rs){
-			if(!in_array($rs['id'], $ydarr)){
+			if(!in_array($rs['id'], $ydarr) && $rs['uid'] != $uid){
 				$rows[$k]['statustext'] 	= '未读';
 				$rows[$k]['statuscolor'] 	= '#ED5A5A';
 			}else{

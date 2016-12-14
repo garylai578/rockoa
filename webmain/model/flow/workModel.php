@@ -141,7 +141,7 @@ class flow_workClassModel extends flowModel
 		}
 		
 		return array(
-			'where' => $where,
+			'where' => 'and `status`=1 '.$where,
 			'fields'=> 'id,type,grade,dist,startdt,title,enddt,`status`,state,optname,projectid,score,mark,ddname',
 			'order' => '`optdt` desc'
 		);

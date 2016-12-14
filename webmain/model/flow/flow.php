@@ -56,6 +56,9 @@ class flowModel extends Model
 	//自定义审核人重新的方法$num 步骤单号
 	protected function flowcheckname($num){}
 	
+	//审核步骤根据$num 编号判断是否需要审核
+	protected function flowcoursejudge($num){}
+	
 	//操作单据
 	protected function flowoptmenu($ors, $crs){}
 	
@@ -127,7 +130,7 @@ class flowModel extends Model
 			}
 		}
 		$this->sericnum	= '';
-		$this->billrs 	= $this->db->getone('[Q]flow_bill', $this->mwhere);
+		$this->billrs 	= $this->billmodel->getone($this->mwhere);
 		if($this->billrs){
 			$this->sericnum = $this->billrs['sericnum'];
 		}else{
@@ -153,14 +156,14 @@ class flowModel extends Model
 				$allcheckid = $this->billrs['allcheckid'];
 				if(contain(','.$allcheckid.',',','.$this->adminid.','))$bo = true;
 			}
-			if(!$bo){
-				if(contain($this->urs['superpath'],'['.$this->adminid.']'))$bo = true;
-			}
+		}
+		if(!$bo){
+			if($this->urs && contain($this->urs['superpath'],'['.$this->adminid.']'))$bo = true;
 		}
 		if(!$bo)$bo = $this->flowisreadqx();
 		if(!$bo){
 			$where 	= $this->viewmodel->viewwhere($this->moders, $this->adminid, $this->flowviewufieds);
-			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
+			$tos 	= $this->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=true;
 		}
 		if(!$bo)$this->echomsg('无权限查看模块['.$this->modenum.'.'.$this->modename.']'.$this->uname.'的数据');
@@ -178,7 +181,7 @@ class flowModel extends Model
 		}
 		if($bo==0){
 			$where 	= $this->viewmodel->editwhere($this->moders, $this->adminid);
-			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
+			$tos 	= $this->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=1;
 		}
 		return $bo;
@@ -196,7 +199,7 @@ class flowModel extends Model
 		}
 		if($bo==0){
 			$where 	= $this->viewmodel->deletewhere($this->moders, $this->adminid);
-			$tos 	= m($this->mtable)->rows("`id`='$this->id'  $where ");
+			$tos 	= $this->rows("`id`='$this->id'  $where ");
 			if($tos>0)$bo=1;
 		}
 		return $bo;
@@ -546,6 +549,11 @@ class flowModel extends Model
 				if(!$bo)continue;
 			}
 			
+			if(!isempt($rs['num'])){
+				$bo = $this->flowcoursejudge($rs['num']);
+				if(is_bool($bo) && !$bo)continue;
+			}
+			
 			$zongsetp++;
 			$uarr 		= $this->getcheckname($rs);
 			$checkid	= $uarr[0];
@@ -581,7 +589,9 @@ class flowModel extends Model
 				$checkids 	= $_chid;
 				$checknames = $_chna;
 			}else{
-				if($checkshu>0&&$nowshu>=$checkshu)$ischeck	= 1;
+				if($checkshu>0&&$nowshu>=$checkshu)$ischeck	= 1;				
+				//需要全部审核时 同时已有审核过了 也没有审核人了
+				if($checkshu == 0 && $nowshu>0)$ischeck = 1;
 			}
 			
 			$rs['ischeck'] 		= $ischeck;
@@ -643,8 +653,9 @@ class flowModel extends Model
 		return true;
 	}
 	
-	public function getflowsave($sarr)
+	public function getflowsave($sarr, $suvu=false)
 	{
+		if($suvu)$sarr['updt'] = $this->rock->now;
 		$this->billmodel->update($sarr, $this->mwhere);
 	}
 	
@@ -754,6 +765,7 @@ class flowModel extends Model
 			'optname' 	=> $this->adminname,
 			'optid' 	=> $this->adminid,
 			'modeid'  	=> $this->modeid,
+			'updt'  	=> $this->rock->now,
 			'isdel'		=> '0',
 			'nstatus'	=> $this->rs['status'],
 			'applydt'	=> $this->rs['applydt'],
@@ -762,6 +774,7 @@ class flowModel extends Model
 		foreach($oarr as $k=>$v)$arr[$k]=$v;
 		if($biid==0){
 			$arr['uid'] 	= $this->uid;
+			$arr['createdt']= $arr['optdt'];
 			$arr['sericnum']= $this->createnum();
 			$whes			= '';
 			$this->sericnum	= $arr['sericnum'];
@@ -944,7 +957,7 @@ class flowModel extends Model
 			$this->update($uparr, $this->id);
 			foreach($uparr as $k=>$v)$this->rs[$k]=$v;
 		}
-		$this->getflowsave($bsarr);
+		$this->getflowsave($bsarr, true);
 		return '处理成功';
 	}
 	
@@ -1062,12 +1075,12 @@ class flowModel extends Model
 			}
 		}
 		
-		if($flx==1 && $this->iseditqx()==1){
+		if($this->iseditqx()==1){
 			$arr[] = array('name'=>'编辑','optnum'=>'edit','lx'=>'11','optmenuid'=>-11);
 		}
 		
 		if($this->isdeleteqx()==1){
-			$arr[] = array('name'=>'删除','color'=>'red','optnum'=>'del','issm'=>1,'islog'=>0,'statusvalue'=>9,'lx'=>'9','optmenuid'=>-9);
+			$arr[] = array('name'=>'删除','color'=>'red','optnum'=>'del','issm'=>0,'islog'=>0,'statusvalue'=>9,'lx'=>'9','optmenuid'=>-9);
 		}
 		
 		return $arr;
@@ -1124,6 +1137,12 @@ class flowModel extends Model
 					}
 				}
 				if($uarrs)$this->update($uarrs, $this->id);
+			}
+			$upgcont		= $ors['upgcont'];
+			if(!isempt($upgcont)){
+				$upgcont	= $this->rock->jm->base64decode($upgcont);
+				$upgcont 	= str_replace(array('{now}','{date}','{adminid}','{admin}','{sm}','{cname}','{cnameid}'),array($this->rock->now,$this->rock->date, $this->adminid, $this->adminname, $sm, $cname, $cnameid), $upgcont);
+				$this->update($upgcont, $this->id);
 			}
 			$this->flowoptmenu($ors, $barrs);
 		}

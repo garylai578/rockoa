@@ -32,7 +32,21 @@ class userinfoClassAction extends Action
 		return array('rows'=>$rows);
 	}
 	
-
+	public function fieldsafters($table, $fid, $val, $id)
+	{
+		$fields = 'sex,ranking,tel,mobile,workdate,email,quitdt';
+		if(contain($fields, $fid)){
+			if($fid=='quitdt'){
+				$dbs = m($table);
+				if(isempt($val)){
+					$dbs->update('`state`=0', "`id`='$id' and `state`=5");
+				}else{
+					$dbs->update('`state`=5', "`id`='$id'");
+				}
+			}
+			m('admin')->update(array($fid=>$val), $id);
+		}
+	}
 
 	
 	public function userinfobeforegeren()

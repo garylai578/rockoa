@@ -57,6 +57,24 @@ class kaoqinClassModel extends Model
 	}
 	
 	/**
+	*	读取某人一天考勤类型状态
+	*/
+	public function getkqztarr($uid, $dt)
+	{
+		$kqzt 	= $this->getkqsj($uid, $dt);
+		$kqsr 	= array(); $xu 	= 0;
+		foreach($kqzt as $k=>$rs){
+			foreach($rs['children'] as $rs1){
+				if(!isset($kqsr[$rs1['name']])){
+					$kqsr[$rs1['name']]='state'.$xu.'';
+					$xu++;
+				}
+			}
+		}
+		return $kqsr;
+	}
+	
+	/**
 	*	是不是工作日
 	*/
 	public function isworkdt($uid, $dt)

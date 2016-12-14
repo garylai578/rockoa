@@ -64,6 +64,9 @@ function loginsubmit(){
 	js.bool		= true;
 	js.ajax(url,data,function(a){
 		if(a.success){
+			get('imglogo').src=a.face;
+			js.setoption('loginface', a.face);
+			js.setoption('uploadmaxsize',a.maxsize);
 			var ltype=js.request('ltype');
 			if(ltype=='1' && history.length>1){
 				history.back();
@@ -71,8 +74,6 @@ function loginsubmit(){
 				js.setmsg('登录成功,跳转中..','green');
 				location.href='?m=index';
 			}
-			get('imglogo').src=a.face;
-			js.setoption('loginface', a.face);
 		}else{
 			js.setmsg(a.msg,'red');
 			form('button').disabled=false;

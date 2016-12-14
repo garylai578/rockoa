@@ -185,34 +185,62 @@ js.decode=function(str){
 	}catch(e){}
 	return arr;
 }
-js.move=function(id,event){
-	var _left=0,_top=0;
-	var obj	= id;
+js.move=function(id,rl){
+	var _left=0,_top=0,_x=0,_right=0,_y=0;
+	var obj	= id;if(!rl)rl='left';
 	if(typeof(id)=='string')obj=get(id);
-	var _Down=function(evt){
+	var _Down=function(e){
 		try{
 			var s='<div id="divmovetemp" style="filter:Alpha(Opacity=0);opacity:0;z-index:99999;width:100%;height:100%;position:absolute;background-color:#000000;left:0px;top:0px;cursor:move"></div>';
 			$('body').prepend(s);
-			evt=window.event||evt;
-			_left=evt.clientX-parseInt(obj.style.left);
-			_top=evt.clientY-parseInt(obj.style.top);
+			_x = e.clientX;_y = e.clientY;_left=parseInt(obj.style.left);_top=parseInt(obj.style.top);_right=parseInt(obj.style.right);
 			document.onselectstart=function(){return false}
-		}catch(e){}		
+		}catch(e1){}		
 	}
-	var _Move=function(evt){
+	var _Move=function(e){
 		try{
 			var c=get('divmovetemp').innerHTML;
-			evt=window.event||evt;
-			obj.style.left=evt.clientX-_left+'px';
-			obj.style.top=evt.clientY-_top+'px';
-		}catch(e){_Down(evt)}
+			var x = e.clientX-_x,y = e.clientY-_y;
+			if(rl=='left')obj.style.left=_left+x+'px';
+			if(rl=='right')obj.style.right=_right-x+'px';
+			obj.style.top=_top+y+'px';
+		}catch(e1){_Down(e)}
 	}
 	var _Up=function(){
-		document.onmousemove="";
-		document.onselectstart=""
+		document.onmousemove='';
+		document.onselectstart='';
 		$('#divmovetemp').remove();	
 	}
-	document.onmousemove=_Move
+	document.onmousemove=_Move;
+	document.onmouseup=_Up;
+}
+js.tanresize=function(id,hid){
+	var _x = 0,_y = 0,_cs=0;
+	var obj	= id,hobj=false;
+	if(typeof(id)=='string')obj=get(id);
+	if(hid)hobj=get(hid);
+	document.onselectstart=function(){return false}
+	var _Move=function(e){
+		var _x1 = e.clientX,_y1=e.clientY;
+		if(_cs==0){_x = _x1;_y = _y1;}
+		var x = _x1 - _x,y = _y1 - _y;
+		var xy = parseInt(obj.style.width);
+		xy+=x;
+		obj.style.width = ''+xy+'px';
+		if(hobj){
+			var xy = parseInt(hobj.style.height);
+			xy+=y;
+			hobj.style.height = ''+xy+'px';
+		}
+		_x = _x1;_y = _y1;
+		_cs++;
+	}
+	var _Up=function(){
+		document.onmousemove='';
+		document.onselectstart='';
+		$('#divmovetemp').remove();	
+	}
+	document.onmousemove=_Move;
 	document.onmouseup=_Up;
 }
 js.setdev=function(val,dev){
@@ -276,18 +304,20 @@ js.apply=function(a,b){
 	return a;
 }
 js.tanbody=function(act,title,w,h,can1){
-	var can	= js.applyIf(can1,{html:'',showfun:function(){},bodystyle:'',guanact:'',titlecls:'',btn:[]});
+	var can	= js.applyIf(can1,{minbtn:false,reheiid:'',resize:false,html:'',zindex:'160',showfun:function(){},onclose:function(){},bodystyle:'',guanact:'',titlecls:'',btn:[]});
+	if(can.mode=='none')can.zindex='95';
 	var l=(winWb()-w-50)*0.5,t=(winHb()-h-50)*0.5;
 	var s	= '';
 	var mid	= ''+act+'_main';
 	$('#'+mid+'').remove();
 	var posta= 'fixed';
 	if(js.path == 'admin')posta='absolute';
-	s+='<div id="'+mid+'" style="position:'+posta+';background-color:#ffffff;left:'+l+'px;width:'+w+'px;top:'+t+'px;z-index:99;box-shadow:0px 0px 10px rgba(0,0,0,0.3);">';
+	s+='<div id="'+mid+'" tanbody="rock" style="position:'+posta+';background-color:#ffffff;left:'+l+'px;width:'+w+'px;top:'+t+'px;z-index:'+can.zindex+';box-shadow:0px 0px 10px rgba(0,0,0,0.3);">';
 	s+='	<div class="title '+can.titlecls+'" style="-moz-user-select:none;-webkit-user-select:none;user-select:none;">';
 	s+='		<table border="0"  width="100%" cellspacing="0" cellpadding="0"><tr>';
 	s+='			<td height="34" style="font-size:14px; font-weight:bold;color:white; padding-left:8px" width="100%" onmousedown="js.move(\''+mid+'\')" id="'+act+'_title">'+title+'</td>';
-	s+='			<td><div onmouseover="this.style.backgroundColor=\'#C64343\'" onmouseout="this.style.backgroundColor=\'\'" style="padding:0px 8px;height:40px;overflow:hidden;cursor:pointer;" onclick="js.tanclose(\''+act+'\',\''+can.guanact+'\')"><div id="'+act+'_spancancel" style="height:16px;overflow:hidden;width:16px;background:url(images/wclose.png);margin-top:12px"></div></div></td>';
+	if(can.minbtn)s+='			<td><div onclick="$(\'#'+mid+'\').hide();" id="'+act+'_minbtn" title="最小化" class="tantbtn">一</div></td>';
+	s+='			<td><div title="关闭" id="'+act+'_spancancel" class="tantbtn" ><div style="height:16px;overflow:hidden;width:16px;background:url(images/wclose.png);margin-top:12px"></div></div></td>';
 	s+='		</tr></table>';
 	s+='	</div>';
 	s+='	<div id="'+act+'_body" style="'+can.bodystyle+'">';
@@ -301,18 +331,29 @@ js.tanbody=function(act,title,w,h,can1){
 	}
 	s+='		<a class="webbtn" id="'+act+'_cancel" onclick="return js.tanclose(\''+act+'\',\''+can.guanact+'\')" >取消</a>';
 	s+='	</div>';
+	if(can.resize)s+='<div onmousedown="js.tanresize(\''+mid+'\',\''+can.reheiid+'\')" id="'+act+'_resizebtn" style="cursor:se-resize" class="tanresize notsel">&nbsp;</div>';
 	s+='</div>';
 	js.xpbody(act,can.mode);
 	$('body').prepend(s);
+	var cso = $('#'+act+'_spancancel');
 	if(can.closed=='none'){
 		$('#'+act+'_cancel').remove();
-		$('#'+act+'_spancancel').parent().remove();
+		cso.remove();
+	}else{
+		cso.click(function(){
+			js.tanclose(act, can.guanact);
+			can.onclose();
+		});
 	}
 	if(can.bbar=='none')$('#'+act+'_bbar').remove();
-	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight;
+	this.tanoffset(act);
+	can.showfun(act);
+}
+js.tanoffset=function(act){
+	var mid=''+act+'_main';
+	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight,l,t;
 	l=(winWb()-lw)*0.5;t=(winHb()-lh-20)*0.5;
 	$('#'+mid+'').css({'left':''+l+'px','top':''+t+'px'});
-	can.showfun(act);
 }
 js.tanclose=function(act, guan){
 	if(!isempt(guan)){
@@ -329,10 +370,11 @@ js.xpbody=function(act,type){
 		return;
 	}
 	if(get('xpbg_bodydds'))return false;
-	var bs='<div id="xpbg_bodydds" xpbody="'+act+'" oncontextmenu="return false" style="position:absolute;display:none;width:100%;height:100%;filter:Alpha(opacity=30);opacity:0.3;left:0px;top:0px;background-color:#000000;z-index:80"></div>';
+	var H	= (document.body.clientHeight<winHb())?winHb()-5:document.body.clientHeight;
+	var W	= document.documentElement.scrollWidth+document.body.scrollLeft;
+	var bs='<div id="xpbg_bodydds" xpbody="'+act+'" oncontextmenu="return false" style="position:absolute;display:none;width:'+W+'px;height:'+H+'px;filter:Alpha(opacity=30);opacity:0.3;left:0px;top:0px;background-color:#000000;z-index:150"></div>';
 	$('body').prepend(bs);	
 	$('#xpbg_bodydds').fadeIn(300);
-	return $('#xpbg_bodydds');
 }
 js.focusval	= '0';
 js.number=function(obj){

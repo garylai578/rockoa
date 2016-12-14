@@ -10,11 +10,11 @@ class gerenClassAction extends Action
 			$where='';
 		}
 		if($key!=''){
-			$where.=" and (`optname` like '%$key%' or filename like '%$key%')";
+			$where.=" and (`optname` like '%$key%' or `filename` like '%$key%' or `mtype`='$key')";
 		}
 		return array(
 			'where' => $where,
-			'fields' => '`id`,fileext,filename,filesizecn,filepath,adddt,optname,downci,ip,web',
+			'fields' => '`id`,fileext,filename,filesizecn,filepath,adddt,optname,downci,ip,web,mtype,mid',
 		);
 	}
 	

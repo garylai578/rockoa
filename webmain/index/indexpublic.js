@@ -38,8 +38,7 @@ function openxiangs(name,num,id,cbal){
 	if(!id)id=0;
 	if(!cbal)cbal='';
 	var url = 'task.php?a=p&num='+num+'&mid='+id+'';
-	if(num.indexOf('?')>-1)url=num;
-	url+='&callback='+cbal+'';
+	if(num.indexOf('?')>-1){url=num;}else{url+='&callback='+cbal+'';}
 	js.winiframe(name,url);
 	return false;
 }
@@ -107,6 +106,7 @@ function optmenuclass(o1,num,id,obj,mname,oi){
 		var uostr= '<div align="left" style="padding:10px"><div id="'+nwsh+'" style="height:60px;overflow:auto" class="input"></div><input style="width:180px" id="'+nwsh+'_input" type="file"></div>';
 		var bts = (d.issm==1)?'必填':'选填';
 		if(lx==1 || lx==9 || lx==10){
+			if(lx==9)uostr='';
 			js.prompt(d.name,'请输入['+d.name+']说明('+bts+')：',function(index, text){
 				if(index=='yes'){
 					if(!text && d.issm==1){

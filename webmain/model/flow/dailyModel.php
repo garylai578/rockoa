@@ -46,6 +46,7 @@ class flow_dailyClassModel extends flowModel
 	
 	protected function flowgetoptmenu($opt)
 	{
+		if($this->uid==$this->adminid)return false;
 		$to = m('log')->isread($this->mtable, $this->id);
 		return $to<=0;
 	}
@@ -92,7 +93,7 @@ class flow_dailyClassModel extends flowModel
 		
 		//全部下属
 		if($lx == 'undall' || $lx == 'undwd'){
-			$where  = 'and '.m('admin')->getdownwheres('uid', $uid, 1); //直属下级
+			$where  = 'and '.m('admin')->getdownwheres('uid', $uid, 0); //全部下属
 			if($lx == 'undwd'){
 				$ydid  	= m('log')->getread('daily', $uid); 
 				$where.=' and id not in('.$ydid.')';

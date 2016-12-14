@@ -99,7 +99,7 @@ class agentModel extends Model
 		foreach($rows as $k=>$rs){
 			$jarr 	= array('id'=>$rs['id']);
 			if(isset($rs['uid']))$jarr['uid'] = $rs['uid'];
-			$rs 	= $this->flow->flowrsreplace($rs);
+			$rs 	= $this->flow->flowrsreplace($rs, 2);
 			foreach($suarr as $f=>$nr){
 				$str  		= $this->rock->reparr($nr, $rs);
 				if($f=='cont')$str = $this->contreplaces($str);
@@ -133,11 +133,11 @@ class agentModel extends Model
 			$a1 = explode('：', $s);
 			if(isset($a1[1]) && $a1[1]==''){
 			}else{
-				$s1.='@'.$s.'';
+				$s1.='$%#'.$s.'';
 			}
 		}
 		if($s1!=''){
-			$s1 = str_replace('@', "\n", substr($s1, 1));
+			$s1 = str_replace('$%#', "\n", substr($s1, 3));
 		}
 		return $s1;
 	}

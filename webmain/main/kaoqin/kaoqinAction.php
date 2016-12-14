@@ -340,7 +340,7 @@ class kaoqinClassAction extends Action
 			$s = 'and id='.$this->adminid.'';
 		}
 		
-		if(!isempt($key))$s.=" and (`name` like '%$key%' or `deptname` like '%$key%')";
+		if(!isempt($key))$s.=" and (`name` like '%$key%' or `deptallname` like '%$key%')";
 		
 		$fields = 'id,name,deptname,ranking,workdate';
 		return array('where'=>$s,'fields'=>$fields,'order'=>'`sort`');
@@ -350,6 +350,13 @@ class kaoqinClassAction extends Action
 		$dtobj 	= c('date');
 		$uids 	= '0';
 		foreach($rows as $k=>$rs)$uids.=','.$rs['id'].'';
+		$farrs	= $columns = array();
+		//获取考勤状态数组{'正常':'state0'}
+		if($rows){
+			$fuid 	= $rows[0]['id'];
+			$farrs 	= m('kaoqin')->getkqztarr($fuid, $this->months.'-01');
+			$columns= $farrs;
+		}
 		
 		$darr	= $this->db->getall("SELECT uid,state,states FROM `[Q]kqanay` where iswork=1 and dt like '$this->months%' and `uid` in($uids)");
 		$sarr 	= array();
@@ -361,7 +368,10 @@ class kaoqinClassAction extends Action
 			if(!isset($sarr[$uid][$state]))$sarr[$uid][$state]=0;
 			$sarr[$uid][$state]++;
 		}
-		$farrs = array('正常'=>'state0','未打卡'=>'state1','迟到'=>'state2','早退'=>'state3','请假'=>'qingjia','加班'=>'jiaban');
+		
+		$farrs['未打卡'] 	= 'weidk';
+		$farrs['请假'] 		= 'qingjia';
+		$farrs['加班'] 		= 'jiaban';
 		
 		$kqarr	= $this->db->getall("select sum(totals)as totals,kind,uid from `[Q]kqinfo` where `status`=1 and `uid` in($uids) and `stime` like '$this->months%' and `kind` in('请假','加班') group by `uid`,`kind`");
 		foreach($kqarr as $k=>$rs){
@@ -383,7 +393,7 @@ class kaoqinClassAction extends Action
 			if($outci==0)$outci='';
 			$rows[$k]['outci'] = $outci;
 		}
-		return array('rows'=>$rows);
+		return array('rows'=>$rows,'columns'=>$columns);
 	}
 	
 	/**
@@ -406,6 +416,7 @@ class kaoqinClassAction extends Action
 				$dkdt 	= $a[1];
 			}
 			if(!isempt($name) && !isempt($dkdt)){
+				$dkdt	 = str_replace('/','-', $dkdt);
 				if(!$dtobj->isdate($dkdt))continue;
 				if(isset($uarr[$name])){
 					$uid = $uarr[$name];
@@ -469,5 +480,13 @@ class kaoqinClassAction extends Action
 		$this->assign('location_x', $location_x);
 		$this->assign('location_y', $location_y);
 		$this->assign('scale', $scale);
+	}
+	
+	//删除打卡记录
+	public function deldkjlAjax()
+	{
+		$sid = $this->post('id');
+		//m('kqdkjl')->delete('id in('.$sid.')');
+		$this->showreturn('');
 	}
 }

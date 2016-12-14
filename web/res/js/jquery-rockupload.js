@@ -9,8 +9,9 @@
 (function ($) {
 
 	function rockupload(opts){
-		var me = this;
-		var opts=js.apply({inputfile:'',uptype:'*',maxsize:20,onchange:function(){},onprogress:function(){},onsuccess:function(){},xu:0,fileallarr:[],autoup:true,
+		var me 		= this;
+		var maxs 	= parseFloat(js.getoption('uploadmaxsize','5'));
+		var opts	= js.apply({inputfile:'',initremove:true,uptype:'*',maxsize:maxs,onchange:function(){},onprogress:function(){},onsuccess:function(){},xu:0,fileallarr:[],autoup:true,
 		onerror:function(){},fileidinput:'fileid',
 		onabort:function(){},
 		allsuccess:function(){}
@@ -18,20 +19,24 @@
 		this._init=function(){
 			for(var a in opts)this[a]=opts[a];
 			if(!this.autoup)return;
-			$('#'+this.inputfile+'').parent().remove();
-			var s='<form style="display:none;height:0px;width:0px" name="form_'+this.inputfile+'"><input type="file" id="'+this.inputfile+'"></form>';
-			$('body').append(s);
+			if(this.initremove){
+				$('#'+this.inputfile+'').parent().remove();
+				var s='<form style="display:none;height:0px;width:0px" name="form_'+this.inputfile+'"><input type="file" id="'+this.inputfile+'"></form>';
+				$('body').append(s);
+			}
 			$('#'+this.inputfile+'').change(function(){
 				me.change(this);
 			});
 		};
 		this.reset=function(){
 			if(!this.autoup)return;
-			document['form_'+this.inputfile+''].reset();
+			var fids = 'form_'+this.inputfile+'';
+			if(document[fids])document[fids].reset();
 		};
-		this.click=function(lx){
+		this.click=function(ars){
 			if(this.upbool)return;
-			if(lx)this.uptype=lx;
+			this.oparams = js.apply({uptype:'*'}, ars);
+			this.uptype=this.oparams.uptype;
 			get(this.inputfile).click();
 		};
 		this.change=function(o1){
@@ -67,6 +72,7 @@
 			if(a.isimg)a.imgviewurl = this.getimgview(o1);
 			a.xu		 = this.xu;
 			a.f 		 = f;
+			for(var i in this.oparams)a[i]=this.oparams[i];
 			this.filearr = a;
 			this.fileallarr.push(a);
 			this.xu++;
@@ -93,8 +99,8 @@
 			}
 			return bo;
 		};
-		this.sendbase64=function(nr){
-			this.filearr={filename:'截图.png',filesize:0,filesizecn:'',isimg:true,fileext:'png'};
+		this.sendbase64=function(nr,ocs){
+			this.filearr=js.apply({filename:'截图.png',filesize:0,filesizecn:'',isimg:true,fileext:'png'}, ocs);
 			this._startup(false, nr);
 		};
 		this.start=function(){
@@ -150,7 +156,7 @@
 			xhr.onreadystatechange = function(){me._statechange(this);};
 			xhr.upload.addEventListener("progress", function(evt){me._onprogress(evt, this);}, false);  
 			xhr.addEventListener("load", function(){me._onsuccess(this);}, false);  
-			xhr.addEventListener("error", function(){me._error(this);}, false); 
+			xhr.addEventListener("error", function(){me._error(false,this);}, false); 
 			if(fs){
 				var fd = new FormData();  
 				fd.append('file', fs); 
@@ -170,14 +176,15 @@
 			this.upbool = false;
 			var bstr 	= o.response;
 			if(bstr.indexOf('id')<0){
-				this.onerror(bstr);
+				this._error(bstr);
 			}else{
 				this.onsuccess(this.filearr,bstr,o);
 			}
 		};
-		this._error=function(xr){
+		this._error=function(ts,xr){
 			this.upbool = false;
-			this.onerror('上传内部错误');
+			if(!ts)ts='上传内部错误';
+			this.onerror(ts);
 		};
 		this._statechange=function(o){
 			

@@ -31,7 +31,7 @@ $(document).ready(function(){
 	
 	<div style="height:40px; background-color:#eeeeee">
 		<div align="right" style="padding:9px">
-			<a class="webbtn" title="快捷键：Alt+C/Esc" onclick="closenowtabs()" >关闭(C)</a>&nbsp; &nbsp; 
+			<a class="webbtn" title="快捷键：Alt+C/Esc" click="toolsclick" tools="close">关闭(C)</a>&nbsp; &nbsp; 
 			<a class="webbtn" title="快捷键：Alt+S" click="toolsclick" tools="send">发送(S)</a><a class="webbtn" style="padding-left:4px;padding-right:4px;border-left:1px #0AA888 solid" click="toolsclick" tools="change">↓</a>
 		</div>
 	</div>

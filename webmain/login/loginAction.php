@@ -32,7 +32,8 @@ class loginClassAction extends ActionNot{
 			if($rempass=='0')$ca_adminpass='';
 			$this->rock->savecookie('ca_adminpass', $ca_adminpass);
 			$barr['success'] = true;
-			$barr['face']  	 = $face;
+			$barr['face'] 	 = $face;
+			$barr['maxsize'] = c('upfile')->getmaxzhao();
 		}else{
 			$barr['success'] = false;
 			$barr['msg'] 	 = $arr;

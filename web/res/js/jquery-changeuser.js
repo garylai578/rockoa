@@ -16,7 +16,6 @@
 		
 		this._init	= function(){
 			for(var i in options)this[i]=options[i];
-			
 			this.oveob = false;
 			if(this.showview!='' && get(this.showview))this.oveob=true;
 			

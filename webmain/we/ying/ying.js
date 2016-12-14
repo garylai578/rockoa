@@ -1,7 +1,3 @@
-js.location = function(url){
-	if(url.indexOf('#')==-1)js.wx.load();
-	location.href = url;
-}
 var myScroll=false,yy={
 	sousoukey:'',
 	resizehei:function(){
@@ -212,6 +208,10 @@ var myScroll=false,yy={
 				}
 			});
 			return;
+		}
+		if(lx==11){
+			var url='index.php?a=lum&m=input&d=flow&num='+d.modenum+'&mid='+d.mid+'&show=we';
+			js.location(url);return;
 		}
 		this.showmenuclicks(d,'');
 	},

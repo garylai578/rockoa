@@ -150,4 +150,21 @@ return array(
 			echo '保存失败无法写入：'.$_confpath.'';
 		}
 	}
+	
+	public function logbefore($table)
+	{
+		$key = $this->post('key');
+		$s   = '';
+		if($key != ''){
+			$s = "and (`type`='$key' or `optname` like '$key%' or `remark` like '$key%' or `web`='$key' or `ip`='$key')";
+		}
+		return $s;
+	}
+	
+	public function dellogAjax()
+	{
+		$id = $this->post('id');
+		m('log')->delete('id in('.$id.')');
+		backmsg();
+	}
 }

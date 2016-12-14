@@ -59,7 +59,7 @@ class flow_gongClassModel extends flowModel
 		if(!isempt($key))$s.=" and (`title` like '%$key%' or `typename`='$key')";
 		
 		return array(
-			'where' => $s,
+			'where' => 'and `status`=1 '.$s,
 			'order' => 'optdt desc',
 			'fields'=> 'id,typename,optdt,title,optname,zuozhe,indate,recename'
 		);

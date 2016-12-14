@@ -27,7 +27,7 @@ function initbody(){
 		fid=arr[i].fields;
 		if(arr[i].islu=='1' && arr[i].iszb=='0'){
 			if(arr[i].fieldstype=='checkboxall')fid+='[]';
-			if(!form(fid)){
+			if(fid.indexOf('temp_')!=0 && !form(fid)){
 				nfid+='\n('+fid+'.'+arr[i].name+')';
 			}
 			if(arr[i].fieldstype=='htmlediter')c.htmlediter(arr[i].fields);
@@ -171,6 +171,7 @@ var c={
 			isedit=1;
 			$('#AltS').show();
 			c.initdatelx();
+			c.initinput();
 			initbodys(smid);
 		}else{
 			js.setmsg('加载数据中...');
@@ -180,6 +181,31 @@ var c={
 				js.setmsg('error:内部错误,可F12调试');
 			});
 		}
+	},
+	initinput:function(){
+		var o,o1,sna,i;
+		var o = $('div[id^="filed_"]');
+		if(isedit==1)o.show();
+		for(i=0;i<o.length;i++){
+			o1 = o[i];sna= $(o1).attr('tnam');
+			if(isedit==1){
+				$.rockupload({
+					'inputfile':''+o1.id+'_inp',
+					'initremove':false,maxsize:1,
+					'oparams':{sname:sna},'uptype':'image',
+					'onsuccess':function(f,gstr){
+						var sna= f.sname,d=js.decode(gstr);
+						get('imgview_'+sna+'').src = d.filepath;
+						form(sna).value=d.filepath;
+					}
+				});
+			}
+			var val = form(sna).value;
+			if(val)get('imgview_'+sna+'').src=val;
+		}
+	},
+	showviews:function(o1){
+		$.imgview({'url':o1.src,'ismobile':ismobile==1});
 	},
 	initdatelx:function(){
 		
@@ -193,7 +219,7 @@ var c={
 			for(i=0;i<len;i++){
 				fid=arr[i].fields;
 				flx=arr[i].fieldstype;
-				if(arr[i].islu=='1' && arr[i].iszb=='0'){
+				if(arr[i].islu=='1' && arr[i].iszb=='0' && fid.indexOf('temp_')!=0){
 					val=da.data[fid];
 					if(val==null)val='';
 					if(flx=='checkboxall'){
@@ -231,6 +257,7 @@ var c={
 					}
 				}
 			}
+			c.initinput();
 			initbodys(form('id').value);
 			if(isedit==0){
 				this.formdisabled();

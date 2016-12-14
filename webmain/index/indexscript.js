@@ -251,14 +251,13 @@ function addtabs(a){
 		ura	= url.split(','),
 		dir	= ura[0],
 		mode= ura[1];
-	url =''+PROJECT+'/'+dir+'/'+mode+'/rock_'+mode+'';
+	url =''+dir+'/'+mode+'/rock_'+mode+'';
 	if(ura[2]){
 		if(ura[2].indexOf('=')<0){
 			oi=3;
 			url+='_'+ura[2]+'';
 		}
 	}
-	url+='.shtml?rnd='+Math.random()+'';
 	var urlpms= '';
 	for(i=oi;i<ura.length;i++){
 		var nus	= ura[i].split('=');
@@ -270,7 +269,7 @@ function addtabs(a){
 	
 	objcont.append('<div temp="content" id="content_'+num+'"></div>');
 	$.ajax({
-		url:url,
+		url:'?m=index&a=getshtml&surl='+jm.base64encode(url)+'',
 		type:'get',
 		success: function(da){
 			$('#mainloaddiv').remove();

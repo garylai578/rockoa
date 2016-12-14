@@ -58,8 +58,8 @@ function initbody(){
 			return im.index<3;
 		},
 		ondrayrlend:function(lx){
-			if(lx<-60)im.changetab(im.index+1);
-			if(lx>60)im.changetab(im.index-1);
+			if(lx<-100)im.changetab(im.index+1);
+			if(lx>100)im.changetab(im.index-1);
 		}
 	});
 	
@@ -68,10 +68,6 @@ function initbody(){
 	if(!site)site=0;
 	im.changetab(site);
 	}catch(e){}
-}
-js.location = function(url){
-	js.wx.load();
-	location.href = url;
 }
 var agentarr={};
 var im={
@@ -428,6 +424,17 @@ var im={
 		js.ajax('indexreim','changewxtx', {tx:tx},function(){
 			
 		},'none',false,false,'get');
+	},
+	tongbuface:function(){
+		js.ajax('indexreim','tongbuface', false,function(ret){
+			var fac = ret.face;
+			if(fac){
+				adminface = fac;
+				js.setoption('adminface',fac);
+				get('myface').src=adminface+'?'+Math.random()+'';
+			}
+			js.msg('success','同步成功');
+		},'wait');
 	}
 };
 </script>
@@ -519,6 +526,15 @@ var im={
 			</a>
 		</div>
 		
+		<div class="weui_cells weui_cells_access">
+			<div onclick="im.tongbuface()" class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					同步微信头像
+				</div>
+				<span class="weui_cell_ft"></span>
+			</div>
+		</div>
+		
 		<div class="weui_cells weui_cells_checkbox">
 			<label class="weui_cell weui_check_label" for="wxtxchecked">
 				<div class="weui_cell_hd">
@@ -535,6 +551,7 @@ var im={
 		<div class="weui_btn_area">
 			<input class="weui_btn weui_btn_warn" type="button" onclick="im.loginout()" value="退出登录">
 		</div>
+		<div style="height:10px"></div>
 	</div>
 </div>
 

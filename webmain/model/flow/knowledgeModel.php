@@ -5,6 +5,10 @@ class flow_knowledgeClassModel extends flowModel
 		$this->rs['content'] = c('html')->replace($this->rs['content']);
 	}
 	
+	protected function flowdatalog($arr)
+	{
+		return array('title'=>'');
+	}
 	
 	protected function flowbillwhere($uid, $lx)
 	{

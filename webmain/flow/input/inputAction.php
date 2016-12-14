@@ -68,6 +68,7 @@ class inputAction extends ActionNot
 		$uaarr = $farrs = array();
 		foreach($fieldsarr as $k=>$rs){
 			$fid = $rs['fields'];
+			if(substr($fid, 0, 5)=='temp_')continue;
 			$val = $this->post($fid);
 			if($rs['isbt']==1&&$this->isempt($val))$this->backmsg(''.$rs['name'].'不能为空');
 			$uaarr[$fid] = $val;
@@ -109,12 +110,13 @@ class inputAction extends ActionNot
 			$uaarr['status']= '0';
 		}else{
 			if(in_array('status', $allfields))$uaarr['status'] = (int)$this->post('status', '1');
-			if(in_array('isturn', $allfields))$uaarr['isturn'] = 1;
+			if(in_array('isturn', $allfields))$uaarr['isturn'] = (int)$this->post('isturn', '1');
 		}
 		
 		//保存条件的判断
 		foreach($fieldsarr as $k=>$rs){
-			$ss  = $this->flow->savedatastr($uaarr[$rs['fields']], $rs, $uaarr);
+			$ss  = '';
+			if(isset($uaarr[$rs['fields']]))$ss = $this->flow->savedatastr($uaarr[$rs['fields']], $rs, $uaarr);
 			if($ss!='')$this->backmsg($ss);
 		}
 		
@@ -137,7 +139,8 @@ class inputAction extends ActionNot
 		if($id==0)$id = $this->db->insert_id();
 		m('file')->addfile($this->post('fileid'), $table, $id);
 		
-		$this->savesubtable($id,'0', $addbo);//保存子表
+		$this->savesubtable($id, 0, $addbo);//保存第一个多行表
+		$this->savesubtable($id, 1, $addbo);//保存第二个多行表
 		
 		//保存后处理
 		$this->saveafter($table,$uaarr, $id, $addbo);
@@ -177,13 +180,19 @@ class inputAction extends ActionNot
 		return $arr;
 	}
 	
+	//多行子表的保存
 	private function savesubtable($mid, $xu, $addbo)
 	{
+		$tablesa= $this->moders['tables'];
+		if(isempt($tablesa))return;
+		$tablesa= explode(',', $tablesa);
+		if(!isset($tablesa[$xu]))return;
+		$tables	= $tablesa[$xu];
+		if(isempt($tables))return;
+		
 		$data 	= $this->getsubtabledata($xu);
 		$len 	= count($data);
 		if($len<=0)return;
-		$table		= $this->moders['table'];
-		$tables		= $this->moders['tables'];if(isempt($tables))$tables='items';
 		$idss		= '0';
 		$dbs 		= m($tables);
 		

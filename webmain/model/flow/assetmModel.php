@@ -14,6 +14,7 @@ class flow_assetmClassModel extends flowModel
 			$b 			 = $this->statearr[$rs['state']];
 			$rs['state'] = '<font color="'.$b[0].'">'.$b[1].'</font>';
 		}
+		if(isset($rs['fengmian']) && !isempt($rs['fengmian']))$rs['fengmian'] = '<img src="'.$rs['fengmian'].'" height="100">';
 		return $rs;
 	}
 

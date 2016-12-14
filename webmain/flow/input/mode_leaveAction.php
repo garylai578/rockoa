@@ -16,5 +16,18 @@ class mode_leaveClassAction extends inputAction{
 		$sj 	= ceil($sj);
 		$this->returnjson(array($sj, ''));
 	}
+	
+
+	
+	//统计剩余时间
+	public function getshentime()
+	{
+		$mid = (int)$this->get('mid');
+		$kqm = m('kaoqin');
+		$njs = $kqm->getqjsytime($this->adminid, '年假', '', $mid);
+		$tx  = $kqm->getqjsytime($this->adminid, '调休', '', $mid);
+		$str = '年假('.$njs.'小时)，可调休('.$tx.'小时)';
+		return $str;
+	}
 }	
 			

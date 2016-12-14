@@ -29,12 +29,22 @@ class flow_waichuClassModel extends flowModel
 	protected function flowbillwhere($uid, $lx)
 	{
 		$dt 	= $this->rock->date;
-		$where 	= "`uid`=$uid and `intime`>'$dt 00:00:00' and `outtime`<'$dt 23:59:59'";
+		$key 	= $this->rock->post('key');
+		$month 	= $this->rock->post('month');
+		$where 	= "a.`uid`=$uid and a.`intime`>'$dt 00:00:00' and a.`outtime`<'$dt 23:59:59'";
 		if($lx=='myall'){
-			$where 	= "`uid`=$uid";
+			$where 	= "a.`uid`=$uid";
 		}
+		if($lx=='all'){
+			$where = '1=1';
+		}
+		if($key!='')$where.= m('admin')->getkeywhere($key, 'b.');
+		if($month !='')$where.=" and a.`outtime` like '$month%'";
 		return array(
-			'where' => 'and '.$where
+			'where' => 'and '.$where,
+			'fields'=> 'a.*,b.name,b.deptname,b.ranking',
+			'table'	=> '`[Q]kqout` a left join `[Q]admin` b on a.`uid`=b.`id`',
+			'order' => 'a.`id` desc'
 		);
 	}
 }

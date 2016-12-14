@@ -500,7 +500,7 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		$id = (int)$this->post('id','0');
 		$mrs = m('flow_set')->getone($id);
 		if(!$mrs)return;
-		if($mrs['type']=='系统')return;
+		if($mrs['type']=='系统' || $mrs['num']=='gong')return;
 		$table = $mrs['table'];
 		m('flow_bill')->delete("`modeid`='$id'");
 		$where = $mrs['where'];
@@ -518,6 +518,12 @@ class mode_'.$modenum.'ClassAction extends inputAction{
 		}
 		m($table)->delete('1=1 '.$where.'');
 		m('flow_set')->delete("`id`='$id'");
+		m('flow_course')->delete("`setid`='$id'");
+		m('flow_element')->delete("`mid`='$id'");
+		m('flow_extent')->delete("`modeid`='$id'");
+		m('flow_checks')->delete("`modeid`='$id'");
+		m('flow_where')->delete("`setid`='$id'");
+		m('flow_menu')->delete("`setid`='$id'");
 		$this->db->query("alter table `[Q]$table` AUTO_INCREMENT=1");
 	}
 }

@@ -59,7 +59,7 @@ class indexClassAction extends Action{
 	{
 		$pid 	= $this->get('pid');
 		$this->menuwheres();
-		$this->addmenu = m('menu')->getall("`status`=1 $this->menuwhere order by `sort`",'`id`,`num`,`url`,`icons`,`name`,`pid`');
+		$this->addmenu = m('menu')->getall("`status`=1 $this->menuwhere order by `sort`,`id`",'`id`,`num`,`url`,`icons`,`name`,`pid`');
 		$arr	= $this->getmenu($pid,0);
 		$this->returnjson($arr);
 	}
@@ -141,5 +141,18 @@ class indexClassAction extends Action{
 		$url 	= $this->get('url');
 		if($url=='')exit('无效请求');
 		$this->defaultAction();
+	}
+	
+	/**
+	*	获取模版文件
+	*/
+	public function getshtmlAction()
+	{
+		$surl = $this->jm->base64decode($this->get('surl'));
+		if(isempt($surl))exit('not found');
+		$file = ''.P.'/'.$surl.'.php';
+		if(!file_exists($file))$file = ''.P.'/'.$surl.'.shtml';
+		if(!file_exists($file))exit('404 not found '.$surl.'');
+		$this->displayfile = $file;
 	}
 }

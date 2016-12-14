@@ -53,10 +53,10 @@ class flow_custfinaClassModel extends flowModel
 		
 		//下属
 		if($lxs=='downskd'){
-			$where = m('admin')->getdownwheres('uid', $uid, 1).'  and `type`=0';
+			$where = m('admin')->getdownwheres('uid', $uid, 0).'  and `type`=0';
 		}
 		if($lxs=='downfkd'){
-			$where = m('admin')->getdownwheres('uid', $uid, 1).'  and `type`=1';
+			$where = m('admin')->getdownwheres('uid', $uid, 0).'  and `type`=1';
 		}
 		
 		if($lx=='yi'){

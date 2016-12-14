@@ -36,8 +36,13 @@ class flowbillClassModel extends Model
 			$where	= $this->rock->dbinstr('allcheckid', $uid);
 		}
 		
-		//我直属下级申请
+		//我全部下级申请
 		if($lx=='daiban_myxia'){
+			$where 	= m('admin')->getdownwheres('uid', $uid, 0);
+		}
+		
+		//我直属下级申请
+		if($lx=='daiban_mydown'){
 			$where 	= m('admin')->getdownwheres('uid', $uid, 1);
 		}
 		

@@ -13,6 +13,7 @@ class totalsClassModel extends Model
 		$arr['daiban']	= $bidb->daibanshu($uid);
 		$arr['applywtg']= $bidb->applymywgt($uid);
 		$arr['workwwc']	= m('work')->getwwctotals($uid);
+		$arr['email']	= m('emailm')->wdtotal($uid);
 		return $arr;
 	}
 }

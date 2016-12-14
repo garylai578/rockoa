@@ -1,6 +1,13 @@
 <?php
 class extentClassAction extends Action
 {
+	public function beforeextentuser($table)
+	{
+		return array(
+			'where' => 'and `status`=1',
+			'fields'=> '`id`,`name`,`user`,`deptname`'
+		);
+	}
 
 	/**
 		保存

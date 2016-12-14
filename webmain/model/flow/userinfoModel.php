@@ -20,12 +20,14 @@ class flow_userinfoClassModel extends flowModel
 	{
 		$s 		= '';
 		$key 	= $this->rock->post('key');
+		$state 	= $this->rock->post('state');
 		if($key!=''){
 			$s = " and (`name` like '%$key%' or `ranking` like '%$key%' or `deptname` like '%$key%') ";
 		}
+		if($state!='')$s.=" and `state`='$state'";
 		return array(
 			'where'	=> $s,
-			'fields'=> 'id,name,deptname,ranking,state,tel,sex,mobile,workdate,quitdt,positivedt,birtype'
+			'fields'=> 'id,name,deptname,ranking,state,tel,sex,mobile,workdate,quitdt,positivedt,birtype,num'
 		);
 	}
 }

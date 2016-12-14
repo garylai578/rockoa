@@ -1,6 +1,9 @@
 <?php 
 class indexreimClassAction extends apiAction
 {
+	/**
+	*	PC客户端首页读取
+	*/
 	public function indexinitAction()
 	{
 		$viewobj 	= m('view');
@@ -31,6 +34,9 @@ class indexreimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	手机网页版读取
+	*/
 	public function mwebinitAction()
 	{
 		$dbs 		= m('reim');
@@ -83,7 +89,17 @@ class indexreimClassAction extends apiAction
 	{
 		$arr = m('admin')->getone($this->adminid,'`id`,`deptallname`,`ranking`,`face`,`name`');
 		if(!$arr)$this->showreturn('','not user', 201);
-		if(isempt($arr['face']))$arr['face']='images/notface.png';
+		if(isempt($arr['face']))$arr['face']='images/noface.png';
 		$this->showreturn($arr);
+	}
+	
+	//同步微信上头像
+	public function tongbufaceAction()
+	{
+		$reim = m('reim');
+		if(!$reim->isanwx())$this->showreturn('','没安装微信企业号',201);
+		$barr 	= m('weixin:user')->anayface($this->userrs['user'], true);
+		if($barr['errcode'] != 0)$this->showreturn('',$barr['msg'],202);
+		$this->showreturn($barr);
 	}
 }

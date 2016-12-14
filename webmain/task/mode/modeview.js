@@ -15,6 +15,10 @@ function initbody(){
 function showchayue(opt, st){
 	alert('总查阅:'+st+'次\n最后查阅：'+opt+'');
 }
+function geturlact(act){
+	var url=js.getajaxurl(act,'mode_'+modenum+'|input','flow');
+	return url;
+}
 function check(o1){
 	var da = {'sm':form('check_explain').value,'mid':mid,'modenum':modenum,'zt':_getaolvw('check_status')};
 	if(da.zt==''){js.setmsg('请选择处理动作');return;}if(da.zt=='2'&&isempt(da.sm)){js.setmsg('此动作必须填写说明');return;}

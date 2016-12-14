@@ -6,7 +6,7 @@ agentobj.word.initagent = function(){
 		typeid:0,
 		init:function(){
 			c.getfile(0);
-			c.upobj = new rockupload({
+			c.upobj = $.rockupload({
 				'inputfile' : 'wordupfile',
 				onchange:function(a){
 					c.onchange(a);
@@ -16,6 +16,10 @@ agentobj.word.initagent = function(){
 				},
 				onsuccess:function(a,str){
 					c.onsuccess(a,str);
+				},
+				onerror:function(str){
+					js.msg('msg', str);
+					$('#progresscls_hehehehsss').remove();
 				}
 			});
 			me.disabledscroll();
@@ -23,7 +27,7 @@ agentobj.word.initagent = function(){
 		},
 		onchange:function(a){
 			$('#progresscls_hehehehsss').remove();
-			me.showobj.append('<div id="progresscls_hehehehsss" style="position:absolute;bottom:0px;height:20px" class="progresscls"><div  id="progresscls_heheheh" style="height:20px" class="progressclssse"></div><div class="progressclstext"  id="progresstext_heheheh" style="height:20px;line-height:20px">'+a.filename+'(0%)</div></div>');
+			me.showobj.append('<div id="progresscls_hehehehsss" style="position:absolute;bottom:3px;height:30px" class="progresscls"><div  id="progresscls_heheheh" style="height:30px" class="progressclssse"></div><div class="progressclstext"  id="progresstext_heheheh" style="height:30px;line-height:30px">'+a.filename+'(0%)</div></div>');
 		},
 		onprogress:function(a,per){
 			$('#progresscls_heheheh').css('width',''+per+'%');

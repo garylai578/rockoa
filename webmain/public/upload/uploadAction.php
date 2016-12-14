@@ -14,7 +14,7 @@ class uploadClassAction extends Action{
 		$params['upkey'] 		= $this->get('upkey');
 		$params['uptype'] 		= $this->get('uptype','*');
 		$params['thumbtype'] 	= $this->get('thumbtype','0');
-		$params['maxsize'] 		= (int)$this->get('maxsize', ini_get('upload_max_filesize'));
+		$params['maxsize'] 		= (int)$this->get('maxsize', c('upfile')->getmaxzhao());
 		$this->title 			= $this->get('title','文件上传');
 		$this->assign('params', $params);
 		$this->assign('callback', $params['callback']);

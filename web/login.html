@@ -86,6 +86,9 @@ function loginsuccess(a){
 	js.setoption('admintoken',a.token);
 	js.setoption('systemtitle',a.title);
 	js.setoption('systemlogo',a.weblogo);
+	js.setoption('uploadmaxsize',a.maxsize);
+	js.location('webos.html');
+	return;
 	if(nwjsgui){
 		js.location('mainnw.html?rnd='+js.getrand()+'');
 	}else{

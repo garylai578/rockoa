@@ -12,11 +12,11 @@ class customerClassAction extends Action
 			$where=' and `id`='.$uid.'';
 		}
 		if($lx=='down'){
-			$s 		= m('admin')->getdownwheres('id', $uid, 1);
+			$s 		= m('admin')->getdownwheres('id', $uid, 0);
 			$where 	=' and ('.$s.' or `id`='.$uid.')';
 		}
 		if($key!=''){
-			$where .= " and (`name` like '%$key%' or `user` like '%$key%' or `ranking` like '%$key%' or `deptallname` like '%$key%') ";
+			$where .= m('admin')->getkeywhere($key);
 		}
 		return array(
 			'fields'=> 'id,name,deptname',
@@ -87,5 +87,26 @@ class customerClassAction extends Action
 	public function retotalAjax()
 	{
 		m('crm')->custtotal();
+	}
+	
+	
+	//批量添加客户
+	public function addplcustAjax()
+	{
+		$rows  	= c('html')->importdata('type,name,unitname,laiyuan,linkname,tel,mobile,email,address','type,name');
+		$oi 	= 0;
+		$db 	= m('customer');
+		foreach($rows as $k=>$rs){
+			$rs['adddt']	= $this->now;
+			$rs['optdt']	= $this->now;
+			$rs['status']	= 1;
+			$rs['uid']		= $this->adminid;
+			$rs['createid']		= $this->adminid;
+			$rs['optname']		= $this->adminname;
+			$rs['createname']	= $this->adminname;
+			$db->insert($rs);
+			$oi++;
+		}
+		backmsg('','成功导入'.$oi.'条数据');
 	}
 }

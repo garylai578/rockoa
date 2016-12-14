@@ -1,10 +1,11 @@
-var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='';
+var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='',ISDEMO=false;
 var windows	= null,ismobile=0;
 function initbody(){}
 function bodyunload(){}
 function globalbody(){}
 $(document).ready(function(){
 	$(window).scroll(js.scrolla);
+	HOST = js.gethost();
 	adminid=js.request('adminid');
 	token=js.request('token');
 	globalbody();
@@ -50,6 +51,12 @@ js.getcan = function(i,dev){
 	if(a[i])val=a[i];
 	if(!val)val=dev;
 	return val;
+}
+js.gethost=function(){
+	var url = location.href,sau='';
+	try{sau = url.split('//')[1].split('/')[0];}catch(e){}
+	if(sau.indexOf('xh829.com')>0)ISDEMO=true;
+	return sau;
 }
 function winHb(){
 	var winH=(!isIE)?window.innerHeight:document.documentElement.offsetHeight;
@@ -796,4 +803,10 @@ js.importjs=function(url,fun){
 	}
 	document.getElementsByTagName('head')[0].appendChild(scr);
 	return false;	
+}
+
+js.replacecn=function(o1){
+	var  val = strreplace(o1.value);
+	val		 = val.replace(/[\u4e00-\u9fa5]/g,'');
+	o1.value =val;
 }

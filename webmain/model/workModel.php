@@ -5,7 +5,7 @@ class workClassModel extends Model
 	public function getwwctotals($uid)
 	{
 		$s 	= $this->rock->dbinstr('distid', $uid);
-		$to	= $this->rows('state in(0,2) and '.$s.'');
+		$to	= $this->rows('`status`=1 and `state` in(0,2) and '.$s.'');
 		return $to;
 	}
 }

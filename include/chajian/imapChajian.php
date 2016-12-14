@@ -1,8 +1,35 @@
 <?php 
 /**
 *	imap 收邮件扩展
+
+	imap_search 使用返回Id
+	http://php.net/manual/en/function.imap-search.php
+	ALL	返回所有合乎标准的信件
+	ANSWERED	信件有配置 \\ANSWERED 标志者
+	BCC "字符串"	Bcc 栏中有指定 "字符串" 的信件
+	BEFORE "日期"	指定 "日期" 以前的信件
+	BODY "字符串"	内文字段中有指定 "字符串" 的信件
+	CC "字符串"	Cc 栏中有指定 "字符串" 的信件
+	DELETED	合乎已删除的信件
+	FLAGGED	信件有配置 \\FLAGGED 标志者
+	FROM "字符串"	From 栏中有指定 "字符串" 的信件
+	KEYWORD "字符串"	关键字为指定 "字符串" 者
+	NEW	新的信件
+	OLD	旧的信件
+	ON "日期"	指定 "日期" 的信件
+	RECENT	信件有配置 \\RECENT 标志者
+	SEEN	信件有配置 \\SEEN 标志者
+	SINCE "日期"	指定 "日期" 之后的信件
+	SUBJECT "字符串"	Subject 栏中有指定 "字符串" 的信件
+	TEXT "字符串"	Text 栏中有指定 "字符串" 的信件
+	TO "字符串"	To 栏中有指定 "字符串" 的信件
+	UNANSWERED	未回应的信件
+	UNDELETED	未删除的信件
+	UNFLAGGED	未配置标志的信件
+	UNKEYWORD "字符串"	未配置关键 "字符串" 的信件
+	UNSEEN	未读取的信件
 */
-set_time_limit(1800);
+
 class imapChajian extends Chajian
 {
 	private $supportbool = true;
@@ -18,22 +45,39 @@ class imapChajian extends Chajian
 		return function_exists('imap_open');
 	}
 	
-	public function receemail()
+	
+	/**
+	*	读取某日期后的邮件
+	*	@params $link 服务器
+	*	@params $user 邮箱
+	*	@params $pass 邮箱密码
+	*	@params $time 时间戳，默认7天前的
+	*/
+	public function receemail($link, $user, $pass, $time=0)
 	{
-		if(!$this->supportbool)exit('系统不支持imap收邮件扩展');
+		if(isempt($link))return '未设置收邮件imap服务器';
+		if(isempt($user))return '用户未设置邮箱';
+		if(isempt($pass))return '邮箱['.$user.']未设置密码';
 		
-		$mailServer	= "imap.exmail.qq.com"; //IMAP主机
-		$mailLink	= "{{$mailServer}:143}INBOX" ; //imagp连接地址：不同主机地址不同
-		$mailUser 	= ''; //邮箱用户名
-		$mailPass 	= ''; //邮箱密码
-
-		$this->marubox 		= imap_open($mailLink,$mailUser,$mailPass); //开启信箱imap_open
-		if(!$this->marubox)exit('不能连接收件服务器');
-		//$wdboxarr 			= imap_search($this->marubox, 'UNSEEN');//未读
-		//$wdboxarr 			= imap_search($this->marubox, "SINCE ");//指定日期之后
-		
-		//print_r($wdboxarr);exit;
-		
+		if(!$this->supportbool)return '系统未开启imap收邮件扩展';
+		$this->marubox 			= @imap_open($link,$user,$pass);
+		$this->struck_tearr		= array();
+		if(!$this->marubox)return '不能连接到['.$link.']可能帐号密码有错';
+		if($time == 0)$time		= time() - 7*24*3600;
+		$ondt 					= date('j M Y', $time);
+		$searcharr 				= imap_search($this->marubox, 'SINCE "'.$ondt.'"');//指定日期之后
+		$rows 					= array();
+		//return $searcharr;
+		if($searcharr)foreach($searcharr as $k=>$i){
+			$headers 	= $this->getheader($i);
+			$body 		= $this->getBody($i);
+			$headers['body']	= $body;
+			$headers['num']		= $i;
+			$headers['attach']	= $this->getattach($i);
+			$rows[] = $headers;
+		}
+		imap_close($this->marubox, CL_EXPUNGE);
+		return $rows;
 		$totalrows 	= imap_num_msg($this->marubox); //取得信件数
 		$rows 		= array();
 		for ($i=1;$i<=$totalrows;$i++){
@@ -41,11 +85,78 @@ class imapChajian extends Chajian
 			$body 		= $this->getBody($i); 	//获取信件正文
 			$headers['body']	= $body;
 			$headers['num']		= $i;
+			$headers['attach']	= $this->getattach($i);
 			$rows[] = $headers;
 		}
 		imap_close($this->marubox, CL_EXPUNGE);
-		
 		return $rows;
+	}
+	
+	/**
+	*	下载附件
+	*/
+	public function downattach($link, $user, $pass, $num, $key)
+	{
+		
+	}
+	
+	private function getfetchstructure($i)
+	{
+		if(!isset($this->struck_tearr[$i])){
+			$struck = imap_fetchstructure($this->marubox,$i);
+		}else{
+			$struck = $this->struck_tearr[$i];
+		}
+		return $struck;
+	}
+	
+	/**
+	*	获取附件
+	*/
+	private function getattach($i)
+	{
+		$struck = $this->getfetchstructure($i);
+		$arr 	= array();
+		if($struck && isset($struck->parts))foreach($struck->parts as $key=>$val){
+			if($val->subtype=='OCTET-STREAM'){
+				$arr[] = array(
+					'filename' => $val->dparameters[0]->value,
+					'filesize' => $val->bytes,
+					'encoding' => $val->encoding,
+					'filekey'  => $key
+				);
+			}
+		}
+		return $arr;
+	}
+	
+	/**
+	*	附件内容读取，需要额外读取
+	*/
+	private function getattachcont($i, $key, $encoding)
+	{
+		$message = imap_fetchbody($this->marubox, $i, $key + 1);
+		switch ($encoding) {
+			case 0:
+				$message = imap_8bit($message);
+				break;
+			case 1:
+				$message = imap_8bit($message);
+				break;
+			case 2:
+				$message = imap_binary($message);
+				break;
+			case 3:
+				$message = imap_base64($message);
+				break;
+			case 4:
+				$message = quoted_printable_decode($message);
+				break;
+			case 5:
+				$message = $message;
+				break;
+		}
+		return $message;
 	}
 	
 	/**
@@ -141,14 +252,14 @@ class imapChajian extends Chajian
 	
 	private function get_part($stream, $msg_number, $mime_type, $structure = false, $part_number = false) { //Get Part Of Message Internal Private Use  
         if (!$structure) {  
-            $structure = imap_fetchstructure($stream, $msg_number);  
+            $structure = $this->getfetchstructure($msg_number);; 
         }  
         if ($structure) {  
             if ($mime_type == $this->get_mime_type($structure)) {  
                 if (!$part_number) {  
                     $part_number = "1";  
                 }  
-                $text = imap_fetchbody($stream, $msg_number, $part_number);  
+                $text = imap_fetchbody($stream, $msg_number, $part_number); 
                 if ($structure->encoding == 3) {  
                     return imap_base64($text);  
                 } else if ($structure->encoding == 4) {  

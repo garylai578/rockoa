@@ -148,7 +148,7 @@ class Action extends mainAction
 		}else{
 			$aid	= explode(',', $id);
 			foreach($aid as $mid){
-				$msg 	= m('flow')->opt('deletebill', $modenum, $mid, '');
+				$msg 	= m('flow')->deletebill($modenum, $mid, '');
 				if($msg != 'ok')$this->showreturn('', $msg, 201);
 			}
 		}

@@ -15,7 +15,7 @@ class agent_gongClassModel extends agentModel
 	private function getwdtotal($uid)
 	{
 		$ydid 	= m('log')->getread('infor', $uid);
-		$where	= "id not in($ydid)";
+		$where	= "id not in($ydid) and `status`=1";
 		$meswh	= m('admin')->getjoinstr('receid', $uid);
 		$where .= $meswh;
 		$stotal	= m('infor')->rows($where);

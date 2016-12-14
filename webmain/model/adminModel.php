@@ -374,7 +374,7 @@ class adminClassModel extends Model
 	public function updateuserinfo($whe='')
 	{
 		$db 	= m('userinfo');
-		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id where a.id>0 '.$whe.' ');
+		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings,b.num as nums,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt,a.num from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id where a.id>0 '.$whe.' ');
 		foreach($rows as $k=>$rs){
 			$uparr = array(
 				'id' 		=> $rs['id'],
@@ -386,7 +386,8 @@ class adminClassModel extends Model
 				'mobile' 	=> $rs['mobile'],
 				'email' 	=> $rs['email'],
 				'workdate' 	=> $rs['workdate'],
-				'quitdt' 	=> $rs['quitdt']
+				'quitdt' 	=> $rs['quitdt'],
+				'num' 		=> $rs['num'],
 			);
 			if(isempt($rs['ids'])){
 				$db->insert($uparr);
@@ -440,5 +441,14 @@ class adminClassModel extends Model
 			$urs	= $this->emailtoursarr[$key];
 		}
 		return $urs;
+	}
+	
+	/**
+	*	关键词搜索的
+	*/
+	public function getkeywhere($key, $qz='', $ots='')
+	{
+		$where = " and ($qz`name` like '%$key%' or $qz`user` like '%$key%' or $qz`deptallname` like '%$key%' or $qz`ranking` like '%$key%' or $qz`pingyin` like '$key%' $ots)";
+		return $where;
 	}
 }

@@ -80,6 +80,7 @@ function loginsuccess(d){
 	js.setoption('deptallname',d.deptallname);
 	js.setoption('ranking',d.ranking);
 	js.setoption('adminid',d.uid);
+	js.setoption('uploadmaxsize',d.maxsize);
 	if(js.request('ltype')=='1'){
 		history.back();
 	}else{

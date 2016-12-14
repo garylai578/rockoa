@@ -290,9 +290,11 @@ class reimClassModel extends Model
 	public function getagent($uid=0, $whe='', $pid=0)
 	{
 		if($uid==0)$uid = $this->adminid;
+		$yylx	= '2';
+		if($this->rock->get('cfrom')=='reim')$yylx='1';
 		$where	= m('admin')->getjoinstr('receid', $this->adminid);
 		if($whe=='')$whe=' and `pid`='.$pid.'';
-		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 $where $whe",'`id`,`name`,`url`,`face`,`num`,`pid`,`iconfont`,`iconcolor`','`sort`');
+		$rows 	= $this->db->getrows('[Q]im_group',"`valid`=1 and `type`=2 and `yylx` in(0,".$yylx.") $where $whe",'`id`,`name`,`url`,`face`,`num`,`pid`,`iconfont`,`iconcolor`','`sort`');
 		$dbs 	= m('im_menu');
 		$barr	= array();
 		foreach($rows as $k=>$rs){

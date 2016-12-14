@@ -124,7 +124,7 @@ return array(
 );";
 		$this->rock->createtxt($paths, $txt);
 		$this->delinstall();
-		c('curl')->getcurl('http://xh829.com/api.php?a=xinhuinstall&version='.VERSION.'');//这个只是用于统计安装数而已
+		c('xinhu')->getdata('xinhuinstall');//这个只是用于统计安装数而已
 		echo 'success';
 	}
 }

@@ -284,7 +284,7 @@ $(document).ready(function(){
 				
 				
 				
-				<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.shtml</div>
+				<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.php</div>
 				
 				
 			

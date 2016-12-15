@@ -81,9 +81,16 @@ class flow_emailmClassModel extends flowModel
 		$dt 	= $this->rock->post('dt');
 		$dbs 	= m('emailm');
 		
+		//所有邮件
 		if($lx=='' || $lx=='def' || $lx=='sjx'){
 			$where 		= $dbs->gettowhere($uid, 0);
 		}
+		
+		//未读邮件
+		if($lx=='wdyj'){
+			$where 		= $dbs->gettowhere($uid, 1);
+		}
+		
 		//草稿箱
 		if($lx == 'cgx'){
 			$where 		= $dbs->gettowhere($uid, 2);

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50540
 File Encoding         : 65001
 
-Date: 2016-12-14 17:11:40
+Date: 2016-12-15 09:10:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -59,7 +59,7 @@ CREATE TABLE `xinhu_admin` (
 -- ----------------------------
 -- Records of xinhu_admin
 -- ----------------------------
-INSERT INTO `xinhu_admin` VALUES ('1', 'A001', 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '964', '1', '1', '男', '0592-123456', 'upload/face/1.jpg', '2', '开发部', '信呼开发团队/开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-05', 'admin@rockoa.com', '2016-10-23 18:57:21', null, 'chenxihu829', null, '1', 'guanliyuan', 'a123456A');
+INSERT INTO `xinhu_admin` VALUES ('1', 'A001', 'admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '966', '1', '1', '男', '0592-123456', 'upload/face/1.jpg', '2', '开发部', '信呼开发团队/开发部', '5', '磐石', '项目主管', '0', '[1],[2]', '[5]', null, '15800000123', '1', '2016-07-05', 'admin@rockoa.com', '2016-10-23 18:57:21', null, 'chenxihu829', null, '1', 'guanliyuan', 'a123456A');
 INSERT INTO `xinhu_admin` VALUES ('2', null, 'diaochan', '貂蝉', 'e10adc3949ba59abbe56e057f20f883e', '56', '1', '0', '女', null, 'upload/face/2.jpg', '3', '财务部', '信呼开发团队/财务部', '5', '磐石', '财务总监', '0', '[1],[3]', '[5]', null, '15800000007', '1', '2016-08-09', null, null, null, null, null, '0', 'diaochan', null);
 INSERT INTO `xinhu_admin` VALUES ('3', null, 'xiaoqiao', '小乔', 'e10adc3949ba59abbe56e057f20f883e', '67', '1', '0', '女', null, 'upload/face/3.jpg', '3', '财务部', '信呼开发团队/财务部', '2', '貂蝉', '出纳', '0', '[1],[3]', '[5],[2]', null, '15800000001', '1', null, null, '2016-08-30 20:34:23', null, null, null, '0', 'xiaoqiao', null);
 INSERT INTO `xinhu_admin` VALUES ('4', null, 'daqiao', '大乔', 'e10adc3949ba59abbe56e057f20f883e', '88', '1', '0', '女', null, 'upload/face/4.jpg', '4', '行政人事部', '信呼开发团队/行政人事部', '5', '磐石', '人事主管', '0', '[1],[4]', '[5]', null, '15800000002', '1', null, null, '2016-10-20 22:27:51', null, null, null, '0', 'daqiao', null);
@@ -269,9 +269,9 @@ CREATE TABLE `xinhu_chargems` (
 -- ----------------------------
 -- Records of xinhu_chargems
 -- ----------------------------
-INSERT INTO `xinhu_chargems` VALUES ('1', '1', '1', '2016-10-22 14:32:00', '2016-12-14 17:11:15', null);
-INSERT INTO `xinhu_chargems` VALUES ('2', '1', '2', '2016-10-22 14:32:00', '2016-12-14 17:11:15', null);
-INSERT INTO `xinhu_chargems` VALUES ('3', '0', '1', '2016-10-22 14:32:00', '2016-12-14 17:11:15', null);
+INSERT INTO `xinhu_chargems` VALUES ('1', '1', '1', '2016-10-22 14:32:00', '2016-12-15 09:09:44', null);
+INSERT INTO `xinhu_chargems` VALUES ('2', '1', '2', '2016-10-22 14:32:00', '2016-12-15 09:09:44', null);
+INSERT INTO `xinhu_chargems` VALUES ('3', '0', '1', '2016-10-22 14:32:00', '2016-12-15 09:09:44', null);
 
 -- ----------------------------
 -- Table structure for `xinhu_custfina`
@@ -1542,7 +1542,7 @@ CREATE TABLE `xinhu_flow_log` (
   `valid` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `table` (`table`,`mid`)
-) ENGINE=MyISAM AUTO_INCREMENT=427 DEFAULT CHARSET=utf8 COMMENT='单据操作记录';
+) ENGINE=MyISAM AUTO_INCREMENT=428 DEFAULT CHARSET=utf8 COMMENT='单据操作记录';
 
 -- ----------------------------
 -- Records of xinhu_flow_log
@@ -1658,6 +1658,7 @@ INSERT INTO `xinhu_flow_log` VALUES ('423', 'customer', '1', '1', '拜访记录'
 INSERT INTO `xinhu_flow_log` VALUES ('424', 'customer', '1', '1', '拜访', '拜访记录', '0', '2016-12-14 10:22:47', '112', '127.0.0.1', 'Chrome', '管理员', '1', '7', null, '1');
 INSERT INTO `xinhu_flow_log` VALUES ('425', 'daily', '15', '1', null, '编辑', '0', '2016-12-14 16:33:31', null, '127.0.0.1', 'Chrome', '管理员', '1', '3', null, '1');
 INSERT INTO `xinhu_flow_log` VALUES ('426', 'infor', '6', '1', null, '编辑', '0', '2016-12-14 16:53:38', null, '127.0.0.1', 'Chrome', '管理员', '1', '1', null, '1');
+INSERT INTO `xinhu_flow_log` VALUES ('427', 'infor', '6', '1', null, '编辑', '0', '2016-12-14 20:33:36', null, '127.0.0.1', 'Chrome', '管理员', '1', '1', null, '1');
 
 -- ----------------------------
 -- Table structure for `xinhu_flow_menu`
@@ -2259,7 +2260,7 @@ CREATE TABLE `xinhu_im_menu` (
   `num` varchar(10) DEFAULT NULL,
   `color` varchar(10) DEFAULT NULL COMMENT '颜色',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=utf8 COMMENT='IM下应用菜单';
+) ENGINE=MyISAM AUTO_INCREMENT=71 DEFAULT CHARSET=utf8 COMMENT='IM下应用菜单';
 
 -- ----------------------------
 -- Records of xinhu_im_menu
@@ -2326,10 +2327,13 @@ INSERT INTO `xinhu_im_menu` VALUES ('60', '24', '0', '所有外出', '1', '0', '
 INSERT INTO `xinhu_im_menu` VALUES ('61', '20', '52', '我共享的', '0', '0', 'shate', null, null);
 INSERT INTO `xinhu_im_menu` VALUES ('62', '20', '52', '共享给我的', '0', '0', 'fxgw', null, null);
 INSERT INTO `xinhu_im_menu` VALUES ('63', '15', '23', '更多&gt;&gt;', '0', '0', 'moreapply', null, null);
-INSERT INTO `xinhu_im_menu` VALUES ('64', '26', '0', '收件箱', '0', '0', 'sjx', 'sjx', null);
+INSERT INTO `xinhu_im_menu` VALUES ('64', '26', '0', '收件箱', '0', '0', null, 'sjx', null);
 INSERT INTO `xinhu_im_menu` VALUES ('65', '26', '0', '＋写信', '2', '1', 'add_emailm', null, null);
 INSERT INTO `xinhu_im_menu` VALUES ('66', '27', '0', '知识信息', '0', '0', 'def', null, null);
 INSERT INTO `xinhu_im_menu` VALUES ('67', '26', '0', '草稿箱', '1', '0', 'cgx', null, null);
+INSERT INTO `xinhu_im_menu` VALUES ('68', '26', '64', '未读邮件', '0', '0', 'wdyj', null, null);
+INSERT INTO `xinhu_im_menu` VALUES ('69', '26', '64', '所有邮件', '0', '0', 'sjx', null, null);
+INSERT INTO `xinhu_im_menu` VALUES ('70', '26', '64', '已发送', '0', '0', 'yfs', null, null);
 
 -- ----------------------------
 -- Table structure for `xinhu_im_mess`
@@ -2409,7 +2413,7 @@ CREATE TABLE `xinhu_infor` (
 INSERT INTO `xinhu_infor` VALUES ('1', '欢迎使用信呼工作台', '2016-09-24 17:24:55', '通知公告', '<p>\n	欢迎使用，有任何问题可以随时联系我们，帮你解答哦。&nbsp;\n</p>\n<p>\n	信呼是一款开源免费的工作台软件，可添加应用，管理，pc上，app都可以使用，我们的代码全部开放，可自由使用。\n</p>', null, null, null, '1', '管理员', null, null, '信呼开发团队', '2016-08-01', '1');
 INSERT INTO `xinhu_infor` VALUES ('2', '关于写日报制度说明', '2016-09-24 17:25:15', '规则制度', '<p>\n	1、每个人工作日在下班后必须写工作日报，全天请假可不用写，只要有上班就需要写，即使你上班1分钟。\n</p>\n<p>\n	2、也可以隔天写。\n</p>\n<p>\n	<strong>未写处罚</strong> \n</p>\n<p>\n	1、未写一次扣五块，累计加倍。\n</p>', null, null, null, '1', '管理员', null, null, '人力行政部', '2016-08-01', '1');
 INSERT INTO `xinhu_infor` VALUES ('8', '关于系统升级问题', '2016-10-26 19:50:50', '通知公告', '<span>关于系统升级问题</span><span></span>', null, 'u6,u8', '张飞,信呼客服', '1', '管理员', null, null, '开发部', '2016-10-26', '1');
-INSERT INTO `xinhu_infor` VALUES ('6', '信呼更新发布V1.2.1版本', '2016-12-14 16:53:38', '通知公告', '<p>\n	版本添加了发布如下功能。\n</p>\n<p>\n	1、将网页版改为桌面版。\n</p>\n<p>\n	2、添加邮件收发功能，收附件有待完善。\n</p>\n<p>\n	3、添加印章管理功能。\n</p>', null, 'u1', '管理员', '1', '管理员', null, null, '信呼开发团队', '2016-12-30', '1');
+INSERT INTO `xinhu_infor` VALUES ('6', '信呼更新发布V1.2.1版本', '2016-12-14 20:33:36', '通知公告', '<p>\n	版本添加了发布如下功能。\n</p>\n<p>\n	1、将网页版改为桌面版。\n</p>\n<p>\n	2、添加邮件收发功能，收附件有待完善。\n</p>\n<p>\n	3、添加印章管理功能。\n</p>', null, 'u1', '管理员', '1', '管理员', null, null, '信呼开发团队', '2016-12-31', '1');
 
 -- ----------------------------
 -- Table structure for `xinhu_knowledge`

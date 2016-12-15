@@ -1757,6 +1757,11 @@ function agentclass(opts){
 			});
 			return;
 		}
+		if(lx==11){
+			var url=''+apiurl+'index.php?a=lu&m=input&d=flow&num='+d.modenum+'&mid='+d.mid+'';
+			im.openurl(d.name, url);
+			return;
+		}
 		this.showmenuclicks(d,'');
 	};
 	this.changeuser=function(nas,sid){

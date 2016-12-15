@@ -21,6 +21,7 @@ class emailmClassModel extends Model
 		$myurs 	= $this->adminobj->getone($uid, 'email,emailpass');
 		$time	= $this->optionobj->getval($ukey,'',3);
 		if(!isempt($time))$time = strtotime($time);
+		if(isempt($this->receyumi))return '未设置收信邮箱域名';
 		if(!contain($myurs['email'], $this->receyumi))return '邮箱域名必须是['.$this->receyumi.']';
 		$rows 	= c('imap')->receemail($this->recehost, $myurs['email'], $myurs['emailpass'], $time);
 		if(!is_array($rows))return $rows;

@@ -1,5 +1,4 @@
 <?php
-set_time_limit(0);
 class installClassAction extends ActionNot{
 	
 	public function initAction()
@@ -95,6 +94,9 @@ class installClassAction extends ActionNot{
 			}
 		}
 		$db->query("delete from `".$perfix."option` where `name` is null");
+		$urs	= $db->getone("".$perfix."admin", "`id`=1");
+		if(!is_array($urs))exit('数据库导入失败:'.$db->error().'');
+		
 		$rand	= $this->rock->jm->getRandkey();
 		$asynkey= md5($this->rock->jm->getRandkey());
 		$openkey= md5($this->rock->jm->getRandkey());

@@ -218,10 +218,10 @@ var up={
 		var arr 	= this.suarr;
 		if(result.id){
 			up.wcarr.push({id:result.id,filename:arr.filename,filetype:arr.filetype,fileext:arr.fileext,filesize:arr.filesize,filesizecn:arr.filesizecn,filepath:result.filepath,thumbpath:result.thumbpath,width:result.width,height:result.height});
-			setTimeout('up.start('+(arr.xuoi+1)+')',5);
 		}else{
 			$('#'+up.updengid+'').html('<font color=red>上传失败1</font>');
 		}
+		setTimeout('up.start('+(arr.xuoi+1)+')',5);
 	},
 	jdt:function(bl){
 		$('#allbili').html(bl+'%');

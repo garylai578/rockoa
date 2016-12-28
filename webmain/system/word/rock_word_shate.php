@@ -19,16 +19,20 @@ $(document).ready(function(){
 			text:'创建人',dataIndex:'optname',sortable:true
 		},{
 			text:'',dataIndex:'opt',renderer:function(v,d,oi){
-				return '<a href="javascript:;" onclick="showvies{rand}('+oi+')">查看</a>';
+				return '<a href="javascript:;" onclick="showvies{rand}('+oi+',0)">预览</a>&nbsp;<a href="javascript:;" onclick="showvies{rand}('+oi+',1)"><i class="icon-arrow-down"></i></a>';
 			}
 		}]
 	});
-	showvies{rand}=function(oi){
+	showvies{rand}=function(oi,lx){
 		var d=a.getData(oi);
-		if(js.isimg(d.fileext)){
-			$.imgview({url:d.filepath});
-		}else{
+		if(lx==1){
 			js.downshow(d.id)
+		}else{
+			if(js.isimg(d.fileext)){
+				$.imgview({url:d.filepath,downbool:false});
+			}else{
+				openxiangs(d.filename,'?m=public&a=fileviewer&id='+d.id+'&wintype=max');
+			}
 		}
 	}
 	var c = {

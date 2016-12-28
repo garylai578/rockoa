@@ -172,6 +172,10 @@ js.decode=function(str){
 	}catch(e){}
 	return arr;
 }
+js.email=function(str){
+	var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+ 	return myreg.test(str);
+}
 js.move=function(id,event){
 	var _left=0,_top=0;
 	var obj	= id;
@@ -229,8 +233,13 @@ js.locationshow=function(sid){
 	return false;
 }
 js.winiframe=function(tit, url){
+	var mxw= 900;
 	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
-	var wi = winWb()-150;if(wi>900)wi=900;if(wi<700)wi=700;
+	if(url.indexOf('wintype=max')>0){
+		mxw= 1100;
+		hm=winHb()-45;
+	}
+	var wi = winWb()-150;if(wi>mxw)wi=mxw;if(wi<700)wi=700;
 	js.tanbody('winiframe',tit,wi,410,{
 		html:'<div style="height:'+hm+'px;overflow:hidden"><iframe src="" name="openinputiframe" width="100%" height="100%" frameborder="0"></iframe></div>',
 		bbar:'none'
@@ -437,14 +446,14 @@ js.tanbody=function(act,title,w,h,can1){
 	s+='	<div id="'+act+'_body" style="'+can.bodystyle+'">';
 	s+=can.html;
 	s+='	</div>';
-	s+='	<div id="'+act+'_bbar" style="padding:5px 10px;background:#eeeeee;line-height:30px" align="right"><span id="msgview_'+act+'"></span>&nbsp;';
+	s+='	<div id="'+act+'_bbar" style="padding:5px 10px;background:#eeeeee;line-height:30px;" align="right"><span id="msgview_'+act+'"></span>&nbsp;';
 	for(var i=0; i<can.btn.length; i++){
 		var a	= can.btn[i];
-		s+='<a class="btn btn-success" id="'+act+'_btn'+i+'" onclick="return false" href="javascript:">';
+		s+='<a class="btn btn-success" id="'+act+'_btn'+i+'" onclick="return false">';
 		if(!isempt(a.icons))s+='<i class="icon-'+a.icons+'"></i>&nbsp; ';
 		s+=''+a.text+'</a>&nbsp; ';
 	}
-	s+='		<a class="btn btn-default" id="'+act+'_cancel" onclick="return js.tanclose(\''+act+'\',\''+can.guanact+'\')" href="javascript:"><i class="icon-remove"></i>&nbsp;取消</a>';
+	s+='		<a class="btn btn-default" id="'+act+'_cancel" onclick="return js.tanclose(\''+act+'\',\''+can.guanact+'\')">取消</a>';
 	s+='	</div>';
 	s+='</div>';
 	js.xpbody(act,can.mode);
@@ -461,6 +470,7 @@ js.tanoffset=function(act){
 	var mid=''+act+'_main';
 	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight,l,t;
 	l=(winWb()-lw)*0.5;t=(winHb()-lh-20)*0.5;
+	if(t<0)t=1;
 	$('#'+mid+'').css({'left':''+l+'px','top':''+t+'px'});
 }
 js.tanclose=function(act, guan){
@@ -762,6 +772,7 @@ js.changeuser=function(na, lx, tits,ocans){
 }
 js.back=function(){
 	history.back();
+	try{api.closeWin();}catch(e){}
 }
 js.changeclear=function(na){
 	get(na).value='';
@@ -809,4 +820,16 @@ js.replacecn=function(o1){
 	var  val = strreplace(o1.value);
 	val		 = val.replace(/[\u4e00-\u9fa5]/g,'');
 	o1.value =val;
+}
+
+js.setselectdata = function(o, data, vfs, devs){
+	var i,ty = data,sv;
+	if(!data)return;	
+	if(!vfs)vfs='name';	
+	if(typeof(devs)=='undefined')devs=-1;
+	for(i=0;i<ty.length;i++){
+		o.options.add(new Option(ty[i].name,ty[i][vfs]));
+		if(i==devs)sv=ty[i][vfs];
+	}
+	if(sv)o.value=sv;
 }

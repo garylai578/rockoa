@@ -17,17 +17,6 @@ js.initbtn = function(obj){
 	o.attr('clickadd','true');
 }
 
-js.setselectdata = function(o, data, vfs, devs){
-	var i,ty = data,sv;
-	if(!data)return;	
-	if(!vfs)vfs='name';	
-	if(typeof(devs)=='undefined')devs=-1;
-	for(i=0;i<ty.length;i++){
-		o.options.add(new Option(ty[i].name,ty[i][vfs]));
-		if(i==devs)sv=ty[i][vfs];
-	}
-	if(sv)o.value=sv;
-}
 js.initedit = function(id,can){
 	var cans = js.apply({
 		resizeType : 0,

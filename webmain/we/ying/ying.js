@@ -82,8 +82,12 @@ var myScroll=false,yy={
 		this.menuname2 = a.name;
 		this.clickmenus(a);
 	},
+	onclickmenu:function(a){
+		return true;
+	},
 	clickmenus:function(a){
 		$("div[id^='menushoess']").remove();
+		if(!this.onclickmenu(a))return;
 		var tit = this.menuname1;
 		if(this.menuname2!='')tit+='→'+this.menuname2+'';
 		document.title = tit;
@@ -125,12 +129,16 @@ var myScroll=false,yy={
 	},
 	getdata:function(st,p, mo){
 		this.nowevent=st;
+		this.nowpage = p;
 		if(!mo)mo='mode';
 		var key = ''+this.sousoukey;
 		if(key)key='basejm_'+jm.base64encode(key)+'';
 		js.ajax('index','getyydata',{'page':p,'event':st,'num':this.num,'key':key},function(ret){
 			yy.showdata(ret);
 		},mo, false,false, 'get');
+	},
+	reload:function(){
+		this.getdata(this.nowevent,this.nowpage);
 	},
 	keysou:function(key){
 		if(this.sousoukey == key)return;

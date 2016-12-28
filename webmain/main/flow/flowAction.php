@@ -205,8 +205,8 @@ PRIMARY KEY (`id`),KEY `mid` (`mid`)
 			$bt='';
 			if($brs['isbt']==1)$bt='*';
 			$iszbs = $brs['iszb'];
-			if($iszbs>0&&$iszb==0){
-				$fleft[]= array('', '<font color=#ff6600>—第'.$iszbs.'个多列子表—</font>', $iszbs);
+			if($iszbs>0&&$iszb != $iszbs){
+				$fleft[]= array('', '<font color=#ff6600>—第'.$iszbs.'个多行子表—</font>', $iszbs);
 				$fleft[]= array('xuhao', '序号', $iszbs);
 			}
 			$iszb	= $iszbs;
@@ -247,8 +247,8 @@ PRIMARY KEY (`id`),KEY `mid` (`mid`)
 			$bt='';
 			if($brs['isbt']==1)$bt='*';
 			$iszbs = $brs['iszb'];
-			if($iszbs>0&&$iszb==0){
-				$fleft[]= array('', '<font color=#ff6600>—第'.$iszbs.'个多列子表—</font>', $iszbs);
+			if($iszbs>0&&$iszb != $iszbs){
+				$fleft[]= array('', '<font color=#ff6600>—第'.$iszbs.'个多行子表—</font>', $iszbs);
 				$fleft[]= array('xuhao', '序号', $iszbs);
 			}
 			$iszb	= $iszbs;

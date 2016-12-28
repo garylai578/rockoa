@@ -1,9 +1,29 @@
 <?php
 class flowbillClassModel extends Model
 {
+	public $statustext;
+	public $statuscolor;
+	
 	public function initModel()
 	{
 		$this->settable('flow_bill');
+		$this->statustext	= explode(',','待处理,已审核,处理不通过,,,已作废');
+		$this->statuscolor	= explode(',','blue,green,red,,,gray');
+	}
+	
+	/**
+	*	获取状态
+	*/
+	public function getstatus($zt, $lx=0)
+	{
+		$a1	= $this->statustext;
+		$a2	= $this->statuscolor;
+		$str 		= '<font color='.$a2[$zt].'>'.$a1[$zt].'</font>';
+		if($lx==0){
+			return $str;
+		}else{
+			return array($a1[$zt], $a2[$zt]);
+		}
 	}
 	
 	public function getrecord($uid, $lx, $page, $limit)
@@ -59,14 +79,13 @@ class flowbillClassModel extends Model
 			$moders = m('flow_set')->getall("`id` in($modeids)",'id,num,name,summary');
 			foreach($moders as $k=>$rs)$modearr[$rs['id']] = $rs;
 		}
-		$statsss	= explode(',','待处理,已审核,处理不通过');
-		$statsss1	= explode(',','blue,green,red');
 		foreach($rows as $k=>$rs){
 			$modename	= $rs['modename'];
 			$summary	= '';
 			$modenum 	= '';
 			$statustext	= '记录不存在';
 			$statuscolor= '#888888';
+			$ishui		= 0;
 			if(isset($modearr[$rs['modeid']])){
 				$mors 	= $modearr[$rs['modeid']];
 				$modename 	= $mors['name'];
@@ -76,14 +95,15 @@ class flowbillClassModel extends Model
 				$summary	= $this->rock->reparr($summary, $rers);
 				if($rers){
 					$status		 = $rers['status'];
-					$statustext  = $statsss[$status];
-					$statuscolor = $statsss1[$status];
+					$statustext  = $this->statustext[$status];
+					$statuscolor = $this->statuscolor[$status];
 					if($rers['isturn']==0){
 						$statustext  = '待提交';
 						$statuscolor = '#ff6600';
 					}else{
 						if($status==0)$statustext='待'.$rs['nowcheckname'].'处理';
 					}
+					if($rers['status']==5)$ishui = 1;
 				}else{
 					$this->update('isdel=1', $rs['id']);
 				}
@@ -99,6 +119,7 @@ class flowbillClassModel extends Model
 			$srows[]= array(
 				'title' => $title,
 				'cont' 	=> $cont,
+				'ishui' => $ishui,
 				'id' 	=> $rs['mid'],
 				'uid' 	=> $rs['uid'],
 				'optdt' 	=> $rs['optdt'],
@@ -142,8 +163,6 @@ class flowbillClassModel extends Model
 			$moders = m('flow_set')->getall("`id` in($modeids)",'id,num,name,summary');
 			foreach($moders as $k=>$rs)$modearr[$rs['id']] = $rs;
 		}
-		$statsss	= explode(',','待处理,已审核,处理不通过');
-		$statsss1	= explode(',','blue,green,red');
 		foreach($rows as $k=>$rs){
 			$modename	= $rs['modename'];
 			$summary	= '';
@@ -151,6 +170,7 @@ class flowbillClassModel extends Model
 			$statustext	= '记录不存在';
 			$statuscolor= '#888888';
 			$wdst 		= 0;
+			$ishui 		= 0;
 			if(isset($modearr[$rs['modeid']])){
 				$mors 	= $modearr[$rs['modeid']];
 				$modename 	= $mors['name'];
@@ -160,13 +180,14 @@ class flowbillClassModel extends Model
 				$summary	= $this->rock->reparr($summary, $rers);
 				if($rers){
 					$wdst		 = $rers['status'];
-					$statustext  = $statsss[$wdst];
-					$statuscolor = $statsss1[$wdst];
+					$statustext  = $this->statustext[$wdst];
+					$statuscolor = $this->statuscolor[$wdst];
 					if($rers['isturn']==0){
 						$statustext  = '待提交';
 						$statuscolor = '#ff6600';
 						$wdst		 = 1;
 					}
+					if($rers['status']==5)$ishui = 1;
 				}else{
 					$this->update('isdel=1', $rs['id']);
 				}
@@ -181,6 +202,7 @@ class flowbillClassModel extends Model
 				'name' 		=> $rs['name'],
 				'deptname' 	=> $rs['deptname'],
 				'sericnum' 	=> $rs['sericnum'],
+				'ishui' 	=> $ishui,
 				'modename' 	=> $modename,
 				'modenum' 	=> $modenum,
 				'summary' 	=> $summary,

@@ -16,6 +16,8 @@ $(document).ready(function(){
 		},{
 			text:'允许误差(米)',dataIndex:'precision',editor:true
 		},{
+			text:'WIFI名称',dataIndex:'wifiname',editor:true
+		},{
 			text:'ID',dataIndex:'id'
 		}],
 		itemclick:function(){
@@ -39,11 +41,13 @@ $(document).ready(function(){
 			var h = $.bootsform({
 				title:'位置',height:380,width:400,
 				tablename:'kqdw',isedit:lx,
-				submitfields:'name,address,precision',
+				submitfields:'name,address,precision,wifiname',
 				items:[{
 					labelText:'名称',name:'name',required:true
 				},{
 					labelText:'位置名称',name:'address',required:true
+				},{
+					labelText:'WIFI名称',name:'wifiname'
 				},{
 					labelText:'允许误差(米)',name:'precision',type:'number',value:0
 				}],

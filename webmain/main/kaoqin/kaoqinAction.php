@@ -17,16 +17,7 @@ class kaoqinClassAction extends Action
 		$table  = '[Q]'.$table.' a left join `[Q]admin` b on a.uid=b.id';
 		return array('where'=>$s,'table'=>$table, 'fields'=>$fields);
 	}
-	public function kqdkjlaftershow($table, $rows)
-	{
-		$types = explode(',','在线打卡,考勤机,手机定位,手动添加,异常添加,数据导入,接口导入');
-		$dtobj = c('date');
-		foreach($rows as $k=>$rs){
-			$rows[$k]['type'] = $types[$rs['type']];
-			$rows[$k]['week'] = $dtobj->cnweek($rs['dkdt']);
-		}
-		return array('rows'=>$rows);
-	}
+
 	
 	//定位打卡的
 	public function locationbeforeshow($table)
@@ -199,19 +190,21 @@ class kaoqinClassAction extends Action
 	public function kqxxsjdtbefore($table)
 	{
 		$pid 	= (int)$this->post('pid','0');
-		$month 	= $this->post('month', date('Y-m'));
+		$month 	= $this->post('month');
 		$s 		= 'and `pid`='.$pid.'';
 		if(!isempt($month))$s.=" and `dt` like '$month%'";
 		return array(
 			'where' => $s,
-			'order' => 'dt asc'
+			'order' => 'dt desc'
 		);
 	}
 	public function kqxxsjdtafter($table, $rows)
 	{
 		$dtobj = c('date');
 		foreach($rows as $k=>$rs){
-			$rows[$k]['week'] = $dtobj->cnweek($rs['dt']);
+			$w = $dtobj->cnweek($rs['dt']);
+			$rows[$k]['week'] = $w;
+			if($w=='六' || $w=='日')$rows[$k]['ishui'] = 1;
 		}
 		return array('rows'=>$rows);
 	}
@@ -392,6 +385,10 @@ class kaoqinClassAction extends Action
 			$outci	= $this->db->rows('[Q]kqout',"`status`=1 and `uid`=$uid and `outtime` like '$this->months%'");
 			if($outci==0)$outci='';
 			$rows[$k]['outci'] = $outci;
+			
+			$errci	= $this->db->rows('[Q]kqerr',"`status`=1 and `uid`=$uid and `dt` like '$this->months%'");
+			if($errci==0)$errci='';
+			$rows[$k]['errci'] = $errci;
 		}
 		return array('rows'=>$rows,'columns'=>$columns);
 	}

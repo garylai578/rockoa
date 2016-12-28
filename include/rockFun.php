@@ -23,7 +23,7 @@ function m($name)
 	$cls			= NULL;
 	$pats	= $nac	= '';
 	if(isset($GLOBALS['rockModelImport'][$name])){
-		$cls		= $GLOBALS['rockModelImport'][$name];
+		$cls		= clone $GLOBALS['rockModelImport'][$name];
 	}else{
 		$nas		= $name;
 		$asq		= explode(':', $nas);

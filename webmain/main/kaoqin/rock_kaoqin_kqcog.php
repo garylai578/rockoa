@@ -17,9 +17,7 @@ $(document).ready(function(){
 		},{
 			text:'在线打卡MAC地址',dataIndex:'dkmac',editor:true
 		},{
-			text:'是否考勤',dataIndex:'iskq',type:'checkbox',editor:true
-		},{
-			text:'是否定位打卡',dataIndex:'isdwdk',type:'checkbox',editor:true
+			text:'需要考勤',dataIndex:'iskq',type:'checkbox',editor:true
 		},{
 			text:'ID',dataIndex:'id'
 		}]

@@ -65,7 +65,7 @@ class inputChajian extends Chajian
 		$val 	= $a['dev'];
 		if(isset($a['value']))$val=$a['value'];
 		$attr 	= $a['attr'];
-		$fnams 	= @$a['name'];
+		$fnams 	= @$a['name'];$fieldname = $fnams;
 		if($a['isbt']==1)$fnams='*'.$fnams.'';
 		$val	= $this->rock->get('def_'.$fname.'', $val);
 		if(isempt($val))$val='';
@@ -82,6 +82,10 @@ class inputChajian extends Chajian
 		if($objs != null && method_exists($objs, 'inputfieldsval')){
 			$_vals = $objs->inputfieldsval($fname, $a);
 			if(!isempt($_vals))$val = $_vals;
+		}
+		
+		if($type=='email' || $type=='tel' || $type=='mobile' || $type=='url'){
+			$attr.=' inputtype="'.$type.'"';
 		}
 		
 		$str 	= '<input class="inputs" value="'.$val.'" '.$attr.' name="'.$fname.'">';
@@ -145,8 +149,12 @@ class inputChajian extends Chajian
 		if($type=='changeusercheck'||$type=='changeuser'||$type=='changedept'||$type=='changedeptusercheck'){
 			$_vals  = explode(',', $val);$_vals0 = $_vals[0];
 			$_vals1 = isset($_vals[1]) ? $_vals[0] : '';
-			$str 	= '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:98%" id="change'.$fname.'" value="'.$_vals0.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" value="'.$_vals1.'" id="change'.$fname.'_id" type="hidden"></td>';
-			$str   .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" onclick="js.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
+			$str 	= '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:99%" id="change'.$fname.'" value="'.$_vals0.'" readonly type="text" name="'.$fname.'"><input name="'.$data.'" value="'.$_vals1.'" id="change'.$fname.'_id" type="hidden"></td>';
+			$str   .= '<td nowrap><a href="javascript:;" style="border-right:1px #0AA888 solid" onclick="js.changeclear(\'change'.$fname.'\')" class="webbtn">×</a><a href="javascript:;" id="btnchange_'.$fname.'" onclick="js.changeuser(\'change'.$fname.'\',\''.$type.'\')" class="webbtn">选择</a></td></tr></table>';
+		}
+		if($type=='selectdatafalse' || $type=='selectdatatrue'){
+			$str 	= '<table width="98%" cellpadding="0" border="0"><tr><td width="100%"><input '.$attr.' class="inputs" style="width:99%" value="'.$val.'" readonly type="text" name="'.$fname.'"></td>';
+			$str   .= '<td nowrap><a href="javascript:;" onclick="c.selectdata(\''.$data.'\','.substr($type,10).',\''.$fname.'\',\''.$fieldname.'\')" class="webbtn">选择</a></td></tr></table>';
 		}
 		if($type=='htmlediter'){
 			$str = '<textarea class="textarea" style="height:130px" '.$attr.' name="'.$fname.'">'.$val.'</textarea>';

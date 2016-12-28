@@ -21,7 +21,8 @@ html,body{overflow:hidden;background-color:#fbf9fe}
 .weui_media_box.weui_media_appmsg .weui_media_hd {height:40px;width:40px;line-height:40px}
 .weui_media_box .weui_media_desc{height:20px;line-height:20px;padding-right:20px}
 .weui_bar_item_on .weui_tabbar_icon{color:#09BB07}
-.weui_grid_icon{width:40px;height:40px;text-align:center}
+.weui_grid_icon{width:40px;height:40px;text-align:center;}
+.weui_grid_icon img{border-radius:8px}
 .weui_grid_icon i{font-size:32px}
 .weui_grid_icon span{position:absolute;top:5px;left:10px}
 .weui_tabbar_item span{position:absolute;right:5px;top:2px}
@@ -412,6 +413,7 @@ var im={
 			js.setoption('adminface',adminface);
 			adminame 	= ret.name;
 			js.setoption('adminame',adminame);
+			js.setoption('adminid',ret.id);
 			get('myface').src=adminface;
 			$('#myname').html(adminame);
 			$('#myshow_name').html(adminame);

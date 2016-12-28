@@ -103,4 +103,21 @@ class gerenClassAction extends Action
 		$rows = m('links')->getrows('1=1','*','`type`,`sort`');
 		echo json_encode($rows);
 	}
+	
+	
+	//导入个人通讯录
+	public function piliangaddAjax()
+	{
+		$rows  	= c('html')->importdata('name,unitname,tel,mobile,email,gname,address','name');
+		$oi 	= 0;
+		$db 	= m('vcard');
+		foreach($rows as $k=>$rs){
+			$rs['optdt']	= $this->now;
+			$rs['uid']		= $this->adminid;
+			$rs['optname']	= $this->adminname;
+			$db->insert($rs);
+			$oi++;
+		}
+		backmsg('','成功导入'.$oi.'条数据');
+	}
 }

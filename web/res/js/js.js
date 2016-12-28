@@ -353,6 +353,7 @@ js.tanoffset=function(act){
 	var mid=''+act+'_main';
 	var lw = get(mid).offsetWidth,lh=get(mid).offsetHeight,l,t;
 	l=(winWb()-lw)*0.5;t=(winHb()-lh-20)*0.5;
+	if(t<0)t=1;
 	$('#'+mid+'').css({'left':''+l+'px','top':''+t+'px'});
 }
 js.tanclose=function(act, guan){
@@ -617,42 +618,57 @@ js.changeuser=function(lx, ots, ots1,tit, ocans){
 js.changeok=function(sna,sid, blx,plx){
 	
 }
-
 js.debug	= function(s){
 	if(!DEBUG)return;
 	if(typeof(console)!='object')return;
 	console.log(s);
 }
-
-js.confirm	= function(txt,fun, tcls, tis, lx){
+js.alert = function(txt,tit,fun){
+	js.confirm(txt, fun, '', tit, 2, '');
+}
+js.wait	= function(txt,tit,fun){
+	js.confirm(txt, fun, '', tit, 3, '');
+}
+js.confirm	= function(txt,fun, tcls, tis, lx,ostr,bstr){
 	if(!lx)lx=0;
-	var h = '<div style="padding:20px;line-height:30px" align="center">';
+	var h = '<div style="padding:20px;line-height:30px" align="center">',w=300;
 	if(lx==1){
-		if(!tcls)tcls='';
-		h+='<div align="left" style="padding-left:15px">'+txt+'</div>';
-		h+='<div style="padding:10px"><input value="'+tcls+'" class="input" id="confirm_input" style="width:230px"></div>';
+		if(!tcls)tcls='';if(!ostr)ostr='';if(!bstr)bstr='';
+		h+=''+ostr+'';
+		h+='<div align="left" style="padding-left:10px">'+txt+'</div>';
+		h+='<div ><input value="'+tcls+'" class="input" id="confirm_input" style="width:230px"></div>'+bstr+'';
+	}else if(lx==3){
+		h+='<img src="images/mloading.gif" height="32" width="32" align="absmiddle">&nbsp; '+txt+'';
 	}else{
 		h+='<img src="images/helpbg.png" align="absmiddle">&nbsp; '+txt+'';
 	}
 	h+='</div>';
-	h+='<div style="padding:10px" align="center"><a id="confirm_btn1" style="padding:5px 10px"  class="webbtn" sattr="yes" href="javascript:;"><i class="icon-ok"></i>&nbsp;确定</a> &nbsp;  &nbsp; <a sattr="no" style="padding:5px 10px; background-color:#888888" class="webbtn" id="confirm_btn" href="javascript:;"><i class="icon-remove"></i>&nbsp;取消</a></div>';
+	h+='<div style="padding:10px" align="center">';
+	h+='	<button id="confirm_btn1" style="padding:5px 10px"  class="webbtn" sattr="yes" type="button"><i class="icon-ok"></i>&nbsp;确定</button>';
+	if(lx<2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <button sattr="no" style="padding:5px 10px; background-color:#888888" class="webbtn" id="confirm_btn" type="button"><i class="icon-remove"></i>&nbsp;取消</button>';
+	h+='</div>';
 	h+='<div class="blank10"></div>';
-	if(!tcls)tcls='danger';
+	if(!tcls)tcls='danger';if(lx==1)tcls='info';
 	if(!tis)tis='<i class="icon-question-sign"></i>&nbsp;系统提示';
-	js.tanbody('confirm', tis, 300, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
+	js.tanbody('confirm', tis, w, 200,{closed:'none',bbar:'none',html:h,titlecls:tcls});
 	function backl(e){
 		var jg	= $(this).attr('sattr'),val=$('#confirm_input').val();
-		js.tanclose('confirm');if(val==null)val='';
-		if(typeof(fun)=='function')fun(jg, val);
+		if(val==null)val='';
+		if(typeof(fun)=='function'){
+			var cbo = fun(jg, val);
+			if(cbo)return false;
+		}
+		js.tanclose('confirm');
 		return false;
 	}
 	$('#confirm_btn1').click(backl);
+	if(get('confirm_btn')){
 	$('#confirm_btn').click(backl);
-	get('confirm_btn').focus();
+	get('confirm_btn').focus();}
 	if(lx==1)get('confirm_input').focus();
 }
-js.prompt = function(tit,txt,fun, msg){
-	js.confirm(txt, fun, msg, tit, 1);
+js.prompt = function(tit,txt,fun, msg, ostr,bstr){
+	js.confirm(txt, fun, msg, tit, 1, ostr,bstr);
 }
 js.fileall=',aac,ace,ai,ain,amr,app,arj,asf,asp,aspx,av,avi,bin,bmp,cab,cad,cat,cdr,chm,com,css,cur,dat,db,dll,dmv,doc,docx,dot,dps,dpt,dwg,dxf,emf,eps,et,ett,exe,fla,ftp,gif,hlp,htm,html,icl,ico,img,inf,ini,iso,jpeg,jpg,js,m3u,max,mdb,mde,mht,mid,midi,mov,mp3,mp4,mpeg,mpg,msi,nrg,ocx,ogg,ogm,pdf,php,png,pot,ppt,pptx,psd,pub,qt,ra,ram,rar,rm,rmvb,rtf,swf,tar,tif,tiff,txt,url,vbs,vsd,vss,vst,wav,wave,wm,wma,wmd,wmf,wmv,wps,wpt,wz,xls,xlsx,xlt,xml,zip,';
 js.filelxext = function(lx){

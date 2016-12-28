@@ -53,7 +53,7 @@ $(document).ready(function(){
 				title:'组',height:400,width:400,
 				tablename:'group',isedit:lx,
 				url:js.getajaxurl('publicsave','group','system'),
-				params:{int_filestype:'sort'},
+				params:{int_filestype:'sort',add_otherfields:'indate={now}'},
 				submitfields:'name,sort',
 				items:[{
 					labelText:'组名',name:'name',required:true

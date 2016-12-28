@@ -193,6 +193,29 @@ var strformat = {
 			this.emotsarrss[a[i]]=i;
 		}
 		this.dt=js.now();
+	},
+	contshozt:function(d, lj){
+		var s='',slx,sttr;
+		if(!d)return s;
+		if(!d.fileid)d.fileid=d.id;
+		if(js.isimg(d.fileext)){
+			sttr='';
+			if(d.thumbpath){
+				s='<img src="'+apiurl+''+d.thumbpath+'" fid="'+d.fileid+'">';
+			}else{
+				if(d.width){
+					if(d.width>150)sttr='width="150"';
+				}else{
+					sttr='width="150"';
+				}
+				s='<img src="'+apiurl+''+d.filepath+'" '+sttr+' fid="'+d.fileid+'">';
+			}
+		}else{
+			slx = d.fileext;if(!lj)lj='';
+			if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
+			s='<img src="'+lj+'images/fileicons/'+slx+'.gif" align="absmiddle">&nbsp;'+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;'+d.filesizecn+'';
+		}
+		return s;
 	}
 }
 strformat.init();

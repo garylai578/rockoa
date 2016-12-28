@@ -124,11 +124,11 @@ abstract class Model{
 		if($order != '')$order = 'order by '.$order.'';
 		$where  	= $this->getwhere($where);
 		if($table == '')$table = $this->table;
-		$sql 		= "select SQL_CALC_FOUND_ROWS $fields from $table where $where $order ";
+		$sql 		= "select $fields from $table where $where $order ";
+		$count 		= $this->db->rows($table, $where);
 		if($page <= 0)$page=1;
 		$sql	.= "limit ".($page-1)*$limit.",$limit";
 		$rows	 = $this->db->getall($sql);
-		$count 	 = $this->db->found_rows();
 		$maxpage = ceil($count/$limit);
 		return array(
 			'rows'		=> $rows,

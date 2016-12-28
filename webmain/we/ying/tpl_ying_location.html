@@ -11,110 +11,240 @@
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/jswx.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
-<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&libraries=convertor,geometry"></script>
 <style>
 
 </style>
 <script>
-var infoWin;
+var kqrs = <?=json_encode($kqrs);?>;
+js.servernow = '<?=$rock->now?>';
+var infoWin,marker,circle;
+var label='',accuracy=0,latitude='',longitude='',kqjuli=-1;
+apiready = function(){
+	initbodyss()
+}
 function initbody(){
+	if(!api.appName)initbodyss();
+}
+function initbodyss(){
+	js.getsplit();
 	js.jssdkwixin();
+	showtimessabc();
 	var lata = js.getoption('latlongedu','24.504332,118.141136,12').split(',');
 	if(!lata[2])lata[2]=12;
+	scale 	= parseFloat(lata[2]);
 	var center = new qq.maps.LatLng(parseFloat(lata[0]), parseFloat(lata[1]));
 	map = new qq.maps.Map(document.getElementById('container'),{
         center: center,
-        zoom: parseFloat(lata[2])
+        zoom: scale
     });
+	if(kqrs){
+		var enddt = new qq.maps.LatLng(<?=$kqrs['location_x']?>, <?=$kqrs['location_y']?>);
+		new qq.maps.Marker({
+			map: map,
+			position:enddt
+		});
+	}
 	geocoder = new qq.maps.Geocoder({
         complete : function(result){
-			dwbool=false;
-			var center = result.detail.location;
+			js.msg();
+			scale	 = map.getZoom();
+			js.setoption('latlongedu',''+latitude+','+longitude+','+scale+'');
+			clearTimeout(dwtimeer);
+			dwbool		= false;
+			var center 	= result.detail.location;
             map.setCenter(center);
 			var address = result.detail.address;
 			var dzarr 	= result.detail.addressComponents;
-			address = ''+dzarr.province+''+dzarr.city+''+dzarr.district+''+dzarr.street+'';
+			address 	= ''+dzarr.province+''+dzarr.city+''+dzarr.district+''+dzarr.street+'';
 			if(dzarr.streetnumber)address+=dzarr.streetnumber;
-			var label = address+'';
-			address+='(精确'+accuracy+'米)';
-			if(!infoWin)infoWin = new qq.maps.InfoWindow({
-				map: map
-			});
-			infoWin.open();
-			infoWin.setContent('定位成功<br>地址：'+address+'');
-			infoWin.setPosition(center);
-			var data = {location_x:latitude,location_y:longitude,scale:scale,precision:accuracy,label:jm.base64encode(label)};
-			js.ajax('weixin','addlocation',data,function(ret){
-				js.msg('success','保存成功');
-			},'none');
+			label 		= address+'';
+			if(accuracy>0)address+='(精确'+accuracy+'米)';
+			showinfo(center ,accuracy, '定位成功<br>地址：'+address+'');
+			if(kqrs){
+				kqjuli = parseInt(qq.maps.geometry.spherical.computeDistanceBetween(center, enddt));
+			}
         }
     });
 }
-var dwbool=false;
+function showtimessabc(){
+	var dt = js.serverdt('H:i:s');
+	$('#timess').html(dt);
+	setTimeout('showtimessabc()',1000);
+}
+
+
+js.jssdkcall  = function(bo){
+	dingweidak();
+}
+function showinfo(center ,fw, str){
+	if(!infoWin)infoWin = new qq.maps.InfoWindow({
+		map: map
+	});
+	infoWin.open();
+	infoWin.setContent(str);
+	infoWin.setPosition(center);
+	
+	if(!marker)marker= new qq.maps.Marker({
+        map: map
+    });
+	marker.setPosition(center);
+	if(!circle)circle=new qq.maps.Circle({
+        map:map,
+        strokeWeight:1
+    });
+	circle.setCenter(center);
+	circle.setRadius(parseFloat(fw));
+}
+var dwbool=false,dwtimeer;
 function dingweidak(){
 	if(dwbool)return;
-	if(!js.iswxbo()){
+	dwbool = true;
+	chaoshi();
+	if(js.jssdkstate != 1){
 		htmldingw();
 		return;
 	}
-	if(!js.jssdkstate){js.msg('msg','微信jssdk验证失败，无法使用');return;}
-	js.msg('wait','定位中...');
-	dwbool=true;
+	js.msg('wait','微信定位中...');
 	wx.getLocation({
 		type: 'gcj02',
 		success: function (res){
 			js.setmsg('');
-			latitude = res.latitude;
-			longitude = res.longitude;
-			scale=map.getZoom();
-			js.setoption('latlongedu',''+latitude+','+longitude+','+scale+'');
-			accuracy = res.accuracy;
-			var center = new qq.maps.LatLng(latitude, longitude);
+			clearTimeout(dwtimeer);
+			latitude 	= res.latitude;
+			longitude 	= res.longitude;
+			scale		= map.getZoom();
+			accuracy 	= parseFloat(res.accuracy);
+			js.msg('wait','定位成功，获取位置信息...');
+			var center 	= new qq.maps.LatLng(latitude, longitude);
 			geocoder.getAddress(center);
 		},
 		error:function(){
-			js.msg('msg','定位失败');
+			js.msg('msg','微信定位失败，请重试');
+			js.jssdkstate = 2;
+			clearTimeout(dwtimeer);
 		}
 	});
 }
+function chaoshi(){
+	clearTimeout(dwtimeer);
+	dwtimeer = setTimeout(function(){
+		js.msg('msg','定位超时，请重新定位');
+		js.jssdkstate = 2;
+		dwbool=false;
+	},20*1000);
+}
 function htmldingw(){
-	js.msg('msg','请使用微信企业号定位打卡');
-	return;
+	if(api.appName){
+		baidingwei();
+		return;
+	}
 	if(!navigator.geolocation){
-		js.wx.alert('不能定位');
+		js.msg('msg','不支持浏览器定位');
+		clearTimeout(dwtimeer);
 	}else{
-		js.msg('wait','使用浏览器定位中...');
-		navigator.geolocation.getCurrentPosition(showPosition,showError);
+		js.msg('wait','浏览器定位中...');
+		navigator.geolocation.getCurrentPosition(showPosition,showError,{
+			enableHighAccuracy: true,
+			timeout: 19000,
+			maximumAge: 3000
+		});
 	}
 }
 function showError(error){
+	clearTimeout(dwtimeer);dwbool=false;
 	js.setmsg('');
 	var msg='无法定位';
-	switch(error.code)
-    {
+	switch(error.code){
     case error.PERMISSION_DENIED:
-      msg="用户拒绝对获取地理位置的请求。"
-      break;
+		msg="用户拒绝对获取地理位置的请求。"
+		break;
     case error.POSITION_UNAVAILABLE:
-      msg="位置信息是不可用的。"
-      break;
+		msg="位置信息是不可用的。"
+		break;
     case error.TIMEOUT:
-      msg="请求用户地理位置超时。"
-      break;
+		msg="请求用户地理位置超时。"
+		break;
     case error.UNKNOWN_ERROR:
-      msg="未知错误。"
-      break;
+		msg="未知错误。"
+		break;
     }
 	js.msg('msg', msg);
 }
 function showPosition(position){
 	js.msg('');
-	latitude = position.coords.latitude;
-	longitude = position.coords.longitude;
-	scale=12;
-	js.getarr(position);
-} 
+	clearTimeout(dwtimeer);
+	var res 	= position.coords;
+	latitude 	= res.latitude;
+	longitude 	= res.longitude;
+	scale		= map.getZoom();
+	accuracy 	= parseFloat(res.accuracy);
+	js.msg('wait','定位成功，获取位置信息...');
+	var center = new qq.maps.LatLng(parseFloat(latitude), parseFloat(longitude));
+	translate(center, 1);
+}
+function translate(center,type){
+	qq.maps.convertor.translate(center,type,function(res){
+		latitude 	= res[0].lat;
+		longitude 	= res[0].lng;
+		geocoder.getAddress(res[0]);
+	});	
+}
+function adddkjl(lx,ss,sm){
+	js.msg('wait',''+ss+'中...');
+	if(!sm)sm='';
+	scale	 = map.getZoom();
+	js.setoption('latlongedu',''+latitude+','+longitude+','+scale+'');
+	var data = {location_x:latitude,type:lx,location_y:longitude,scale:scale,precision:accuracy,label:jm.base64encode(label),sm:jm.base64encode(sm)};
+	js.ajax('weixin','addlocation',data,function(ret){
+		js.msg('success',''+ss+'成功:'+ret.now+'');
+	},'none');
+}
+function adddkjlsss(){
+	if(dwbool){js.wx.alert('正在定位，稍后在添加');return;}
+	if(latitude==''){js.wx.alert('定位没有成功，不能添加');return;}
+	js.wx.prompt('保存定位','请输入说明(选填)：',function(text){
+		adddkjl(0,'保存', text);
+	});
+}
+function baidingwei(){
+	var baiduLocation = api.require('baiduLocation');
+	baiduLocation.startLocation({
+		accuracy: '500m',
+		filter: 1,
+		autoStop: true
+	},function(ret, err) {
+		if (ret.status) {
+			latitude 	= ret.latitude;
+			longitude 	= ret.longitude;
+			scale		= map.getZoom();
+			accuracy 	= 0;
+			var center 	= new qq.maps.LatLng(latitude, longitude);
+			translate(center, 3);
+		}else {
+			js.msg('msg','定位失败');
+			js.jssdkstate = 2;
+			clearTimeout(dwtimeer);
+		}
+	});
+}
+function showdw(id){
+	var url = '?d=main&m=kaoqin&a=location&id='+id+'';
+	js.location(url);
+}
+function addkaoqin(){
+	if(!kqrs){js.wx.alert('没有设置定位考勤位置');return;}
+	if(dwbool){js.wx.alert('正在定位，稍后在添加');return;}
+	if(latitude=='' || kqjuli==-1){js.wx.alert('定位没有成功，不能添加');return;}
+	var slju= parseFloat(kqrs.precision);
+	if(kqjuli>slju){js.wx.alert('当前位置距离考勤点有'+kqjuli+'米,考勤设置误差不能超过'+slju+'米，故不能添加考勤打卡！');return;}
+	adddkjl(1,'打卡');
+}
 </script>
+<style>
+.addbtnss{position:absolute;right:10px;bottom:10px;width:80px;height:80px; background:rgba(0,0,0,0.5);z-index:1;border-radius:50%;font-size:14px;color:white;text-align:center}
+.addbtnss:active{background:rgba(0,0,0,0.8)}
+</style>
 </head>
 
 
@@ -122,7 +252,7 @@ function showPosition(position){
 <?php if($web!='wxbro'){?>
 <div>
 	<div class="r-header">
-		<div class="r-header-text" id="header_title"><?=$da['title']?></div>
+		<div class="r-header-text" onclick="location.reload()" id="header_title"><?=$da['title']?></div>
 		<span onclick="js.back()" class="r-position-left r-header-btn"><i class="icon-chevron-left"></i></span>
 	</div>
 	<div class="blank50"></div>
@@ -130,23 +260,32 @@ function showPosition(position){
 <?php }?>
 
 <div>
-	<div style="width:100%;height:340px" id="container"></div>
+	<div style="width:100%;height:340px;position:relative">
+		<div id="container" style="position:absolute;width:100%;height:340px;"></div>
+		<div class="addbtnss" onclick="addkaoqin()"><div style="margin-top:20px">考勤打卡<br><span id="timess"><?=date('H:i:s')?></span></div></div>
+	</div>
+	
 	
 	<div style="padding:10px">
-	<button type="button" onClick="dingweidak()" class="weui_btn weui_btn_primary" name="button"><i class="icon-map-marker"></i> 定位打卡</button>
+	<table width="100%"><tr>
+		<td width="35%"><button type="button" onClick="dingweidak()" class="weui_btn weui_btn_default" name="button"><i class="icon-map-marker"></i> 定位</button></td>
+		<td width="15" nowrap></td>
+		<td><button type="button" onClick="adddkjlsss()" class="weui_btn weui_btn_primary" name="button"><i class="icon-plus"></i> 保存此定位记录</button></td>
+	</tr></table>
 	</div>
-	<div style="padding:0px 10px">
-		<div><b>今日我的外勤：</b></div>
+	<div style="padding:0px 10px;line-height:26px">
+		<div><b>今日定位：</b></div>
 		<?php
+		foreach($dwarr as $k=>$rs){
+			echo '<div style="font-size:14px">'.($k+1).'.'.substr($rs['optdt'],11).'('.$rs['label'].'),<a href="javascript:;" onclick="showdw('.$rs['id'].')">[查看]</a></div>';
+		}
+		if($rows)echo '<div class="blank10"></div><div><b>今日我的外勤：</b></div>';
 		foreach($rows as $k=>$rs){
 			echo '<div style="font-size:14px">'.($k+1).'.['.$rs['atype'].']'.$rs['address'].','.$rs['reason'].'('.$rs['outtime'].')</div>';
 		}
 		?>
 	</div>
-
-
-
-
+	<div class="blank10"></div>
 </div>
 
 </body>

@@ -3,8 +3,8 @@ function initbodys(){};
 function savesuccess(){};
 function eventaddsubrows(){}
 function eventdelsubrows(){}
-function geturlact(act){
-	var url=js.getajaxurl(act,'mode_'+moders.num+'|input','flow');
+function geturlact(act,cns){
+	var url=js.getajaxurl(act,'mode_'+moders.num+'|input','flow',cns);
 	return url;
 }
 function initbody(){
@@ -21,7 +21,6 @@ function initbody(){
 			}
 		}
 	});
-	
 	var len = arr.length,i,fid,nfid='';
 	for(i=0;i<len;i++){
 		fid=arr[i].fields;
@@ -100,37 +99,62 @@ var c={
 		if(!d)return;
 		this.saveok(d);
 	},
+	showtx:function(msg){
+		js.setmsg(msg);
+		if(ismobile==1)js.msg('msg', msg);
+	},
+	selectdatadata:{},
+	selectdata:function(s1,ced,fid,tit){
+		if(isedit==0)return;
+		if(!tit)tit='请选择...';
+		var a1 = s1.split(',');
+		$.selectdata({
+			data:this.selectdatadata[fid],title:tit,
+			url:geturlact('getselectdata',{act:a1[0]}),
+			checked:ced, nameobj:form(fid), idobj:form(a1[1]),
+			onloaddata:function(a){
+				c.selectdatadata[fid]=a;
+			}
+		});
+	},
 	savesss:function(){
 		var d=this.getsubdata(0);
 		if(js.ajaxbool||isedit==0)return false;
-		var len = arr.length,i,val,fid;
+		var len = arr.length,i,val,fid,flx,nas;
 		changesubmitbefore();
 		var d = js.getformdata();
 		for(i=0;i<len;i++){
 			if(arr[i].iszb!='0')continue;
 			fid=arr[i].fields;
-			if(ismobile==0 && arr[i].islu=='1'&&arr[i].fieldstype=='htmlediter'){
+			flx=arr[i].fieldstype;
+			nas=arr[i].name;
+			if(ismobile==0 && arr[i].islu=='1' && flx=='htmlediter'){
 				d[fid] = this.editorobj[fid].html();
 			}
+			val=d[fid];
 			if(arr[i].isbt=='1'){
-				val=d[fid];
 				if(isempt(val)){
 					if(form(fid))form(fid).focus();
-					js.setmsg(''+arr[i].name+'不能为空');
-					if(ismobile==1)js.msg('msg',''+arr[i].name+'不能为空');
+					this.showtx(''+nas+'不能为空');
+					return false;
+				}
+			}
+			if(val && flx=='email'){
+				if(!js.email(val)){
+					this.showtx(''+nas+'格式不对');
+					form(fid).focus();
 					return false;
 				}
 			}
 		}
 		var s=changesubmit(d);
 		if(typeof(s)=='string'&&s!=''){
-			js.setmsg(s);
-			js.msg('msg',s);
+			this.showtx(s);
 			return false;
 		}
 		if(typeof(s)=='object')d=js.apply(d,s);
-		d.modeid=moders.id;
-		d.modenum=moders.num;
+		d.sysmodeid=moders.id;
+		d.sysmodenum=moders.num;
 		return d;
 	},
 	saveok:function(d){

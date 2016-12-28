@@ -1,4 +1,4 @@
-<?php if(!defined('HOST'))die('not access');?>
+<?php defined('HOST') or die('not access');?>
 <script >
 $(document).ready(function(){
 	var istongbu=false;
@@ -19,16 +19,17 @@ $(document).ready(function(){
 		},{
 			text:'详情',dataIndex:'view'
 		},{
-			text:'操作',dataIndex:'opt',renderer:function(v,d){
+			text:'操作',dataIndex:'opt',align:'left',renderer:function(v,d){
+				if(d.isaz=='0')return '<font color=#888888>还不能安装</font>';
 				var s='';
 				if(v==1)s='<font color=green>已安装</font> ';
 				if(v==2)s='<button onclick="upsho{rand}(2,'+d.id+',\''+d.key+'\')" class="btn btn-danger btn-sm" type="button">升级</button>';
 				if(v==0)s='<button onclick="upsho{rand}(0,'+d.id+',\''+d.key+'\')" class="btn btn-info btn-sm"  type="button">安装</button>';
 				if(v==0||v==2){
-					if(d.price=='-1')s+='&nbsp;<a href="javascrpt:;" onclick="downup{rand}('+d.id+')">对比更新</a>';
+					if(d.price=='0')s+='&nbsp;<a href="javascript:;" onclick="downup{rand}('+d.id+',\''+d.name+'\')">文件对比</a>';
 					$('#shiw_{rand}').html('有系统模块需要升级/安装！');
 				}
-				if(d.price=='0'){
+				if(d.id=='1'){
 					istongbu=false;
 					if(v==1){
 						istongbu=true;
@@ -40,6 +41,10 @@ $(document).ready(function(){
 		beforeload:function(){
 			istongbu=false;
 			$('#shiw_{rand}').html('');
+			get('resede_{rand}').disabled=true;
+		},
+		itemclick:function(){
+			get('resede_{rand}').disabled=false;
 		}
 	});
 	
@@ -51,12 +56,42 @@ $(document).ready(function(){
 			var msgid='msg'+id+'_{rand}',lxs='安装';
 			if(lx==2)lxs='升级';
 			js.setmsg(''+lxs+'中...','', msgid);
-			js.ajax(js.getajaxurl('shengjian','{mode}','{dir}'),{id:id,key:key,slx:slx},function(s){
-				if(s=='ok'){
-					js.setmsg(''+lxs+'成功','green', msgid);
-					a.reload();
+			this.msgid  = msgid;
+			this.lxsss  = lxs;
+			this.upadd	= {id:id,key:key,slx:slx};
+			js.ajax(js.getajaxurl('shengjian','{mode}','{dir}'),this.upadd,function(d){
+				if(d.success){
+					c.uparr = d.data;
+					c.upstart(0);
 				}else{
-					js.setmsg(s,'red', msgid);
+					js.setmsg(d.msg,'red', c.msgid);
+				}
+			},'post,json');
+		},
+		upstart:function(oi){
+			var len = this.uparr.length,lxs = this.lxsss;
+			var ad  = this.upadd;
+			if(oi>=len){
+				js.setmsg(''+lxs+'完成','green', this.msgid);
+				if(ad.id=='1'){
+					js.confirm('系统核心文件升级完成需要重新进入系统哦！',function(jg){
+						location.reload();
+					});
+				}else{
+					a.reload();
+				}
+				return;
+			}
+			var d = this.uparr[oi];
+			js.setmsg(''+lxs+'中('+len+'/'+(oi+1)+')...','', this.msgid);
+			ad.fileid = d.id;
+			ad.lens	  = len;
+			ad.oii	  = oi;
+			js.ajax(js.getajaxurl('shengjianss','{mode}','{dir}'),ad,function(s){
+				if(s=='ok'){
+					c.upstart(oi+1);
+				}else{
+					js.setmsg(s,'red', c.msgid);
 				}
 			},'post');
 		},
@@ -74,40 +109,60 @@ $(document).ready(function(){
 			js.ajax(js.getajaxurl('tontbudata','{mode}','{dir}'),{lx:lx},function(s){
 				o.innerHTML=js.getmsg(s,'green');
 			});
+		},
+		delreload:function(){
+			a.del({
+				url:js.getajaxurl('delmodel', '{mode}','{dir}'),
+				msg:'确定要删除选中模块后可重新安装的！'
+			});
 		}
 	};
 	upsho{rand}=function(lx,id,kes){
 		c.upshos(lx,id,kes);
 	}
-	downup{rand}=function(id){
-		alert(id);
+	downup{rand}=function(id,na){
+		addtabs({num:'upgradefile'+id+'','url':'system,upgrade,file,id='+id+'','name':'['+na+']文件对比'});
 	}
 	js.initbtn(c);
 	
 	upfetwontbu=function(lx, o){
-		if(!istongbu){
+		if(!istongbu && lx!=3){
 			js.alert('请先升级系统到最新才能同步');
 			return;
 		}
-		js.confirm('谨慎啊，确定要同步嘛？同步了将覆盖你原先配置好的流程哦！',function(jg){
+		js.confirm('谨慎啊，确定要同步嘛？同步了将覆盖你原先配置好的哦！',function(jg){
 			if(jg=='yes')c.tontbudata(lx, o);
 		});
 	}
 });
 </script>
 <div>
-	<button class="btn btn-default" click="reloads"  type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp;  
-	<font color="red" id="shiw_{rand}"></font>
+	<table width="100%"><tr>
+	<td nowrap>
+		<button class="btn btn-default" click="reloads"  type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp;  
+		<font color="red" id="shiw_{rand}"></font> 
+	</td>
+	<td align="right">
+		<button class="btn btn-default" click="delreload" disabled id="resede_{rand}" type="button">删除重新安装</button>
+	</td>
+	</tr>
+	</table>
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
 <div class="blank10"></div>
-<div>1、同步菜单，系统上操作菜单会和官网同步。<a onclick="upfetwontbu(0,this)" href="javascript:;">[同步]</a></div>
+<div><h4><b>系统同步：</b></h4></div>
 <div class="blank10"></div>
-<div>2、同步流程模块，流程模块会和官网同步。<a onclick="upfetwontbu(1,this)" href="javascript:;">[同步]</a></div>
+<div>1、同步菜单，系统上操作菜单会和官网同步，也可到【系统→菜单管理】下管理。<a onclick="upfetwontbu(0,this)" href="javascript:;">[同步]</a></div>
 <div class="blank10"></div>
-<div style="font-size:16px;line-height:35px">
-更多升级方法：<br>
+<div>2、同步流程模块，流程模块会和官网同步，也可到【流程模块】下管理。<a onclick="upfetwontbu(1,this)" href="javascript:;">[同步]</a></div>
+<div class="blank10"></div>
+<div>3、同步桌面版/手机上应用，应用会和官网同步，也可到【系统→即时通信管理→应用管理】下管理。<a onclick="upfetwontbu(2,this)" href="javascript:;">[同步]</a></div>
+<div class="blank10"></div>
+<div>4、<font color=red>建议同步计划任务</font>，让系统更好运行，计划任务会和官网同步，也可到【系统→系统工具→计划任务】下管理。<a onclick="upfetwontbu(3,this)" href="javascript:;">[同步]</a></div>
+<div class="blank10"></div>
+<div><h4><b>更多升级方法：</b></h4></div>
+<div style="line-height:35px">
 1、使用svn地址升级(推荐)，地址：<a href="https://git.oschina.net/rainrock/xinhu" target="_blank">https://git.oschina.net/rainrock/xinhu</a><br>
 2、去官网下载源码全部覆盖升级，如果您自己修改，请谨慎覆盖。<br>
 3、根据列表升级安装。

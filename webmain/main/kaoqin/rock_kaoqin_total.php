@@ -25,6 +25,8 @@ $(document).ready(function(){
 		text:'加班(小时)',dataIndex:'jiaban'
 	},{
 		text:'外出(次数)',dataIndex:'outci'
+	},{
+		text:'异常(次数)',dataIndex:'errci'
 	}];
 	function getcolumns(a1,a2,a3){
 		var a4 = [].concat(a1,a2,a3);

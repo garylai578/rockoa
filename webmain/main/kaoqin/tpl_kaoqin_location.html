@@ -27,6 +27,11 @@ var init = function() {
     infoWin.open();
     infoWin.setContent('地址：<?=$da['rs']['label']?><br>打卡时间：<?=$da['rs']['optdt']?>');
     infoWin.setPosition(map.getCenter());
+	
+	var marker = new qq.maps.Marker({
+        map: map,
+		position:center
+    });
 }
 </script>
 </head>

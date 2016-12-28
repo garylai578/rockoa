@@ -26,6 +26,7 @@ class emailmClassModel extends Model
 		$rows 	= c('imap')->receemail($this->recehost, $myurs['email'], $myurs['emailpass'], $time);
 		if(!is_array($rows))return $rows;
 		$jf 	= 0;
+		$bool 	= true;
 		foreach($rows as $k=>$rs){
 			$message_id	= $rs['message_id'];
 			if(isempt($message_id))$message_id = md5($rs['date']);
@@ -37,7 +38,7 @@ class emailmClassModel extends Model
 			
 			$uarr['message_id'] = $message_id;
 			$uarr['title'] 		= $rs['subject'];
-			$uarr['content'] 	= $rs['body'];
+			$uarr['content'] 	= $this->db->tocovexec($rs['body'], 1);
 			$uarr['senddt'] 	= $rs['date'];
 			$uarr['optdt'] 		= $this->rock->now;
 			$uarr['size'] 		= $rs['size'];
@@ -59,23 +60,23 @@ class emailmClassModel extends Model
 				$uarr['uid']		= $urs['id'];
 				$uarr['sendname']	= $urs['name'];
 			}
-			if($uarr['sendid']==0){
-				$uarr['sendname']	= $uarr['fromemail'];
+			$uarr['sendname']	= $uarr['fromemail'];
+			$uarr['recename']	= $uarr['toemail'];
+			
+			$bool  = $this->record($uarr, $where);
+			if($bool){
+				if($id ==0)$id = $this->db->insert_id();
+				$this->saveattach($rs['num'], $rs['attach'], $id);
+				$toarr = $this->saveemails($id, 0, $rs['to']);
+				$this->saveemails($id, 1, $rs['cc']);
+				$this->saveemails($id, 2, $rs['from']);
+				$uuarr['receid']	= $toarr[0];
+				//$uuarr['recename']	= $toarr[1];
+				$this->update($uuarr, $id);
+				$jf++;
 			}
-			
-			$this->record($uarr, $where);
-			if($id ==0)$id = $this->db->insert_id();
-			$this->saveattach($rs['num'], $rs['attach'], $id);
-			$toarr = $this->saveemails($id, 0, $rs['to']);
-			$this->saveemails($id, 1, $rs['cc']);
-			$this->saveemails($id, 2, $rs['from']);
-			$uuarr['receid']	= $toarr[0];
-			$uuarr['recename']	= $toarr[1];
-			
-			$this->update($uuarr, $id);
-			$jf++;
 		}
-		$this->optionobj->setval($ukey, '共'.$jf.'封');//记录最后收信时间
+		if($bool)$this->optionobj->setval($ukey.'@-2', '共'.$jf.'封');//记录最后收信时间
 		return array(
 			'count' => $jf
 		);
@@ -168,8 +169,8 @@ class emailmClassModel extends Model
 	
 	public function zongtotal($uid)
 	{
-		$zz = $this->gettotsllss($uid, 0);
-		$wd = $this->gettotsllss($uid, 1);
+		$zz = $this->gettotsllss($uid, 0); //所有邮件
+		$wd = $this->gettotsllss($uid, 1); //未读邮件
 		$cgx= $this->gettotsllss($uid, 2); //草稿箱
 		
 		$yfs= $this->gettotsllss($uid, 3); //已发送

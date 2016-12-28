@@ -1,5 +1,5 @@
 <?php
-set_time_limit(1800);
+@set_time_limit(1800);
 class beifenClassAction extends Action
 {
 	
@@ -10,7 +10,7 @@ class beifenClassAction extends Action
 		if($myext!='-1'){
 			echo '只有管理员才可以用';
 		}else{
-			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,items,log,logintoken,meet,reads,sjoin,work,todo,flow_bill,goodss,goods,kqanay,kqdkjl,kqinfo,location,official,schedule,project,wx_agent,wx_chat,wx_dept,wx_user,userinfo,userract,hrpositive,word,hrredund,hrsalary,customer,custsale,custract,custfina,assetm,book,bookborrow,carm,carmrese,email_cont,emailm,emails');
+			$tables		= explode(',', 'daily,file,flow_log,im_history,im_mess,im_messzt,infor,log,logintoken,meet,reads,sjoin,work,todo,flow_bill,goodss,goods,kqanay,kqdkjl,kqerr,kqinfo,location,official,schedule,project,wx_agent,wx_chat,wx_dept,wx_user,userinfo,userract,hrpositive,word,hrredund,hrsalary,customer,custsale,custract,custfina,assetm,book,bookborrow,carm,carmrese,email_cont,emailm,emails,sealapl,vcard,tovoid');
 			$alltabls 	= $this->db->getalltable();
 			foreach($tables as $tabs){
 				$_tabs 	= ''.PREFIX.''.$tabs.'';
@@ -21,6 +21,7 @@ class beifenClassAction extends Action
 					$this->db->query($sql2, false);
 				}
 			}
+			$this->option->delete('`pid`=-2');
 			echo 'ok';
 		}
 	}

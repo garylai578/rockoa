@@ -10,6 +10,7 @@ class agentModel extends Model
 	public $page		= 1;
 	public $limit		= 10;
 	public $user_id		= 0;
+	public $event		= '';
 	public $agentrs;
 	public $moders;
 	public $flow;
@@ -50,9 +51,17 @@ class agentModel extends Model
 	
 	public function getdata($uid, $num, $lx, $page)
 	{
+		if(!isempt($lx)){
+			$lxa = explode('_', $lx);
+			if(isset($lxa[1]) && !isempt($lxa[1])){
+				$num = $lxa[1];
+				$lx  = $lxa[0];
+			}
+		}
 		$this->getagentinfor($num);
 		$this->page 	= $page;
 		$this->user_id 	= $uid;
+		$this->event 	= $lx;
 		$narr 	= $this->agentdata($uid, $lx);
 		if(!$narr)$narr = $this->getdatalimit($uid, $lx);
 		$arr 	= array(
@@ -97,9 +106,11 @@ class agentModel extends Model
 		$row 	= array();
 		$suarr  = $this->zhaiyaoar($this->flow->moders['summarx']);
 		foreach($rows as $k=>$rs){
-			$jarr 	= array('id'=>$rs['id']);
-			if(isset($rs['uid']))$jarr['uid'] = $rs['uid'];
+			$jarr 	= array();
 			$rs 	= $this->flow->flowrsreplace($rs, 2);
+			if(isset($rs['id']))$jarr['id']	  		= $rs['id'];	
+			if(isset($rs['uid']))$jarr['uid'] 		= $rs['uid'];
+			if(isset($rs['ishui']))$jarr['ishui'] 	= $rs['ishui'];
 			foreach($suarr as $f=>$nr){
 				$str  		= $this->rock->reparr($nr, $rs);
 				if($f=='cont')$str = $this->contreplaces($str);

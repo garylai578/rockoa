@@ -153,8 +153,14 @@ $(document).ready(function(){
 		js.tanbody('loginmobile','登录手机版', 300,200,{
 			html:'<div  style="height:160px;padding:5px" align="center"><div><img id="logeweerew" src="images/logo.png" width="130" height="130"></div><div>直接扫一扫即可登录</div></div>'
 		});
-		var surl = js.getajaxurl('getqrcode','index','home');
-		get('logeweerew').src=surl;
+		var surl = js.getajaxurl('getqrcode','index','home'),surls = js.getajaxurl('getqrcores','index','home');
+		$.get(surls,function(ass){
+			if(ass!='ok'){
+				$('#logeweerew').parent().html('<div style="padding:10px 20px;text-align:left">未开启gd库，不能生成二维码，<br>可手机浏览器输入地址:<br>'+ass+'</div>');
+			}else{
+				get('logeweerew').src=surl;
+			}
+		});
 	}
 	openwangyban=function(){
 		window.open('web/login.html?user='+adminuser+'&token='+admintoken+'');

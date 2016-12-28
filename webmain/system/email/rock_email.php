@@ -23,7 +23,9 @@ $(document).ready(function(){
 		},{
 			text:'发件人',dataIndex:'sendname'
 		},{
-			text:'收件人',dataIndex:'recename'
+			text:'收件人',dataIndex:'recename',renderer:function(v){
+				return '<div style="width:250px" class="wrap">'+v+'</div>';
+			}
 		},{
 			text:'发件时间',dataIndex:'senddt',sortable:true
 		},{
@@ -112,13 +114,15 @@ $(document).ready(function(){
 			},'post',false,'删除中...');
 		},
 		cogemail:function(){
+			if(nowemail.email==null)nowemail.email='';
+			if(nowemail.emailpass==null)nowemail.emailpass='';
 			var h = $.bootsform({
 				title:'邮箱设置',height:400,width:400,
 				tablename:'admin',isedit:1,
 				url:js.getajaxurl('saveemaipass','{mode}','{dir}'),
 				submitfields:'email,sort',
 				items:[{
-					labelText:'我邮箱',name:'email',value:nowemail.email,readOnly:true
+					labelText:'我邮箱',name:'email',value:nowemail.email,readOnly:true,required:true
 				},{
 					labelText:'我邮箱密码',name:'emailpass',value:nowemail.emailpass,required:true
 				}],

@@ -4,7 +4,7 @@ class extentClassAction extends Action
 	public function beforeextentuser($table)
 	{
 		return array(
-			'where' => 'and `status`=1',
+			'where' => 'and `status`=1 and `type`=0',
 			'fields'=> '`id`,`name`,`user`,`deptname`'
 		);
 	}
@@ -63,32 +63,12 @@ class extentClassAction extends Action
 		
 		//权限查看的
 		if($type == 'view' || $type == 'um'){
-			$s.=$this->getuserext($mid);
+			$s		= m('sjoin')->getuserext($mid);
 		}else{
 			$rsa	= $this->db->getall("select `sid` from `".PREFIX."sjoin` where `type`='$type' and `mid`='$mid'");
 			foreach($rsa as $rs)$s.=',['.$rs['sid'].']';
 		}
 		echo $s;
-	}
-
-	/**
-		查看人员菜单权限
-	*/	
-	function getuserext($uid)
-	{
-		$gasql	= " ( id in( select `sid` from `[Q]sjoin` where `type`='ug' and `mid`='$uid') or id in( select `mid` from `[Q]sjoin` where `type`='gu' and `sid`='$uid') )";//用户所在组id
-		$gsql	= "select `id` from `[Q]group` where $gasql ";
-		$owhe	= " and (`id` in(select `sid` from `[Q]sjoin` where ((`type`='um' and `mid`='$uid') or (`type`='gm' and `mid` in($gsql) ) ) ) or `id` in(select `mid` from `[Q]sjoin` where ((`type`='mu' and `sid`='$uid') or (`type`='mg' and `sid` in($gsql) )) ))";
-		if($this->db->rows('[Q]group',"`ispir`=0 and $gasql")>0)$owhe = ''; 	//不用权限验证的用户
-		if($owhe != ''){
-			if($this->db->rows('[Q]admin', "`id`='$uid' and `type`=1")>0)$owhe = '';
-		}
-		$guid	= '';
-		$arss	= $this->db->getall("select `id` from `[Q]menu` where (`status` =1 $owhe) or (`status` =1 and `ispir`=0) order by `sort`");
-		foreach($arss as $ars){
-			$guid.=',['.$ars['id'].']';
-		}
-		return $guid;
 	}
 	
 }

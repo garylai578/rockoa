@@ -46,6 +46,7 @@ function yingyonginit(){
 	yy.getdata('def',1);
 }
 function initbody(){
+	adminid = js.getoption('adminid');
 	yy.init();
 	yingyonginit();
 }
@@ -102,7 +103,9 @@ function initbody(){
 	</div>
 </div>
 
-
+<?php
+if($yyurljs!='')echo '<script type="text/javascript" src="'.$yyurljs.'"></script>'."\n";
+?>
 <script type="text/javascript" src="web/res/js/jquery-imgview.js"></script>
 <script type="text/javascript" src="web/res/js/jquery-rockupload.js"></script>
 <script type="text/javascript" src="web/res/js/jquery-changeuser.js"></script>

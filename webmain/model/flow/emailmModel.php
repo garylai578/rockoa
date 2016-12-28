@@ -11,7 +11,7 @@ class flow_emailmClassModel extends flowModel
 	//立即发送提醒
 	protected function flowsubmit($na, $sm)
 	{
-		if($this->rs['isturn']==1){
+		if($this->rs['isturn']==1 && $this->rs['type']==0){
 			$h 		= c('html');
 			$cont 	= $h->htmlremove($this->rs['content']);
 			$cont 	= $h->substrstr($cont,0, 50);
@@ -54,7 +54,7 @@ class flow_emailmClassModel extends flowModel
 	/**
 	*	读取原来邮件内容
 	*/
-	private function getoldcont($hid)
+	private function getoldcont($hid, $bo=true)
 	{
 		$hid = (int)$hid;
 		if($hid==0)return '';
@@ -68,7 +68,7 @@ class flow_emailmClassModel extends flowModel
 			收件人: '.$hrs['recename'].'<br>
 			主题: '.$hrs['title'].'</div>';
 		$s.= '<div style="margin-top:10px">'.$hrs['content'].'<br>'.$fstr.'</div>';
-		$s.= $this->getoldcont($hrs['hid']);
+		if($bo)$s.= $this->getoldcont($hrs['hid'], $bo);
 		return $s;
 	}
 	
@@ -127,12 +127,12 @@ class flow_emailmClassModel extends flowModel
 	
 	public function savesubmid($tuid, $mid, $type, $zt=0)
 	{
+		$now 		= $this->rock->now;
 		if(is_numeric($tuid)){
 			$uids	= $tuid;
 		}else{
 			$uids 	= m('admin')->gjoin($tuid);
 		}
-		$now 		= $this->rock->now;
 		if($uids!=''){
 			$this->db->insert('[Q]emails','mid,uid,email,personal,type,optdt,zt',"select '$mid',id,email,name,'$type','$now','$zt' from `[Q]admin` where id in($uids)", true);
 		}
@@ -148,7 +148,7 @@ class flow_emailmClassModel extends flowModel
 		$rers 	= $this->gethuifuarr();
 		if(!$rers)return '没有发送人';
 		$cont	= str_replace("\n", '<br>', $cont);
-		$arr['title'] 	 	= 'Re:'.$rs['title'].'';
+		$arr['title'] 	 	= '回复：'.$rs['title'].'';
 		$arr['content'] 	= $cont;
 		$arr['sendid'] 		= $this->adminid;
 		$arr['uid'] 		= $this->adminid;
@@ -177,7 +177,14 @@ class flow_emailmClassModel extends flowModel
 		m('emails')->update('ishui=1','`mid`='.$this->id.' and `uid`='.$this->adminid.' and `type`=0');//更新已回复
 		//需要外发
 		if($rs['type']==1 && !isempt($rers['email'])){
-			m('email')->sendemailout($this->adminid, $arr['title'], $arr['content'], $rers['email'], $arr['recename']);
+			$cont 	 =  $arr['content'];
+			$cont 	.=  $this->getoldcont($this->id, false);
+			m('email')->sendemailout($this->adminid, array(
+				'title' 	=> $arr['title'],
+				'body' 		=> $cont,
+				'receemail' => $rers['email'],
+				'recename' 	=> $arr['recename'],
+			));
 		}
 		
 		$this->loaddata($id, false);

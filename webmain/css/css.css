@@ -17,6 +17,7 @@ a:hover{TEXT-DECORATION:underline;color:#1abc9c;}
 img{ border:none}
 h1{ font-size:18px}
 select,input,textarea,button,a{ font-size:14px;resize: none;outline:none}
+.touch{-webkit-overflow-scrolling:touch;overflow-scrolling:touch;}
 
 a.zhu:link,a.zhu:visited{color:#1abc9c;}
 

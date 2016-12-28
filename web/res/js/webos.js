@@ -1,11 +1,12 @@
 var userarr = {},deptarr={},agentarr={},connectbool=false,fromrecid='',fromwshost='',relianshotime_time,otherlogin=false,grouparr= {},maindata={},tabsarr={},nowtabs,opentabs=[],chatobj={},notifyobj,agentobj={},systemtitle,windowfocus=true,enterbool=false;
 function initbody(){im.init();}
 function addtabs(d){
+	$('.rockmenu').remove();
 	var d=js.apply({width:500,height:400,num:js.getrand(),rand:js.getrand(),scroll:true,face:'images/white.gif',onshow:function(){},onclose:function(){},reheiid:''},d),num=d.num,i,ura;
 	nowtabs=d;
 	if(changetabs(num))return true;
 	var ura	= d.url.split(',');
-	var url = 'html/xinhu_'+ura[0]+'.shtml?rnd='+Math.random()+'';
+	var url = 'html/xinhu_'+ura[0]+'.html?rnd='+Math.random()+'';
 	var s='<div temp="tabs" onclick="changetabs(\''+num+'\')" id="tabs_'+num+'" class="lists active"><img src="'+d.face+'" align="absmiddle"> '+d.name+'<span class="close" onclick="closetabs(\''+num+'\')"><i class="icon-remove-sign"></i></span>';
 	s+='<span id="tabs_stotal_'+num+'" class="badge bqs"></span>';
 	s+='</div>';
@@ -24,7 +25,7 @@ function addtabs(d){
 		nowtabs={};
 	});
 	$('#tabs_'+num+'').remove();
-	var s = '<div id="tabs_'+num+'" onclick="changetabs(\''+num+'\');">'+tit+' <span id="tabs_stotal_'+num+'" class="badge"></span></div>';
+	var s = '<div id="tabs_'+num+'" onclick="taskbarclick(\''+num+'\');">'+tit+' <span id="tabs_stotal_'+num+'" class="badge"></span></div>';
 	$('.os_taskbar_list').append(s);
 	var urlpms= '';
 	for(i=1;i<ura.length;i++){
@@ -57,6 +58,18 @@ function addtabs(d){
 		var s = this.id.replace('_main','');
 		changetabs(s);
 	});
+}
+function taskbarclick(num){
+	if(nowtabs.num!=num){
+		changetabs(num);
+	}else{
+		var o = get(''+num+'_main');
+		if(o.style.display=='none'){
+			changetabs(num);
+		}else{
+			o.style.display='none';
+		}
+	}
 }
 function modeltabs(nr, sw){
 	$('#tabsmodestese').remove();
@@ -166,9 +179,6 @@ var im={
 		$(window).blur(function(){windowfocus=false});
 		systemtitle = js.getoption('systemtitle','信呼');
 		document.title=systemtitle;
-		var slogo = js.getoption('systemlogo');
-		if(slogo){
-		}
 		notifyobj=new notifyClass({
 			title:'系统提醒',
 			sound:'res/sound/todo.ogg',
@@ -217,6 +227,7 @@ var im={
 	},
 	resize:function(){
 		var hei = winHb(),wei = winWb();
+		im.resizebgwh();
 	},
 	zuidhua:function(){
 		js.location('mainnw.html');
@@ -387,7 +398,7 @@ var im={
 		nwjs.changeicon(v3);
 	},
 	getsicons:function(a){
-		var arr = [{name:'IM即时通信',onclick:"$('#chatimdiv').toggle()",badgeid:'stotal_ss0',id:'im',face:'images/reim.png',num:'defim',type:0,stotal:''},{name:'添加打卡',onclick:"im.adddaka()",id:'im',face:'images/adddk.png',num:'defadddk',type:0,stotal:''}];
+		var arr = [{name:'IM交流',onclick:"$('#chatimdiv').toggle()",badgeid:'stotal_ss0',id:'im',face:'images/reim.png',num:'defim',type:0,stotal:''},{face:'images/cog.png',onclick:'im.clickcog(this,event)',name:'设置',stotal:'',type:0,id:'cog',num:'syscog'}];
 		var i,len=a.length,d,d1,j;
 		for(i=0;i<len;i++){
 			d 	= a[i];d.type = 1;
@@ -414,7 +425,7 @@ var im={
 			s1= d.stotal;if(s1==0)s1='';
 			s2= 'agentstotal_'+d.id+'';
 			if(d.badgeid)s2=d.badgeid;
-			s3='im.openicons('+i+')';
+			s3='im.openicons('+i+',event)';
 			if(d.onclick)s3=d.onclick;
 			s+='<div onclick="'+s3+'" style="top:'+t+'px;left:'+l+'px" class="os_icons">';
 			s+='	<div class="os_icons_img">';
@@ -431,13 +442,18 @@ var im={
 			if(t>zh-130){t=10;l+=jg}
 		}
 		$('body').append(s);
+		$('.os_icons').click(function(){return false;});
 		this.changestotl('agentstotal_',1);
 	},
 	reloadicons:function(){
 		this.showicons(iconsarr);
 	},
-	openicons:function(oi){
+	onclickicons:function(a){
+		return true;
+	},
+	openicons:function(oi,e){
 		var d = iconsarr[oi];
+		if(!this.onclickicons(d, e))return;
 		if(d.type==1)this.openagent(d.id);
 	},
 	showagent:function(a){
@@ -709,7 +725,7 @@ var im={
 		if(w>1200)w=1200;if(h>800)h=800;
 		js.open(apiurl+'?afrom=client',w,h);
 	},
-	clickcog:function(o1){
+	clickcog:function(o1,e){
 		var d=[{name:'＋创建会话',lx:21}];
 		d.push({name:'设置',lx:22});
 		d.push({name:'修改密码',lx:25});
@@ -718,8 +734,12 @@ var im={
 		d.push({name:'更多功能...',lx:26});
 		d.push({name:'退出',lx:99});
 		righthistroboj.setData(d);
-		var off = $(o1).offset();
-		righthistroboj.showAt(off.left,off.top-255);
+		if(!e){
+			var off = $(o1).offset();
+			righthistroboj.showAt(off.left,off.top-255);
+		}else{
+			righthistroboj.showAt(e.clientX,e.clientY);
+		}
 	},
 	addapply:function(o1){
 		var d = maindata.modearr,a=[],i,i1,len=d.length,s='',d1,d2={};
@@ -940,8 +960,13 @@ var im={
 		this.searchright.showAt(off.left+1,off.top+40,$('#headercenter').width()-2);
 	},
 	openurl:function(tit, url){
+		var mxw= 900;
 		var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
-		var wi = winWb()-150;if(wi>900)wi=900;if(wi<700)wi=700;
+		if(url.indexOf('wintype=max')>0){
+			mxw= 1100;
+			hm=winHb()-45;
+		}
+		var wi = winWb()-150;if(wi>mxw)wi=mxw;if(wi<700)wi=700;
 		js.tanbody("winiframe",tit,wi,410,{html:'<div id="winiframe_hei" style="height:'+hm+'px"><iframe src="" name="winiframe" onload="im.openurlload(this)" width="100%" height="100%" frameborder="0"></iframe></div>',bbar:'none',resize:true,reheiid:'winiframe_hei'});
 		url+='&ofrom=zmb';
 		winiframe.location.href=url;
@@ -954,10 +979,11 @@ var im={
 		var d = {'tuid':tuid,'type':type,'cont':jm.base64encode(cont),'fileid':fid};
 		js.ajax('reim','forward', d, function(){js.msg('success','已转发')},'');
 	},
-	adddaka:function(){
+	adddaka:function(fus){
 		js.msg('wait','打卡中...');
 		var dacs=nwjs.getipmac();
-		js.ajax('kaoqin','adddkjl',dacs, function(s){js.msg('success','打卡成功时间：'+s+'')},'');
+		if(!fus)fus=function(){}
+		js.ajax('kaoqin','adddkjl',dacs, function(s){js.msg('success','打卡成功时间：'+s+'');fus(s);},'');
 	},
 	udpreceive:function(msg, infs){
 		var a=js.decode(msg);
@@ -1034,8 +1060,8 @@ var im={
 		if(!surl)surl = js.getoption('background');
 		if(surl)document.body.style.background='url('+surl+') top left';
 		if(bo)js.setoption('background', surl);
-		return;
-		get('bodybgimg').src  = surl;
+		if(!surl)return;
+		get('os_bodybgimg').src  = surl;
 		var img = new Image();
 		img.src = surl;
 		img.onload = function(){
@@ -1044,8 +1070,18 @@ var im={
 		}
 	},
 	resizebgwh:function(){
+		if(!this.bgwidthhei)return;
 		var w 	= this.bgwidthhei[0],h = this.bgwidthhei[1];
-		var zw 	= $(window).width(),zh=$(window).height();
+		var zw 	= winWb(),zh = winHb(),bl,_nw,_nh;
+		bl 		= zw/w;
+		_nw		= zw;
+		_nh		= h*bl;
+		if(_nh<zh){
+			bl  = zh/h;
+			_nh = zh;
+			_nw = w*bl;
+		}
+		$('#os_bodybgimg').css({width:''+_nw+'px',height:''+_nh+'px'});
 	}
 }
 js.changeok=function(sna,sid, blx,plx){
@@ -1324,18 +1360,7 @@ var chatclass = function(opts){
 		this.showobj.html(s);
 	};
 	this.contshozt=function(d){
-		var s='',slx;
-		if(d){
-			if(!d.fileid)d.fileid=d.id;
-			if(js.isimg(d.fileext)){
-				s='<img src="'+apiurl+''+d.thumbpath+'" width="150" fid="'+d.fileid+'">';
-			}else{
-				slx = d.fileext;
-				if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
-				s='<img src="images/fileicons/'+slx+'.gif" align="absmiddle">&nbsp;'+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;'+d.filesizecn+'';
-			}
-		}
-		return s;
+		return strformat.contshozt(d);
 	};
 	this.addcont=function(cont, isbf){
 		var o	= this.showobj;
@@ -1546,16 +1571,16 @@ function agentclass(opts){
 			return;
 		}
 		this.sousoukey= '';
+		this.nowpage  = 1;
 		this.num 	  = this.receinfor.num;
 		this.name 	  = this.receinfor.name;
 		this.showobj  = $('#agentshow_'+this.rand+'');
 		this.showheight = 0;
 		this.setheight();
-		
 		var menus = this.receinfor.menu,len=menus.length,i;
 		this.menus= menus;
 		var s='<table width="100%" style="border-bottom:1px #dddddd solid" cellpadding="0"><tr><td nowrap>&nbsp;&nbsp;</td><td height="39"><div style="height:24px;overflow:hidden;padding-right:5px"><img src="'+this.receinfor.face+'" height="24"></div></td><td id="agenttitle_'+this.rand+'" nowrap>'+this.receinfor.name+'</td>';
-		s+='<td style="padding-left:10px"><input onkeyup="agentobj.'+this.num+'.sousousou(this,event)" style="border:1px #dddddd solid; width:150px; background:white;height:26px;padding:0px 5px" placeholder="输入关键词搜索" ></td>';
+		if(this.receinfor.url=='auto')s+='<td style="padding-left:10px"><input onkeyup="agentobj.'+this.num+'.sousousou(this,event)" style="border:1px #dddddd solid; width:150px; background:white;height:26px;padding:0px 5px" placeholder="输入关键词搜索" ></td>';
 		s+='<td width="100%"></td>';
 		for(i=0;i<len;i++){
 			a=menus[i];
@@ -1581,7 +1606,7 @@ function agentclass(opts){
 		});
 	};
 	this.setheight=function(iu){
-		var h = this.showheight==0 ? 450 : parseFloat(this.showobj.height());
+		var h = this.showheight==0 ? 430 : parseFloat(this.showobj.height());
 		if(!iu)iu=0;
 		h	= h+iu;
 		this.showheight = h;
@@ -1649,7 +1674,7 @@ function agentclass(opts){
 					me.initagent();
 				},
 				error:function(e){
-					me.getdata('def', 1);
+					me.initagent();
 				}
 			});
 		}else{
@@ -1666,12 +1691,16 @@ function agentclass(opts){
 	};
 	this.getdata=function(st,p, nob){
 		this.nowevent=st;
+		this.nowpage =p;
 		if(!nob)modeltabs('','agent_'+this.id+'');
 		var key = ''+this.sousoukey;
 		if(key)key='basejm_'+jm.base64encode(key)+'';
 		js.ajax('index','getyydata',{'page':p,'event':st,'num':this.num,'key':key},function(ret){
 			me.showdata(ret);
 		},'none');
+	};
+	this.reload=function(){
+		this.getdata(this.nowevent, this.nowpage);
 	};
 	this.regetdata=function(o1,p){
 		if(o1)$(o1).html('<img src="images/loadings.gif" height="14" width="15" align="absmiddle"> 加载中...');

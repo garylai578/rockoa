@@ -15,26 +15,33 @@ class imageChajian extends Chajian
 	public $whbili	= 0;//高和宽的比例
 	
 	
+	protected function initChajian()
+	{
+		$this->bool	= function_exists('ImageCreate');
+	}
+	
 	/**
 		创建图片对象$rotate旋转角度
 		
 	*/
 	public function createimg($path,$rotate=0)
 	{
-		$this->bool	= false;
-		if(!file_exists($path))return;
+		if(!$this->bool)return false;
+		$this->bool = false;
+		if(!file_exists($path))return false;
 		
 		$this->ext	= $this->getext($path);
 		$this->path	= $path;
 		$img		= $this->createimgobj($path);
-		
+		$this->img	= $img;
+		if(!$img)return false;
 		//判断是否旋转
 		if($rotate != 0 && $rotate<360 && $rotate>-360){
 			$white	= $this->color('#ffffff',$img);
 			$img	= imagerotate($img, $rotate, $white);//旋转
 		}
 		
-		$this->img	= $img;
+		
 		$this->w	= imagesx($this->img);
 		$this->h	= imagesy($this->img);
 		$this->size	= ceil(filesize($this->path)/1024);
@@ -48,6 +55,7 @@ class imageChajian extends Chajian
 	public function createimgobj($path)
 	{
 		$ext	= $this->getext($path);
+		$img	= false;
 		switch ($ext){
 			case 'gif':
 				$img=imagecreatefromgif($path);
@@ -84,6 +92,7 @@ class imageChajian extends Chajian
 	*/
 	public function addwater($str,$color='#000000',$size=20,$align='rb')
 	{
+		if(!$this->bool)return;
 		$font	= '../fonts/FZZHYJW.TTF';	//方正稚艺简体
 		$lw 	= strlen($str)*($size/2);
 		$lh		= $size*0.5;
@@ -118,7 +127,7 @@ class imageChajian extends Chajian
 	*/
 	public function imgwater($imgpath,$align='rb')
 	{
-		if(!file_exists($imgpath))return;
+		if(!$this->bool || !file_exists($imgpath))return;
 		list($lw, $lh) 	= getimagesize($imgpath);
 		$logoimg		= $this->createimgobj($imgpath);
 		$x				= 2;
@@ -195,6 +204,7 @@ class imageChajian extends Chajian
 	*/
 	public function thumbnail($w,$h,$lx=0)
 	{
+		if(!$this->bool)return '';
 		list($mw, $mh, $bili) = $this->imgwh($w,$h);
 		$tmpimg = imagecreatetruecolor($w,$h);
 		imagefill($tmpimg,0,0,$this->color('#ffffff',$tmpimg));

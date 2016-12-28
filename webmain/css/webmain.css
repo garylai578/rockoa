@@ -9,6 +9,8 @@ ul,li{padding:0px;margin:0px}
 .zhu{ color:#ffffff}
 img{border:0}
 
+.wrap{word-wrap:break-word;word-break:break-all;white-space:normal;}
+
 select,input,textarea,button,a{ font-size:14px;resize: none;outline:none}
 
 a.hui:link,a.hui:visited{color:#555555;TEXT-DECORATION:none;}

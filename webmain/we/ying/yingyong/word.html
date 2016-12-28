@@ -117,17 +117,18 @@ var c = {
 		this.tempda = d;
 		var a = [{name:(d.fileext=='folder')?'打开':'下载',lx:0}];
 		if(!this.ssslx){
-			a.push({name:'重命名',lx:1});
 			if(d.fileext=='folder'){
 				if(this.movedata)a.push({name:'['+this.movedata.name+']移动到这',lx:3});
 			}else{
+				a.push({name:'预览',lx:7});
 				a.push({name:'移动',lx:2});
 			}
+			a.push({name:'重命名',lx:1});
 			a.push({name:'删除',lx:4});
 		}
 		if(d.fileext!='folder'){
-			//a.push({name:'共享给...',lx:5});
-			//a.push({name:'转发给...',lx:6});
+			if(d.optid==adminid)a.push({name:'共享给...',lx:5});
+			a.push({name:'转发给...',lx:6});
 		}
 		js.showmenu({data:a,onclick:function(d){c.clickmenuss(d)}});
 	},
@@ -140,6 +141,7 @@ var c = {
 		if(lx==4)this.delfload();
 		if(lx==5)this.fenxiang();
 		if(lx==6)this.zhuanfagei();
+		if(lx==7)this.yulans();
 	},
 	celdblckc:function(oi){
 		var d = this.data[oi-1];
@@ -148,12 +150,20 @@ var c = {
 			$('#workheader').append(s);
 			this.getfile(d.id);
 		}else{
-			if(js.isimg(d.fileext)){
-				$.imgview({url:apiurl+d.filepath,ismobile:1});
-			}else{
-				js.downshow(d.fileid);
-			}
+			js.downshow(d.fileid);
 		}
+	},
+	yulans:function(){
+		var d = this.tempda;
+		if(js.isimg(d.fileext)){
+			$.imgview({url:apiurl+d.filepath,ismobile:1});
+		}else{
+			var url = '?m=public&a=fileviewer&id='+d.id+'';
+			js.location(url);
+		}
+	},
+	fenxiang:function(){
+		
 	},
 	clickheadeer:function(pid,o1){
 		var as = $('#workheader span');
@@ -200,6 +210,40 @@ var c = {
 		js.ajax('word','delfile',{type:d.fileext,id:d.id},function(a){
 			$('#'+d.fileext+'_'+d.id+'').remove();
 			js.msg('success','删除成功');
+		});
+	},
+	fenxiang:function(){
+		$('body').chnageuser({
+			'changetype':'changedeptusercheck',
+			'title':'共享给...',
+			'titlebool':get('header_title'),
+			'onselect':function(sna,sid){
+				c.fenxiangok(sna,sid);
+			}
+		});
+	},
+	zhuanfagei:function(){
+		$('body').chnageuser({
+			'changetype':'changeusercheck',
+			'title':'转发给...',
+			'titlebool':get('header_title'),
+			'onselect':function(sna,sid){
+				c.zhuanfageiok(sna,sid);
+			}
+		});
+	},
+	zhuanfageiok:function(sna,sid){
+		var d  = this.tempda;
+		var ds = {'tuid':sid,'type':'user','cont':'','fileid':d.id};
+		js.ajax('reim','forward', ds, function(){
+			js.msg('success','已转发给【'+sna+'】')
+		});
+	},
+	fenxiangok:function(sna,sid){
+		if(sid=='')return;
+		var d = this.tempda;
+		js.ajax('word','shatefile',{type:d.fileext,id:d.id,shateid:sid,shate:jm.base64encode(sna)},function(a){
+			js.msg('success','已共享给【'+sna+'】');
 		});
 	},
 	wfenxx:function(lx){

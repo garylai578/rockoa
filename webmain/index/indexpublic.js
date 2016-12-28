@@ -38,7 +38,7 @@ function openxiangs(name,num,id,cbal){
 	if(!id)id=0;
 	if(!cbal)cbal='';
 	var url = 'task.php?a=p&num='+num+'&mid='+id+'';
-	if(num.indexOf('?')>-1){url=num;}else{url+='&callback='+cbal+'';}
+	if(num.indexOf('?')>-1){url=num+'&callback='+cbal+'';}else{url+='&callback='+cbal+'';}
 	js.winiframe(name,url);
 	return false;
 }

@@ -45,9 +45,7 @@ class kaoqinClassModel extends Model
 	*/
 	public function getkqsj($uid, $dt, $lx=0)
 	{
-		$s 		= m('admin')->getjoinstr('receid', $uid);
-		$rows  	= $this->getall("`status`=1 and `type`=0 and '$dt' between `startdt` and `enddt` $s ");
-		$mid 	= $this->getpipeimid($uid, $rows);
+		$mid 	= $this->getdistid($uid, $dt, 0);
 		$rows 	= $this->db->getrows('[Q]kqsjgz','pid='.$mid.'','id,name,stime,etime,qtype','`sort`');
 		if($lx==1)return $rows;
 		foreach($rows as $k=>$rs){
@@ -75,26 +73,35 @@ class kaoqinClassModel extends Model
 	}
 	
 	/**
+	*	获取匹配Id
+	*	$type 0考勤时间,1休息,2定位
+	*/
+	public function getdistid($uid, $dt, $type)
+	{
+		$s 		= m('admin')->getjoinstr('receid', $uid);
+		$rows  	= $this->getall("`status`=1 and `type`=".$type." and '$dt' between `startdt` and `enddt` $s ");
+		$mid 	= $this->getpipeimid($uid, $rows);
+		return $mid;
+	}
+	
+	/**
 	*	是不是工作日
 	*/
 	public function isworkdt($uid, $dt)
 	{
-		$s 		= m('admin')->getjoinstr('receid', $uid);
-		$rows  	= $this->getall("`status`=1 and `type`=1 and '$dt' between `startdt` and `enddt` $s ");
-		$mid 	= $this->getpipeimid($uid, $rows);
+		$mid 	= $this->getdistid($uid, $dt, 1);
 		$tos 	= $this->db->rows('[Q]kqxxsj',"`pid`=$mid and `dt`='$dt'");
 		$isw 	= ( $tos>0 ) ? 0 : 1;
 		return $isw;
 	}
 	
 	/**
-	*	读取人员今天定位打卡位置
+	*	读取人员定位定位打卡位置
 	*/
 	public function dwdkrs($uid, $dt)
 	{
-		$s 		= m('admin')->getjoinstr('receid', $uid);
-		$rows  	= $this->getall("`status`=1 and `type`=1 and '$dt' between `startdt` and `enddt` $s ");
-		$mid 	= $this->getpipeimid($uid, $rows, 'mid', 0);
+		$mid 	= $this->getdistid($uid, $dt, 2);
+		return m('kqdw')->getone($mid);
 	}
 	
 	public function getpipeimid($uid=0, $garrs, $esfi='mid', $momid=1, $dt='')

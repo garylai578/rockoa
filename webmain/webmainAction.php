@@ -91,15 +91,15 @@ class Action extends mainAction
 			$wherea		= str_replace($arr['sou'],$arr['rep'],$wherea);
 			$order		= str_replace($arr['sou'],$arr['rep'],$order);
 		}
-		$sql		= "select SQL_CALC_FOUND_ROWS $fields from $table where $wherea $group $order ";
+		$sql		= "select $fields from $table where $wherea $group $order ";
+		$total 		= $this->db->rows($table, $wherea);
 		if(!$limitall)$sql.=' '.$this->getLimit();
 		$rows		= $this->db->getall($sql);
-		$total		= $this->db->found_rows();
 		if(!is_array($rows))$rows = array();
 		return array(
 			'total'	=> $total,
 			'rows'	=> $rows,
-			'sql'	=> $sql
+			'sql'	=> $this->db->nowsql
 		);
 	}
 	
@@ -211,12 +211,15 @@ class Action extends mainAction
 				foreach($narr as $kv=>$vv)$bacarr[$kv]=$vv;
 			}
 		}
-		$statusarr = explode(',','<font color=blue>待审核</font>,<font color=green>已审核</font>,<font color=red>未通过</font>');
 		if($this->flow){
 			$rows = $bacarr['rows'];
+			$bils = m('flowbill');
 			foreach($rows as $k=>$rs){
-				if($this->flow->isflow==1 && isset($rs['status']))$rs['statustext'] 	= $statusarr[$rs['status']];
-				$rows[$k] 			= $this->flow->flowrsreplace($rs);
+				if($this->flow->isflow==1 && isset($rs['status'])){
+					$rs['statustext'] 	= $bils->getstatus($rs['status']);
+					if($rs['status']==5)$rs['ishui'] 		= 1;
+				}
+				$rows[$k] 				= $this->flow->flowrsreplace($rs);
 			}
 			$bacarr['rows'] = $rows;
 		}
@@ -433,10 +436,12 @@ class ActionNot extends Action
 			$uid = (int)$this->getcookie('mo_adminid');
 			if($uid>0){
 				$db   = m('login');
-				$onrs = $db->getone("`uid`=$uid and `cfrom` in('mweb','pc','reim') and `online`=1",'`name`,`token`,`id`');
+				$onrs = $db->getone("`uid`=$uid and `online`=1",'`name`,`token`,`id`,`uid`');
 				if($onrs){
 					$db->setsession($uid, $onrs['name'], $onrs['token']);
 					$db->update("moddt='$this->now'", $onrs['id']);
+					$this->adminid 		= $onrs['uid'];
+					$this->adminname 	= $onrs['name'];
 				}else{
 					$uid = 0;
 				}

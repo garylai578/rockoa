@@ -1,5 +1,4 @@
 <?php 
-set_time_limit(0);
 header('Access-Control-Allow-Origin: *');
 class uploadClassAction extends apiAction
 {

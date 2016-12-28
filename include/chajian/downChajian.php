@@ -78,6 +78,7 @@ class downChajian extends Chajian{
 				$imgaa->createimg($thumbpath);
 				$thumbpath 	= $imgaa->thumbnail($lw, $lh, 1);
 			}
+			if($upses['picw'] == 0 && $upses['pich']==0)$thumbpath = '';
 			$arrs['thumbpath'] = $thumbpath;
 			
 			

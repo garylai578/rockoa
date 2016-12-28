@@ -151,7 +151,7 @@
 			s3 	= can.rendertr(ov, this, j);
 			s4  = can.rowsbody(ov, this, j);
 			if(s4)s5='rowspan="2"';
-			if(!s3 && can.statuschange && ov.status==0)s3='style="color:#aaaaaa"';
+			if(!s3 && ((can.statuschange && ov.status==0) || (ov.ishui==1)))s3='style="color:#aaaaaa"';
 			s='<tr oi="'+j+'" dataid="'+ov.id+'" '+s3+'>';
 			s+='<td '+s5+' align="right" width="40">'+(j+1+can.pageSize*(this.page-1))+'</td>';
 			if(can.checked){

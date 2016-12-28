@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var atype=params.atype;
 	var a = $('#view_{rand}').bootstable({
 		tablename:'kqdkjl',celleditor:true,fanye:true,modenum:'kqdkjl',sort:'id',dir:'desc',
-		modedir:'{mode}:{dir}',params:{'atype':atype},storeafteraction:'kqdkjlaftershow',storebeforeaction:'kqdkjlbeforeshow',
+		modedir:'{mode}:{dir}',params:{'atype':atype},storebeforeaction:'kqdkjlbeforeshow',
 		columns:[{
 			text:'部门',dataIndex:'deptname',align:'left'
 		},{

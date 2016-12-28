@@ -59,4 +59,13 @@ class asynrunClassAction extends apiAction
 		$body	= $this->jm->base64decode($body);
 		m('weixin:index')->sendbody($body);
 	}
+	
+	//转pdf完成了设置
+	public function topdfokAction()
+	{
+		$id    	= (int)$this->get('id');
+		$frs 	= m('file')->getone($id);
+		$pdfpath= str_replace('.'.$frs['fileext'].'','.pdf', $frs['filepath']);
+		m('file')->update("`pdfpath`='$pdfpath'", $id);
+	}
 }

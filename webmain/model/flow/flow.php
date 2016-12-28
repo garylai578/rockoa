@@ -32,6 +32,9 @@ class flowModel extends Model
 	//删除单据时调用，$sm删除说明
 	protected function flowdeletebill($sm){}
 	
+	//作废单据时调用，$sm作废说明
+	protected function flowzuofeibill($sm){}
+	
 	//提交时调用
 	protected function flowsubmit($na, $sm){}
 	
@@ -1010,10 +1013,19 @@ class flowModel extends Model
 		}
 	}
 	
-	public function deletebill($sm='')
+	public function getwxurl($num='')
 	{
-		$is = $this->isdeleteqx();
-		if($is==0)return '无权删除';
+		if($num=='')$num = $this->modenum;
+		$str = ''.URL.'?m=ying&d=we&num='.$num.'';
+		return $str;
+	}
+	
+	public function deletebill($sm='', $qxpd=true)
+	{
+		if($qxpd){
+			$is = $this->isdeleteqx();
+			if($is==0)return '无权删除';
+		}
 		m('flow_log')->delete($this->mwhere);
 		m('reads')->delete($this->mwhere);
 		m('file')->delfiles($this->mtable, $this->id);
@@ -1025,6 +1037,26 @@ class flowModel extends Model
 		$this->billmodel->delete($this->mwhere);
 		$this->delete($this->id);
 		$this->flowdeletebill($sm);
+		return 'ok';
+	}
+	
+	/**
+	*	单据作废处理
+	*/
+	public function zuofeibill($sm='')
+	{
+		$this->update('`status`=5', $this->id);
+		$zfarr = array(
+			'status' 		=> 5,
+			'nstatus' 		=> 5,
+			'checksm' 		=> '作废：'.$sm.'',
+			'nowcheckid' 	=> '',
+			'nowcheckname' 	=> '',
+			'nstatustext' 	=> '作废',
+			'updt' 			=> $this->rock->now,
+		);
+		$this->billmodel->update($zfarr, $this->mwhere);
+		$this->flowzuofeibill($sm);
 		return 'ok';
 	}
 	
@@ -1059,7 +1091,7 @@ class flowModel extends Model
 		}
 		
 		if($this->isflow==1){
-			if($this->rs['status'] != 1 && $this->uid == $this->adminid){
+			if(($this->rs['status'] == 0 || $this->rs['status'] == 1) && $this->uid == $this->adminid){
 				$arr[] = array('name'=>'追加说明...','lx'=>1,'optmenuid'=>-12);
 			}
 			$chearr = $this->getflowinfor();

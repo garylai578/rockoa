@@ -38,7 +38,7 @@ class inputAction extends ActionNot
 	public function saveAjax()
 	{
 		$id				= (int)$this->request('id');
-		$modenum		= $this->request('modenum');
+		$modenum		= $this->request('sysmodenum');
 		$uid			= $this->adminid;
 		$this->flow		= m('flow')->initflow($modenum);
 		$this->moders	= $this->flow->moders;
@@ -46,6 +46,7 @@ class inputAction extends ActionNot
 		$isflow			= $this->moders['isflow'];
 		$flownum		= $this->moders['num'];
 		$table			= $this->moders['table'];
+		$checkobj		= c('check');
 		if($this->isempt($table))$this->backmsg('模块未设置表名');
 		$fieldsarr		= m('flow_element')->getrows("`mid`='$modeid' and `islu`=1 and `iszb`=0",'`name`,`fields`,`isbt`,`fieldstype`,`savewhere`,`data`,`iszb`','`sort`');
 		if(!$fieldsarr)$this->backmsg('没有录入元素');
@@ -70,7 +71,10 @@ class inputAction extends ActionNot
 			$fid = $rs['fields'];
 			if(substr($fid, 0, 5)=='temp_')continue;
 			$val = $this->post($fid);
-			if($rs['isbt']==1&&$this->isempt($val))$this->backmsg(''.$rs['name'].'不能为空');
+			if($rs['isbt']==1 && isempt($val))$this->backmsg(''.$rs['name'].'不能为空');
+			if(!isempt($val) && $rs['fieldstype']=='email'){
+				if(!$checkobj->isemail($val))$this->backmsg(''.$rs['name'].'格式不对');
+			}
 			$uaarr[$fid] = $val;
 			$farrs[$fid] = array('name' => $rs['name']);
 		}
@@ -272,6 +276,7 @@ class inputAction extends ActionNot
 		$num		= $this->jm->gettoken('num');
 		$mid		= (int)$this->jm->gettoken('mid');
 		$this->mid  = $mid;
+		$this->rs   = array();
 		$this->flow = m('flow')->initflow($num);
 		$moders		= $this->flow->moders;
 		$this->smartydata['moders']	= array(
@@ -289,6 +294,7 @@ class inputAction extends ActionNot
 		
 		$content 	= '';
 		$oldrs 		= m($moders['table'])->getone($mid);
+		$this->rs 	= $oldrs;
 
 		
 		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`=0 $stwhe",'fields,fieldstype,name,dev,data,isbt,islu,attr,iszb','`sort`');
@@ -322,8 +328,11 @@ class inputAction extends ActionNot
 		$pathss 		= ''.P.'/flow/input/mode_'.$num.'Action.php';
 		if(file_exists($pathss)){
 			include_once($pathss);
-			$clsnam 	= 'mode_'.$num.'ClassAction';
-			$this->actclss 	= new $clsnam();
+			$clsnam 				= 'mode_'.$num.'ClassAction';
+			$this->actclss 			= new $clsnam();
+			$this->actclss->flow 	= $this->flow;
+			$this->actclss->mid 	= $this->mid;
+			$this->actclss->rs 		= $this->rs;
 		}
 		
 		//初始表单插件元素
@@ -392,6 +401,16 @@ class inputAction extends ActionNot
 			}
 		}
 		return $content;
+	}
+	
+	public function getselectdataAjax()
+	{
+		$rows 	= array();
+		$act	= $this->get('act');
+		if(!isempt($act) && method_exists($this, $act)){
+			$rows = $this->$act();
+		}
+		$this->returnjson($rows);
 	}
 }
 

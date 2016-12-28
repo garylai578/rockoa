@@ -255,6 +255,25 @@ class fileClassModel extends Model
 		return $rows;
 	}
 	
+	public function getfilepath($mtype, $mid)
+	{
+		$rows		= $this->getfiles($mtype, $mid);
+		$str 		= '';
+		$nas 		= '';
+		foreach($rows as $k=>$rs){
+			$path = $rs['filepath'];
+			if(!isempt($path) && file_exists($path)){
+				$str .= ','.$path.'';
+				$nas .= ','.$rs['filename'].'';
+			}
+		}
+		if($str!=''){
+			$str = substr($str, 1);
+			$nas = substr($nas, 1);
+		}
+		return array($str, $nas);
+	}
+	
 	public function copyfile($mtype, $mid)
 	{
 		$rows	= $this->getall("`mtype`='$mtype' and `mid`='$mid' order by `id`");
@@ -286,11 +305,13 @@ class fileClassModel extends Model
 	{
 		if($sid!='')$where = "`id` in ($sid)";
 		if($where=='')return;
-		$rows 	= $this->getall($where, 'filepath,thumbpath');
+		$rows 	= $this->getall($where, 'filepath,thumbpath,pdfpath');
 		foreach($rows as $k=>$rs){
 			$path = $rs['filepath'];
 			if(!$this->isempt($path) && file_exists($path))unlink($path);
 			$path = $rs['thumbpath'];
+			if(!$this->isempt($path) && file_exists($path))unlink($path);
+			$path = $rs['pdfpath'];
 			if(!$this->isempt($path) && file_exists($path))unlink($path);
 		}
 		$this->delete($where);
@@ -298,15 +319,25 @@ class fileClassModel extends Model
 	
 	public function fileheader($filename,$ext='xls')
 	{
-		$mime = $this->getmime($ext);
+		$mime 		= $this->getmime($ext);
+		$filename 	= $this->iconvutf8(str_replace(' ','',$filename));
 		header('Content-type:'.$mime.'');
 		header('Accept-Ranges: bytes');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: no-cache');
 		header('Expires: 0');
-		header('Content-disposition:attachment;filename='.iconv("utf-8","gb2312",str_replace(' ','',$filename)).'');
+		header('Content-disposition:attachment;filename='.$filename.'');
 		header('Content-Transfer-Encoding: binary');
 	}
+	
+	//渣渣IE才需要转化，真是醉了
+	public function iconvutf8($text) {
+		if(contain($this->rock->web,'IE')){
+			return iconv('utf-8','gb2312', $text);
+		}else{
+			return $text;
+		} 
+    }
 	
 	public function show($id)
 	{
@@ -322,6 +353,7 @@ class fileClassModel extends Model
 			header('location:'.$filepath.'');
 		}else{
 			if(!file_exists($filepath))exit('404 Not find files');
+			if(!contain($filename,'.'.$fileext.''))$filename .= '.'.$fileext.'';
 			$this->fileheader($filename, $fileext);
 			if(substr($filepath,-4)=='temp'){
 				$content	= file_get_contents($filepath);

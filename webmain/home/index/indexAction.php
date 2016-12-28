@@ -50,6 +50,14 @@ class indexClassAction extends Action{
 		$this->returnjson($arr);
 	}
 	
+	public function getqrcoresAjax()
+	{
+		if(!function_exists('ImageCreate')){
+			echo ''.URL.'?d=we';
+		}else{
+			echo 'ok';
+		}
+	}
 	
 	public function getqrcodeAjax()
 	{

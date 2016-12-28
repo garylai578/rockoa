@@ -601,10 +601,20 @@ abstract class mysql{
 		$adstr="'$str'";
 		if($this->isempt($str)){
 			$adstr='null';
-		}elseif(substr($str,0,1)=='{'&&substr($str,-1)=='}'){
-			//$adstr=substr($str,1,-1);
 		}
 		return $adstr;
+	}
+	
+	/**
+	*	替换特殊符合'
+	*/
+	public function tocovexec($str, $lx=0)
+	{
+		$str = str_replace('\'', '&#39;',$str);
+		if($lx==1){
+			$str = str_replace("\n", '',$str);
+		}
+		return $str;
 	}
 	
 	/**
@@ -675,6 +685,7 @@ class DB{
 	public static function table($tab)
 	{
 		self::$tablename = ''.getconfig('.perfix.').$tab.'';
+		return m($tab);
 	}
 	
 	public static function where($f, $v)

@@ -448,6 +448,7 @@ class reimClassModel extends Model
 					if(!$this->isempt($path)&&file_exists($path)){
 						if($this->contain($imgext, ','.$type.',')){
 							$cont = '<img fid="'.$fid.'" src="{url}'.$frs['thumbpath'].'">';
+							if(isempt($frs['thumbpath']))list($frs['width'], $frs['height']) = getimagesize($path);
 							$rows[$k]['cont'] = $this->rock->jm->base64encode($cont);
 						}else{
 							
@@ -776,17 +777,13 @@ class reimClassModel extends Model
 	*/
 	public function asynurl($m, $a,$can=array(), $runtime=0)
 	{
-		$runurl		= getconfig('localurl');
-		if($runurl=='')$runurl = URL;
-		$key 	 	= getconfig('asynkey');
-		if($key!='')$key = md5(md5($key));
-		$runurl .= 'api.php?m='.$m.'&a='.$a.'&adminid='.$this->adminid.'&asynkey='.$key.'';
-		if(is_array($can))foreach($can as $k=>$v)$runurl.='&'.$k.'='.$v.'';
+		$runurl	= m('base')->getasynurl($m, $a,$can);
 		return $this->pushserver('runurl', array(
 			'url' => $runurl,
 			'runtime' => $runtime
 		));
 	}
+
 	
 	public function pushserver($atype, $cans=array())
 	{

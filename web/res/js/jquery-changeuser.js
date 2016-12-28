@@ -8,6 +8,11 @@
 
 (function ($) {
 	
+	function _getstyles(){
+		var s='<style>.changeuserlist div.listsss{padding:10px; background:white;border-bottom:1px #eeeeee solid;cursor:default}.changeuserlist div:active{ background:#f1f1f1}.changeuserbotton{height:30px;width:50px; background:#aaaaaa;color:white;font-size:14px;border:none;padding:0px;margin:0px;line-height:20px;cursor:default}</style>';
+		return s;
+	}
+	
 	function chnageuser(sobj, options){
 		var obj		= sobj;
 		var rand	= ''+parseInt(Math.random()*9999999)+''; 
@@ -57,14 +62,14 @@
 				s+='<div style="height:50px;overflow:hidden;border-bottom:1px #cccccc solid"><table width="100%"><tr><td width="100%" height="50"><input id="changekey_'+this.rand+'" placeholder="部门/姓名/职位" style="height:30px;border:none;background:none;width:100%;margin:0px 10px"></td><td><input style="background:none;color:#666666" class="changeuserbotton" id="changesoubtn_'+this.rand+'" value="查找" type="button" ></td></tr></table></div>';
 				jhei+=50;
 			}
-			s+='<div style="-webkit-overflow-scrolling:touch;height:'+(hei-jhei)+'px;overflow:auto; background:#f1f1f1"" class="changeuserlist">';
+			s+='<div style="-webkit-overflow-scrolling:touch;height:'+(hei-jhei)+'px;overflow:auto; background:#f1f1f1" class="changeuserlist">';
 			s+='<span id="showdiv'+rand+'_0"></span>';
 			s+='<span id="showdiv'+rand+'_search"></span>';
 			s+='</div>';
 			var s3= '<input id="changeboxs_'+rand+'" style="width:18px;height:18px;" align="absmiddle" type="checkbox" >';
 			if(type!='checkbox1')s3='';
 			s+='<div style="height:50px;line-height:50px;border-top:1px #cccccc solid" align="right"><table width="100%"><tr><td width="10" nowrap>&nbsp;</td><td width="80%">'+s3+'</td><td><input style="width:70px;" type="button" id="changereload_'+rand+'" class="changeuserbotton" value="刷新数据" ></td><td width="20" nowrap>&nbsp;</td><td><input class="changeuserbotton" type="button" id="changecancl_'+rand+'" value="取消" ></td><td width="20" nowrap>&nbsp;</td><td height="50"><input style="background:#1ABC9C;" id="changeok_'+rand+'" type="button" value="确定" class="changeuserbotton"></td><td width="10" nowrap>&nbsp;</td></tr></table></div>';
-			s+='<style>.changeuserlist div.listsss{padding:10px; background:white;border-bottom:1px #eeeeee solid;cursor:default}.changeuserlist div:active{ background:#f1f1f1}.changeuserbotton{height:30px;width:50px; background:#aaaaaa;color:white;font-size:14px;border:none;padding:0px;margin:0px;line-height:20px;cursor:default}</style>';
+			s+=_getstyles();
 			s+='</div>';
 			if(atts==''){
 				$('#'+this.showview+'').html(s);
@@ -180,7 +185,7 @@
 			if(js.getajaxurl){
 				url = js.getajaxurl('deptuserjson','dept','system');
 			}else{
-				url = js.apiurl('dept','data');
+				url = js.apiurl('dept','data',{callback:'?'});
 			}
 			$.getJSON(url, function(ret){
 				if(ret.code==200){
@@ -232,9 +237,144 @@
 		}
 	}
 	
+	function selectdata(sobj, options){
+		var obj		= sobj;
+		var rand	= ''+parseInt(Math.random()*9999999)+''; 
+		var me		= this;
+		this.rand	= rand;
+		this.ismobile = false;
+		
+		this._init	= function(){
+			for(var i in options)this[i]=options[i];
+			if(typeof(ismobile) && ismobile==1)this.ismobile = true;
+			this._showcreate();
+		};
+		this._showcreate = function(){
+			var ws = '300px';
+			if(this.ismobile)ws='90%';
+			var s='<div style="z-index:1;width:100%;height:100%;overflow:hidden;left:0px;top:0px; background:rgba(0,0,0,0.3);position:fixed" id="selectdata_'+rand+'">';
+			s+='<div tsid="main" id="mints_'+rand+'" style="position:absolute;top:30%; background:white;width:'+ws+';box-shadow:0px 0px 5px rgba(0,0,0,0.3)">';
+			s+='	<div onmousedown="js.move(\'mints_'+rand+'\')" style="line-height:40px; background:#2c3e50;color:white;font-size:16px"> &nbsp; &nbsp;'+this.title+'</div>';
+			s+='	<div style="height:50px;overflow:hidden;border-bottom:1px #cccccc solid"><table width="100%"><tr><td width="100%" height="50"><input id="changekey_'+this.rand+'" placeholder="搜索关键词" style="height:30px;border:none;background:none;width:100%;margin:0px 10px"></td><td><input style="background:none;color:#666666" class="changeuserbotton" id="changesoubtn_'+this.rand+'" value="查找" type="button" ></td></tr></table></div>';
+			s+='	<div style="-webkit-overflow-scrolling:touch;height:300px;overflow:auto; background:#f1f1f1" id="selectlist_'+rand+'" class="changeuserlist"></div>';
+			s+='	<div style="height:50px;line-height:50px;border-top:1px #cccccc solid" align="right"><table width="100%"><tr><td width="10" nowrap>&nbsp;</td><td width="80%"><font color="#888888" tsid="count"></font></td><td><input type="button" id="changereload_'+rand+'" class="changeuserbotton" value="刷新" ></td><td width="10" nowrap>&nbsp;</td><td><input class="changeuserbotton" type="button" id="changecancl_'+rand+'" value="取消" ></td><td width="10" nowrap>&nbsp;</td><td height="50"><input style="background:#1ABC9C;" id="changeok_'+rand+'" type="button" value="确定" class="changeuserbotton"></td><td width="10" nowrap>&nbsp;</td></tr></table></div>';
+			s+='</div>';
+			s+='</div>';
+			s+=_getstyles();
+			$('body').append(s);
+			this.showdata(this.data);
+			var o = this._getobj('main');
+			var l = ($(window).width()-o.width())*0.5,t = ($(window).height()-o.height())*0.5;
+			o.css({'left':''+l+'px','top':''+t+'px'});
+			$('#changecancl_'+this.rand+'').click(function(){
+				me._clickcancel();
+			});
+			$('#changeok_'+this.rand+'').click(function(){
+				me.queding();
+			});
+			$('#changereload_'+this.rand+'').click(function(){
+				me.loaddata();
+			});
+			$('#changesoubtn_'+this.rand+'').click(function(){
+				me._searchkey(true);
+			});
+			$('#changekey_'+this.rand+'').keydown(function(e){
+				me._searchkeys(e)
+			});
+		};
+		this._getobj=function(lx){
+			var o = $('#selectdata_'+rand+'').find("[tsid='"+lx+"']");
+			return o;
+		};
+		this._clickcancel=function(){
+			this.hide();
+		};
+		this.hide=function(){
+			$('#selectdata_'+rand+'').remove();
+			this.oncancel();
+		};
+		this.queding=function(){
+			var ns= 'changeuserinput_'+rand+'';
+			var o = $("input[name='"+ns+"']");
+			var i,len=o.length,o1,xna,xal,sid='',sna='';
+			for(i=0;i<len;i++){
+				o1 = $(o[i]);
+				if(o[i].checked){
+					xna= o1.attr('xname');
+					xal= o1.val();
+					sid+=','+xal+'';
+					sna+=','+xna+'';
+				}
+			}
+			if(sid!=''){
+				sid=sid.substr(1);
+				sna=sna.substr(1);
+			}
+			if(this.idobj)this.idobj.value=sid;
+			if(this.nameobj){
+				this.nameobj.value=sna;
+				this.nameobj.focus();
+			}
+			this.onselect(sna, sid);
+			this.hide();
+		};
+		this.showdata=function(a,inb){
+			if(!a)a=[];
+			var i,len=a.length,s='',s2,s1='';
+			if(len==0){
+				s='<div align="center" style="margin-top:30px;color:#cccccc;font-size:16px">无记录</div>';
+				if(!inb)this.loaddata();
+			}else{
+				var type='checkbox';
+				if(!this.checked)type='radio';
+				for(i=0;i<len;i++){
+					s2 = '<input name="changeuserinput_'+rand+'" xname="'+a[i].name+'" value="'+a[i].value+'" style="width:18px;height:18px;" align="absmiddle" type="'+type+'">';
+					s+='<div class="listsss">'+s2+'&nbsp;'+a[i].name+'</div>';
+				}
+				s1='共'+len+'条';
+			}
+			this._getobj('count').html(s1);
+			var o = $('#selectlist_'+rand+'');
+			o.html(s);
+		};
+		this.loaddata=function(){
+			var url = this.url;
+			if(url=='')return;
+			$('#selectlist_'+rand+'').html('<div align="center" style="margin-top:30px"><img src="images/mloading.gif"></div>');
+			$.getJSON(url, function(a){
+				me.data = a;
+				me.onloaddata(a);
+				me.showdata(a, true);
+			});
+		};
+		this._searchkeys=function(e){
+			clearTimeout(this._searchkeystime);
+			this._searchkeystime=setTimeout(function(){
+				me._searchkey(false);
+			},500);
+		};
+		this._searchkey = function(bo){
+			var key = $('#changekey_'+this.rand+'').val(),a=[],d=[],len,i;
+			a=this.data;
+			len=a.length;
+			var o = $('#selectlist_'+rand+'');
+			if(key!='')for(i=0;i<len;i++)if(a[i].name.indexOf(key)>-1 || a[i].name.indexOf(key)>-1)d.push(i);
+			len = d.length;
+			if(len==0){
+				o.find('div').show();
+			}else{
+				o.find('div').hide();
+				for(i=0;i<len;i++){
+					o.find('div:eq('+d[i]+')').show();
+				}
+			}
+			if(bo && len==0 && key!='')js.msg('msg','无相关['+key+']的记录', 2);
+		};
+	}
+	
 	$.fn.chnageuser	= function(options){
 		var defaultVal = {
-			'title' : '请选择',
+			'title' : '请选择...',
 			'titlebool':true,
 			'showview':'',
 			'changetype' : 'user',
@@ -244,6 +384,23 @@
 		};
 		var can = $.extend({}, defaultVal, options);
 		var funcls = new chnageuser($(this), can);
+		funcls._init();
+		return funcls;
+	};
+	
+	$.selectdata	= function(options){
+		var defaultVal = {
+			'showview': '',
+			'title' : '请选择...',
+			'data'	  : [], 'url' : '',
+			'checked' : false,
+			'idobj'	  : false, 'nameobj':false,
+			'onselect': function(){},
+			'oncancel': function(){},
+			'onloaddata':function(){}
+		};
+		var can = $.extend({}, defaultVal, options);
+		var funcls = new selectdata(false, can);
 		funcls._init();
 		return funcls;
 	};

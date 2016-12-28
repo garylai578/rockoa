@@ -36,6 +36,9 @@ var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,ise
 .course{padding:8px 10px; background-color:#CDF4EC;border:1px #AADDD3 solid;margin-right:10px}
 .coursejt{height:8px;overflow:hidden;width:30px;background-color:#CDF4EC}
 .coursejts{width:0px;  height:0px; overflow:hidden;border-width:8px;border-style:solid;border-color:transparent transparent transparent #CDF4EC;}
+.btn{color:#ffffff;opacity:0.8; background-color:#1abc9c; padding:5px 10px; border:none; cursor:pointer;font-size:14px}
+.btn-default{background-color:#999999;}
+.btn:hover{opacity:1;color:#ffffff}
 </style>
 </head>
 <body style="background:white">
@@ -43,7 +46,7 @@ var editor,arr=<?=$da['fieldsjson']?>,moders=<?=json_encode($da['moders'])?>,ise
 	<div class="blank10"></div>
 	<div style="width:650px; position:relative">
 		<div class="status"><img id="statusimg" src="images/status1.png"></div>
-		<div style="padding-bottom:15px;font-size:24px"><?=$da['title']?></div>
+		<div style="padding-bottom:15px;"><span onclick="location.reload()" style="font-size:24px"><?=$da['title']?></span></div>
 		<div class="tdcont" align="left">
 			<form name="myform">
 			<input name="id" type="hidden" value="<?=$da['mid']?>">

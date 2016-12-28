@@ -146,4 +146,37 @@ class flow_workClassModel extends flowModel
 			'order' => '`optdt` desc'
 		);
 	}
+	
+	/**
+	*	提醒快过期的任务
+	*	$txsj 提前几天提醒
+	*/
+	public function tododay($txsj = 1)
+	{
+		$dtobj= c('date');
+		$dt   = $this->rock->date;
+		$rows = $this->getrows("`status`=1 and `state` in(0,2) and ifnull(`distid`,'')<>'' and `enddt`>='$dt'");
+		$arr  = array();
+		foreach($rows as $k=>$rs){
+			$jg = $dtobj->datediff('d', $this->rock->date, $rs['enddt']);
+			if($jg <= $txsj){
+				$dista = explode(',', $rs['distid']);
+				foreach($dista as $distid){
+					if(!isset($arr[$distid]))$arr[$distid] = array();
+					$tis = ''.$jg.'天后截止';
+					if($jg == 0)$tis = '需今日完成';
+					$arr[$distid][]= '['.$rs['type'].']'.$rs['title'].'('.$tis.');';
+				}
+			}
+		}
+		foreach($arr as $uid => $strarr){
+			$this->flowweixinarr['url'] = $this->getwxurl();//设置微信提醒的详情链接
+			$str = '';
+			foreach($strarr as $k=>$str1){
+				if($k>0)$str.="\n";
+				$str.="".($k+1).".$str1";
+			}
+			if($str != '')$this->push($uid, '', $str, '任务到期提醒');
+		}
+	}
 }

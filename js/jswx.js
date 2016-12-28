@@ -216,9 +216,12 @@ js.iswxbo=function(){
 	if(ua.indexOf('micromessenger')<0)bo=false;
 	return bo;
 }
-js.jssdkstate = false;
+js.jssdkcall  = function(bo){
+	
+}
+js.jssdkstate = 0;
 js.jssdkwixin = function(qxlist,afe){
-	if(!js.iswxbo())return;
+	if(!js.iswxbo())return js.jssdkcall(false);
 	if(!afe)$.getScript('http://res.wx.qq.com/open/js/jweixin-1.1.0.js', function(){
 		js.jssdkwixin(qxlist, true);
 	});
@@ -226,7 +229,7 @@ js.jssdkwixin = function(qxlist,afe){
 	var surl= location.href;
 	if(!qxlist)qxlist= ['openLocation','getLocation'];
 	js.ajax('weixin','getsign',{url:jm.base64encode(surl)},function(ret){
-		if(!ret.appId)return;
+		if(!ret.appId)return js.jssdkcall(false);;
 		wx.config({
 			debug: false,
 			appId: ret.appId,
@@ -236,7 +239,11 @@ js.jssdkwixin = function(qxlist,afe){
 			jsApiList:qxlist
 		});
 		wx.ready(function(){
-			js.jssdkstate=true;
+			if(js.jssdkstate==0)js.jssdkstate = 1;
+			js.jssdkcall(true);
+		});
+		wx.error(function(res){
+			js.jssdkstate = 2;
 		});
 	});
 }

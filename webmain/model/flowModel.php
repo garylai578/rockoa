@@ -28,10 +28,16 @@ class flowClassModel extends Model
 		return $this->flow->submit($na, $sm);
 	}
 	
-	public function deletebill($num, $mid, $sm='')
+	public function deletebill($num, $mid, $sm='', $dlqx=true)
 	{
 		$this->initflow($num,$mid, false);
-		return $this->flow->deletebill($sm);
+		return $this->flow->deletebill($sm, $dlqx);
+	}
+	
+	public function zuofeibill($num, $mid, $sm='')
+	{
+		$this->initflow($num,$mid, false);
+		return $this->flow->zuofeibill($sm);
 	}
 	
 	public function getoptmenu($num, $mid, $lx=0)
@@ -78,12 +84,15 @@ class flowClassModel extends Model
 			$flow = $this->initflow($rs['num']);
 			$rows = $this->db->getrows('[Q]'.$rs['table'].'','status in(0,2) and isturn=1 '.$where.'');
 			$hshu = 0;
+			$yics = 0;
 			foreach($rows as $k1=>$rs1){
 				$flow->loaddata($rs1['id'], false);
-				$flow->getflow(true);
+				$bar 	= $flow->getflow(true);
 				$hshu+=$this->db->row_count();
+				if(isempt($bar['nowcheckid']))$yics++;
 			}
 			if($hshu>0)$str.=''.$rs['name'].'匹配('.$hshu.')条;';
+			if($yics>0)$str.=''.$rs['name'].'<font color=red>('.$yics.')条没审核人</font>;';
 		}
 		if($str=='')$str = '无从新匹配记录';
 		return $str;

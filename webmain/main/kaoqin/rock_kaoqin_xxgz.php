@@ -23,7 +23,7 @@ $(document).ready(function(){
 	});
 	
 	var b = $('#viewa_{rand}').bootstable({
-		tablename:'kqxxsj',autoLoad:false,url:publicstore('{mode}','{dir}'),storebeforeaction:'kqxxsjdtbefore',storeafteraction:'kqxxsjdtafter',
+		tablename:'kqxxsj',autoLoad:false,url:publicstore('{mode}','{dir}'),storebeforeaction:'kqxxsjdtbefore',storeafteraction:'kqxxsjdtafter',fanye:true,
 		columns:[{
 			text:'休息日期',dataIndex:'dt',sortable:true
 		},{
@@ -101,10 +101,9 @@ $(document).ready(function(){
 		search:function(){
 			var month = $('#dt1_{rand}').val();
 			if(!month){
-				js.msg('msg','请选择月份');
-				return;
+				//js.msg('msg','请选择月份');
+				//return;
 			}
-			//mobj.setMonth(month);
 			b.setparams({'month':month},true);
 		}
 	};
@@ -113,18 +112,7 @@ $(document).ready(function(){
 	}
 
 	js.initbtn(c);
-	$('#dt1_{rand}').val(js.now('Y-m'));
-	
-	/*
-	var mobj = $('#viewab_{rand}').rockcalendar({
-		height:300,align:'center',valign:'middle',
-		changemonth:function(y, m){
-			
-		},
-		renderer:function(day, s, d,s2,col1,col2, oi){
-			return '<font color="'+col1+'">'+d+'</font>';
-		}
-	});*/
+	//$('#dt1_{rand}').val(js.now('Y-m'));
 });
 </script>
 <table width="100%">

@@ -90,6 +90,12 @@ class emailClassModel extends Model
 		$mail->setUser($emailuser, $pass);
 		$mail->setFrom($emailuser, $emailname);
 		$mail->addAddress($receemail, $recename);
+		if(isset($ccemail) && !isempt($ccemail)){
+			$mail->addCC($ccemail, $ccname);
+		}
+		if(isset($attachpath) && !isempt($attachpath)){
+			$mail->addAttachment($attachpath, $attachname);
+		}
 		$mail->sendMail($title, $body);
 		$bo		= $mail->isSuccess();
 		return $bo;
@@ -114,7 +120,16 @@ class emailClassModel extends Model
 		if($stype == 0){
 			$msg 	= $this->sendmail($rs['title'],$rs['body'], $rs['receid'], array(), 1);
 		}else{
-			$msg 	= $this->sendemailout($rs['optid'],$rs['title'],$rs['body'], $rs['receemail'], $rs['recename'], 1);
+			$msg 	= $this->sendemailout($rs['optid'],array(
+				'title' 	=> $rs['title'],
+				'body' 		=> $rs['body'],
+				'receemail' => $rs['receemail'],
+				'recename' 	=> $rs['recename'],
+				'ccname' 	=> $rs['ccname'],
+				'ccemail' 	=> $rs['ccemail'],
+				'attachpath'=> $rs['attachpath'],
+				'attachname'=> $rs['attachname'],
+			), 1);
 		}
 		$status = '2';
 		if($msg=='ok')$status = '1';
@@ -127,8 +142,20 @@ class emailClassModel extends Model
 	/**
 	*	用户自己外发发送
 	*/
-	public function sendemailout($sendid, $title, $body, $to_em, $to_mn, $zjsend=0)
+	public function sendemailout($sendid, $canarr = array(), $zjsend=0)
 	{
+		$sendarr 		= array(
+			'title'			=> '',
+			'body'			=> '',
+			'receemail'		=> '',
+			'recename'		=> '',
+			'ccname'		=> '',
+			'ccemail'		=> '',
+			'attachpath'	=> '',
+			'attachname'	=> '',
+		);
+		foreach($canarr as $k=>$v)$sendarr[$k] = $v;
+		extract($sendarr);
 		$setrs			= m('option')->getpidarr(-1);
 		if(!$setrs)return '未设置发送邮件';
 		$serversmtp 	= $this->rock->arrvalue($setrs, 'email_sendhost');
@@ -152,8 +179,12 @@ class emailClassModel extends Model
 				'emailsecure' 	=> $emailsecure,
 				'emailuser' 	=> $emailuser,
 				'emailname' 	=> $emailname,
-				'receemail' 	=> $to_em,
-				'recename' 		=> $to_mn,
+				'receemail' 	=> $receemail,
+				'recename' 		=> $recename,
+				'ccname' 		=> $ccname,
+				'ccemail' 		=> $ccemail,
+				'attachpath' 	=> $attachpath,
+				'attachname' 	=> $attachname,
 				'title' 		=> $title,
 				'body' 			=> $body,
 			), false);
@@ -163,8 +194,12 @@ class emailClassModel extends Model
 			$uarr['title'] 		= $title;
 			$uarr['body'] 		= $body;
 			$uarr['receid'] 	= '';
-			$uarr['recename'] 	= $to_mn;
-			$uarr['receemail'] 	= $to_em;
+			$uarr['recename'] 	= $recename;
+			$uarr['receemail'] 	= $receemail;
+			$uarr['ccname'] 	= $ccname;
+			$uarr['ccemail'] 	= $ccemail;
+			$uarr['attachpath'] = $attachpath;
+			$uarr['attachname'] = $attachname;
 			$uarr['optdt'] 		= $this->rock->now();
 			$uarr['optid'] 		= $this->adminid;
 			$uarr['optname'] 	= $this->adminname;

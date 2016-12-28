@@ -79,11 +79,15 @@ class mailerChajian extends Chajian{
 	}
 	
 	//添加附件
-	public function addAttachment($address){
+	public function addAttachment($address, $name=''){
 		if($this->rock->isempt($address))return;
 		$a1	= explode(',', $address);
+		$n1 = array();
+		if($name != '')$n1 = explode(',', $name);
 		for($i=0; $i<count($a1); $i++){
-			$this->mail->AddAttachment($a1[$i]); 
+			$na = '';
+			if(isset($n1[$i]))$na = $n1[$i];
+			$this->mail->AddAttachment($a1[$i], $this->tojoin($na)); 
 		}
 	}
 	
@@ -103,8 +107,9 @@ class mailerChajian extends Chajian{
 		return $this->mail->ErrorInfo;
 	}
 	
-	private function tojoin($name)
+	private function tojoin($name='')
 	{
+		if($name=='')return '';
 		return "=?UTF-8?B?".base64_encode($name)."?=";
 	}
 }	       

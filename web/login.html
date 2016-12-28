@@ -13,7 +13,8 @@
 <script type="text/javascript" src="res/js/base64-min.js"></script>
 <script type="text/javascript" src="res/js/nwjs.js"></script>
 <style>
-.lmaisft{width:380px;border-radius:10px;text-align:left; background-color:#C4E0F4;background: rgba(255,255,255,0.5);box-shadow:0px 0px 10px rgba(0,0,0,0)}
+.lmaisft{width:400px;border-radius:10px;text-align:left; background-color:#C4E0F4;background: rgba(255,255,255,0.5);box-shadow:0px 0px 10px rgba(0,0,0,0)}
+.ltoplog img{border-radius:50%}
 </style>
 <script>
 var temp_token='';
@@ -44,7 +45,7 @@ function bodyunload(){
 }
 function resize(){
 	var tt=$(window).height()-$('.lmaisft').height();
-	var ts=(tt*0.5)-5;
+	var ts=(tt*0.5)-10;
 	if(ts<10)ts=10;
 	$('#topblank').css('height',''+ts+'px');
 }
@@ -87,6 +88,7 @@ function loginsuccess(a){
 	js.setoption('systemtitle',a.title);
 	js.setoption('systemlogo',a.weblogo);
 	js.setoption('uploadmaxsize',a.maxsize);
+	get('myface').src = a.face;
 	js.location('webos.html');
 	return;
 	if(nwjsgui){
@@ -115,22 +117,22 @@ function loginset(){
 
 	<div class="lmaisft">
 		<div class="blank20"></div>
-		<div class="ltoplog" align="center"><img onclick="location.reload()" src="images/logo.png" id="myface" align="absmiddle"  height="60" width="60"></div>
+		<div class="ltoplog" align="center"><img onclick="location.reload()" src="images/logo.png" id="myface" align="absmiddle"  height="80" width="80"></div>
 		
 		<form style="padding:20px;padding-left:60px" name="myform">
 			
 			<div>
-				<div><input type="text" style="height:35px;width:250px" class="input" onKeyUp="if(event.keyCode==13)get('adminpass').focus()" maxlength="20" placeholder="请输入用户名/姓名" id="adminuser" name="adminuser" ></div>
+				<div><input type="text" style="height:35px;width:270px" class="input" onKeyUp="if(event.keyCode==13)get('adminpass').focus()" maxlength="20" placeholder="请输入用户名/姓名" id="adminuser" name="adminuser" ></div>
 			</div>
 
 			<div class="blank20"></div>
 			<div>
-				<div><input  style="height:35px;width:250px" class="input"  onKeyUp="if(event.keyCode==13)loginsubmit(1)" value=""  name="adminpass" id="adminpass" type="password" placeholder="请输入密码"></div>
+				<div><input  style="height:35px;width:270px" class="input"  onKeyUp="if(event.keyCode==13)loginsubmit(1)" value=""  name="adminpass" id="adminpass" type="password" placeholder="请输入密码"></div>
 			</div>
 			
 			<div class="blank10"></div>
 			<div>
-				<span style="color:#888888;font-size:12px">&nbsp;没有帐号?请联系管理员 &nbsp;<a onclick="return loginset()" href="javascript:">[设置]</a> &nbsp;查看<a target="_blank" href="http://xh829.com/help.html">[帮助?]</a></span>
+				<span style="color:#888888;font-size:12px">&nbsp;没有帐号?请联系管理员 &nbsp;<a onclick="return loginset()" href="javascript:">[设置]</a></span>
 			</div>
 			
 			<div class="blank20"></div>

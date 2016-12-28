@@ -143,18 +143,7 @@ var im={
 		$.imgview({url:src,ismobile:true});
 	},
 	contshozt:function(d){
-		var s='',slx;
-		if(d){
-			if(!d.fileid)d.fileid=d.id;
-			if(js.isimg(d.fileext)){
-				s='<img src="'+apiurl+''+d.thumbpath+'" fid="'+d.fileid+'">';
-			}else{
-				slx = d.fileext;
-				if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
-				s='<img src="web/images/fileicons/'+slx+'.gif" align="absmiddle">&nbsp;'+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;'+d.filesizecn+'';
-			}
-		}
-		return s;
+		return strformat.contshozt(d,'web/');
 	},
 	sendcont : function(ssnr){
 		if(js.ajaxbool)return;

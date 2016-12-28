@@ -6,8 +6,7 @@ class indexClassAction extends Action{
 		$afrom 			= $this->get('afrom');
 		$this->tpltype	= 'html';
 		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`type`,`style`');
-		$allmenuid	= '-1';
-		if($my['type'] != 1)$allmenuid	= $this->getuserext($this->adminid);
+		$allmenuid	= m('sjoin')->getuserext($this->adminid, $my['type']);
 		
 		$mewhere	= '';
 		$isadmin	= 1;
@@ -88,43 +87,6 @@ class indexClassAction extends Action{
 		}
 		return $rows;
 	}
-	
-	
-	
-	
-	/**
-	*	查看菜单权限
-	*/	
-	private function getuserext($uid)
-	{
-		$guid 	= '-1';
-		$gasql	= " ( id in( select `sid` from `[Q]sjoin` where `type`='ug' and `mid`='$uid') or id in( select `mid` from `[Q]sjoin` where `type`='gu' and `sid`='$uid') )";//用户所在组id
-		$gsql	= "select `id` from `[Q]group` where $gasql ";
-		$owhe	= " and (`id` in(select `sid` from `[Q]sjoin` where ((`type`='um' and `mid`='$uid') or (`type`='gm' and `mid` in($gsql) ) ) ) or `id` in(select `mid` from `[Q]sjoin` where ((`type`='mu' and `sid`='$uid') or (`type`='mg' and `sid` in($gsql) )) ))";
-		if($this->db->rows('`[Q]group`',"`ispir`=0 and $gasql")>0){	//不用权限验证的用户
-			$owhe=''; 
-			return $guid;
-		}
-		$guid	= '[0]';
-		if($owhe != ''){
-			$arss	= $this->db->getall("select `id`,`pid`,(select `pid` from `[Q]menu` where `id`=a.`pid`)as `mpid` from `[Q]menu` a where (`status` =1 $owhe) or (`status` =1 and `ispir`=0) order by `sort`");
-			foreach($arss as $ars){
-				$guid.=',['.$ars['id'].']';
-				$bpid	= $ars['pid'];
-				$bmpid	= $ars['mpid'];
-				if(!$this->rock->contain($guid, '['.$bpid.']')){
-					$guid.=',['.$bpid.']';
-				}
-				if(!$this->rock->isempt($bmpid)){
-					if(!$this->rock->contain($guid, '['.$bmpid.']')){
-						$guid.=',['.$bmpid.']';
-					}
-				}
-			}
-		}
-		return $guid;
-	}
-	
 	
 	public function downAction()
 	{

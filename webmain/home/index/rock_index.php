@@ -290,7 +290,7 @@ $(document).ready(function(){
 				
 				
 				
-				<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.php</div>
+				<div class="tishi">&nbsp;本页面路径：webmain/home/index/rock_index.php，快捷键F2可查看相关帮助。</div>
 				
 				
 			

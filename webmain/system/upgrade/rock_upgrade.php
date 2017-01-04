@@ -85,6 +85,7 @@ $(document).ready(function(){
 			var d = this.uparr[oi];
 			js.setmsg(''+lxs+'中('+len+'/'+(oi+1)+')...','', this.msgid);
 			ad.fileid = d.id;
+			ad.updatedt = d.updatedt;
 			ad.lens	  = len;
 			ad.oii	  = oi;
 			js.ajax(js.getajaxurl('shengjianss','{mode}','{dir}'),ad,function(s){

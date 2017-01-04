@@ -216,13 +216,14 @@ class kaoqinClassModel extends Model
 	{
 		if($dt > $this->rock->date)return;
 		$dkarr 	= $this->db->getrows('[Q]kqdkjl',"`uid`='$uid' and `dkdt` like '$dt%'",'`dkdt`','`dkdt` asc');
+		$this->_dkarr = $dkarr;
 		$iswork	= $this->isworkdt($uid, $dt);
 		$sjarr	= $this->getkqsj($uid, $dt);
 		$db 	= m('kqanay');
 		$ids 	= '0';
 		foreach($sjarr as $k=>$rs){
 			$ztname = $rs['name'];
-			$arrs 	= $this->kqanaysss($uid, $dt, $rs, $dkarr);
+			$arrs 	= $this->kqanaysss($uid, $dt, $rs, $this->_dkarr);
 			$state	= $arrs['state'];
 			$states	= $arrs['states'];
 			
@@ -262,7 +263,7 @@ class kaoqinClassModel extends Model
 	private function kqanaysss($uid, $dt, $kqrs, $dkarr)
 	{
 		$kqarr	= $kqrs['children'];
-		$state	= '未打卡';$states = $remark = ''; $emiao	= 0; $time	= ''; $pdtime	= 0;
+		$state	= '未打卡';$states = $remark = ''; $emiao	= 0; $tpk=-1; $time	= ''; $pdtime	= 0;
 		if($dkarr && $kqarr)foreach($kqarr as $k=>$rs){
 			$stime 	= strtotime(''.$dt.' '.$rs['stime'].'');
 			$etime 	= strtotime(''.$dt.' '.$rs['etime'].'');
@@ -272,6 +273,7 @@ class kaoqinClassModel extends Model
 				if($stime>$dkdt || $etime<$dkdt)continue;
 				$time	= $dkdt;
 				$state	= $rs['name'];
+				$tpk	= $k1;
 				if($qtype==0)break;
 			}
 			$pdtime	= $stime;
@@ -282,6 +284,7 @@ class kaoqinClassModel extends Model
 			if($state!='正常'){
 				$emiao = $pdtime-$time;
 			}
+			unset($this->_dkarr[$tpk]);//一次打卡记录只能使用一次
 		}
 		$barr['state'] 		= $state;
 		$barr['emiao'] 		= abs($emiao);

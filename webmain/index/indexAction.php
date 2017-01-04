@@ -72,7 +72,7 @@ class indexClassAction extends Action{
 			$num			= $rs['num'];
 			$sid			= $rs['id'];
 			$icons			= $rs['icons'];
-			if(isempt($num))$num 		= 'num_'.$sid;
+			if(isempt($num))$num 		= 'num'.$sid;
 			if(isempt($icons))$icons 	= 'bookmark-empty';
 			$rs['icons']	= $icons;
 			$rs['num']		= $num;

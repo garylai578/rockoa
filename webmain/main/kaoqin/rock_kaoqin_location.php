@@ -17,6 +17,8 @@ $(document).ready(function(){
 		},{
 			text:'地址',dataIndex:'label'
 		},{
+			text:'说明',dataIndex:'explain',align:'left'
+		},{
 			text:'',dataIndex:'opt',renderer:function(v,d){
 				return '<a onclick="js.locationshow('+d.id+')" href="javascript:;">地图上打开</a>';
 			}

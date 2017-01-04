@@ -13,7 +13,7 @@
 	});
 	loadmenu($("span[pmenuid]")[0]);
 	if(typeof(applicationCache)=='undefined'){
-		//js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
+		js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
 	}
 	if(a.length<=1)$('.topmenubg').html('');
 	var ddsata=[{
@@ -56,17 +56,7 @@
 		$('#indexmenuss').hide();
 		resizewh();
 	});
-	$('body').keydown(function(e){
-		var code	= e.keyCode;
-		if(code==27){
-			if(get('xpbg_bodydds')){
-				js.tanclose($('#xpbg_bodydds').attr('xpbody'));
-			}else{
-				closenowtabs();
-			}
-			return false;
-		}
-	});
+	_addbodykey();
 	$('#indesearchmenu').click(function(){
 		_searchmenus();
 	});

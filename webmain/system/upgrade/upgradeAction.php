@@ -90,6 +90,19 @@ class upgradeClassAction extends Action
 			'key'		=> $this->jm->encrypt($key)
 		),$where);
 	}
+	private function upsueeccmids($modeid, $mid, $updatedt, $type=1)
+	{
+		$where  = "`type`='$type' and `mid`='$mid'";
+		$db 	= m('chargems');
+		if($db->rows($where)==0)$where='';
+		$db->record(array(
+			'type' 		=> $type,
+			'mid'  		=> $mid,
+			'modeid'  	=> $modeid,
+			'updatedt'  => $updatedt,
+			'optdt' 	=> $this->now,
+		),$where);
+	}
 	public function shengjianssAjax()
 	{
 		$mid 	= (int)$this->post('id');
@@ -97,25 +110,36 @@ class upgradeClassAction extends Action
 		$key 	= $this->post('key');
 		$oi 	= $this->post('oii');
 		$len 	= $this->post('lens');
-		$barr	= c('xinhu')->getdata('getinstallfileid',array('fid'=>$fileid,'sysnum'=>$this->keyss,'key'=>$key));
-		if($barr['code'] != 200)exit($barr['msg']);
-		$data 	= $barr['data'];
-		$type 	= $data['type'];
-		$filepath = $data['filepath'];
-		$fcont 	= $this->jm->base64decode($data['content']);
-		if($fcont != ''){
-			if($type==1){
-				$bmsg = m('beifen')->updatefabric($fcont);
-				if($bmsg != 'ok')exit($bmsg);
+		$updatedt = $this->post('updatedt');
+		$upbo 	= true;
+		$ors 	= m('chargems')->getone("`type`=1 and `mid`='$fileid'");
+		if($ors && $updatedt<=$ors['optdt'])$upbo = false;
+		if(isempt($updatedt))$upbo = true;
+		if($upbo){
+			$barr	= c('xinhu')->getdata('getinstallfileid',array('fid'=>$fileid,'sysnum'=>$this->keyss,'key'=>$key));
+			if($barr['code'] != 200)exit($barr['msg']);
+			$data 	= $barr['data'];
+			$type 	= $data['type'];
+			$filepath = $data['filepath'];
+			$fcont 	= $this->jm->base64decode($data['content']);
+			if($fcont != ''){
+				if($type==1){
+					$bmsg = m('beifen')->updatefabric($fcont);
+					if($bmsg != 'ok')exit($bmsg);
+					$this->upsueeccmids($mid, $fileid, $updatedt, 1);
+				}
+				if($type==9){
+					$this->rock->createdir($filepath);
+					@$bo = file_put_contents($filepath, $fcont);
+					if(!$bo)exit('无法写入：'.$filepath.'');
+				}
 			}
-			if($type==9){
-				$this->rock->createdir($filepath);
-				@$bo = file_put_contents($filepath, $fcont);
-				if(!$bo)exit('无法写入：'.$filepath.'');
-			}
+			$udt = $data['updatedt'];
+		}else{
+			$udt = $this->now;
 		}
 		if($oi+1 == $len){
-			$this->upsueecc($mid, $data['updatedt'], $key);
+			$this->upsueecc($mid, $udt, $key);
 		}
 		echo 'ok';
 	}

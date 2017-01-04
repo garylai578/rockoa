@@ -5,18 +5,7 @@
 	resizewh();
 	$(window).resize(resizewh);
 	clickhome();
-
-	$('body').keydown(function(e){
-		var code	= e.keyCode;
-		if(code==27){
-			if(get('xpbg_bodydds')){
-				js.tanclose($('#xpbg_bodydds').attr('xpbody'));
-			}else{
-				closenowtabs();
-			}
-			return false;
-		}
-	});
+	_addbodykey();
 }
 
 function opentixiang(){

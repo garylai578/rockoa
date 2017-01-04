@@ -24,13 +24,33 @@ function _editfacechangback(a,xid){
 		js.msg('success','修改成功,如没显示最新头像，请清除浏览器缓存');
 	});
 }
+function _addbodykey(){
+	$('body').keydown(function(e){
+		var code	= e.keyCode;
+		if(code==27){
+			if(get('xpbg_bodydds')){
+				js.tanclose($('#xpbg_bodydds').attr('xpbody'));
+			}else{
+				closenowtabs();
+			}
+			return false;
+		}
+		//弹出帮助
+		if(code==113){
+			js.confirm('是否打开查看关于['+nowtabs.name+']的帮助信息？',function(jg){
+				if(jg=='yes')window.open('http://xh829.com/view_'+nowtabs.num+'.html');
+			});
+			return false;
+		}
+	});
+}
 
 
 function openinput(name,num, id,cbal){
 	if(!id)id=0;
 	if(!cbal)cbal='';
 	if(id==0){name='[新增]'+name+'';}else{name='[编辑]'+name+'';}
-	var url='?a=lu&m=input&d=flow&num='+num+'&mid='+id+'&callback='+cbal+'';
+	var url='?a=lu&m=input&d=flow&num='+num+'&mid='+id+'';
 	openxiangs(name, url,'', cbal);
 	return false;
 }

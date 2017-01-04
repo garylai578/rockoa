@@ -283,6 +283,7 @@ class kaoqinClassAction extends Action
 				$state 	= $rs['state'];
 				$iswork = $rs['iswork'];
 				if($state != '正常' && $iswork==1)$s='<font color=red>'.$s.'</font>';
+				if($iswork==0 && $state == '未打卡')$s='休息日';
 				if(!isempt($rs['miaocn'])){
 					$s.='['.$rs['miaocn'].']';
 				}
@@ -296,7 +297,7 @@ class kaoqinClassAction extends Action
 				}
 				$str.= ''.$rs['ztname'].'：'.$s.'';
 				$str.= '<br>';
-				if($iswork==0)$str='<font color=#888888>休息日</font>';
+				if($iswork==0)$str='<font color="#aaaaaa">'.$str.'</font>';
 			}
 			$barrs[$dt] = $str;
 		}

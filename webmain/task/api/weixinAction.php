@@ -1,11 +1,15 @@
 <?php 
-
+//保存打卡记录等
 class weixinClassAction extends apiAction{
 
 	public function getsignAction()
 	{
-		$url = $this->getvals('url');
-		$arr = m('weixin:signjssdk')->getsignsdk($url);
+		if(isempt($this->option->getval('weixin_corpid'))){
+			$arr['appId'] = '';
+		}else{
+			$url = $this->getvals('url');
+			$arr = m('weixin:signjssdk')->getsignsdk($url);
+		}
 		$this->showreturn($arr);
 	}
 	

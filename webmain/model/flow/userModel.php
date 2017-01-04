@@ -9,6 +9,7 @@ class flow_userClassModel extends flowModel
 	{
 		$where 	= 'and `status`=1';
 		$key	= $this->rock->post('key');
+		if($lx == 'gl')$where = '';
 		
 		if(!isempt($key))$where.= m('admin')->getkeywhere($key);
 	

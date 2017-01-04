@@ -19,12 +19,12 @@
 var kqrs = <?=json_encode($kqrs);?>;
 js.servernow = '<?=$rock->now?>';
 var infoWin,marker,circle;
-var label='',accuracy=0,latitude='',longitude='',kqjuli=-1;
+var label='',accuracy=0,latitude='',longitude='',kqjuli=-1,addbo = true;
 apiready = function(){
 	initbodyss()
 }
 function initbody(){
-	if(!api.appName)initbodyss();
+	if(js.request('ftype')!='app')initbodyss();
 }
 function initbodyss(){
 	js.getsplit();
@@ -39,7 +39,7 @@ function initbodyss(){
         zoom: scale
     });
 	if(kqrs){
-		var enddt = new qq.maps.LatLng(<?=$kqrs['location_x']?>, <?=$kqrs['location_y']?>);
+		var enddt = new qq.maps.LatLng(parseFloat(kqrs.location_x), parseFloat(kqrs.location_y));
 		new qq.maps.Marker({
 			map: map,
 			position:enddt
@@ -48,6 +48,7 @@ function initbodyss(){
 	geocoder = new qq.maps.Geocoder({
         complete : function(result){
 			js.msg();
+			addbo	 = true;
 			scale	 = map.getZoom();
 			js.setoption('latlongedu',''+latitude+','+longitude+','+scale+'');
 			clearTimeout(dwtimeer);
@@ -198,17 +199,20 @@ function adddkjl(lx,ss,sm){
 	var data = {location_x:latitude,type:lx,location_y:longitude,scale:scale,precision:accuracy,label:jm.base64encode(label),sm:jm.base64encode(sm)};
 	js.ajax('weixin','addlocation',data,function(ret){
 		js.msg('success',''+ss+'成功:'+ret.now+'');
+		addbo = false;
 	},'none');
 }
 function adddkjlsss(){
 	if(dwbool){js.wx.alert('正在定位，稍后在添加');return;}
 	if(latitude==''){js.wx.alert('定位没有成功，不能添加');return;}
+	if(!addbo){js.wx.alert('已保存过了，请重新定位后在保存');return;}
 	js.wx.prompt('保存定位','请输入说明(选填)：',function(text){
 		adddkjl(0,'保存', text);
 	});
 }
 function baidingwei(){
 	var baiduLocation = api.require('baiduLocation');
+	js.msg('wait','定位中...');
 	baiduLocation.startLocation({
 		accuracy: '500m',
 		filter: 1,
@@ -238,6 +242,7 @@ function addkaoqin(){
 	if(latitude=='' || kqjuli==-1){js.wx.alert('定位没有成功，不能添加');return;}
 	var slju= parseFloat(kqrs.precision);
 	if(kqjuli>slju){js.wx.alert('当前位置距离考勤点有'+kqjuli+'米,考勤设置误差不能超过'+slju+'米，故不能添加考勤打卡！');return;}
+	if(!addbo){js.wx.alert('已打卡过了，请重新定位后在打卡');return;}
 	adddkjl(1,'打卡');
 }
 </script>

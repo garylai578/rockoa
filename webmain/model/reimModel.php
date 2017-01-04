@@ -24,7 +24,9 @@ class reimClassModel extends Model
 		$this->serverhosturl	= $dbs->getval('reimhostsystem');
 		$this->servertitle		= $dbs->getval('reimtitlesystem');
 		$this->wxcorpid			= $dbs->getval('weixin_corpid');
+		$_chatsecret			= $dbs->getval('weixin_chatsecret');
 		$this->wxchattb			= (int)$dbs->getval('weixin_chattb','0');
+		if(isempt($_chatsecret))$this->wxchattb = 0;
 		if(getconfig('systype')=='demo')$this->serverhosturl = $this->rock->jm->base64decode('d3M6Ly93d3cueGg4MjkuY29tOjY1NTIv');
 		if($this->isempt($this->servertitle))$this->servertitle='信呼';
 	}

@@ -15,7 +15,7 @@ class kaoqinClassAction extends runtAction
 		}
 		if($ids!=''){
 			$flow 	= m('flow')->initflow('leavehr');
-			$flow->push(substr($ids, 1),'','昨天['.$dt.']的你考勤存在异常，此消息仅供参考！','考勤异常提醒');
+			$flow->push(substr($ids, 1),'考勤','昨天['.$dt.']的你考勤存在异常，此消息仅供参考！','考勤异常提醒');
 		}
 		echo 'success';
 	}
@@ -24,6 +24,30 @@ class kaoqinClassAction extends runtAction
 	{
 		$dt 	= date('Y-m-d', time()-3600*20);//昨天
 		m('kaoqin')->kqanayalldt($dt);
+		echo 'success';
+	}
+	
+	//每月分析上月
+	public function lmanayAction()
+	{
+		$month = c('date')->adddate($this->rock->date, 'm', -1,'Y-m');
+		m('kaoqin')->kqanayall($month);
+		echo 'success';
+	}
+	
+	//分析工作日报统计
+	public function dailyfxAction()
+	{
+		$dt 	= c('date')->adddate($this->rock->date, 'd', -1);
+		$flow 	= m('flow')->initflow('daily');
+		$flow->dailyanay(0, $dt);
+		$flow->dailytodo($dt); 	//未写日报通知
+		echo 'success';
+	}
+
+	public function dayAction()
+	{
+		m('flow:leave')->autoaddleave(); //年假自动添加
 		echo 'success';
 	}
 }

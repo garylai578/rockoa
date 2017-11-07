@@ -14,6 +14,7 @@ class totalsClassModel extends Model
 		$arr['applywtg']= $bidb->applymywgt($uid);
 		$arr['workwwc']	= m('work')->getwwctotals($uid);
 		$arr['email']	= m('emailm')->wdtotal($uid);
+		$arr['flowtodo']= m('flowtodo')->getwdtotals($uid);
 		return $arr;
 	}
 }

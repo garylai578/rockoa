@@ -8,10 +8,13 @@ ul,li{padding:0px;margin:0px}
 .relative{position:relative}
 .zhu{ color:#ffffff}
 img{border:0}
+label{font-weight:normal}
 
 .wrap{word-wrap:break-word;word-break:break-all;white-space:normal;}
 
 select,input,textarea,button,a{ font-size:14px;resize: none;outline:none}
+
+.notsel{-moz-user-select: none;-o-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;cursor:default;}
 
 a.hui:link,a.hui:visited{color:#555555;TEXT-DECORATION:none;}
 a.hui:hover{TEXT-DECORATION:underline;color:red;}
@@ -65,9 +68,10 @@ input.checkbox,input.radio{ border:none;padding:0;margin-right:5px; width:14px; 
 
 .input,.select,.textarea{height:30px; line-height:30px; border:1px #cccccc solid; padding:2px 5px;font-size:14px;}
 .textarea{ line-height:26px;}
-.input:focus,input:focus{box-shadow:0px 0px 5px rgba(0,0,0,0.3); border:1px #0887CC solid; color:#000000}
+.input:focus,input:focus,.textarea:focus{box-shadow:0px 0px 5px rgba(0,0,0,0.3); border:1px #0887CC solid; color:#000000}
 
 .box{box-shadow:0px 0px 5px rgba(0,0,0,0.3); border:1px #157FCC solid;}
+.boxs{box-shadow:0px 5px 20px rgba(0,0,0,0.3);}
 
 
 
@@ -89,7 +93,7 @@ input.checkbox,input.radio{ border:none;padding:0;margin-right:5px; width:14px; 
 .topcenter span:hover,.topmenubg span:hover,.spanactive{background:#15AF90} 	/*换皮肤的  选中的模块*/
 .topmenubg span{float:left;border-right-width:0px;}
 
-.topheader{color:white;font-size:24px;background:#1ABC9C;height:50px;overflow:hidden;} /*头部颜色*/
+.topheader{color:white;font-size:24px;background:#1389D3;height:50px;overflow:hidden;} /*头部颜色*/
 
 .topmenu{font-size:14px;padding:0px 20px;}
 .topactive{background-color:#0784C6}
@@ -119,10 +123,10 @@ input.checkbox,input.radio{ border:none;padding:0;margin-right:5px; width:14px; 
 .jtcls{height:44px;line-height:44px;overflow:hidden;width:14px;text-align:center;position:absolute;z-index:8;top:50px; background-color:#e1e1e1;right:0px;font-size:12px;cursor:pointer;color:#888888;display:none;top:0px}
 .jtcls:hover{background-color:#e5e5e5;color:#000000}
 
-.homeiconss{margin:10px 10px;padding:10px;color:white;width:150px;height:110px;overflow:hidden;cursor:pointer;font-size:14px;position:relative;}
+.homeiconss{margin:10px 10px;padding:10px;color:white;width:150px;height:110px;overflow:hidden;cursor:pointer;font-size:14px;position:relative}
 .homeiconss i{font-size:40px}
 .homeiconss:hover{opacity:0.8}
-.homeiconss2{width:120px;height:90px;overflow:hidden;border-radius:0px}
+.homeiconss2{width:120px;height:90px;overflow:hidden;border-radius:0px;border-radius:10px}
 .homeiconss .div01{margin-top:15px}
 .homeiconss .div00{position:absolute;right:10px;top:2px}
 
@@ -190,3 +194,24 @@ line-height: 0;
 .datesss{background:url(../../mode/icons/date.png) no-repeat right;cursor:pointer}
 .divinput{padding:5px}
 .lurim{ text-align:right}
+
+
+
+/*图形样式*/
+.rf{position:absolute;background-color:#D2E9F7;border:1px #B8DAEF solid;color:#1389D3;text-align:center;max-width:150px;min-width:100px}
+.rf_nei{padding:5px 10px}
+.rf_ract{}
+.rf_yuan{border-radius:20%}
+.rf-text{font-size:14px;word-wrap:nowrap;height:20px;line-height:20px;overflow:hidden}
+.rf-texts{font-size:12px;color:#84BDE0;word-wrap:nowrap;height:20px;line-height:20px;overflow:hidden}
+
+.rf-txt{position:absolute;color:#1389D3}
+.rf-active{background-color:#60C2F7}
+
+/*箭头的*/
+.rf_shu{position:absolute;height:100px;border:none;width:12px;overflow:hidden;transform-origin:0px 0px;-webkit-transform-origin:0px 0px;-ms-transform-origin:0px 0px;-moz-transform-origin:0px 0px;}
+.rf_shu1{width:6px;height:94px;background-color:#C6E1F2;margin-left:3px}
+.rf_shu2{width:0px;height:0px; overflow:hidden;border-width:6px;border-style:solid;border-color:#C6E1F2 transparent transparent transparent;}
+
+.rf_shus{position:absolute;height:100px;border:none;width:6px;overflow:hidden;background-color:#C6E1F2}
+.rf_hens{position:absolute;height:6px;border:none;width:100px;overflow:hidden;background-color:#C6E1F2}

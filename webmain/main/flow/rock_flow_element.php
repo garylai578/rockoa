@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var bools=false,modeid=0,moders={};
 	if(params.mid)modeid=params.mid;
 	var a = $('#view_{rand}').bootstable({
-		tablename:'flow_element',defaultorder:'`sort`',celleditor:true,
+		tablename:'flow_element',celleditor:true,
 		params:{mid:modeid},
 		url:publicstore('{mode}','{dir}'),storeafteraction:'elementafter',storebeforeaction:'elementbefore',
 		columns:[{
@@ -13,13 +13,13 @@ $(document).ready(function(){
 		},{
 			text:'对应字段',dataIndex:'fields'
 		},{
-			text:'分类',dataIndex:'iszb',renderer:function(v){
+			text:'分类',dataIndex:'iszb',renderer:function(v,d){
 				var s='<font color=#ff6600>主表</font>';
-				if(v==1)s='多行子表';
+				if(v>0)s='第'+d.iszb+'个子表';
 				return s;
 			}
 		},{
-			text:'元素类型,<a target="_blank" href="http://xh829.com/view_element.html">说明</a>',dataIndex:'fieldstype'
+			text:'元素类型,<a target="_blank" href="<?=URLY?>view_element.html">说明</a>',dataIndex:'fieldstype'
 		},{
 			text:'默认值',dataIndex:'dev',editor:true
 		},{
@@ -31,6 +31,25 @@ $(document).ready(function(){
 		},{
 			text:'展示',dataIndex:'iszs',type:'checkbox',editor:true,sortable:true
 		},{
+			text:'列表列',dataIndex:'islb',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'列排序',dataIndex:'ispx',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'可搜索',dataIndex:'issou',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'可统计',dataIndex:'istj',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'唯一值',dataIndex:'isonly',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'可导入',dataIndex:'isdr',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'对齐',dataIndex:'isalign',type:'select',editor:true,sortable:true,renderer:function(v,d){
+				var s='<font color="#888888">居中</font>';
+				if(v==1)s='<font color="#ff6600">居左</font>';
+				if(v==2)s='居右';
+				return s;
+			},store:js.arraystr('0|居中,1|居左,2|居右')
+		},{
 			text:'数据源',dataIndex:'data'
 		}],
 		itemclick:function(d){
@@ -41,7 +60,17 @@ $(document).ready(function(){
 		},
 		load:function(a){
 			if(!bools){
-				js.setselectdata(get('mode_{rand}'),a.flowarr,'id');
+				var s = '<option value="0">-选择模块-</option>',len=a.flowarr.length,i,csd,types='';
+				for(i=0;i<len;i++){
+					csd = a.flowarr[i];
+					if(types!=csd.type){
+						if(types!='')s+='</optgroup>';
+						s+='<optgroup label="'+csd.type+'">';
+					}
+					s+='<option value="'+csd.id+'">'+csd.name+'</option>';
+					types = csd.type;
+				}
+				$('#mode_{rand}').html(s);
 				if(modeid>0){
 					get('mode_{rand}').value=modeid;
 					btnsss(false);
@@ -66,6 +95,7 @@ $(document).ready(function(){
 		get('luc_{rand}').disabled = bo;
 		get('luz_{rand}').disabled = bo;
 		get('luzz_{rand}').disabled = bo;
+		get('changelieb_{rand}').disabled = bo;
 	}
 	var c = {
 		del:function(){
@@ -107,6 +137,18 @@ $(document).ready(function(){
 		zhanshi:function(o1,lx){
 			var url='?m=flow&d=main&a=inputzs&setid='+moders.id+'&atype='+lx+'';
 			js.open(url,900,500);
+		},
+		rexuhao:function(){
+			if(modeid==0)return;
+			js.ajax(js.getajaxurl('rexuhao','{mode}','{dir}'),{modeid:modeid},function(){
+				a.reload();
+			},'get','','刷新中...,刷新成功');
+		},
+		changelieb:function(){
+			if(modeid==0)return;
+			js.ajax(js.getajaxurl('changelieb','{mode}','{dir}'),{modeid:modeid},function(s){
+				js.msg('success','生成成功路径：'+s+'');
+			},'get','','生成中...,生成成功');
 		}
 	};
 	js.initbtn(c);
@@ -129,14 +171,16 @@ $(document).ready(function(){
 		<button class="btn btn-default" id="luc_{rand}" disabled click="inputs,0" type="button">PC端录入页布局</button>
 		<button class="btn btn-default" id="luz_{rand}" disabled click="zhanshi,0" type="button">PC端展示</button>
 		<button class="btn btn-default" id="luzz_{rand}" disabled click="zhanshi,1" type="button">手机展示</button>
-		<button class="btn btn-default" id="lu_{rand}" disabled click="lulu,0" type="button"><i class="icon-desktop"></i> PC录入页</button>
-		<button class="btn btn-default" id="lum_{rand}" disabled click="lulu,1" type="button"><i class="icon-tablet"></i> 手机录入页</button>
+		<button class="btn btn-default" id="lu_{rand}" disabled click="lulu,0" type="button">PC录入页</button>
+		<button class="btn btn-default" id="lum_{rand}" disabled click="lulu,1" type="button">手机录入页</button>
+		<button class="btn btn-default" id="changelieb_{rand}" disabled click="changelieb" type="button">生成列表页</button>
 		</div>
 	</td>
 	<td align="right" nowrap>
-		<button class="btn btn-warning" id="add_{rand}" disabled click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
-		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>&nbsp; 
-		<button class="btn btn-danger" click="del" disabled id="del_{rand}" type="button"><i class="icon-trash"></i> 删除</button>
+		<button class="btn btn-default" click="rexuhao" type="button">刷新序号</button>&nbsp; 
+		<button class="btn btn-warning" id="add_{rand}" disabled click="clickwin,0" type="button">新增</button>&nbsp; 
+		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button">编辑</button>&nbsp; 
+		<button class="btn btn-danger" click="del" disabled id="del_{rand}" type="button">删除</button>
 	</td>
 	</tr>
 	</table>

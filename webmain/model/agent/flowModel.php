@@ -15,7 +15,7 @@ class agent_flowClassModel extends agentModel
 	
 	private function getwdtotal($uid)
 	{
-		$stotal	= $this->rows("`uid`='$uid' and `status`=2");
+		$stotal	= m('flowbill')->applymywgt($uid);;
 		return $stotal;
 	}
 	
@@ -28,7 +28,7 @@ class agent_flowClassModel extends agentModel
 			$otyle		= '';
 			$oi 		= 0;
 			foreach($applyarr as $k=>$rs){
-				if(!$viewobj->isadd($rs['id'], $this->adminid))continue;
+				if(!$viewobj->isadd($rs, $this->adminid))continue;
 				if($otyle!=$rs['type']){
 					$oi = 0;
 					$modearr[] = array(

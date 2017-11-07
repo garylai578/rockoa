@@ -2,7 +2,7 @@
 <script >
 $(document).ready(function(){
 	{params}
-	var gzdata=[],type=params.type;if(!type)type='0';
+	var gzdata=[],lobdds=false,type=params.type;if(!type)type='0';
 	var a = $('#view_{rand}').bootstable({
 		tablename:'kqdist',celleditor:true,fanye:true,params:{'type':type},
 		url:publicstore('{mode}','{dir}'),storeafteraction:'kqdistafter',storebeforeaction:'kqdistbefore',
@@ -17,6 +17,8 @@ $(document).ready(function(){
 		},{
 			text:'状态',dataIndex:'status',type:'checkbox',editor:true,sortable:true
 		},{
+			text:'排序号',dataIndex:'sort',editor:true,sortable:true
+		},{
 			text:'ID',dataIndex:'id'
 		}],
 		itemclick:function(){
@@ -27,6 +29,10 @@ $(document).ready(function(){
 		},
 		load:function(d){
 			gzdata=d.gzdata;
+			if(!lobdds){
+				js.setselectdata(get('sekw_{rand}'),gzdata,'id');
+			}
+			lobdds=true;
 		}
 	});
 	
@@ -42,7 +48,7 @@ $(document).ready(function(){
 		clickwin:function(o1,lx){
 			var h = $.bootsform({
 				title:'分配',height:320,width:400,
-				tablename:'kqdist',isedit:lx,submitfields:'recename,receid,mid,startdt,enddt',
+				tablename:'kqdist',isedit:lx,submitfields:'recename,receid,mid,startdt,enddt,sort',
 				params:{otherfields:'type='+type+''},
 				items:[{
 					labelText:'针对人员',name:'recename',required:true,type:'changeuser',changeuser:{
@@ -56,6 +62,8 @@ $(document).ready(function(){
 					labelText:'截止日期',name:'enddt',type:'date',view:'date',required:true
 				},{
 					labelText:'对应规则',name:'mid',type:'select',valuefields:'id',displayfields:'name',store:gzdata,required:true
+				},{
+					labelText:'排序号',name:'sort',type:'number',value:'0'
 				}],
 				success:function(){
 					a.reload();
@@ -65,6 +73,11 @@ $(document).ready(function(){
 				var d = a.changedata;d.mid=d.mids;
 				h.setValues(d);
 			}
+		},
+		search:function(){
+			var s=get('key_{rand}').value;
+			var gzid=get('sekw_{rand}').value;
+			a.setparams({key:s,gzid:gzid},true);
 		}
 	};
 	
@@ -77,8 +90,16 @@ $(document).ready(function(){
 	<td nowrap>
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
 	</td>
-	
-	<td></td>
+	<td  style="padding-left:10px">
+		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="针对人员/部门">
+	</td>
+	<td  style="padding-left:10px">
+		<select class="form-control" style="width:150px" id="sekw_{rand}" ><option value="0">-对应规则-</option></select>
+	</td>
+	<td  style="padding-left:10px">
+		<button class="btn btn-default" click="search" type="button">搜索</button>
+	</td>
+	<td width="100%"></td>
 	<td align="right" nowrap>
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button> &nbsp; 
 		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button>
@@ -88,3 +109,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="tishi">排序号：数字越小优先级别越高。</div>

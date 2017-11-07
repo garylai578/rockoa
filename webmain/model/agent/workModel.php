@@ -22,7 +22,11 @@ class agent_workClassModel extends agentModel
 		);
 	}
 	
-	protected function agentrows($rows, $rowd, $uid)
+	protected function agentrows($rows, $rowd, $uid){
+		return $this->agentrows_status($rows, $rowd);
+	}
+	
+	protected function agentrows11($rows, $rowd, $uid)
 	{
 		$statea = $this->flow->statearr;
 		foreach($rowd as $k=>$rs){

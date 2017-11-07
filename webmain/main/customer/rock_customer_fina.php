@@ -54,8 +54,8 @@ $(document).ready(function(){
 			openxiangs(modename,modenum,d.id);
 		},
 		search:function(){
-			var s=get('key_{rand}').value;
-			a.setparams({key:s},true);
+			var s=get('key_{rand}').value,mon = get('month_{rand}').value;
+			a.setparams({key:s,month:mon},true);
 		},
 		daochu:function(){
 			a.exceldown(nowtabs.name);
@@ -75,13 +75,22 @@ $(document).ready(function(){
 	js.initbtn(c);
 	$('#state{rand}_1').html('已'+vlx+'款');
 	$('#state{rand}_2').html('未'+vlx+'款');
+	if(atype.substr(0,2)!='my')$('#btnbnts_{rand}').remove();
 });
 </script>
 <div>
 	<table width="100%">
 	<tr>
-	<td style="padding-right:10px">
+	<td id="btnbnts_{rand}" style="padding-right:10px" >
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+	</td>
+	<td style="padding-right:10px">
+		<div style="width:120px" class="input-group">
+			<input readonly placeholder="所属月份" class="form-control" id="month_{rand}" >
+			<span class="input-group-btn">
+				<button onclick="return js.selectdate(this,'month_{rand}','month')" class="btn btn-default" type="button"><i class="icon-calendar"></i></button>
+			</span>
+		</div>
 	</td>
 	<td>
 		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="合同编号/客户/操作人">

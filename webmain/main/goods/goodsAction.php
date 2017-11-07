@@ -20,29 +20,41 @@ class goodsClassAction extends Action
 	
 	public function beforeshow($table)
 	{
-		$key = $this->post('key');
-		$s 	 = '';
-		if($key!=''){
-			$s = " and (`name` like '%$key%') ";
+		$key 	= $this->post('key');
+		$typeid = (int)$this->post('typeid');
+		$where 	 	= '';
+		if($typeid != 0){
+			$alltpeid = $this->option->getalldownid($typeid);
+			$where .= ' and `typeid` in('.$alltpeid.')';
 		}
-		return $s;
+		if($key!=''){
+			$where .= " and (`name` like '%$key%') ";
+		}
+		return $where;
 	}
 	
 	public function xiangbeforeshow($table)
 	{
 		$key = $this->post('key');
 		$dt  = $this->post('dt');
-		$s 	 = '';
+		$typeid  = (int)$this->post('typeid', 0);
+		
+		$where 	 = '';
+		if($typeid>0){
+			$alltpeid = $this->option->getalldownid($typeid);
+			$where.=" and b.typeid in($alltpeid)";
+		}
 		if($key!=''){
-			$s = " and b.`name` like '%$key%' ";
+			$where .= " and (b.`name` like '%$key%' or a.optname  like '%$key%' )";
 		}
 		if($dt!=''){
-			$s .= " and a.`applydt` like '$dt%' ";
+			$where .= " and a.`applydt` like '$dt%' ";
 		}
+		
 		$table	= '`[Q]goodss` a left join `[Q]goods` b on a.aid=b.id';
-		$fields	= 'b.name,a.count,a.type,a.kind,a.status,a.optname,b.typeid,a.applydt,a.explain';
+		$fields	= 'a.id,b.name,a.count,a.type,a.kind,a.status,a.optname,b.typeid,a.applydt,a.explain,a.mid';
 		return array(
-			'where' => $s,
+			'where' => $where,
 			'table' => $table,
 			'fields' => $fields,
 		);
@@ -74,9 +86,20 @@ class goodsClassAction extends Action
 				if(isset($tyeparr[$skey]))$kind = $tyeparr[$skey];
 				$rows[$k]['kind']	= $kind;
 				$rows[$k]['status']	= $statusar[$rs['status']];
+				if($rs['mid']>0)$rows[$k]['checkdisabled'] = true;//有主表ID，不能删除
 			}
 		}
 		return array('rows' => $rows);
+	}
+	
+	/**
+	*	删除出入库详情
+	*/
+	public function delxiangAjax()
+	{
+		$ids	= $this->post('id','0');
+		m('goodss')->delete("id in($ids) and `mid`=0");
+		backmsg();
 	}
 	
 	public function chukuoptAjax()
@@ -116,17 +139,21 @@ class goodsClassAction extends Action
 	
 	
 	
-	
+	//2017-08-20 后弃用了
 	public function addplgoodsAjax()
 	{
-		$rows  	= c('html')->importdata('name,typeid,price,unit,guige,xinghao','name,typeid');
+		$rows  	= c('html')->importdata('name,typeid,price,unit,guige,xinghao,stockcs','name,typeid');
 		$oi 	= 0;
 		$db 	= m('goods');
 		foreach($rows as $k=>$rs){
-			$rs['typeid'] 	= $this->gettypeid($rs['typeid']);
-			$odi 			= $db->rows("`typeid`=".$rs['typeid']." and `name`='".$rs['name']."'");
-			if($odi>0)continue;
-			$rs['price']	= floatval($rs['price']);
+			$rs['typeid'] 	= $this->option->gettypeid('goodstype',$rs['typeid']);
+			
+			//判断是否存在
+			$odi 			= $db->existsgoods($rs);
+			if($odi)continue;
+			
+			$rs['price']	= floatval($this->rock->repempt($rs['price'],'0')); //金额
+			$rs['stockcs']	= (int)$this->rock->repempt($rs['stockcs'],'0'); //初始库存
 			$rows[$k]		= $rs;
 			$rs['adddt']	= $this->now;
 			$rs['optdt']	= $this->now;
@@ -135,30 +162,13 @@ class goodsClassAction extends Action
 			$db->insert($rs);
 			$oi++;
 		}
+		$this->reloadkcAjax();
 		backmsg('','成功导入'.$oi.'条数据');
 	}
-	private	$getypsarr = array();
-	private function gettypeid($s)
+	
+	//刷新库存
+	public function reloadkcAjax()
 	{
-		if(isset($this->getypsarr[$s]))return $this->getypsarr[$s];
-		$sid = 0;
-		$s 	 = str_replace(',','/', $s);
-		$djid= $this->option->getval('goodstype','0',2);
-		$dsja= $djid;
-		$sarr= explode('/', $s);
-		foreach($sarr as $safs){
-			$pid 	= $djid;
-			$djid 	= (int)$this->option->getmou('id',"`pid`='$pid' and `name`='$safs'");
-			if($djid==0){
-				$djid = $this->option->insert(array(
-					'name' => $safs,
-					'pid'  => $pid,
-					'valid'  => 1,
-				));
-			}
-		}
-		if($djid != $dsja)$sid 	= $djid;
-		$this->getypsarr[$s] 	= $sid;
-		return $sid;
+		m('goods')->setstock();
 	}
 }

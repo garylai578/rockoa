@@ -9,7 +9,9 @@ $(document).ready(function(){
 		},{
 			text:'编号',dataIndex:'num'	,editor:true
 		},{
-			text:'URL',dataIndex:'url',editor:true
+			text:'URL',dataIndex:'url',editor:true,renderstyle:function(v,d){
+				return 'word-wrap:break-word;word-break:break-all;white-space:normal;width:200px';
+			}
 		},{
 			text:'PID',dataIndex:'pid',editor:true
 		},{
@@ -49,6 +51,7 @@ $(document).ready(function(){
 			a.setparams({key:s},true);
 		},
 		clickwin:function(o1,lx){
+			if(ISDEMO){js.msg('success','演示站点禁止操作');return;}
 			var h = $.bootsform({
 				title:'菜单',height:500,width:400,
 				tablename:'menu',isedit:lx,

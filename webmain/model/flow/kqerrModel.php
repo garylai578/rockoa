@@ -16,6 +16,19 @@ class flow_kqerrClassModel extends flowModel
 	
 	protected function flowbillwhere($uid, $lx)
 	{
+		$month	= $this->rock->post('month');
+		$where 	= '';
+		if($month!=''){
+			$where.=" and a.`dt` like '$month%'";
+		}
+
+		return array(
+			'where' => $where
+		);
+	}
+	
+	protected function flowbillwhere33($uid, $lx)
+	{
 		$dt 	= $this->rock->date;
 		$key 	= $this->rock->post('key');
 		$month 	= $this->rock->post('month');

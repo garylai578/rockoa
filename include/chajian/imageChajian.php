@@ -7,6 +7,7 @@ class imageChajian extends Chajian
 {
 	public $ext; 	//图片类型
 	public $img; 	//图片对象
+	public $mime; 	//图片对象
 	public $path; 	//图片地址
 	public $w 		= 0;
 	public $h 		= 0;
@@ -49,18 +50,20 @@ class imageChajian extends Chajian
 		$this->bool	= true;
 	}
 	
+	
+	
 	/**
 		获取图片对象
 	*/
 	public function createimgobj($path)
 	{
-		$ext	= $this->getext($path);
+		$ext	= $this->getmime($path);
 		$img	= false;
 		switch ($ext){
-			case 'gif':
+			case 'image/gif':
 				$img=imagecreatefromgif($path);
 			break;
-			case 'png':
+			case 'image/png':
 				$img=imagecreatefrompng($path);
 			break;
 			default:
@@ -84,6 +87,17 @@ class imageChajian extends Chajian
 	{
 		$type = strtolower(substr($img_name,strrpos($img_name,'.')+1));
 		return $type;
+	}
+	
+	public function getmime($img_name)
+	{ 
+		$mime = '';
+		if(file_exists($img_name)){
+			$fileobj	= getimagesize($img_name);
+			$mime		= strtolower($fileobj['mime']);
+			$this->mime = $mime;
+		}
+		return $mime;
 	}
 	
 	/**
@@ -180,15 +194,19 @@ class imageChajian extends Chajian
 	*/
 	private function saveas($spath,$img)
 	{
-		$ext = $this->getext($spath);
+		$ext = $this->getmime($spath);
+		$this->saveass($ext, $img, $spath);		
+	}
+	private function saveass($ext,$img, $spath)
+	{
 		switch($ext){
-			case 'gif':
+			case 'image/gif':
 				imagegif($img,$spath);
 			break;
-			case 'png':
+			case 'image/png':
 				imagepng($img,$spath);
 			break;
-			case 'bmp':
+			case 'image/bmp':
 				imagewbmp($img,$spath);
 			break;
 			default:
@@ -239,7 +257,7 @@ class imageChajian extends Chajian
 		imagecopyresampled($tmpimg, $this->img, $tx,$ty, $sx,$sy, $mw,$mh,$this->w,$this->h);//生成缩略图
 		//$sapath	= str_replace('.'.$this->ext.'', '_thumb'.$w.'x'.$h.'.'.$this->ext.'', $this->path);
 		$sapath	= str_replace('.'.$this->ext.'', '_s.'.$this->ext.'', $this->path);
-		$this->saveas($sapath, $tmpimg);//保存图片
+		$this->saveass($this->mime ,$tmpimg, $sapath);//保存图片
 		return $sapath;
 	}
 	

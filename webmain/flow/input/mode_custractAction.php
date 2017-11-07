@@ -1,11 +1,13 @@
 <?php
-
+/**
+*	客户.合同管理
+*/
 class mode_custractClassAction extends inputAction{
 	
 	
 	public function selectcust()
 	{
-		$rows = m('crm')->getmycust($this->adminid);
+		$rows = m('crm')->getmycust($this->adminid, $this->rock->arrvalue($this->rs, 'custid'));
 		return $rows;
 	}
 	
@@ -45,6 +47,11 @@ class mode_custractClassAction extends inputAction{
 		if($saleid > 0){
 			$dbs->update('htid='.$id.'', "`id`='$saleid'");
 		}
+	}
+	
+	public function remoneyAjax()
+	{
+		m('crm')->custractupzt();
 	}
 }	
 			

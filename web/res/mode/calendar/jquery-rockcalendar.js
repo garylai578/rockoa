@@ -85,13 +85,18 @@
 				this.obj[i]=no;
 				no.onclick=function(){me.click(this)}
 			}
-			this.nowmonth();//当月
+			this.nowmonth(can.month);//当月
 		}
-		this.nowmonth=function()
+		this.nowmonth=function(nmot)
 		{
 			var dt	= js.now().split('-');
 			this.Y	= parseFloat(dt[0]);
 			this.m	= parseFloat(dt[1]);
+			if(nmot){
+				var nmots = nmot.split('-');
+				this.Y	= parseFloat(nmots[0]);
+				this.m	= parseFloat(nmots[1]);
+			}
 			this.nd	= parseFloat(dt[2]);
 			this.nY	= this.Y;
 			this.nm	= this.m;
@@ -407,7 +412,7 @@
 
 	$.fn.rockcalendar = function(options){
 		var defaultVal = {
-			height:400,selbgcolor:'#D3FFF6',
+			height:400,selbgcolor:'#D3FFF6',month:'',
 			fillot:true,renderer:function(){return ''},align:'left',valign:'top',
 			changemonth:function(){},boofan:true,onclick:function(){},jierixiuxi:'',jierishangban:'',headerbgcolor:'',
 			changemonthbefore:function(){}

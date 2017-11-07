@@ -196,7 +196,15 @@
 		};
 		this.save = function(o1){
 			this._save(o1, 1);
-		},
+		};
+		this.signature= function(da, url){
+			var time = parseInt(js.now('time')*0.001);
+			var siaa = ''+NOWURL+''+url+''+da.tablename_postabc+''+time+'_'+adminid+'';
+			var sign = md5(siaa);
+			da.sys_signature= sign;
+			da.sys_timeature= time;
+			return da;
+		};
 		this._save	= function(o1, lx){
 			if(this.isValid()){
 				this.setmsg(this.isValidText);
@@ -225,16 +233,17 @@
 			if(typeof(s)=='object'){
 				for(ac in s)data[ac]=s[ac];
 			}
-			data.tablename_postabc = can.tablename;
-			data.submitfields_postabc = can.submitfields;
-			data.aftersaveaction = can.aftersaveaction;
-			data.beforesaveaction = can.beforesaveaction;
+			data.tablename_postabc 		= jm.encrypt(can.tablename);
+			data.submitfields_postabc 	= jm.base64encode(can.submitfields);
+			data.aftersaveaction 	= can.aftersaveaction;
+			data.beforesaveaction 	= can.beforesaveaction;
 			data.editrecord_postabc = can.editrecord;
+			data.sysmodenumabc 		= can.modenum;
 			o1.disabled = true;
 			$.ajax({
 				type:'post',
 				url:can.url,
-				data:data,
+				data:this.signature(data, can.url),
 				success:function(da){
 					var a = js.decode(da);
 					if(a.success){
@@ -384,14 +393,20 @@
 	$.bootsform	= function(options){
 		var defaultVal = {
 			items:[],labelWidth:90,width:500,height:400,
-			labelAlign:'right',saveCls:'primary',tablename:'',
+			labelAlign:'right',saveCls:'primary',
+			tablename:'', //对应表名
+			modenum:'',  //对应模块编号
 			url:js.getajaxurl('publicsave','index'),
 			submitfields:'',autoclose:true,cancelbtn:true,
 			params:{},bodywidth:'90%',addCls:'primary',editCls:'info',bodyheight:0,isedit:0,
-			render:'',saveText:'确定',window:true,windowid:'',editrecord:'false',
+			render:'',saveText:'确定',window:true,windowid:'',
+			editrecord:'false', //是否保存修改记录
 			defaultfields:{type:'text',blankText:'',labelText:'',required:false,readOnly:false,labelBox:'',attr:'',value:''},
 			success:function(){},loadafter:function(){},
-			load:function(){},aftersaveaction:'',beforesaveaction:'',requiredfields:'',
+			load:function(){},
+			aftersaveaction:'', //保存后处理方法
+			beforesaveaction:'', //保存前处理方法
+			requiredfields:'',
 			error:function(){},saveid:'',msgviewid:'',rand:'',
 			pdedit:true,
 			submitcheck:function(){return ''}

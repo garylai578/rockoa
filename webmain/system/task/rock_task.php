@@ -105,23 +105,28 @@ $(document).ready(function(){
 			var ase = a.changedata.url.split(',');
 			var url='task.php?m='+ase[0]+'|runt&a='+ase[1]+'&runid='+a.changeid+'';
 			js.ajax(url,{},function(s){
-				if(s=='success'){
-					js.msg('success','运行成功');
+				if(s.indexOf('success')>=0){
+					if(s!='success'){
+						js.msg();
+						js.alert('运行成功，而你可能用记事本修改系统文件了，请到群里《@信呼客服 记事本》查看帮助');
+					}else{
+						js.msg('success','运行成功');
+					}
 					a.reload();
 				}else{
 					js.msg('msg','运行失败');
 				}
 			});
 		},
-		start:function(){
-			js.msg('wait','启动中...');
-			js.ajax(js.getajaxurl('starttask','{mode}','{dir}'),{},function(s){
-				if(s=='ok'){
-					js.msg('success', '启动成功');
+		start:function(lx){
+			js.msg('wait','处理中...');
+			js.ajax(js.getajaxurl('starttask','{mode}','{dir}'),{lx:lx},function(ret){
+				if(ret.success){
+					js.msg('success', ret.data);
 				}else{
-					js.msg('msg', s);
+					js.msg('msg', ret.msg);
 				}
-			});
+			},'get,json');
 		},
 		clearzt:function(){
 			js.msg('wait','清空中...');
@@ -129,6 +134,12 @@ $(document).ready(function(){
 				js.msg();
 				a.reload();
 			});
+		},
+		openanz:function(){
+			js.open(js.getajaxurl('downbat','{mode}','{dir}'));
+		},
+		openqueue:function(){
+			js.open('?a=queue&m=task&d=system');
 		}
 	};
 	
@@ -138,6 +149,20 @@ $(document).ready(function(){
 		get('yun_{rand}').disabled = bo;
 	}
 	js.initbtn(c);
+	
+	$('#randkstrt_{rand}').rockmenu({
+		width:220,top:35,donghua:false,
+		data:[{
+			name:'使用我自己REIM服务端<font color=green>启动</font>',lx:'0'
+		},{
+			name:'使用官网服务<font color=green>启动</font>(VIP专用)',lx:'1'
+		},{
+			name:'<font color=red>停止</font>用官网的计划任务',lx:'2'
+		}],
+		itemsclick:function(d, i){
+			c.start(d.lx);
+		}
+	});
 });
 </script>
 
@@ -150,12 +175,12 @@ $(document).ready(function(){
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button> &nbsp; 
 		<button class="btn btn-default" click="refresh" type="button"><i class="icon-refresh"></i> 刷新</button> &nbsp; 
 		<button class="btn btn-default" click="clearzt" type="button">清空状态</button> &nbsp; 
-		<button class="btn btn-success" click="start" type="button"><i class="icon-stop"></i> 重启任务</button>
+		<button class="btn btn-success" id="randkstrt_{rand}" type="button"><i class="icon-stop"></i> 启动计划任务 <i class="icon-angle-down"></i></button>
 	</td>
 	
 	
 	
-	<td width="80%"></td>
+	<td width="80%">&nbsp;&nbsp;<a href="javascipt:;" click="openanz">[查看计划任务安装]</a>&nbsp;&nbsp;<a href="javascipt:;" click="openqueue">[计划任务队列]</a>&nbsp;&nbsp;<a href="<?=URLY?>view_taskrun.html"target="_blank">[帮助]</a></td>
 	<td align="right" nowrap>
 		
 		<button class="btn btn-default" id="yun_{rand}" click="yunx" disabled type="button">运行</button> &nbsp; 
@@ -168,4 +193,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="veiw_{rand}"></div>
-<div class="tishi">提示：执行地址如[sys,beifen]也就是运行webmain/task/runt/sysAction.php文件的beifenAction方法，以此类推。频率d每天,i分钟</div>
+<div class="tishi">提示：执行地址如[sys,beifen]也就是运行webmain/task/runt/sysAction.php文件的beifenAction方法，以此类推。频率d每天,i分钟,w周,m月,y年,h小时</div>

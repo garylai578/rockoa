@@ -220,6 +220,7 @@ var up={
 			up.wcarr.push({id:result.id,filename:arr.filename,filetype:arr.filetype,fileext:arr.fileext,filesize:arr.filesize,filesizecn:arr.filesizecn,filepath:result.filepath,thumbpath:result.thumbpath,width:result.width,height:result.height});
 		}else{
 			$('#'+up.updengid+'').html('<font color=red>上传失败1</font>');
+			js.msg('msg',result.msg);
 		}
 		setTimeout('up.start('+(arr.xuoi+1)+')',5);
 	},
@@ -284,7 +285,7 @@ button{cursor:pointer}
 button{ cursor:pointer}
 #footmsg{ text-align:left; padding:3px}
 .quebntha{position:fixed;right:10px;bottom:10px;}
-.webbtn{color:#ffffff;opacity:0.8; background-color:#1abc9c; padding:5px 8px; border:none; cursor:pointer;font-size:14px}
+.webbtn{color:#ffffff;opacity:0.8; background-color:#1389D3; padding:5px 8px; border:none; cursor:pointer;font-size:14px}
 .webbtn:disabled{background-color:#aaaaaa; color:#eeeeee}
 .webbtn:hover{box-shadow:0px 0px 5px rgba(0,0,0,0.3);opacity:1}
 </style>

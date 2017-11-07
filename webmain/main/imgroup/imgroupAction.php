@@ -6,11 +6,11 @@ class imgroupClassAction extends Action
 		$s 		= 'and 1=2';
 		$gid 	= $this->post('gid','0');
 		if($gid>0){
-			$s = " and id in(select uid from [Q]im_groupuser where `gid`='$gid')";
+			$s = " and id in(select `uid` from `[Q]im_groupuser` where `gid`='$gid')";
 		}
 		return array(
 			'where' => $s,
-			'fields'=> 'id,user,name,deptname'
+			'fields'=> 'id,user,name,deptname,ranking'
 		);
 	}
 	
@@ -39,5 +39,16 @@ class imgroupClassAction extends Action
 		$sid 	= $this->post('sid','0');
 		m('reim')->exitchat($gid, $sid);
 		echo 'success';
+	}
+	
+	//保存组织结构
+	public function savegroupafter($table, $arr, $id)
+	{
+		m('imgroup')->updateguser($id, $arr['deptid']);
+	}
+	
+	public function reloadallAjax()
+	{
+		m('imgroup')->updategall();
 	}
 }

@@ -78,7 +78,7 @@ var c={
 		js.open(url, 700,450);
 	},
 	instartrows:function(){
-		var s='<div style="padding:10px"><select class="inputs" id="sss1ds"><option value="1">第1个多行子表</option><option value="2">第2个多行子表</option><option value="3">第3个多行子表</option><option value="4">第4个多行子表</option></select>&nbsp;<select class="inputs" id="hangshu"><option value="1">默认1行</option><option value="2">默认2行</option><option value="3">默认3行</option><option value="4">默认4行</option><option value="5">默认5行</option></select></div>';
+		var s='<div style="padding:10px"><select class="inputs" id="sss1ds"><option value="1">第1个多行子表</option><option value="2">第2个多行子表</option><option value="3">第3个多行子表</option><option value="4">第4个多行子表</option><option value="5">第5个多行子表</option><option value="6">第6个多行子表</option></select>&nbsp;<select class="inputs" id="hangshu"><option value="1">默认1行</option><option value="2">默认2行</option><option value="3">默认3行</option><option value="4">默认4行</option></select></div>';
 		js.tanbody('charusss','获取多行子表',300,150,{
 			html:s,
 			btn:[{text:'确定'}]
@@ -158,7 +158,7 @@ select{font-size:12px}
 	<td width="100%">
 		<div style="overflow:auto" id="page_conent">
 			<div style="padding:10px"><textarea style="width:650px;" id="content"><?=$da['content']?></textarea></div>
-			<div align="left" style="font-size:12px;padding:0px 10px"><a onclick="c.instartrows()" class="blue" href="javascript:;">[获取多行子表]</a>&nbsp;注：凡任何软件系统都不可能完美，即使自定义的表单元素，但页面上的交互作用还是需要在开发的。<br>可在<?=$da['p']?>/flow/input/inputjs/mode_<?=$da['rs']['num']?>.js来写交互判断代码。</div>
+			<div align="left" style="font-size:12px;padding:0px 10px"><a onclick="c.instartrows()" class="blue" href="javascript:;">[获取多行子表]</a>&nbsp;注：凡任何软件系统都不可能完美，即使自定义的表单元素，但页面上的交互作用还是需要在开发的。<br>可在<?=$da['p']?>/flow/input/inputjs/mode_<?=$da['rs']['num']?>.js来写交互代码，模版保存在：<?=$da['p']?>/flow/page/input_<?=$da['rs']['num']?>.html</div>
 		</div>
 	</td>
 </tr>

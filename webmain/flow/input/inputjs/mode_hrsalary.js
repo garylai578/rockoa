@@ -27,6 +27,7 @@ function initshuju(){
 		js.msg('msg','请选择月份');
 		return;
 	}
+	js.ajaxbool=false;
 	js.msg('wait','初始化中...');
 	js.setmsg();
 	initshujubs = false;

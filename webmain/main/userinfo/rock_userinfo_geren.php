@@ -3,7 +3,7 @@
 $(document).ready(function(){
 	var modenum='userinfo';
 	var a = $('#view_{rand}').bootstable({
-		tablename:'userinfo',modenum:modenum,modedir:'userinfo:main',storebeforeaction:'userinfobeforegeren',storeafteraction:'userinfoafterabc',
+		tablename:'userinfo',modenum:modenum,params:{atype:'my'},
 		columns:[{
 			text:'部门',dataIndex:'deptname',align:'left',sortable:true
 		},{
@@ -44,7 +44,7 @@ $(document).ready(function(){
 			openxiangs('个人资料',modenum,d.id);
 		},
 		edit:function(){
-			openinput('个人资料',modenum,a.changeid);
+			openinput('个人资料',modenum,a.changeid+'&optlx=my');
 		}
 	};
 	js.initbtn(c);

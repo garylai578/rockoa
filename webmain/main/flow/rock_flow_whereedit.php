@@ -6,9 +6,13 @@ $(document).ready(function(){
 	if(!id)id = 0;
 	var h = $.bootsform({
 		window:false,rand:'{rand}',tablename:'flow_where',url:publicsave('{mode}','{dir}'),
-		submitfields:'setid,name,wheresstr,whereustr,wheredstr,explain,recename,receid,nrecename,nreceid,num,sort',requiredfields:'name',
+		submitfields:'setid,name,wheresstr,whereustr,wheredstr,pnum,explain,recename,status,islb,receid,nrecename,nreceid,num,sort',requiredfields:'name',
 		success:function(){
-			closenowtabs();
+			if(id>0){
+				closenowtabs();
+			}else{
+				js.msg('success','新增成功，继续保存可持续新增');
+			}
 			try{guanflowwherelist.reload();}catch(e){}
 		},
 		loadafter:function(a){
@@ -19,6 +23,7 @@ $(document).ready(function(){
 			}
 		},
 		submitcheck:function(d){
+			if(d.islb==1&&d.num=='')return '请设置一个编号';
 			return {
 				wheresstr:jm.base64encode(d.wheresstr),
 				whereustr:jm.base64encode(d.whereustr),
@@ -59,6 +64,22 @@ $(document).ready(function(){
 			}
 			cans.value=cans.idobj.value,
 			js.getuser(cans);
+		},
+		setdab:function(ov,lx){
+			var a = ['{read}','{unread}','{weekfirst}'];
+			this.addwhewe(a[lx]);
+		},
+		addwhewe:function(ss){
+			if(!ss)return;
+			if(h.form.wheresstr.value!='')ss='and '+ss+'';
+			h.form.wheresstr.value+=' '+ss;
+		},
+		changessvs:function(ss){
+			if(!ss)return;
+			var fid = get('weherecss{rand}').value;
+			if(fid==''){js.msg('msg','没有输入字段');return;}
+			ss = ss.replace('uid', fid);
+			c.addwhewe(ss);
 		}
 	};
 	js.initbtn(c);
@@ -67,6 +88,9 @@ $(document).ready(function(){
 		h.setValue('wheresstr',s1);
 		h.setValue('explain',s2);
 	}
+	$('#weherecs{rand}').change(function(){
+		c.changessvs(this.value);
+	});
 });
 
 </script>
@@ -82,21 +106,27 @@ $(document).ready(function(){
 		
 		<table cellspacing="0" border="0" width="100%" align="center" cellpadding="0">
 		<tr>
-			<td  align="right"  width="20%"><font color=red>*</font> 名称：</td>
-			<td class="tdinput"  width="35%"><input name="name" class="form-control"></td>
+			<td  align="right"  width="25%"><font color=red>*</font> 名称：</td>
+			<td class="tdinput"  width="25%"><input name="name" class="form-control"></td>
 			<td  align="right"   width="15%">编号：</td>
-			<td class="tdinput" width="30%"><input name="num" maxlength="30" class="form-control"></td>
+			<td class="tdinput" width="30%"><input name="num"  maxlength="30" class="form-control"></td>
 		</tr>
 		
+		<tr>
+			<td  align="right" ></td>
+			<td class="tdinput" ></td>
+			<td  align="right" >分组编号：</td>
+			<td class="tdinput"><input name="pnum"  maxlength="30" class="form-control"></td>
+		</tr>
 		
 
 		<tr>
 			<td  align="right" >主表字段条件：</td>
-			<td class="tdinput" colspan="3"><textarea  name="wheresstr" style="height:60px" class="form-control"></textarea><div class="tishi" style="padding-top:0px">对应主表上字段条件,<a click="setwhere" href="javascript:;">[设置条件]</a></div></td>
+			<td class="tdinput" colspan="3"><textarea  name="wheresstr" style="height:60px" class="form-control"></textarea><div class="tishi" style="padding-top:0px">对应主表上字段条件，字段必须用``包含，如：`uid`={uid},<a click="setwhere" href="javascript:;">[设置条件]</a><br>字段:<input style="width:60px"  id="weherecss{rand}" class="input" value="uid">中<select class="input" id="weherecs{rand}"><option value="">-选择条件-</option><option value="{uid,uidin}">包含当前用户</option><option value="{uid,down}">直属下级</option><option value="{uid,downall}">全部直属下级</option><option value="{uid,dept}">同级部门人员</option><option value="{receid}">receid字段包含当前用户</option><option value="{read}">已读记录</option><option value="{unread}">未读记录</option><option value="{uid,receall}">字段中用户部门包含当前用户(含为空时)</option><option value="{uid,recenot}">字段中用户部门包含当前用户</option></select><br>用{}的变量会在文件webmain/model/whereModel.php中的getstrwhere方法替换可自己查看。<a href="<?=URLY?>view_flowwhere.html" target="_blank">[看帮助介绍]</a></div></td>
 		</tr>
 		
 		<tr>
-			<td  align="right" >人员包含条件：</td>
+			<td  align="right" >数据上人员包含条件：</td>
 			<td class="tdinput" colspan="3">
 			<div style="width:100%" class="input-group">
 				<input readonly class="form-control"  name="recename" >
@@ -138,6 +168,14 @@ $(document).ready(function(){
 			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
 	
 			
+		</tr>
+		
+		<tr>
+			<td  align="right" ></td>
+			<td class="tdinput" colspan="3">
+				<label><input name="status" value="1" checked type="checkbox"> 启用?</label>&nbsp; &nbsp; 
+				<label><input name="islb" value="0" type="checkbox"> 列表页显示</label>&nbsp; &nbsp; 
+			</td>
 		</tr>
 
 		

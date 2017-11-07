@@ -3,8 +3,11 @@ class extentClassAction extends Action
 {
 	public function beforeextentuser($table)
 	{
+		$key	= $this->post('key');
+		$where  = '';
+		if(!isempt($key))$where = m('admin')->getkeywhere($key);
 		return array(
-			'where' => 'and `status`=1 and `type`=0',
+			'where' => 'and `status`=1 and `type`=0 '.$where.'',
 			'fields'=> '`id`,`name`,`user`,`deptname`'
 		);
 	}
@@ -17,7 +20,7 @@ class extentClassAction extends Action
 		$type		= $this->rock->post('type');
 		$mid		= $this->rock->post('mid');
 		$checkaid	= $this->rock->post('checkaid');
-		if($type == 'um'){
+		if($type == 'clear'){
 			$this->extentclear($mid);
 		}else{
 			$this->db->delete($this->T('sjoin'), "`type`='$type' and `mid`='$mid'");
@@ -62,7 +65,7 @@ class extentClassAction extends Action
 		$s			= '[0]';
 		
 		//权限查看的
-		if($type == 'view' || $type == 'um'){
+		if($type == 'view'){
 			$s		= m('sjoin')->getuserext($mid);
 		}else{
 			$rsa	= $this->db->getall("select `sid` from `".PREFIX."sjoin` where `type`='$type' and `mid`='$mid'");

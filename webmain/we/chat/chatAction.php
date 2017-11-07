@@ -14,6 +14,7 @@ class chatClassAction extends ActionNot{
 		$arr 	= $db->getreceinfor($type, $uid);
 		if(!isset($arr['name']))exit('error');
 		$this->title = $arr['name'];
+		if(isset($arr['utotal']))$this->title.='('.$arr['utotal'].')';
 		$this->assign('arr', $arr);
 	}
 }

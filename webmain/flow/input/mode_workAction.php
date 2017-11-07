@@ -14,7 +14,7 @@ class mode_workClassAction extends inputAction{
 	
 	public function projectdata()
 	{
-		$rows 	= m('project')->getall('id>0','`id`,`type`,`title`,`progress`','optdt desc');
+		$rows 	= m('project')->getall('id>0 and status in(0,3)','`id`,`type`,`title`,`progress`','optdt desc');
 		$arr	= array();
 		foreach($rows as $k=>$rs){
 			$arr[] = array(

@@ -4,29 +4,41 @@ class flow_customerClassModel extends flowModel
 	public function initModel()
 	{
 		$this->statearr		 = c('array')->strtoarray('停用|#888888,启用|green');
+		$this->statarr		 = c('array')->strtoarray('否|#888888,是|#ff6600');
 	}
 	
 
 	
-	public function flowrsreplace($rs)
+	public function flowrsreplace($rs, $lx=0)
 	{
-		$zt = $this->statearr[$rs['status']];
-		$rs['status']	= '<font color="'.$zt[1].'">'.$zt[0].'</font>';
-		if($rs['htshu']==0)$rs['htshu']='';
-		if($rs['moneyz']==0)$rs['moneyz']='';
-		if($rs['moneyd']==0)$rs['moneyd']='';
+		if(isset($rs['status'])){
+			if($rs['status']==0)$rs['ishui'] = 1;
+			$zt 	= $this->statearr[$rs['status']];
+			$rs['statuss']	= $rs['status'];
+			$rs['status']	= '<font color="'.$zt[1].'">'.$zt[0].'</font>';
+		}
+		
+		if(isset($rs['isstat'])){
+			$stat 	= $this->statarr[$rs['isstat']];
+			$rs['isstat']	= '<font color="'.$stat[1].'">'.$stat[0].'</font>';
+		}
+		
+		if(isset($rs['isgys'])){
+			$gys 	= $this->statarr[$rs['isgys']];
+			$rs['isgys']	= '<font color="'.$gys[1].'">'.$gys[0].'</font>';
+		}
+		if($this->rock->arrvalue($rs,'htshu','0')==0)$rs['htshu']='';
+		if($this->rock->arrvalue($rs,'moneyz','0')==0)$rs['moneyz']='';
+		if($this->rock->arrvalue($rs,'moneyd','0')==0)$rs['moneyd']='';
+		
+		if($lx==1){
+			$rs['suoname'] = $this->adminmodel->getmou('name','id='.$rs['uid'].'');
+		}
+		
 		return $rs;
 	}
 	
 	
-	protected function flowprintrows($rows)
-	{
-		foreach($rows as $k=>$rs){
-			$zt = $this->statearr[$rs['status']];
-			$rows[$k]['status']		= '<font color="'.$zt[1].'">'.$zt[0].'</font>';;
-		}
-		return $rows;
-	}
 	
 	//是否有查看权限
 	protected function flowisreadqx()
@@ -37,7 +49,7 @@ class flow_customerClassModel extends flowModel
 		return $bo;
 	}
 	
-	protected function flowgetfields($lx)
+	protected function flowgetfields_qiyong($lx)
 	{
 		$arr = array();
 		if($this->uid==$this->adminid){
@@ -58,6 +70,7 @@ class flow_customerClassModel extends flowModel
 			$this->update('`status`='.$zt.'', $this->id);
 		}
 		
+		//共享
 		if($num=='shate'){
 			$cname 	 = $crs['cname'];
 			$cnameid = $crs['cnameid'];
@@ -66,72 +79,65 @@ class flow_customerClassModel extends flowModel
 				'shate' 	=> $cname,
 			), $this->id);
 			$this->push($cnameid, '客户管理', ''.$this->adminname.'将一个客户【{name}】共享给你');
+		}
+		
+		//取消共享
+		if($num=='unshate'){
+			$this->update(array(
+				'shateid' 	=> '',
+				'shate' 	=> '',
+			), $this->id);
 		}	
 	}
 	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$where 	= '`uid`='.$uid.' and `status`=1';
-		$key 	= $this->rock->post('key');
-		$lxa 	= explode('_', $lx);
-		$lxs 	= $lxa[0];
-		if(isset($lxa[1]))$lx = $lxa[1];
-		
-		if($lxs=='my'){
-			$where = '`uid`='.$uid.'';
-		}
-		if($lxs=='shatemy'){
-			$where	= $this->rock->dbinstr('shateid', $uid);
-		}
-		if($lxs=='down'){
-			$where = m('admin')->getdownwheres('uid', $uid, 0);
-		}
-		if($lxs=='dist'){
-			$where = '`fzid`='.$uid.'';
-		}
-		if($lx=='qy'){
-			$where.=' and `status`=1';
-		}
-		if($lx=='ting'){
-			$where.=' and `status`=0';
-		}
-		if($lx=='stat'){
-			$where.=' and `isstat`=1';
-		}
-		if($lx=='yfp'){
-			$where.=' and `uid`>0';
-		}
-		if($lx=='wfp'){
-			$where.=' and `uid`=0';
-		}
-		
-		if($lx=='myty'){
-			$where 	= '`uid`='.$uid.' and `status`=0';
-		}
-		
-		if($lx=='myall'){
-			$where 	= '`uid`='.$uid.'';
-		}
-		//共享给我
-		if($lx=='gxgw'){
-			$where	= $this->rock->dbinstr('shateid', $uid);
-		}
-		//我共享
-		if($lx=='mygx'){
-			$where 	= '`uid`='.$uid.' and `shateid` is not null';
-		}
-		
-		//客户统计一览
-		if($lx=='totolall'){
-			$where = '1=1';
-		}
-		
-		if(!isempt($key))$where.=" and (`name` like '%$key%' or `unitname` like '%$key%' or `optname`='$key')";
-	
 		return array(
-			'where' => 'and '.$where,
-			'fields'=> 'id,name,status,laiyuan,isgys,createname,optname,unitname,shate,tel,type,adddt,moneyz,moneyd,htshu',
-			'order' => 'status desc,optdt desc'
+			'order' => 'a.status desc,a.optdt desc',
+			'table'	=> '`[Q]'.$this->mtable.'` a left join `[Q]admin` b on a.`uid`=b.id',
+			'asqom' => 'a.',
+			'fields'=> 'a.*,b.name as suoname'
 		);
 	}
+	
+	
+	//导入数据的测试显示
+	public function flowdaorutestdata()
+	{
+		$barr = array(
+			'name' 		=> '信呼',
+			'type' 		=> '软件',
+			'laiyuan' 		=> '网上开拓',
+			'unitname' 		=> '厦门信呼科技有限公司',
+			'tel' 		=> '0592-123456',
+			'mobile' 		=> '15800000000',
+			'email' 		=> 'admin@rockoa.com',
+			'address' 		=> '福建厦门思明区软件园',
+			'linkname' 		=> '磐石',
+		);
+		$barr1 = array(
+			'name' 		=> '百度',
+			'type' 		=> '搜索计算',
+			'laiyuan' 		=> '电话联系',
+			'unitname' 		=> '百度在线网络技术(北京)有限公司',
+			'tel' 		=> '010-123456',
+			'mobile' 		=> '15800000001',
+			'email' 		=> 'admin@baidu.com',
+			'address' 		=> '北京软件园百度大厦',
+			'linkname' 		=> '李彦宏',
+		);
+		$barr2 = array(
+			'name' 		=> '陈先生',
+			'type' 		=> '个人',
+			'laiyuan' 		=> '电话联系',
+			'unitname' 		=> '',
+			'tel' 		=> '010-123456',
+			'mobile' 		=> '15800000002',
+			'email' 		=> '1111@qq.com',
+			'address' 		=> '福建厦门火车站',
+			'linkname' 		=> '',
+		);
+		return array($barr,$barr1,$barr2);
+	}
+
 }

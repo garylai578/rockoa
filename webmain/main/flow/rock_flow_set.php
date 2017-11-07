@@ -4,7 +4,7 @@ $(document).ready(function(){
 	var qianss='';
 	var a = $('#view_{rand}').bootstable({
 		tablename:'flow_set',dir:'asc',sort:'sort',celleditor:true,
-		url:publicstore('{mode}','{dir}'),fanye:true,pageSize:10,storeafteraction:'modeafter',
+		url:publicstore('{mode}','{dir}'),fanye:true,pageSize:10,storeafteraction:'modeafter',storebeforeaction:'modebefore',
 		columns:[{
 			text:'类型',dataIndex:'type',sortable:true,editor:true
 		},{
@@ -30,7 +30,11 @@ $(document).ready(function(){
 		},{
 			text:'微信提醒',dataIndex:'wxtx',type:'checkbox',editor:true,sortable:true
 		},{
+			text:'钉钉提醒',dataIndex:'ddtx',type:'checkbox',editor:true,sortable:true
+		},{
 			text:'录入',dataIndex:'islu',type:'checkbox',editor:true,sortable:true
+		},{
+			text:'同步更新',dataIndex:'isup',type:'checkbox',editor:true,sortable:true
 		},{
 			text:'编号规则',dataIndex:'sericnum'
 		},{
@@ -62,9 +66,18 @@ $(document).ready(function(){
 		},
 		delss:function(){
 			if(a.changeid==0)return;
-			js.ajax(js.getajaxurl('delmode','{mode}','{dir}'),{id:a.changeid},function(){
-				a.reload();
+			js.ajax(js.getajaxurl('delmode','{mode}','{dir}'),{id:a.changeid},function(s){
+				if(s=='ok'){
+					a.reload();
+				}else{
+					js.msg('msg',s);
+				}
 			},'post',false,'删除中...,删除成功');
+		},
+		allcreate:function(){
+			js.ajax(js.getajaxurl('allcreate','{mode}','{dir}'),{},function(s){
+				js.msg('success', s);
+			},'get',false,'生成中...');
 		},
 		reload:function(){
 			a.reload();
@@ -99,13 +112,28 @@ $(document).ready(function(){
 			});
 		},
 		clearalldatas:function(id){
-			js.msg('msg','不允许清空');
+			if(a.changeid==0)return;
+			js.ajax(js.getajaxurl('clearallmode','{mode}','{dir}'),{id:a.changeid},function(s){
+				if(s=='ok'){
+					a.reload();
+				}else{
+					js.msg('msg',s);
+				}
+			},'post',false,'清空中...,清空成功');
 		},
 		biaoge:function(){
 			this.showtalbe(a.changedata.table);
 		},
 		biaoges:function(){
-			this.showtalbe(a.changedata.tables);
+			var ssa = a.changedata.tables;
+			if(isempt(ssa)){
+				js.msg('success','没有子表无需管理');return;
+			}
+			this.showtalbe(ssa.split(',')[0]);
+		},
+		search:function(){
+			var s = get('key_{rand}').value;
+			a.setparams({key:s}, true);
 		},
 		showtalbe:function(table){
 			if(!table)return;
@@ -142,11 +170,17 @@ $(document).ready(function(){
 		<button class="btn btn-warning" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
 		<button class="btn btn-primary" disabled id="downbtn_{rand}" type="button">模块开发管理 <i class="icon-angle-down"></i></button>&nbsp; 
 		<button class="btn btn-default" click="pipei" type="button">重新匹配流程</button>&nbsp; 
-		<button class="btn btn-default" id="biaoge_{rand}" disabled click="biaoge,1" type="button"><i class="icon-table"></i> 对应主表管理</button>
-		<button class="btn btn-default" id="biaoges_{rand}" disabled click="biaoges,1" type="button"><i class="icon-table"></i> 对应子表管理</button>
+		<button class="btn btn-default" id="biaoge_{rand}" disabled click="biaoge,1" type="button"><i class="icon-table"></i> 主表管理</button>&nbsp; 
+		<button class="btn btn-default" id="biaoges_{rand}" disabled click="biaoges,1" type="button"><i class="icon-table"></i> 子表管理</button>&nbsp; 
+		<button class="btn btn-default" click="allcreate" type="button">一键生成所有列表页</button>
 	</td>
 	<td align="left"  style="padding:0px 10px;">
-		
+		<div class="input-group" style="width:160px">
+			<input class="form-control" id="key_{rand}" placeholder="搜模块">
+			<span class="input-group-btn">
+				<button class="btn btn-default" click="search" type="button"><i class="icon-search"></i></button>
+			</span>
+		</div>
 	</td>
 	<td width="90%">
 		
@@ -162,4 +196,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
-<div class="tishi">提示：对应表请使用数据库管理工具管理，如phpMyadmin,Navicat等<div>
+<div class="tishi">提示：对应表请使用数据库管理工具管理，如phpMyadmin,Navicat等，模块列表页面会生成到webmian/flow/page下<div>

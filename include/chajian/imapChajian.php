@@ -115,15 +115,16 @@ class imapChajian extends Chajian
 	*/
 	private function getattach($i)
 	{
-		$struck = $this->getfetchstructure($i);
 		$arr 	= array();
+		$struck = $this->getfetchstructure($i);
 		if($struck && isset($struck->parts))foreach($struck->parts as $key=>$val){
 			if($val->subtype=='OCTET-STREAM'){
-				$arr[] = array(
-					'filename' => $val->dparameters[0]->value,
+				if(isset($val->dparameters[0]))$arr[] = array(
+					'filename' => $this->_imap_utf8($val->dparameters[0]->value),
 					'filesize' => $val->bytes,
 					'encoding' => $val->encoding,
-					'filekey'  => $key
+					'filekey'  => $key,
+					'attachcont' => $this->getattachcont($i, $key, $val->encoding) //获取附件内容
 				);
 			}
 		}
@@ -133,7 +134,7 @@ class imapChajian extends Chajian
 	/**
 	*	附件内容读取，需要额外读取
 	*/
-	private function getattachcont($i, $key, $encoding)
+	public function getattachcont($i, $key, $encoding)
 	{
 		$message = imap_fetchbody($this->marubox, $i, $key + 1);
 		switch ($encoding) {
@@ -159,6 +160,11 @@ class imapChajian extends Chajian
 		return $message;
 	}
 	
+	private function getkevel($st, $kdy, $dev='')
+	{
+		return objvalue($st, $kdy, $dev);
+	}
+	
 	/**
 	*	获取某信件的标头信息
 	*/
@@ -166,44 +172,55 @@ class imapChajian extends Chajian
 	{
 		$headers 	= imap_header($this->marubox, $i);
 
-		$arr['subject'] 	= $this->_imap_utf8($headers->subject);//标题
-		$arr['message_id'] 	= $headers->message_id;	//邮件ID
-		$arr['size'] 		= $headers->Size;	//邮件大小
-		$arr['date'] 		= date('Y-m-d H:i:s', strtotime($headers->date));
+		$arr['subject'] 	= $this->_imap_utf8($this->getkevel($headers,'subject'));//标题
+		$arr['message_id'] 	= $this->getkevel($headers,'message_id');//邮件ID
+		$arr['size'] 		= $this->getkevel($headers,'Size','0');	//邮件大小
+		$arr['date'] 		= date('Y-m-d H:i:s', strtotime($this->getkevel($headers,'date')));
+		$arr['to']			= array();
+		$arr['from']		= array();
+		
 		//发给
-		$arr['to']			= $headers->to;
-		foreach($arr['to'] as $k=>$rs){
-			$arr['to'][$k]->personal = $this->_imap_utf8($rs->personal);
-			$arr['to'][$k]->email 	 = ''.$rs->mailbox.'@'.$rs->host.'';
+		if(isset($headers->to)){
+			$arr['to']			= $headers->to;
+			foreach($arr['to'] as $k=>$rs){
+				$arr['to'][$k]->personal = $this->_imap_utf8($this->getkevel($rs, 'personal'));
+				$arr['to'][$k]->email 	 = ''.$rs->mailbox.'@'.$rs->host.'';
+			}
 		}
 		$arr['toemail']		= $this->stremail($arr['to']);
 		
 		//发件人
-		$arr['from']			= $headers->from;
-		foreach($arr['from'] as $k=>$rs){
-			$arr['from'][$k]->personal 	= $this->_imap_utf8($rs->personal);
-			$arr['from'][$k]->email 	= ''.$rs->mailbox.'@'.$rs->host.'';
+		if(isset($headers->from)){
+			$arr['from']			= $headers->from;
+			foreach($arr['from'] as $k=>$rs){
+				$arr['from'][$k]->personal 	= $this->_imap_utf8($this->getkevel($rs, 'personal'));
+				$arr['from'][$k]->email 	= ''.$rs->mailbox.'@'.$rs->host.'';
+			}
 		}
 		$arr['fromemail']		= $this->stremail($arr['from']);
 		
 		//回复的邮件
-		$arr['reply_to']			= $headers->reply_to;
-		foreach($arr['reply_to'] as $k=>$rs){
-			$arr['reply_to'][$k]->personal 	= $this->_imap_utf8($rs->personal);
-			$arr['reply_to'][$k]->email 	= ''.$rs->mailbox.'@'.$rs->host.'';
+		if(isset($headers->reply_to)){
+			$arr['reply_to']			= $headers->reply_to;
+			foreach($arr['reply_to'] as $k=>$rs){
+				$arr['reply_to'][$k]->personal 	= $this->_imap_utf8($this->getkevel($rs, 'personal'));
+				$arr['reply_to'][$k]->email 	= ''.$rs->mailbox.'@'.$rs->host.'';
+			}
+			$arr['reply_toemail']		= $this->stremail($arr['reply_to']);
+		}else{
+			$arr['reply_toemail']		= $arr['fromemail'];
 		}
-		$arr['reply_toemail']		= $this->stremail($arr['reply_to']);
 		
 		//抄送
-		$arr['cc']					= array();
+		$arr['cc']				= array();
 		if(isset($headers->cc)){
 			$arr['cc']			= $headers->cc;
 			foreach($arr['cc'] as $k=>$rs){
-				$arr['cc'][$k]->personal = $this->_imap_utf8($rs->personal);
+				$arr['cc'][$k]->personal = $this->_imap_utf8($this->getkevel($rs, 'personal'));
 				$arr['cc'][$k]->email 	 = ''.$rs->mailbox.'@'.$rs->host.'';
 			}
 		}
-		$arr['ccemail']		= $this->stremail($arr['cc']);
+		$arr['ccemail']			= $this->stremail($arr['cc']);
 		
 		$arr['headers'] 		= $headers;
 		return $arr;

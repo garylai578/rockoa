@@ -1,12 +1,12 @@
 function initbodys(){
 	$(form('dt')).blur(function(){
-		changetypes();
+		//changetypes();
 	});
 	$(form('type')).change(function(){
 		changetypes();
 	});
 	$(form('enddt')).blur(function(){
-		changetypes();
+		//changetypes();
 	});
 }
 function changetypes(){

@@ -2,14 +2,23 @@
 <script >
 $(document).ready(function(){
 	{params};
-	var num = params.num,pid,optlx=0,movefid='';
+	var num = params.num,pid,optlx=0,movefid='',showlx=params.showlx;
 	var typeid=0,sspid=0;
+	if(!showlx)showlx = '0';
+	var sname = '个人';
+	if(showlx=='1'){
+		sname = '部门';
+	}
 	var at = $('#optionview_{rand}').bootstree({
-		url:js.getajaxurl('getmywordtype','word','system'),
+		url:js.getajaxurl('getmywordtype','word','system'),params:{showlx:showlx},
 		columns:[{
-			text:'文档类型',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%'
+			text:''+sname+'文档类型',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%',renderer:function(v,d){
+				var s1 = v;
+				if(!isempt(d.recename))s1+='&nbsp;<span style="font-size:10px;color:#888888"><i  title="共享给：'+d.recename+'" class="icon-share-alt"></i></span>';
+				return s1;
+			}
 		},{
-			text:'ID',dataIndex:'id',width:'20%'
+			text:'序号',dataIndex:'sort',width:'20%'
 		}],
 		load:function(d){
 			if(sspid==0){
@@ -24,13 +33,14 @@ $(document).ready(function(){
 		},
 		itemclick:function(d){
 			c.typeclidks(d);
+			c.ismoveok(d);
 		}
-	});;
+	});
 	
 	var a = $('#view_{rand}').bootstable({
-		tablename:'file',celleditor:true,autoLoad:false,checked:true,modedir:'{mode}:{dir}',storebeforeaction:'wordbeforeaction',fanye:true,
+		tablename:'file',celleditor:true,autoLoad:false,checked:true,modedir:'{mode}:{dir}',storebeforeaction:'wordbeforeaction',fanye:true,params:{showlx:showlx},
 		columns:[{
-			text:'类型',dataIndex:'fileext',renderer:function(v){
+			text:'',dataIndex:'fileext',renderer:function(v){
 				var lxs = js.filelxext(v);
 				return '<img src="web/images/fileicons/'+lxs+'.gif">';
 			}
@@ -40,6 +50,10 @@ $(document).ready(function(){
 			text:'大小',dataIndex:'filesizecn',sortable:true
 		},{
 			text:'添加时间',dataIndex:'optdt',sortable:true
+		},{
+			text:'分类',dataIndex:'typename'
+		},{
+			text:'上传者',dataIndex:'optname'
 		},{
 			text:'共享给',dataIndex:'shate'
 		},{
@@ -178,6 +192,75 @@ $(document).ready(function(){
 		},
 		del:function(){
 			a.del({url:js.getajaxurl('delword','{mode}','{dir}')});
+		},
+		movedata:false,
+		move:function(){
+			var d = at.changedata;
+			if(!d){js.msg('msg','没有选中行');return;}
+			this.movedata = d;
+			js.msg('success','请在5秒内选择其他类型确认移动');
+			clearTimeout(this.cmoeefese);
+			this.cmoeefese=setTimeout(function(){c.movedata=false;},5000);
+		},
+		ismoveok:function(d){
+			var md = this.movedata;
+			if(md && md.id!=d.id){
+				js.confirm('确定要将['+md.name+']移动到['+d.name+']下吗？',function(jg){
+					if(jg=='yes'){
+						c.movetoss(md.id,d.id,0);
+					}
+				});
+			}
+		},
+		moveto:function(){
+			var d = at.changedata;if(!d)return;
+			js.confirm('确定要将['+d.name+']移动到顶级吗？',function(jg){
+				if(jg=='yes'){
+					c.movetoss(d.id,sspid,1);
+				}
+			});
+		},
+		movetoss:function(id,toid,lx){
+			js.ajax(js.getajaxurl('movetype','option','system'),{'id':id,'toid':toid,'lx':lx},function(s){
+				if(s!='ok'){
+					js.msg('msg', s);
+				}else{
+					at.reload();
+				}
+			},'get',false, '移动中...,移动成功');
+			c.movedata=false;
+		},
+		floadshate:function(){
+			var d = at.changedata;
+			if(!d){js.msg('msg','没有选中行');return;}
+			if(isempt(d.receid)){
+				var cans = {
+					type:'deptusercheck',
+					title:'文档['+d.name+']共享给...',
+					callback:function(sna,sid){
+						if(sid)c.floadshates(sna,sid, d.id);
+					}
+				}
+				js.getuser(cans);
+			}else{
+				js.confirm('确定要将['+d.name+']取消共享吗？',function(jg){
+					if(jg=='yes'){
+						c.floadshatess(d.id);
+					}
+				});
+			}
+		},
+		floadshates:function(sna,sid,fid){
+			if(sid==''||fid=='')return;
+			js.ajax(js.getajaxurl('sharefileer','{mode}','{dir}'),{'sid':sid,'sna':sna,'fid':fid},function(s){
+				at.reload();
+			},'post',false, '共享中...,共享成功');
+		},
+		floadshatess:function(fid){
+			if(fid=='')return;
+			js.ajax(js.getajaxurl('sharefileer','{mode}','{dir}'),{'sid':'','sna':'','fid':fid},function(s){
+				at.reload();
+			},'get',false, '取消中...,取消成功');
 		}
 	};
 	js.initbtn(c);
@@ -192,10 +275,14 @@ $(document).ready(function(){
 	<div style="border:1px #cccccc solid">
 	  <div id="optionview_{rand}" style="height:400px;overflow:auto;"></div>
 	  <div  class="panel-footer">
-		<a href="javascript:" click="clicktypewin,0" onclick="return false"><i class="icon-plus"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="typedel" onclick="return false"><i class="icon-trash"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="reload" onclick="return false"><i class="icon-refresh"></i></a>
+		<a href="javascript:" title="新增" click="clicktypewin,0" onclick="return false"><i class="icon-plus"></i></a>&nbsp; &nbsp;
+		<a href="javascript:" title="编辑" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp;
+		<a href="javascript:" title="删除" click="typedel" onclick="return false"><i class="icon-trash"></i></a>&nbsp; &nbsp;
+		<a href="javascript:" title="刷新" click="reload" onclick="return false"><i class="icon-refresh"></i></a>&nbsp; &nbsp;
+		<a href="javascript:" title="移动" click="move" onclick="return false"><i class="icon-move"></i></a>&nbsp; &nbsp;
+		<a href="javascript:" title="移动到顶级" click="moveto" onclick="return false"><i class="icon-arrow-up"></i></a>
+		&nbsp; 
+		<a href="javascript:" title="共享/取消共享" click="floadshate" onclick="return false"><i class="icon-share-alt"></i></a>
 	  </div>
 	</div>  
 </td>

@@ -37,6 +37,7 @@ class todoClassModel extends Model
 				'mid'	  => $mid
 			));
 		}
+		return $uids;
 	}
 	
 	/**

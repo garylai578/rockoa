@@ -11,7 +11,7 @@ $(document).ready(function(){
 			text:'模块',dataIndex:'modename',sortable:true
 		},{
 			text:'类型',dataIndex:'type',sortable:true,renderer:function(oi){
-				var as=['查看','添加','编辑','删除'];
+				var as=['查看','添加','编辑','删除','导入'];
 				return '可'+as[oi]+'';
 			}
 		},{
@@ -36,7 +36,17 @@ $(document).ready(function(){
 		},
 		load:function(a){
 			if(!bools){
-				js.setselectdata(get('mode_{rand}'),a.modearr,'id');
+				var s = '<option value="0">-选择模块-</option>',len=a.modearr.length,i,csd,types='';
+				for(i=0;i<len;i++){
+					csd = a.modearr[i];
+					if(types!=csd.type){
+						if(types!='')s+='</optgroup>';
+						s+='<optgroup label="'+csd.type+'">';
+					}
+					s+='<option value="'+csd.id+'">'+csd.name+'</option>';
+					types = csd.type;
+				}
+				$('#mode_{rand}').html(s);
 			}
 			bools=true;
 		}

@@ -14,6 +14,9 @@ class upfileChajian extends Chajian{
 	
 	private $jpgallext		= '|jpg|png|gif|bmp|jpeg|';	//图片格式
 	
+	//可上传文件类型，也就是不保存为uptemp的文件
+	private $upallfile		= '|doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|mp4|flv|wma|chm|apk|amr|log|json|';
+	
 	/**
 		初始化
 		@param	$ext string 上传类型
@@ -67,6 +70,40 @@ class upfileChajian extends Chajian{
 	}
 	
 	/**
+	*	是否在可保存范围内容
+	*/
+	public function issavefile($ext)
+	{
+		$bo 		= false;
+		$upallfile	= $this->jpgallext.$this->upallfile;
+		if($this->contain($upallfile, '|'.$ext.'|'))$bo = true;
+		return $bo;
+	}
+	
+	public function isimg($ext)
+	{
+		return $this->contain($this->jpgallext, '|'.$ext.'|');
+	}
+	
+	/**
+	*	判断是不是图片
+	*/
+	public function isimgsave($ext, $file)
+	{
+		$arr = array();
+		if(!file_exists($file))return $arr;
+		if($this->isimg($ext)){
+			list($picw,$pich)	= getimagesize($file);
+			if($picw==0||$pich==0){
+				@unlink($file);
+			}
+			$arr[0] = $picw;
+			$arr[1] = $pich;
+		}
+		return $arr;
+	}
+	
+	/**
 		上传
 		@param	$name	string	对应文本框名称
 		@param	$cfile	string	文件名心的文件名，不带扩展名的
@@ -85,16 +122,11 @@ class upfileChajian extends Chajian{
 			return '文件为0字节/超过'.$this->formatsize($zongmax).'，不能上传';
 		}
 		$file_sizecn	= $this->formatsize($file_size);
-		$file_ext		= strtolower(substr($file_name,strrpos($file_name,'.')+1));	//文件扩展名
+		$file_ext		= $this->getext($file_name);//文件扩展名
 		
-		$file_img		= false;
-		$file_kup		= false;
-		$jpgallext		= $this->jpgallext;
-		$upallfile		= $jpgallext.'doc|docx|xls|xlsx|ppt|pptx|pdf|swf|rar|zip|txt|gz|wav|mp3|mp4|flv|wma|chm|apk|';
 		
-		if($this->contain($jpgallext, '|'.$file_ext.'|'))$file_img = true;	
-		if($this->contain($upallfile, '|'.$file_ext.'|'))$file_kup = true;	
-		
+		$file_img		= $this->isimg($file_ext);
+		$file_kup		= $this->issavefile($file_ext);
 		
 		
 		if($file_error>0){
@@ -119,7 +151,8 @@ class upfileChajian extends Chajian{
 		}
 		
 		//新的文件名
-		$file_newname	=$file_name;
+		$file_newname	= $file_name;
+		$randname		= $file_name;
 		if(!$cfile==''){
 			$file_newname=''.$cfile.'.'.$file_ext.'';
 		}else{
@@ -133,26 +166,21 @@ class upfileChajian extends Chajian{
 
 		$upbool	 	= true;
 		if(!$file_kup){
-			$fp	= fopen($file_tmp_name,'r');
-			$filebase64	= base64_encode(fread($fp,$file_size));
-			fclose($fp);
-			
-			$fh 	= fopen($uptempname, 'a');
-			$upbool = fwrite($fh, $filebase64);
-			fclose($fh);
-			$allfilename	= $uptempname;
-			unlink($file_tmp_name);
+			$allfilename= $this->filesave($file_tmp_name, $file_newname, $save_path, $file_ext);
+			if(isempt($allfilename))return '无法保存到'.$save_path.'';
 		}else{
-			$upbool	= move_uploaded_file($file_tmp_name,$allfilename);
+			$upbool		= @move_uploaded_file($file_tmp_name,$allfilename);
 		}
 		
 		if($upbool){
 			$picw=0;$pich=0;
 			if($file_img){
-				list($picw,$pich)	= getimagesize($allfilename);
-				if($picw==0||$pich==0){
-					unlink($allfilename);
+				$fobj = $this->isimgsave($file_ext, $allfilename);
+				if(!$fobj){
 					return 'error:非法图片文件';
+				}else{
+					$picw = $fobj[0];
+					$pich = $fobj[1];	
 				}
 			}
 			return array(
@@ -191,5 +219,31 @@ class upfileChajian extends Chajian{
 		$arr 	= array('Byte', 'KB', 'MB', 'GB', 'TB', 'PB');
 		$e 		= floor(log($size)/log(1024));
 		return number_format(($size/pow(1024,floor($e))),2,'.','').' '.$arr[$e];
+	}
+	
+	//获取扩展名
+	public function getext($file)
+	{
+		return strtolower(substr($file,strrpos($file,'.')+1));
+	}
+	
+	/**
+	*	非法文件保存为临时uptemp的形式
+	*/
+	public function filesave($oldfile, $filename, $savepath, $ext)
+	{
+		$file_kup	= $this->issavefile($ext);
+		$ldisn 		= strrpos($filename, '.');
+		if($ldisn>0)$filename = substr($filename, 0, $ldisn);
+		$filepath 	= ''.$savepath.'/'.$filename.'.'.$ext.'';
+		if(!$file_kup){
+			$filebase64	= base64_encode(file_get_contents($oldfile));
+			$filepath 	= ''.$savepath.'/'.$filename.'.uptemp';
+			$bo 		= $this->rock->createtxt($filepath, $filebase64);
+			@unlink($oldfile);
+			if(!$bo)$filepath = '';
+		}else{
+		}
+		return $filepath;
 	}
 }

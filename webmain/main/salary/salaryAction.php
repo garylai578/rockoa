@@ -17,4 +17,26 @@ class salaryClassAction extends Action
 		$barr 	= m('flow')->initflow('hrsalary')->createdata($month);
 		echo $barr;
 	}
+	
+	public function xinzlfafter($table, $rows)
+	{
+		$uids = '';
+		foreach($rows as $k=>$rs){
+			$uids.=','.$rs['xuid'].'';
+		}
+		if($uids!=''){
+			$uids = substr($uids,1);
+			$barr = $this->db->getarr('[Q]userinfo','id in('.$uids.')','`bankname`,`banknum`');
+			foreach($rows as $k=>$rs){
+				$brs = $this->rock->arrvalue($barr, $rs['xuid']);
+				if($brs){
+					$rows[$k]['bankname'] = $brs['bankname'];
+					$rows[$k]['banknum'] = $brs['banknum'];
+				}
+			}
+		}
+		return array(
+			'rows' => $rows
+		); 
+	}
 }

@@ -19,16 +19,15 @@ class flow_rewardClassModel extends flowModel
 		return $rs;
 	}
 	
+
 	protected function flowbillwhere($uid, $lx)
 	{
-		$key	= $this->rock->post('key');
+		$key  	= $this->rock->post('key');
 		$where 	= '';
-		if($key!=''){
-			$where=" and (`object` like '%$key%')";
-		}
+		if($key!='')$where.=" and (b.udeptname like '%$key%' or b.`uname` like '%$key%' or a.`object` like '%$key%')";
 		return array(
-			'where' => $where,
-			'order' => '`optdt` desc'
+			'keywhere' => $where,
+			'leftbill' => 1
 		);
 	}
 }

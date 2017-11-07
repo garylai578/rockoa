@@ -12,6 +12,7 @@
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/jswx.js"></script>
 <script>
+ismobile = 1;
 function loginsubmit(){
 	var opass	= $('#oldpass').val();
 	var pass	= $('#newpass').val();
@@ -44,7 +45,7 @@ function loginsubmit(){
 
 
 <body>
-<?php if($web!='wxbro'){?>
+<?php if($showheader==1){?>
 <div>
 	<div class="r-header">
 		<div class="r-header-text" id="header_title">修改密码</div>

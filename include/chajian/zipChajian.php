@@ -33,7 +33,7 @@ class zipChajian extends Chajian{
 		if(file_exists($file_name)){
 			$oldcont 	= file_get_contents($file_name);
 			if($oldcont != $file_content){
-				$barfile = 'upload/upage/'.$file_name.'';
+				$barfile = ''.UPDIR.'/upage/'.$file_name.'';
 				$this->rock->createdir($barfile);
 				copy($file_name, $barfile);
 			}

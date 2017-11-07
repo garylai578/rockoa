@@ -73,7 +73,7 @@ var strformat = {
 		}
 		var nowa	= js.serverdt('Y-m-d H:i:s 星期W'),
 			nowas	= nowa.split(' ');
-		var ztstr	= [['now',nowa],['date',nowas[0]],['time',nowas[1]],['week',nowas[2]],['百度','https://www.baidu.com/',1],['官网','http://xh829.com/',1]];
+		var ztstr	= [['now',nowa],['date',nowas[0]],['time',nowas[1]],['week',nowas[2]],['百度','https://www.baidu.com/',1],['官网','http://www.rockoa.com/',1]];
 		var patt1,a,thnr,ths='';
 		for(var i=0; i<ztstr.length; i++){
 			a	=	ztstr[i];
@@ -112,7 +112,8 @@ var strformat = {
 		var str = this.strcont(cont);
 		if(!rnd)rnd=js.getrand();
 		var nr	= '';
-		nr+='<div id="ltcont_'+rnd+'" class="ltcont">';
+		this.showqpid = 'ltcont_'+rnd+'';
+		nr+='<div id="'+this.showqpid+'" class="ltcont">';
 		nr+='	<div class="qipao" align="'+type+'">';
 		nr+='		<div class="dt" style="padding-'+type+':65px"><font id="ltname_'+rnd+'">'+name+'</font>('+this.showdt(dt)+')</div>';
 		
@@ -123,7 +124,7 @@ var strformat = {
 			nr+='			<td width="50" align="center"><img src="'+fase+'" class="qipaoface" width="40" height="40"></td>';
 			nr+='			<td><div class="qipao'+type+'"></div></td>';
 		}else{
-			nr+='			<td width="60" align="right">';
+			nr+='			<td width="30" align="right">';
 			if(nuid)nr+='<img src="images/loadings.gif" title="发送中..." id="'+nuid+'" style="margin-top:5px" align="absmiddle">&nbsp;';
 			nr+='			</td>';
 		}
@@ -136,7 +137,7 @@ var strformat = {
 			nr+='			<td><div class="qipao'+type+'"></div></td>';
 			nr+='			<td width="50" align="center"><img src="'+fase+'" class="qipaoface" width="40" height="40"></td>';
 		}else{
-			nr+='			<td width="60"></td>';
+			nr+='			<td width="30"></td>';
 		}
 		
 		nr+='		</tr></table>';
@@ -144,13 +145,22 @@ var strformat = {
 		nr+='</div>';
 		return nr;
 	},
-	showupfile:function(f){
+	showupfile:function(f, snr){
 		var nuid= js.now('time'),optdt = js.serverdt(),nr='';
-		nr = '<div style="width:150px;font-size:14px;">';
-		if(f.isimg){
-			nr+='<div><img width="150" id="imgview_'+nuid+'" src="'+this.emotspath+'images/noimg.jpg"><br>'+f.filesizecn+'</div>';
-		}else{
-			nr+= '<div><img src="'+this.emotspath+'images/fileicons/'+js.filelxext(f.fileext)+'.gif" align="absmiddle">&nbsp;'+f.filename+'('+f.filesizecn+')</div>';
+		nr = '<div id="showve_'+nuid+'">';
+		if(f && f.filename){
+			if(f.isimg){
+				var src = ''+this.emotspath+'images/noimg.jpg';
+				if(f.thumbpath)src = ''+apiurl+''+f.thumbpath+'';
+				if(f.imgviewurl)src = f.imgviewurl;
+				nr+='<div><img width="150" id="imgview_'+nuid+'" src="'+src+'"><br>'+f.filesizecn+'</div>';
+			}else{
+				nr+= '<div><img src="'+this.emotspath+'images/fileicons/'+js.filelxext(f.fileext)+'.gif" align="absmiddle">&nbsp;'+f.filename+'('+f.filesizecn+')</div>';
+			}
+		}
+		if(snr){
+			nr+= '<div><img src="'+snr+'" id="jietuimg_'+nuid+'" width="150"></div>';
+			nr+= '<div><a onclick="im.upbase64(\''+nuid+'\')" href="javascript:;">[发送截图]</a>';
 		}
 		nr+= '<div class="progresscls"><div id="progresscls_'+nuid+'" class="progressclssse"></div><div class="progressclstext"  id="progresstext_'+nuid+'">0%</div></div>';
 		nr+= '<div id="progcanter_'+nuid+'"><a href="javascript:;" onclick="strformat.cancelup(\''+nuid+'\')">取消</a></div>';
@@ -165,18 +175,31 @@ var strformat = {
 		$('#progresstext_'+nuid+'').html(''+per+'%');
 		if(per==100)$('#progcanter_'+nuid+'').remove();
 	},
-	upsuccess:function(f){
-		var nuid=this.nuidup_tep;
+	upsuccess:function(f,nuid){
+		if(!nuid)nuid=this.nuidup_tep;
+		this.upprogresss(100, nuid);
 		$('#progresstext_'+nuid+'').html('上传成功');
-		if(f.isimg)get('imgview_'+nuid+'').src=''+apiurl+''+f.thumbpath+'';
+		var contss;
+		if(js.isimg(f.fileext)){
+			contss = '[图片 '+f.filesizecn+']';
+		}else{
+			contss = '['+f.filename+' '+f.filesizecn+']';
+		}
+		var s = this.contshozt(f);
+		$('#showve_'+nuid+'').html(s);
+		return contss;
+	},
+	uperror:function(nuid){
+		if(!nuid)nuid=this.nuidup_tep;
+		$('#progresstext_'+nuid+'').html('<font color=red>上传失败</font>');
+		$('#progcanter_'+nuid+'').remove();
 	},
 	cancelup:function(nuid){
 		if(!nuid)nuid=this.nuidup_tep;
 		if(this.upobj)this.upobj.abort();
 		$('#ltcont_'+nuid+'').remove();
 	},
-	openimg:function(src)
-	{
+	openimg:function(src){
 		var img = src;
 		if(src.indexOf('thumb')>0){
 			var ext = src.substr(src.lastIndexOf('.')+1);
@@ -213,7 +236,8 @@ var strformat = {
 		}else{
 			slx = d.fileext;if(!lj)lj='';
 			if(js.fileall.indexOf(','+slx+',')<0)slx='wz';
-			s='<img src="'+lj+'images/fileicons/'+slx+'.gif" align="absmiddle">&nbsp;'+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;'+d.filesizecn+'';
+			s=''+d.filename+'<br><a href="javascript:;" onclick="js.downshow('+d.fileid+')">下载</a>&nbsp;&nbsp;<a href="javascript:;" onclick="im.fileyulan(\''+d.filename+'\','+d.fileid+')">预览</a>&nbsp;'+d.filesizecn+'';
+			s='<table><tr><td><div class="qipaofile">'+d.fileext.toUpperCase()+'</div></td><td>'+s+'</td></tr></table>';
 		}
 		return s;
 	}

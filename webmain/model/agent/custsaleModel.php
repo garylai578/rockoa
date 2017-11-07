@@ -26,7 +26,7 @@ class agent_custsaleClassModel extends agentModel
 	{
 		$statea = $this->flow->statearr;
 		foreach($rowd as $k=>$rs){
-			$state 	 = $rs['state'];
+			$state 	 = $rs['statess'];
 			if($state==2){
 				$rows[$k]['ishui']		=1;
 			}

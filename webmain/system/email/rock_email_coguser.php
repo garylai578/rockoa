@@ -3,7 +3,7 @@
 $(document).ready(function(){
 	var a = $('#admin_{rand}').bootstable({
 		tablename:'admin',modenum:'user',celleditor:true,sort:'sort',dir:'asc',fanye:true,
-		storebeforeaction:'coguserbeforeshow',modedir:'{mode}:{dir}',
+		storebeforeaction:'coguserbeforeshow',modedir:'{mode}:{dir}',params:{atype:'all'},
 		columns:[{
 			text:'头像',dataIndex:'face',renderer:function(v,d){
 				if(isempt(v))v='images/noface.png';
@@ -55,7 +55,7 @@ $(document).ready(function(){
 	
 	<td width="80%"></td>
 	<td align="right" nowrap>
-		<a class="btn btn-default" href="http://xh829.com/view_email.html" target="_blank">?查看邮件帮助</a>
+		<a class="btn btn-default" href="<?=URLY?>view_email.html" target="_blank">?查看邮件帮助</a>
 	</td>
 </tr>
 </table>

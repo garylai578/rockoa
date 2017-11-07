@@ -8,7 +8,7 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_menu',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'setid='+mid+''},
-		submitfields:'name,statusname,statuscolor,type,statusvalue,actname,wherestr,upgcont,explain,status,num,issm,islog,fields',
+		submitfields:'name,statusname,statuscolor,type,statusvalue,actname,wherestr,upgcont,explain,status,num,iszs,issm,islog,fields',
 		requiredfields:'name',
 		success:function(){
 			closenowtabs();
@@ -79,7 +79,7 @@ $(document).ready(function(){
 			<td width="35%"  class="tdinput"><input maxlength="20" onblur="this.value=strreplace(this.value)" name="statusname" class="form-control"></td>
 			
 			<td  width="15%" align="right" nowrap>对应状态值：</td>
-			<td width="35%"  class="tdinput"><select name="statusvalue" class="form-control"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td>
+			<td width="35%"  class="tdinput"><select name="statusvalue" class="form-control"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></td>
 		</tr>
 		
 		<tr>
@@ -128,6 +128,7 @@ $(document).ready(function(){
 				<label><input name="status" value="1" checked type="checkbox"> 启用</label>&nbsp; &nbsp; 
 				<label><input name="islog" value="1" checked type="checkbox"> 写入日志</label>&nbsp; &nbsp; 
 				<label><input name="issm" value="1" checked type="checkbox"> 必须填写说明</label>&nbsp; &nbsp; 
+				<label><input name="iszs" value="1" type="checkbox"> 显示在详情页</label>&nbsp; &nbsp; 
 			</td>
 		</tr>
 

@@ -19,6 +19,8 @@ $(document).ready(function(){
 		},{
 			text:'需要考勤',dataIndex:'iskq',type:'checkbox',editor:true
 		},{
+			text:'需要写日报',dataIndex:'isdaily',type:'checkbox',editor:true
+		},{
 			text:'ID',dataIndex:'id'
 		}]
 	});

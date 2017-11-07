@@ -18,7 +18,7 @@ class agent_customerClassModel extends agentModel
 	protected function agentrows($rows, $rowd, $uid)
 	{
 		foreach($rowd as $k=>$rs){
-			if($rs['status']==0){
+			if($rs['statuss']==0){
 				$rows[$k]['statustext']='已停用';
 				$rows[$k]['statuscolor']='#888888';
 				$rows[$k]['ishui']		=1;

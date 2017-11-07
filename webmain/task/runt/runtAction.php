@@ -3,11 +3,18 @@ class runtAction extends ActionNot
 {
 	public $runid = 0;
 	public $runrs;
+	public $splitlast = 0; //距离上次提醒秒数0上次没有运行
+	
+	public $todoarr		= array();
+	
 	public function initAction()
 	{
 		$this->runid	= (int)$this->get('runid','0');
 		$this->runrs	= m('task')->getone($this->runid);
 		$this->display 	= false;
+		if($this->runrs && !isempt($this->runrs['lastdt'])){
+			$this->splitlast = time() - strtotime($this->runrs['lastdt']);
+		}
 	}
 	
 	/**
@@ -24,6 +31,21 @@ class runtAction extends ActionNot
 				'lastcont' 	=> $cont,
 				'state' 	=> $state
 			), $this->runid);
+			
+			//提醒的
+			$todoid = arrvalue($this->runrs,'todoid');
+			if(!isempt($todoid) && $this->todoarr){
+				$modenum	= arrvalue($this->todoarr, 'modenum');
+				$agentname	= arrvalue($this->todoarr, 'agentname');
+				$title		= arrvalue($this->todoarr, 'title');
+				$cont		= arrvalue($this->todoarr, 'cont');
+				if(!isempt($modenum)){
+					$flow 	= m('flow')->initflow($modenum);
+					$flow->push($todoid, $agentname, $cont, $title);
+				}else{
+					m('todo')->add($todoid, $title, $cont);
+				}
+			}
 		}
 	}
 }
@@ -41,5 +63,17 @@ class runtClassAction extends runtAction
 		$barr 	= m('task')->getlistrun($dt);
 		$this->option->setval('systaskrun', $this->now);
 		$this->returnjson($barr);
+	}
+	
+	/**
+	*	运行定时任务用于cli模式的，建每5分钟运行异常
+	*	Linux 使用crontab php task.php runt,task
+	*	win 使用计划任务 php task.php runt,task
+	*	也可以没5分钟访问地址：http://127.0.0.1/app/xinhu/task.php?m=runt&a=task
+	*/
+	public function taskAction()
+	{
+		$runtime = $this->get('runtime',time());
+		echo m('task')->runjsonlist($runtime);
 	}
 }

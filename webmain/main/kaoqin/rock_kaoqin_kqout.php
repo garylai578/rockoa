@@ -34,6 +34,9 @@ $(document).ready(function(){
 		},
 		beforeload:function(){
 			btn(true);
+		},
+		itemdblclick:function(d){
+			openxiangs('外出',modenum,d.id);
 		}
 	});
 	

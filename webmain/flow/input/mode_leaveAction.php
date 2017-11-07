@@ -10,11 +10,27 @@ class mode_leaveClassAction extends inputAction{
 	{
 		$start	= $this->post('stime');
 		$end	= $this->post('etime');
+		$kq 	= m('kaoqin');
 		//$date	= c('date', true);
 		//$sj		= $date->datediff('H', $start, $end);
-		$sj 	= m('kaoqin')->getsbtime($this->adminid,$start, $end);
-		$sj 	= ceil($sj);
-		$this->returnjson(array($sj, ''));
+		$sj 	= $kq->getsbtime($this->adminid,$start, $end);
+		$sbtime = $kq->getworktime($this->adminid, $start); //一天上班小时
+		$sj 	= $this->qjshieuts($sj);
+		return array($sj, '', $sbtime);
+	}
+	
+	//请假最小单位0.5小时
+	private function qjshieuts($jst)
+	{
+		$sts = explode('.', $jst.'');
+		if(isset($sts[1])){
+			$vss = floatval('0.'.$sts[1]);
+			if($vss>0 && $vss<=0.5)$vss = 0.5;
+			if($vss>0.5)$vss = 1;
+			$jst = floatval($sts[0])+$vss;
+		}else{
+		}
+		return $this->rock->number($jst, 1);
 	}
 	
 
@@ -24,9 +40,7 @@ class mode_leaveClassAction extends inputAction{
 	{
 		$mid = (int)$this->get('mid');
 		$kqm = m('kaoqin');
-		$njs = $kqm->getqjsytime($this->adminid, '年假', '', $mid);
-		$tx  = $kqm->getqjsytime($this->adminid, '调休', '', $mid);
-		$str = '年假('.$njs.'小时)，可调休('.$tx.'小时)';
+		$str = $kqm->getqjsytimestr($this->adminid, '', $mid);
 		return $str;
 	}
 }	

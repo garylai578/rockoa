@@ -1,6 +1,9 @@
 <?php 
 class reimClassAction extends apiAction
 {
+	/**
+	*	获取聊天记录
+	*/
 	public function getrecordAction()
 	{
 		$uid 		= $this->adminid;
@@ -14,6 +17,9 @@ class reimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	获取会话的信息
+	*/
 	public function getreceinforAction()
 	{
 		$uid 		= $this->adminid;
@@ -25,6 +31,9 @@ class reimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	发消息
+	*/
 	public function sendinforAction()
 	{
 		$uid 		= $this->adminid;
@@ -44,6 +53,9 @@ class reimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	标识已读
+	*/
 	public function yiduAction()
 	{
 		$id = $this->post('id');
@@ -51,6 +63,7 @@ class reimClassAction extends apiAction
 		$this->showreturn($id);
 	}
 	
+	//将会话标识已读
 	public function yiduallAction()
 	{
 		$type 		= $this->post('type');
@@ -59,6 +72,9 @@ class reimClassAction extends apiAction
 		$this->showreturn('');
 	}
 	
+	/**
+	*	创建讨论组
+	*/
 	public function createtaolunAction()
 	{
 		$name 	= $this->post('title');
@@ -69,6 +85,9 @@ class reimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	获取会话上人员
+	*/
 	public function getgroupuserAction()
 	{
 		$gid 	= (int)$this->post('gid');
@@ -77,6 +96,9 @@ class reimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	下载聊天记录
+	*/
 	public function downrecordAction()
 	{
 		$minid = floatval($this->post('minid','999999999'));
@@ -85,6 +107,9 @@ class reimClassAction extends apiAction
 		$this->showreturn($arr);
 	}
 	
+	/**
+	*	删除历史会话
+	*/
 	public function delhistoryAction()
 	{
 		$gid 	= (int)$this->post('gid');
@@ -119,6 +144,7 @@ class reimClassAction extends apiAction
 		$this->showreturn('success');
 	}
 	
+	//清除历史记录
 	public function clearrecordAction()
 	{
 		$gid 	= (int)$this->post('gid');
@@ -129,6 +155,7 @@ class reimClassAction extends apiAction
 		$this->showreturn('');
 	}
 	
+	//上传头像
 	public function changefaceAction()
 	{
 		$fid 	= (int)$this->post('id');
@@ -138,12 +165,16 @@ class reimClassAction extends apiAction
 		$this->showreturn($face);
 	}
 	
+	//下载文件
 	public function downfileAction()
 	{
 		$id 	= (int)$this->post('id');
 		m('file')->download($id);
 	}
 	
+	/**
+	*	文件转发发送给对应人员
+	*/
 	public function forwardAction()
 	{
 		$fid = (int)$this->post('fileid');
@@ -152,4 +183,9 @@ class reimClassAction extends apiAction
 		if($msg!='ok')$this->showreturn('', $msg, 201);
 		$this->showreturn('');
 	}
+	
+	/**
+	*	信息转发
+	*/
+	
 }

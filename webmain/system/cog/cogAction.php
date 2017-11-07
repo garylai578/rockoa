@@ -27,6 +27,7 @@ class cogClassAction extends Action
 			'url'	=> getconfig('url'),
 			'localurl'	=> getconfig('localurl'),
 			'taskurl'	=> getconfig('taskurl'),
+			'xinhukey'	=> getconfig('xinhukey'),
 			'db_drive'	=> getconfig('db_drive'),
 			'version'	=> '信呼V'.VERSION.'',
 			'phpos'	=> PHP_OS,
@@ -57,11 +58,18 @@ class cogClassAction extends Action
 		$arr['url'] 		= getconfig('url');
 		$arr['localurl'] 	= getconfig('localurl');
 		$arr['apptitle'] 	= getconfig('apptitle');
+		$arr['reimtitle'] 	= getconfig('reimtitle');
 		$arr['asynkey'] 	= getconfig('asynkey');
 		$arr['openkey'] 	= getconfig('openkey');
 		$arr['db_drive'] 	= getconfig('db_drive');
-		$arr['asynsend'] 	= getconfig('asynsend') ? '1' : '0';
+		$arr['xinhukey'] 	= getconfig('xinhukey');
+		$arr['bcolorxiang'] = getconfig('bcolorxiang');
+		$arr['asynsend'] 	= getconfig('asynsend');
 		$arr['sqllog'] 		= getconfig('sqllog') ? '1' : '0';
+		$arr['debug'] 		= getconfig('debug') ? '1' : '0';
+		$arr['reim_show'] 	= getconfig('reim_show') ? '1' : '0';
+		$arr['mobile_show'] = getconfig('mobile_show') ? '1' : '0';
+		if(getconfig('systype')=='demo')$arr['xinhukey']='';
 		$this->returnjson($arr);
 	}
 	
@@ -78,8 +86,8 @@ class cogClassAction extends Action
 		$title 			= $this->post('title');
 		if(!isempt($title))$arr['title'] = $title;
 		
-		$url 			= $this->post('url');
-		if(!isempt($url))$arr['url'] = $url;
+		$arr['url'] 		= $this->post('url');
+		$arr['reimtitle'] 	= $this->post('reimtitle');
 		
 		$apptitle 			= $this->post('apptitle');
 		if(!isempt($apptitle))$arr['apptitle'] = $apptitle;
@@ -95,13 +103,20 @@ class cogClassAction extends Action
 			$arr['db_drive'] = $db_drive;
 		}
 		
-		$arr['localurl'] = $this->post('localurl');
-		$arr['openkey']  = $this->post('openkey');
+		$arr['localurl'] 	= $this->post('localurl');
+		$arr['openkey']  	= $this->post('openkey');
+		$arr['xinhukey'] 	= $this->post('xinhukey');
+		$arr['bcolorxiang'] = $this->post('bcolorxiang');
 		
-		$asynsend 		 = $this->post('asynsend');
-		$arr['asynsend'] = $asynsend=='1';
+		$asynsend 		 	= $this->post('asynsend');
+		$arr['asynsend'] 	= $asynsend;
+		
+		//if($arr['asynsend'] && !m('reim')->asynurlbo())exit('没有开启服务端不能使用异步');
 		
 		$arr['sqllog'] 	 = $this->post('sqllog')=='1';
+		$arr['debug'] 	 = $this->post('debug')=='1';
+		$arr['reim_show'] 	 = $this->post('reim_show')=='1';
+		$arr['mobile_show']  = $this->post('mobile_show')=='1';
 		
 		if($asynsend == '1' && isempt($puurl))exit('未安装或开启服务端不能使用异步发送消息');
 		
@@ -109,6 +124,7 @@ class cogClassAction extends Action
 		$smarr['localurl']		= '本地系统URL，用于服务器上浏览地址';
 		$smarr['title']			= '系统默认标题';
 		$smarr['apptitle']		= 'APP上或PC客户端上的标题';
+		$smarr['reimtitle']		= 'REIM即时通信上标题';
 		$smarr['weblogo']		= 'PC客户端上的logo图片';
 		$smarr['db_host']		= '数据库地址';
 		$smarr['db_user']		= '数据库用户名';
@@ -121,9 +137,14 @@ class cogClassAction extends Action
 		$smarr['randkey']		= '系统随机字符串密钥';
 		$smarr['asynkey']		= '这是异步任务key';
 		$smarr['openkey']		= '对外接口openkey';
-		$smarr['sqllog']		= '是否记录sql日志保存upload/sqllog下';
-		$smarr['asynsend']		= '是否异步发送提醒消息，为true需开启服务端';
+		$smarr['sqllog']		= '是否记录sql日志保存'.UPDIR.'/sqllog下';
+		$smarr['asynsend']		= '是否异步发送提醒消息，0同步，1自己服务端异步，2官网VIP用户异步';
 		$smarr['install']		= '已安装，不要去掉啊';
+		$smarr['xinhukey']		= '信呼官网key，用于在线升级使用';
+		$smarr['bcolorxiang']	= '单据详情页面上默认展示线条的颜色';
+		$smarr['debug']			= '为true调试开发模式,false上线模式';
+		$smarr['reim_show']		= '首页是否显示REIM';
+		$smarr['mobile_show']	= '首页是否显示手机版';
 		
 		$str1 = '';
 		foreach($arr as $k=>$v){

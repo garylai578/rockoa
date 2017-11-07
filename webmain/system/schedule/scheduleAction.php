@@ -9,29 +9,7 @@ class scheduleClassAction extends Action
 		$arr 	= m('schedule')->getlistdata($this->adminid, $startdt, $endddt);
 		$this->returnjson($arr);
 	}
-	
-	public function schedulebefore($table)
-	{
-		$s 		= 'and `uid`='.$this->adminid.'';
-		$dt 	= $this->post('dt1');
-		$key 	= $this->post('key');
-		if($dt!='')$s.=" and `startdt` like '$dt%'";
-		if($key!='')$s.=" and `title` like '%$key%'";
-		return $s;
-	}
-	
-	public function scheduleafter($table, $rows)
-	{
-		foreach($rows as $k=>$rs){
-			$rate = $rs['rate'];
-			if($rate=='w')$rate='每周'.$rs['rateval'].'';
-			if($rate=='d')$rate='每天';
-			if($rate=='m')$rate='每月'.$rs['rateval'].'号';
-			$rows[$k]['rate'] = $rate;
-		}
-		return array('rows'=>$rows);
-	}
-	
+
 	
 	public function schedulemybefore($table)
 	{
@@ -64,7 +42,9 @@ class scheduleClassAction extends Action
 			if($w=='六'||$w=='日')$status	= 0;
 			$str 	= '';
 			if(isset($rows[$dt]))foreach($rows[$dt] as $k=>$rs){
-				$str.=''.($k+1).'.['.substr($rs['time'],11,5).']'.$rs['title'].'<br>';
+				$str.=''.($k+1).'.['.$rs['timea'].']'.$rs['title'].'';
+				if($rs['optname']!=$this->adminname)$str.=' &nbsp;——'.$rs['optname'].'创建';
+				$str.='<br>';
 			}
 			$sbarr	= array(
 				'dt' => $dt,

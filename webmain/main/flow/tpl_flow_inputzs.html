@@ -105,7 +105,7 @@ select{font-size:12px}
 					if($rs[0]){
 						$str.= ' <a href="javascript:" onclick="c.insert1(this,0)">＋</a> <a href="javascript:" onclick="c.insert1(this,1)">⊥</a>';
 					}else{
-						$str.= ' <a href="javascript:" title="插入表格" onclick="c.insert1(this,2)">＋</a>';
+						$str.= '';
 					}
 					$str.= '</div>';
 					echo $str;
@@ -120,7 +120,7 @@ select{font-size:12px}
 	<td width="100%">
 		<div style="overflow:auto" id="page_conent">
 			<div style="padding:10px"><textarea style="width:650px;" id="content"><?=$da['content']?></textarea></div>
-			
+			<div align="left" style="font-size:12px;padding:0px 10px">模版保存在：<?=$da['p']?>/flow/page/view_<?=$da['rs']['num']?>_<?=$da['atype']?>.html</div>
 		</div>
 	</td>
 </tr>

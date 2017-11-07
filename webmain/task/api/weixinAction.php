@@ -2,19 +2,41 @@
 //保存打卡记录等
 class weixinClassAction extends apiAction{
 
+	/**
+	*	获取jssdk签名
+	*/
 	public function getsignAction()
 	{
-		if(isempt($this->option->getval('weixin_corpid'))){
+		$num 	= 'weixin_corpid';
+		$isqywx	= false;
+		$appId	= $this->option->getval($num);
+		if(isempt($appId) || $this->rock->isqywx){
+			$isqywx = true;
+			$num 	= 'weixinqy_corpid';
+		}
+		
+		if(isempt($this->option->getval($num))){
 			$arr['appId'] = '';
 		}else{
 			$url = $this->getvals('url');
-			$arr = m('weixin:signjssdk')->getsignsdk($url);
+			if($isqywx){
+				$agentid = $this->rock->post('agentid', $this->getsession('wxqyagentid'));
+				if(isempt($agentid)){
+					$arr['appId'] = '';
+				}else{
+					$arr = m('weixinqy:signjssdk')->getsignsdk($url, $agentid);
+				}
+			}else{
+				$arr = m('weixin:signjssdk')->getsignsdk($url);
+			}
 		}
 		$this->showreturn($arr);
 	}
 	
 	public function addlocationAction()
 	{
+		$fileid 			= (int)$this->post('fileid','0');
+		$imgpath			= m('file')->getmou('filepath', $fileid);
 		$now 				= $this->rock->now;
 		$uid				= $this->adminid;
 		$type 				= (int)$this->post('type');
@@ -26,6 +48,7 @@ class weixinClassAction extends apiAction{
 		$arr['explain']		= $this->getvals('sm');
 		$arr['optdt']		= $now;
 		$arr['uid']			= $uid;
+		$arr['imgpath']		= $imgpath;
 		m('location')->insert($arr);
 		if($type==1){
 			$dkdt 	= $now;
@@ -34,7 +57,8 @@ class weixinClassAction extends apiAction{
 				'dkdt' 	=> $dkdt,
 				'uid'	=> $uid,
 				'optdt'	=> $now,
-				'address'=> $arr['label'],
+				'imgpath'	=> $imgpath,
+				'address'	=> $arr['label'],
 				'lat'=> $arr['location_x'],
 				'lng'=> $arr['location_y'],
 				'accuracy'=> $arr['precision'],

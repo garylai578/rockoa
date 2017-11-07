@@ -24,6 +24,12 @@ $(document).ready(function(){
 			text:'MAC地址',dataIndex:'mac'
 		},{
 			text:'说明',dataIndex:'explain',align:'left'
+		},{
+			text:'图片',dataIndex:'imgpath',renderer:function(v){
+				var s='&nbsp;';
+				if(!isempt(v))s='<img height="60" onclick="$.imgview({url:this.src})" src="'+v+'">';
+				return s;
+			}
 		}],
 		itemdblclick:function(d){
 			//openxiang('kqdkjl',d.id);
@@ -76,8 +82,10 @@ $(document).ready(function(){
 			});
 		},
 		daoru:function(){
-			dkjlmanagesss = a;
-			addtabs({num:'admindkjlpl',url:'main,kaoqin,dkjlpl',name:'导入打卡记录'});
+			//dkjlmanagesss = a;
+			//addtabs({num:'admindkjlpl',url:'main,kaoqin,dkjlpl',name:'导入打卡记录'});
+			managelistkqdkjl = a;
+			addtabs({num:'daorukqdkjl',url:'flow,input,daoru,modenum=kqdkjl',icons:'plus',name:'导入打卡记录'});
 		}
 	};
 	if(atype=='all')$('#btnss{rand}').show();

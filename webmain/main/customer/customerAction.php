@@ -109,4 +109,23 @@ class customerClassAction extends Action
 		}
 		backmsg('','成功导入'.$oi.'条数据');
 	}
+	
+	//分配客户
+	public function distcustAjax()
+	{
+		$sid 	= $this->post('sid','0');
+		$sname 	= $this->post('sname');
+		$snid 	= $this->post('snid');
+		$lx 	= $this->post('lx');
+		$uarr['uid'] 	 = 0;
+		$uarr['optname'] = '';
+		if($lx==1 && $snid!='' && $sname!=''){
+			$uarr['uid'] 	 = $snid;
+			m('crm')->update($uarr, "`id` in($sid)");
+		}
+		if($lx==0){
+			m('crm')->update($uarr, "`id` in($sid)");
+		}
+		echo 'ok';
+	}
 }

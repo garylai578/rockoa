@@ -3,8 +3,9 @@ class yingyongClassAction extends Action
 {
 	public function yingyongdataAjax()
 	{
-		$rows = m('im_group')->getall('`type`=2 and pid=0','*','`sort`');
+		$rows = m('im_group')->getall('`type`=2','*','`sort`');
 		$arrs = array();
+		/*
 		foreach($rows as $k=>$rs){
 			$sub 	= m('im_group')->getall('`type`=2 and pid='.$rs['id'].'','*','`sort`');
 			$rs['leave'] 	= 1;
@@ -13,8 +14,8 @@ class yingyongClassAction extends Action
 				$rs1['leave'] = 2;
 				$arrs[] 	   = $rs1;
 			}
-		}
-		echo json_encode(array('rows'=>$arrs));
+		}*/
+		echo json_encode(array('rows'=>$rows));
 	}
 	
 	public function getdataAjax()
@@ -42,13 +43,24 @@ class yingyongClassAction extends Action
 	public function menudataAjax()
 	{
 		$this->rows	= array();
-		$mid		= $this->get('mid');
-		$where 	= "and `mid`='$mid'";
+		$mid		= (int)$this->get('mid');
+		$agentnum	= m('im_group')->getmou('num',$mid);
+		$where 		= "and `mid`='$mid'";
 		$this->getmenu(0, 1, $where);
+		$modeid 	= (int)m('flow_set')->getmou('id',"`num`='$agentnum'");
+		$wherearr	= m('flow_where')->getrows("setid='$modeid' and `num` is not null and `status`=1",'`name`,`num`','`pnum`,`sort`');
+		$barr[]		= array('num'=>'','name'=>'-选择-');
+		foreach($wherearr as $k=>$rs){
+			$wherearr[$k]['name'] = ''.$rs['num'].'.'.$rs['name'].'';
+			$barr[] = $wherearr[$k];
+		}
 		
 		echo json_encode(array(
 			'totalCount'=> 0,
-			'rows'		=> $this->rows
+			'rows'		=> $this->rows,
+			'agentnum'	=> $agentnum,
+			'modeid'	=> $modeid,
+			'wherearr'	=> $barr,
 		));
 	}
 	
@@ -64,5 +76,15 @@ class yingyongClassAction extends Action
 			
 			$this->getmenu($sid, $oi+1, $wh);
 		}
+	}
+	
+	public function yingyongafter($table, $rows)
+	{
+		foreach($rows as $k=>$rs){
+			if($rs['valid']=='0')$rows[$k]['status']=0;
+		}
+		return array(
+			'rows' => $rows
+		);
 	}
 }

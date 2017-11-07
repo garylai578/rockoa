@@ -3,24 +3,32 @@ class adminClassModel extends Model
 {
 	private $_getjoinstr = array();
 	
-	public function gjoin($joinid, $glx='ud', $blx='bxl')
+	public function gjoin($joinid, $glx='', $blx='bxl')
 	{
-		$uid 	= $did = '0';
-		if($this->rock->isempt($joinid))return '';
-		if($this->rock->contain($joinid, 'all'))return 'all';
+		$uid 	= $did = $gid = '0';
+		if($glx=='')$glx = 'ud';
+		if(isempt($joinid))return '';
+		$joinid 	= strtolower($joinid);
+		if(contain($joinid, 'all'))return 'all';
 		$narr 	= explode(',', $joinid);
 		$dwhe	= array();
 		foreach($narr as $sid){
 			$lx 	= substr($sid, 0, 1);
-			$ssid 	= str_replace(array('u','d','U','D'), array('','','',''), $sid);
+			$ssid 	= str_replace(array('u','d','g'), array('','',''), $sid);
 			if($lx == 'd' || $glx=='d'){
 				$did.=','.$ssid.'';
 				$dwhe[] = "instr(`deptpath`, '[$ssid]')>0";
+			}else if($lx=='g'){
+				$gid.=','.$ssid.'';
 			}else{
 				$uid.=','.$ssid.'';
 			}
 		}
 		$where = '';
+		if($gid!='0'){
+			$uids = $this->getgrouptouid($gid);
+			if($uids!='')$uid.=','.$uids.'';
+		}
 		if($did != '0'){
 			$where = join(' or ', $dwhe);
 			if($uid!='0')$where.=" or `id` in($uid)";
@@ -35,6 +43,32 @@ class adminClassModel extends Model
 			if($guid !='')$guid = substr($guid, 1);
 		}
 		return $guid;
+	}
+	
+	/**
+	*	根据组部门id获取底下人员ID
+	*/
+	public function gjoins($receid)
+	{
+		if(contain($receid,'u') || contain($receid, 'd') || contain($receid, 'g'))$receid = $this->gjoin($receid);
+		return $receid;
+	}
+	
+	/**
+	*	根据组获取底下人员Id
+	*/
+	public function getgrouptouid($gid)
+	{
+		if(isempt($gid))return '';
+		$where 	= "1=1 and ((`type`='gu' and `mid` in($gid)) or (`type`='ug' and `sid` in($gid)))";
+		$rows  	= $this->db->getall("select `type`,`mid`,`sid` from `[Q]sjoin` where $where");
+		$uids 	= '';
+		foreach($rows as $k=>$rs){
+			if($rs['type']=='gu')$uids.=','.$rs['sid'].'';
+			if($rs['type']=='ug')$uids.=','.$rs['mid'].'';
+		}
+		if($uids!='')$uids= substr($uids, 1);
+		return $uids;
 	}
 	
 	/**
@@ -55,13 +89,13 @@ class adminClassModel extends Model
 	{
 		$s 		= '';
 		if(is_numeric($us)){
-			$key= 'a'.$fids.''.$us.'_'.$lx.'';
+			$key= 'a'.$fids.''.$us.'_'.$lx.'_'.$slx.'';
 			if(isset($this->_getjoinstr[$key]))return $this->_getjoinstr[$key];
 			$us	= $this->getone($us,'id,`name`,`deptid`,`deptpath`');
 		}
 		if(!$us)return '';
 		$uid	= $us['id'];
-		$key 	= 'a'.$fids.''.$uid.'_'.$lx.'';
+		$key 	= 'a'.$fids.''.$uid.'_'.$lx.'_'.$slx.'';
 		if(isset($this->_getjoinstr[$key]))return $this->_getjoinstr[$key];
 		if($slx==0)$tj[]	= "ifnull($fids,'')=''";
 		$tj[]	= $this->rock->dbinstr($fids, 'all');
@@ -146,7 +180,7 @@ class adminClassModel extends Model
 		return $s;
 	}
 	
-	public function getpath($did, $sup)
+	public function getpath($did, $sup,$dids='')
 	{
 		$deptpath 	= $this->db->getpval('[Q]dept', 'pid', 'id', $did, '],[');
 		$deptallname= $this->db->getpval('[Q]dept', 'pid', 'name', $did, '/');
@@ -165,7 +199,23 @@ class adminClassModel extends Model
 			if($superpath!='')$superpath=substr($superpath,1);
 			if($supername!='')$supername=substr($supername,1);
 		}
-		$rows['deptpath'] 	= $this->rock->strformat('[?0]', $deptpath);
+		//部门路径
+		if(!isempt($deptpath))$deptpath	= $this->rock->strformat('[?0]', $deptpath);
+		//有多部门
+		if(!isempt($dids)){
+			$didsa = explode(',', $dids);
+			foreach($didsa as $dids1){
+				$desss 	= $this->db->getpval('[Q]dept', 'pid', 'id', $dids1, '],[');
+				if(isempt($desss))continue;
+				$desssa	= explode(',', $this->rock->strformat('[?0]', $desss));
+				foreach($desssa as $desssa1){
+					if(!contain($deptpath, $desssa1))$deptpath.=','.$desssa1.'';
+				}
+			}
+		}
+		if(!isempt($deptpath) && substr($deptpath,0,1)==',')$deptpath = substr($deptpath,1);
+		
+		$rows['deptpath'] 	= $deptpath; 
 		$rows['superpath'] 	= $superpath;
 		$rows['deptname'] 	= $deptname;
 		$rows['superman'] 	= $supername;
@@ -267,7 +317,7 @@ class adminClassModel extends Model
 	*/
 	public function getonline($receid, $lx=10)
 	{
-		$uarr 		= $this->getonlines('reim', $receid, $lx);
+		$uarr 		= $this->getonlines('reim,pc', $receid, $lx);
 		$jonus		= join(',', $uarr);
 		return $jonus;
 	}
@@ -288,7 +338,7 @@ class adminClassModel extends Model
 		if($lx>0){
 			$wheres .= " and `moddt`>'$dts'";
 		}
-		$sql 	= "select `uid` from `[Q]logintoken` where `cfrom`='$type' and `online`=1 $wheres $where group by `uid`";
+		$sql 	= "select `uid` from `[Q]logintoken` where instr(',".$type.",', concat(',',`cfrom`, ','))>0 and `online`=1 $wheres $where group by `uid`";
 		
 		$rows   = $this->db->getall($sql);
 		foreach($rows as $k=>$rs){
@@ -305,15 +355,43 @@ class adminClassModel extends Model
 		return $face;
 	}
 	
+	/**
+	*	获取人员信息
+	*/
+	public function getuserinfo($uids='0')
+	{
+		$uarr = $this->getall("`id` in(".$uids.") and `status`=1",'`id`,`name`,`face`','`sort`');
+		foreach($uarr as $k=>$rs){
+			$uarr[$k]['face'] = $this->getface($rs['face']);
+		}
+		return $uarr;
+	}
+	
+	/**
+	*	获取人员数据
+	*/
 	public function getuser($lx=0)
 	{
-		$rows = $this->getall("`status`=1",'id,name,deptid,deptname,deptallname,ranking,tel,face,sex,email,pingyin','sort,name');
+		$uid  	= $this->adminid;
+		$where	= m('view')->viewwhere('user', $uid, 'id');
+		$range 	= $this->rock->get('changerange'); //指定了人
+		$where1 = '';
+		if(!isempt($range)){
+			$where1 = $this->gjoin($range, '', 'where');
+			$where1 = 'and ('.$where1.')';
+		}
+		$fields = '`id`,`name`,`deptid`,`deptname`,`deptpath`,`deptallname`,`mobile`,`ranking`,`tel`,`face`,`sex`,`email`,`pingyin`';
+		//读取我可查看权限
+		$rows = $this->getall("`status`=1 and ((1 $where) or (`id`='$uid')) $where1",$fields,'`sort`,`name`');
 		$py   = c('pingyin');
 		foreach($rows as $k=>$rs){
-			$rows[$k]['face'] = $this->getface($rs['face']);
+			$rows[$k]['face'] = $rs['face'] = $this->getface($rs['face']);
 			if($lx==1){
-				if(isempt($rs['pingyin']))$rows[$k]['pingyin'] = $py->get($rs['name'],1);
+				if(isempt($rs['pingyin'])){
+					$rows[$k]['pingyin'] = $rs['pingyin'] = $py->get($rs['name'],1);
+				}
 			}
+			foreach($rs as $k1=>$v1)if($v1==null)$rows[$k][$k1]='';
 		}
 		return $rows;
 	}
@@ -348,7 +426,10 @@ class adminClassModel extends Model
 	
 	
 	
-	
+	public function getidtouser($id)
+	{
+		return $this->getmou('user', "`id`='$id'");
+	}
 	
 	
 	
@@ -358,29 +439,36 @@ class adminClassModel extends Model
 	*/
 	public function updateinfo($where='')
 	{
-		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman from `[Q]admin` a where id>0 $where order by `sort`");
+		$rows	= $this->db->getall("select id,name,deptid,superid,deptpath,superpath,deptname,deptallname,superman,deptids from `[Q]admin` a where id>0 $where order by `sort`");
 		$total	= $this->db->count;
 		$cl		= 0;
 		foreach($rows as $k=>$rs){
-			$nrs	= $this->getpath($rs['deptid'], $rs['superid']);
+			$nrs	= $this->getpath($rs['deptid'], $rs['superid'], $rs['deptids']);
 			if($nrs['deptpath'] != $rs['deptpath'] || $nrs['deptname'] != $rs['deptname'] || $nrs['superpath'] != $rs['superpath'] || $nrs['superman'] != $rs['superman'] || $nrs['deptallname'] != $rs['deptallname']){
 				$this->record($nrs, "`id`='".$rs['id']."'");
 				$cl++;
 			}
 		}
 		$this->updateuserinfo($where);
+		
+		//更新单据上flow_bill上的uname,udeptname
+		m('flowbill')->updatebill();
+		m('imgroup')->updategall(); //更新会话上
+		
 		return array($total, $cl);
 	}
 	public function updateuserinfo($whe='')
 	{
 		$db 	= m('userinfo');
-		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,b.name as names,b.deptname as deptnames,b.ranking as rankings,b.num as nums,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt,a.num from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id where a.id>0 '.$whe.' ');
+		$rows	= $this->db->getall('select a.name,a.deptname,a.id,a.status,a.ranking,b.id as ids,a.sex,a.tel,a.mobile,a.email,a.workdate,a.quitdt,a.num,a.companyid,a.deptnames,a.rankings from `[Q]admin` a left join `[Q]userinfo` b on a.id=b.id where a.id>0 '.$whe.' ');
 		foreach($rows as $k=>$rs){
 			$uparr = array(
 				'id' 		=> $rs['id'],
 				'name' 		=> $rs['name'],
 				'deptname' 	=> $rs['deptname'],
+				'deptnames' => $rs['deptnames'],
 				'ranking' 	=> $rs['ranking'],
+				'rankings' 	=> $rs['rankings'],
 				'sex' 		=> $rs['sex'],
 				'tel' 		=> $rs['tel'],
 				'mobile' 	=> $rs['mobile'],
@@ -388,6 +476,7 @@ class adminClassModel extends Model
 				'workdate' 	=> $rs['workdate'],
 				'quitdt' 	=> $rs['quitdt'],
 				'num' 		=> $rs['num'],
+				'companyid' => $rs['companyid'],
 			);
 			if(isempt($rs['ids'])){
 				$db->insert($uparr);
@@ -399,17 +488,17 @@ class adminClassModel extends Model
 	}
 	
 	//返回这个月份人员
-	public function monthuwhere($month)
+	public function monthuwhere($month, $qz='')
 	{
 		$month	= substr($month, 0, 7);
 		$start	= ''.$month.'-01';
 		$enddt	= c('date')->getenddt($month);
-		$s 		= $this->monthuwheres($start, $enddt);
+		$s 		= $this->monthuwheres($start, $enddt, $qz);
 		return $s;
 	}
-	public function monthuwheres($start, $enddt)
+	public function monthuwheres($start, $enddt, $qz='')
 	{
-		$s 		= " and (`quitdt` is null or `quitdt`>='$start') and (`workdate` is null or `workdate`<='$enddt')";
+		$s 		= " and ($qz`quitdt` is null or $qz`quitdt`>='$start') and ($qz`workdate` is null or $qz`workdate`<='$enddt')";
 		return $s;
 	}
 	
@@ -421,11 +510,15 @@ class adminClassModel extends Model
 		if(isempt($path))$path = $frs['filepath'];
 		$face	= $path;
 		if(file_exists($path)){
-			$face = 'upload/face/'.$uid.'.jpg';
+			$face = ''.UPDIR.'/face/'.$uid.'_'.rand(1000,9999).'.jpg';
+			$this->rock->createdir($face);
 			c('image')->conver($path, $face);
+			$oface  = $this->getmou('face', $uid);
+			if(!isempt($oface) && file_exists($oface))@unlink($oface);//删除原来头像
 			$this->update("face='$face'", $uid);
 		}
 		m('file')->delfile($fid);
+		if(!file_exists($face))$face='';
 		return $face;
 	}
 	
@@ -450,5 +543,28 @@ class adminClassModel extends Model
 	{
 		$where = " and ($qz`name` like '%$key%' or $qz`user` like '%$key%' or $qz`deptallname` like '%$key%' or $qz`ranking` like '%$key%' or $qz`pingyin` like '$key%' $ots)";
 		return $where;
+	}
+	
+	/**
+	*	根据receid获取对应字段$fid聚合得到多个,分开的
+	*/
+	public function getjoinfields($receid, $fid)
+	{
+		if(!is_numeric($receid)){
+			$receid = $this->gjoin($receid,'ud', 'where'); //读取
+			$where 	= '1=1';
+			if($receid != 'all')$where = $receid;
+			if(isempt($receid))$where = '1=2';
+		}else{
+			$where = 'id='.$receid.'';
+		}
+		$rows = $this->getall("`status`=1 and ($where)", '`id`,`'.$fid.'`');
+		$strs = '';
+		foreach($rows as $k=>$rs){
+			if(!isempt($rs[$fid]))$strs.=','.$rs[$fid].'';
+		}
+		if($strs!='')$strs = substr($strs, 1);
+		
+		return $strs;
 	}
 }

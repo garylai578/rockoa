@@ -1,4 +1,4 @@
-.topheader{background:#2C3E50}
+.topheader,.mainback{background:#2C3E50}
 .topcenter span,.topmenubg span{border-right:1px #263647 solid;} 
 .topcenter span:hover,.topmenubg span:hover,.spanactive{background:#263647} 
 .topmenubg span{border-right-width:0px;}

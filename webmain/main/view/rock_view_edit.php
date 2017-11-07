@@ -23,7 +23,7 @@ $(document).ready(function(){
 			}
 		},
 		submitcheck:function(d){
-			if(d.type!='1' && d.wherestr=='' && d.whereid=='0')return '必须设置输入相应条件';
+			if(d.type!='1' && d.type!='4' && d.wherestr=='' && d.whereid=='0')return '必须设置输入相应条件';
 			return {wherestr:jm.base64encode(d.wherestr)}
 		}
 	});
@@ -49,6 +49,7 @@ $(document).ready(function(){
 			if(lx==0)h.form.wherestr.value='{receid}';
 			if(lx==1)h.form.wherestr.value='{allsuper}';
 			if(lx==2)h.form.wherestr.value='{super}';
+			if(lx==4)h.form.wherestr.value='{dept}';
 			if(lx==3)h.form.wherestr.value='all';
 		}
 		,
@@ -90,7 +91,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right" width="15%" ><font color=red>*</font> 类型可：</td>
-			<td class="tdinput" width="35%" ><select name="type" class="form-control"><option value="0">查看</option><option value="1">添加</option><option value="2">编辑</option><option value="3">删除</option></select></td>
+			<td class="tdinput" width="35%" ><select name="type" class="form-control"><option value="0">查看</option><option value="1">添加</option><option value="2">编辑</option><option value="3">删除</option><option value="4">导入</option></select></td>
 			<td  align="right"  width="15%"></td>
 			<td class="tdinput" width="35%" ></td>
 		</tr>
@@ -107,7 +108,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right" >相应条件：</td>
-			<td class="tdinput" colspan="3"><textarea placeholder="由对应模块上主表字段，如:optid={uid}，操作人是当前用户" name="wherestr" style="height:60px" class="form-control"></textarea><br>如:<a click="hanrenss,0" href="javascript:;">[receid中包含我]</a>,<a click="hanrenss,1" href="javascript:;">[所有下属人员]</a>,<a click="hanrenss,2" href="javascript:;">[直属下属人员]</a>,<a click="hanrenss,3" href="javascript:;">[所有数据]</a></td>
+			<td class="tdinput" colspan="3"><textarea placeholder="由对应模块上主表字段，如:optid={uid}，操作人是当前用户" name="wherestr" style="height:60px" class="form-control"></textarea><br>如:<a click="hanrenss,0" href="javascript:;">[receid中包含我]</a>,<a click="hanrenss,1" href="javascript:;">[所有下属人员]</a>,<a click="hanrenss,2" href="javascript:;">[直属下属人员]</a>,<a click="hanrenss,4" href="javascript:;">[同级本部门]</a>,<a click="hanrenss,3" href="javascript:;">[所有数据]</a></td>
 		</tr>
 		
 		<tr>

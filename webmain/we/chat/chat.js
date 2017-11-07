@@ -207,6 +207,7 @@ var im={
 	sendfile:function(){
 		if(typeof(uploadobj)=='undefined')uploadobj = $.rockupload({
 			inputfile:'allfileinput',
+			initpdbool:true,
 			onchange:function(d){
 				im.sendfileshow(d);
 			},
@@ -242,5 +243,9 @@ var im={
 			conss = '['+f.filename+' '+f.filesizecn+']'
 		}
 		this.sendconts(jm.base64encode(conss), tm.nuid, tm.optdt, a.id);
+	},
+	fileyulan:function(pn,fid){
+		var url = '?m=public&a=fileviewer&id='+fid+'';
+		js.location(url);
 	}
 }

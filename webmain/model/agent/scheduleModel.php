@@ -15,4 +15,12 @@ class agent_scheduleClassModel extends agentModel
 		}
 		return $rows;
 	}
+	
+	protected function agentdata($uid, $lx)
+	{
+		//$rows  = m('schedule')->getmonthdata($uid);
+		//print_r($rows);
+		if(contain($lx,'month'))$this->event = 'my';
+		return false;
+	}
 }

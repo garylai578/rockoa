@@ -6,12 +6,19 @@ class goodsClassModel extends Model
 		$where = '';
 		if($id!='')$where=' and `aid` in('.$id.')';
 		$sql = 'SELECT sum(count)stock,aid FROM `[Q]goodss` where `status` in('.$lsx.') '.$where.' GROUP BY aid';
+		if($id=='')$this->update('stock=stockcs','id>0');
 		$rows= $this->db->getall($sql);
 		foreach($rows as $k=>$rs){
-			$this->update(array(
-				'stock' => $rs['stock']
-			), $rs['aid']);
+			$this->update('`stock`=`stockcs`+'.$rs['stock'].'', $rs['aid']);
 		}
+	}
+	
+	//判断是否存在相同库存
+	public function existsgoods($rs, $id=0)
+	{
+		$where 	= "`id`<>".$id." and `typeid`=".$rs['typeid']." and `name`='".$rs['name']."' and ifnull(`guige`,'')='".$rs['guige']."' and ifnull(`xinghao`,'')='".$rs['xinghao']."'";
+		$to 	= $this->rows($where);
+		return $to>0;
 	}
 	
 	public function getgoodstype()
@@ -37,11 +44,13 @@ class goodsClassModel extends Model
 	
 	public function getgoodsdata()
 	{
-		$rowss  = m('goods')->getall('1=1','id,name');
+		$rowss  = m('goods')->getall('1=1','id,name,xinghao');
 		$rows	= array();
 		foreach($rowss as $k=>$rs){
+			$name 	= $rs['name'];
+			if(!isempt($rs['xinghao']))$name.='('.$rs['xinghao'].')';
 			$rows[] = array(
-				'name' => $rs['name'],
+				'name' 	=> $name,
 				'value' => $rs['id'],
 			);
 		}

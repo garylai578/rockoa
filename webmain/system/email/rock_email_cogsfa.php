@@ -24,6 +24,7 @@ $(document).ready(function(){
 			});
 		},
 		test:function(){
+			if(ISDEMO){js.msg('success','demo上就不要测试，我们都测试通过的');return;}
 			var url = js.getajaxurl('testsend','{mode}','{dir}');
 			js.ajax(url,false,function(s){
 				js.msg('success', s);
@@ -104,7 +105,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right"></td>
-			<td style="padding:15px 0px" colspan="3" align="left"><button click="save" class="btn btn-success" type="button"><i class="icon-save"></i>&nbsp;保存</button>&nbsp;<a href="http://xh829.com/view_email.html" target="_blank">[?查看邮件帮助]</a>
+			<td style="padding:15px 0px" colspan="3" align="left"><button click="save" class="btn btn-success" type="button"><i class="icon-save"></i>&nbsp;保存</button>&nbsp;<a href="<?=URLY?>view_email.html" target="_blank">[?查看邮件帮助]</a>
 			</span>
 		</td>
 		</tr>

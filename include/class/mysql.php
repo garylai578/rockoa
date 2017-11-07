@@ -1,10 +1,10 @@
 <?php
 /**
 	*****************************************************************
-	* 联系QQ： 290802026/1073744729									*
+	* 联系QQ： 290802026											*
 	* 版  本： V2.0													*
 	* 开发者：雨中磐石工作室										*
-	* 网  址： http://www.xh829.com/								*
+	* 网  址： http://www.rockoa.com/								*
 	* 说  明: 数据库核心类											*
 	* 备  注: 未经允许不得商业出售，代码欢迎参考纠正				*
 	*****************************************************************
@@ -71,9 +71,9 @@ abstract class mysql{
 		//记录访问sql日志
 		if(getconfig('sqllog')){
 			$sql = '';
-			$filstr = 'sql'.time().'_'.$this->rock->adminid.'_'.str_shuffle('abcefghijklmn').'.log';
+			$filstr = 'sqllog_'.date('Y.m.d.H.i.s').'_'.$this->rock->adminid.'_'.str_shuffle('abcdefg').'.log';
 			foreach($this->sqlarr as $sql1)$sql.="\n\n$sql1;";
-			if($sql!='')$this->rock->createtxt('upload/sqllog/'.date('Y-m-d').'/'.$filstr.'', "时间[".$this->rock->now."],用户[".$this->rock->adminid.".".$this->rock->adminname."],IP[".$this->rock->ip."],WEB[".$this->rock->web."],URL[".$this->rock->nowurl()."]".$sql);
+			if($sql!='')$this->rock->createtxt(''.UPDIR.'/sqllog/'.date('Y-m-d').'/'.$filstr.'', "时间[".$this->rock->now."],用户[".$this->rock->adminid.".".$this->rock->adminname."],IP[".$this->rock->ip."],WEB[".$this->rock->web."],URL[".$this->rock->nowurl()."]".$sql);
 		}
 	}
 
@@ -113,9 +113,9 @@ abstract class mysql{
 	public function query($sql, $ebo=true)
 	{
 		if($this->conn == null)$this->connect();
-		if($this->conn == null)exit('mysql user or pass error!');
+		if($this->conn == null)exit('数据库的帐号/密码有错误!');
 		$sql	= trim($sql);
-		$sql	= str_replace(array('[Q]','[q]', '[date]', '[now]'), array($this->perfix, $this->perfix, date('Y-m-d'), date('Y-m-d H:i:s')), $sql);
+		$sql	= str_replace(array('[Q]','[q]'), array($this->perfix, $this->perfix), $sql);
 		$this->countsql++;
 		$this->sqlarr[]	= $sql;
 		$this->nowsql	= $sql;
@@ -128,9 +128,14 @@ abstract class mysql{
 		}
 		$this->nowerror	= false;
 		if(!$rsbool)$this->nowerror = true;
-		if(!$rsbool && DEBUG && $ebo){
-			$txt	= ''.D.'/'.M.'/'.A.',[错误SQL]：《'.$sql.'》----------原因：'.$this->error().'';
-			$this->rock->debug($txt,'mysql');
+		if(!$rsbool && (DEBUG || $this->rock->adminid==1) && $ebo){
+			$txt	= '【错误SQL】'.chr(10).''.$sql.''.chr(10).''.chr(10).'【原因】'.chr(10).''.$this->error().''.chr(10).'';
+			$this->rock->debug($txt,'mysql_sqlerr');
+		}
+		if(!$rsbool && $ebo){
+			$stabs  = ''.$this->perfix.'log';
+			$errmsg = str_replace("'",'&#39;', $this->error());
+			if(!contain($sql, $stabs))m('log')->addlogs('错误SQL',''.$errmsg.'', 2); //写入日志中方便查看
 		}
 		return $rsbool;
 	}
@@ -157,16 +162,25 @@ abstract class mysql{
 		return $to;
 	}
 	
+	/**
+	*	返回使用SQL_CALC_FOUND_ROWS，统计总记录数
+	*/
 	public function found_rows()
 	{
 		return $this->getsyscount('found_rows');
 	}
 	
+	/**
+	*	返回update,insert,delete上所影响的条数
+	*/
 	public function row_count()
 	{
 		return $this->getsyscount('row_count');
 	}
 	
+	/**
+	*	获取select的sql
+	*/
 	public function getsql($arr=array())
 	{
 		$where 	= $table = $order = $limit = $group = '';
@@ -181,7 +195,7 @@ abstract class mysql{
 		$table	= $this->gettable($table);
 		$sql	= "SELECT $fields FROM $table";
 		if($where!=''){
-			$where = $this->filterstr($where);
+			//$where = $this->filterstr($where);
 			$sql.=" WHERE $where";
 		}
 		if($order!='')$sql.=" ORDER BY $order";
@@ -190,10 +204,11 @@ abstract class mysql{
 		return $sql;
 	}
 	
+	//弃用过滤
 	public function filterstr($str)
 	{
 		$str = strtolower($str);
-		$file= explode(', ','delete,drop,update,union,exec,insert,declare,master,truncate,create,alter,database');
+		$file= explode(',','delete,drop,update,union,exec,insert,declare,master,truncate,create,alter,database');
 		$res = array();
 		foreach($file as $fid)$res[]='';
 		$str = str_replace($file, $res, $str);
@@ -324,6 +339,9 @@ abstract class mysql{
 		return $where;
 	}
 
+	/**
+	*	以$kfied作为主键返回数组
+	*/
 	public function getarr($table, $where='', $fields='*', $kfied='id')
 	{
 		$sql	= $this->getsql(array(
@@ -406,11 +424,11 @@ abstract class mysql{
 	}	
 
 	/**
-		启用事务
+	*	启用事务
 	*/	
 	private function tranbegin($sql)
 	{
-		if($this->errorbool)return false;
+		//if($this->errorbool)return false;
 		if($this->conn == null)$this->connect();
 		$this->iudcount++;
 		if(!$this->tran){
@@ -509,9 +527,10 @@ abstract class mysql{
 	/**
 		返回所有数据库的表
 	*/	
-	public function getalltable()
+	public function getalltable($base='')
 	{	
-		$sql = "select `TABLE_NAME` from information_schema.`TABLES` where `TABLE_SCHEMA`='$this->basename'";
+		if($base=='')$base = $this->basename;
+		$sql = "select `TABLE_NAME` from information_schema.`TABLES` where `TABLE_SCHEMA`='$base'";
 		$arr = $this->getall($sql);
 		$rows= array();
 		foreach($arr as $k=>$rs)$rows[] = $rs['TABLE_NAME'];
@@ -655,9 +674,9 @@ abstract class mysql{
 	}	
 	
 	/**
-		获取所有顶级信息连接起来
-		$table	表名
-		$pfields	上级字段
+	*	获取所有顶级信息连接起来
+	*	@param $table	表名
+	*	@param $pfields	上级字段 $jfield 要连接的字段名 $afid = 值
 	*/
 	private $joinarr=array();
 	public function getpval($table,$pfields,$jfield,$afid,$plit='/',$afield='id',$maxlen=5)

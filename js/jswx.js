@@ -37,11 +37,12 @@ js.wx.prompt=function(tit,msg,fun,nr){
 	this.alert(msg,func,tit, 1);
 }
 js.apiurl = function(m,a,cans){
-	var url=''+apiurl+'api.php?m='+m+'&a='+a+'&adminid='+adminid+'';
+	var url=''+apiurl+'api.php?m='+m+'&a='+a+'';
 	var cfrom='mweb';
-	url+='&device='+device+'';
+	if(adminid)url+='&adminid='+adminid+'';
+	if(device)url+='&device='+device+'';
 	url+='&cfrom='+cfrom+'';
-	url+='&token='+token+'';
+	if(token)url+='&token='+token+'';
 	if(!cans)cans={};
 	for(var i in cans)url+='&'+i+'='+cans[i]+'';
 	return url;
@@ -78,6 +79,10 @@ js.ajax  = function(m,a,d,funs, mod,checs, erfs, glx){
 			js.ajaxbool=false;
 			js.wx.unload();
 			clearTimeout(js.ajax_time);
+			if(ret.code==199){
+				js.location('?d=we&m=login&backurl='+jm.base64encode(location.href)+'');
+				return;
+			}
 			if(ret.code!=200){
 				errsoers(ret.msg);
 			}else{
@@ -155,7 +160,7 @@ js.showmenu=function(d){
 	var h1=$(window).height(),h2=document.body.scrollHeight,s1;
 	if(h2>h1)h1=h2;
 	var col='';
-	var s='<div onclick="$(this).remove();" align="center" id="menulistshow" style="background:rgba(0,0,0,0.6);height:'+h1+'px;width:100%;position:absolute;left:0px;top:0px;z-index:9999" >';
+	var s='<div onclick="$(this).remove();" align="center" id="menulistshow" style="background:rgba(0,0,0,0.6);height:'+h1+'px;width:100%;position:absolute;left:0px;top:0px;z-index:198" >';
 	s+='<div id="menulistshow_s" style="width:'+d.width+'px;margin-top:'+d.top+';position:fixed;-webkit-overflow-scrolling:touch" class="menulist r-border-r r-border-l">';
 	for(var i=0;i<a.length;i++){
 		s+='<div oi="'+i+'" style="text-align:'+d.align+';color:'+a[i].color+'" class="r-border-t">';
@@ -210,10 +215,12 @@ js.wx.actionsheet=function(d){
 	});
 }
 
+js.isqywx=false;
 js.iswxbo=function(){
 	var bo = true;
 	var ua = navigator.userAgent.toLowerCase(); 
 	if(ua.indexOf('micromessenger')<0)bo=false;
+	if(bo && ua.indexOf('wxwork')>0)js.isqywx=true;
 	return bo;
 }
 js.jssdkcall  = function(bo){
@@ -222,14 +229,48 @@ js.jssdkcall  = function(bo){
 js.jssdkstate = 0;
 js.jssdkwixin = function(qxlist,afe){
 	if(!js.iswxbo())return js.jssdkcall(false);
-	if(!afe)$.getScript('http://res.wx.qq.com/open/js/jweixin-1.1.0.js', function(){
+	var wxurl = 'https://res.wx.qq.com/open/js/jweixin-1.1.0.js';
+	if(js.isqywx)wxurl = 'https://res.wx.qq.com/wwopen/js/jsapi/jweixin-1.0.0.js';
+	if(!afe)$.getScript(wxurl, function(){
 		js.jssdkwixin(qxlist, true);
 	});
 	if(!afe)return;
 	var surl= location.href;
-	if(!qxlist)qxlist= ['openLocation','getLocation'];
-	js.ajax('weixin','getsign',{url:jm.base64encode(surl)},function(ret){
-		if(!ret.appId)return js.jssdkcall(false);;
+	if(!qxlist)qxlist= ['openLocation','getLocation','chooseImage','previewImage'];
+	js.ajax('weixin','getsign',{url:jm.base64encode(surl),agentid:js.request('agentid')},function(ret){
+		if(!ret.appId)return js.jssdkcall(false);
+		wx.config({
+			debug: false,
+			appId: ret.appId,
+			timestamp:ret.timestamp,
+			nonceStr: ret.nonceStr,
+			signature: ret.signature,
+			jsApiList:qxlist
+		});
+		wx.ready(function(){
+			if(js.jssdkstate==0)js.jssdkstate = 1;
+			js.jssdkcall(true);
+		});
+		wx.error(function(res){
+			js.jssdkstate = 2;
+		});
+	});
+}
+
+/**
+*	微信公众号jssdk授权
+*/
+js.jssdkwxgzh = function(qxlist,afe){
+	if(!js.iswxbo())return js.jssdkcall(false);
+	var wxurl = 'https://res.wx.qq.com/open/js/jweixin-1.2.0.js';
+	if(!afe)$.getScript(wxurl, function(){
+		js.jssdkwxgzh(qxlist, true);
+	});
+	if(!afe)return;
+	var surl= location.href;
+	if(!qxlist)qxlist= ['openLocation','getLocation','chooseImage','previewImage'];
+	js.ajax('wxgzh','getsign',{url:jm.base64encode(surl)},function(ret){
+		if(!ret.appId)return js.jssdkcall(false);
 		wx.config({
 			debug: false,
 			appId: ret.appId,

@@ -1,4 +1,7 @@
 <?php
+/**
+*	模块.印章申请
+*/
 class flow_sealaplClassModel extends flowModel
 {
 	//读取印章保管人来审批
@@ -19,17 +22,4 @@ class flow_sealaplClassModel extends flowModel
 		return $rs;
 	}
 	
-	protected function flowbillwhere($uid, $lx)
-	{
-		$key  	= $this->rock->post('key');
-		$where 	= '';
-		if($key!='')$where = m('admin')->getkeywhere($key, 'b.', "or a.`sealname` like '%$key%'");
-		$table 	= '`[Q]sealapl` a left join `[Q]admin` b on a.uid=b.id';
-		return array(
-			'where' => $where,
-			'table'	=> $table,
-			'fields'=> 'a.*,b.deptname,b.name',
-			'order' => 'a.`optdt` desc'
-		);
-	}
 }

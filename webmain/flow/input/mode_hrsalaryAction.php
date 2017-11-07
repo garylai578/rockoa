@@ -1,5 +1,5 @@
 <?php
-
+//薪资
 class mode_hrsalaryClassAction extends inputAction{
 	
 
@@ -35,7 +35,7 @@ class mode_hrsalaryClassAction extends inputAction{
 		$a		= m('kaoqin')->getkqtotal($xuid, $month);
 		$lmonth	= c('date')->adddate($month.'-01','m',-1,'Y-m');
 		$sfielss= 'base,postjt,skilljt,travelbt,telbt,socials';
-		$lrs 	= m('hrsalary')->getone("`xuid`='$xuid' and `month`='$lmonth'", $sfielss);
+		$lrs 	= m('hrsalary')->getone("`xuid`='$xuid' and `status`<>5", $sfielss,'`month` desc');
 		$sm 	= '';
 		if($lrs){
 			$sfiels 	= explode(',',$sfielss);

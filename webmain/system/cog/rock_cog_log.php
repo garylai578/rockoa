@@ -11,7 +11,12 @@ $(document).ready(function(){
 		},{
 			text:'操作人',dataIndex:'optname',sortable:true
 		},{
-			text:'备注',dataIndex:'remark',align:'left'
+			text:'备注',dataIndex:'remark',align:'left',renderer:function(v,d){
+				if(d.url && d.level==2)v+='<br>'+d.url+'';
+				return v;
+			},renderstyle:function(){
+				return 'word-wrap:break-word;word-break:break-all;white-space:normal;';
+			}
 		},{
 			text:'操作时间',dataIndex:'optdt',sortable:true
 		},{
@@ -21,8 +26,15 @@ $(document).ready(function(){
 		},{
 			text:'Device',dataIndex:'device'
 		},{
+			text:'级别',dataIndex:'level'
+		},{
 			text:'ID',dataIndex:'id',sortable:true
-		}]
+		}],
+		rendertr:function(d){
+			var s = '';
+			if(d.level==2)s='style="color:red"';
+			return s;
+		}
 	});
 	
 

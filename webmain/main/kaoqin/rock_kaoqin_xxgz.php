@@ -18,6 +18,7 @@ $(document).ready(function(){
 		itemdblclick:function(d){
 			pid = d.id;
 			get('set_{rand}').disabled=false;
+			get('setadds_{rand}').disabled=false;
 			b.setparams({pid:pid},true);
 		}
 	});
@@ -83,7 +84,7 @@ $(document).ready(function(){
 		},
 		clickwins:function(o1,lx){
 			var h = $.bootsform({
-				title:'休息日',height:180,width:400,
+				title:'['+a.changedata.name+']的休息日',height:180,width:400,
 				tablename:'kqxxsj',isedit:lx,submitfields:'dt,pid',
 				params:{otherfields:'pid='+pid+''},
 				items:[{
@@ -136,14 +137,14 @@ $(document).ready(function(){
 		</div>
 		<div class="blank10"></div>
 		<div id="view_{rand}"></div>
-		<div class="tishi">双击查看设置的日期</div>
+		<div class="tishi">先双击查看设置休息日的日期，在添加休息日</div>
 	</td>
 	<td width="10"><div style="width:20px;overflow:hidden"></div></td>
 	<td width="60%">
 		<div>
 		<table width="100%"><tr>
 			<td>
-				<button class="btn btn-primary" click="clickwins,0" type="button"><i class="icon-plus"></i> 新增</button>
+				<button class="btn btn-primary" id="setadds_{rand}" disabled click="clickwins,0" type="button"><i class="icon-plus"></i> 加休息日</button>
 			</td>
 			<td style="padding-left:10px">
 				<button class="btn btn-info" id="set_{rand}" click="byuexiux" disabled type="button">设置本月周六日为休息日</button>

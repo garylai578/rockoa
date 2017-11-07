@@ -37,11 +37,23 @@ $(document).ready(function(){
 		},{
 			text:'写说明',dataIndex:'issm',type:'checkbox',editor:true,sortable:true
 		},{
+			text:'显示在详情页',dataIndex:'iszs',type:'checkbox',editor:true,sortable:true
+		},{
 			text:'ID',dataIndex:'id'
 		}],
 		load:function(a){
 			if(!bools){
-				js.setselectdata(get('mode_{rand}'),a.flowarr,'id');
+				var s = '<option value="0">-选择模块-</option>',len=a.flowarr.length,i,csd,types='';
+				for(i=0;i<len;i++){
+					csd = a.flowarr[i];
+					if(types!=csd.type){
+						if(types!='')s+='</optgroup>';
+						s+='<optgroup label="'+csd.type+'">';
+					}
+					s+='<option value="'+csd.id+'">'+csd.name+'</option>';
+					types = csd.type;
+				}
+				$('#mode_{rand}').html(s);
 			}
 			bools=true;
 		},
@@ -102,4 +114,4 @@ $(document).ready(function(){
 
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
-<div class="tishi">此功能设置的是对应单据操作菜单，如pc网页版，客户端打开应用显示数据，右键显示操作菜单的。</div>
+<div class="tishi">此功能设置的是对应单据操作菜单，如pc桌面版，客户端打开应用显示数据，右键显示操作菜单的。</div>

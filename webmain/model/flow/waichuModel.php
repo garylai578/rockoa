@@ -13,6 +13,7 @@ class flow_waichuClassModel extends flowModel
 			$s = $this->getdklocation($rs['outtime'], $rs['intime']);
 			$rs['location'] = $s;
 		}
+		
 		return $rs;
 	}
 	
@@ -28,23 +29,16 @@ class flow_waichuClassModel extends flowModel
 	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$dt 	= $this->rock->date;
-		$key 	= $this->rock->post('key');
-		$month 	= $this->rock->post('month');
-		$where 	= "a.`uid`=$uid and a.`intime`>'$dt 00:00:00' and a.`outtime`<'$dt 23:59:59'";
-		if($lx=='myall'){
-			$where 	= "a.`uid`=$uid";
+		$month	= $this->rock->post('month');
+		$where 	= '';
+		if($month!=''){
+			$where.=" and `outtime` like '$month%'";
 		}
-		if($lx=='all'){
-			$where = '1=1';
-		}
-		if($key!='')$where.= m('admin')->getkeywhere($key, 'b.');
-		if($month !='')$where.=" and a.`outtime` like '$month%'";
+
 		return array(
-			'where' => 'and '.$where,
-			'fields'=> 'a.*,b.name,b.deptname,b.ranking',
-			'table'	=> '`[Q]kqout` a left join `[Q]admin` b on a.`uid`=b.`id`',
-			'order' => 'a.`id` desc'
+			'where' => $where
 		);
 	}
+	
+	
 }

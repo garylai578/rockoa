@@ -2,8 +2,8 @@
 /**
 *	【文档】应用的接口
 *	createname：雨中磐石
-*	homeurl：http://xh829.com/
-*	Copyright (c) 2016 rainrock (xh829.com)
+*	homeurl：http://www.rockoa.com/
+*	Copyright (c) 2016 rainrock (www.rockoa.com)
 *	Date:2016-08-08
 */
 class wordClassAction extends apiAction
@@ -42,12 +42,25 @@ class wordClassAction extends apiAction
 		}else{
 			$where 	= " and a.optid=".$this->adminid." and a.typeid='$typeid'";
 		}
-		if($slx=='wfx')$where 	= " and a.optid=".$this->adminid." and a.shate is not null";
+		//我共享的
+		if($slx=='wfx'){
+			$alsid	= $this->option->getreceiddownall($this->adminid, $this->adminid);
+			$where 	= " and a.optid=".$this->adminid." and a.shate is not null";
+			if($alsid != ''){
+				$where = ' and ((1 '.$where.') or a.`typeid` in('.$alsid.') )';
+			}
+		}
+		//共享给我的
 		if($slx=='fxgw'){
+			$alsid	= $this->option->getreceiddownall($this->adminid, 0);
 			$where 	= m('admin')->getjoinstrs('a.shateid', $this->adminid, 1);
+			if($alsid != ''){
+				$where = ' and ((1 '.$where.') or a.`typeid` in('.$alsid.') )';
+			}
 		}
 		
 		$arr 	= $this->db->getall("select a.fileid,a.shate,a.typeid,b.filepath,a.optname,a.optid,a.optdt,b.filename,b.fileext,b.filesizecn from `[Q]word` a left join `[Q]file` b on a.fileid=b.id where b.id is not null $where order by a.`id` desc");
+		
 		$rows 	= array_merge($rows, $arr);			
 		$this->showreturn($rows);
 	}

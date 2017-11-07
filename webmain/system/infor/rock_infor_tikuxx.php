@@ -7,9 +7,7 @@ $(document).ready(function(){
 	var at = $('#optionview_{rand}').bootstree({
 		url:js.getajaxurl('gettreedata','option','system',{'num':'knowtikutype'}),
 		columns:[{
-			text:'题库分类',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%'
-		},{
-			text:'ID',dataIndex:'id',width:'20%'
+			text:'题库分类',dataIndex:'name',align:'left',xtype:'treecolumn'
 		}],
 		load:function(d){
 			if(sspid==0){
@@ -28,6 +26,8 @@ $(document).ready(function(){
 		tablename:modenum,celleditor:false,autoLoad:false,modenum:modenum,fanye:true,params:{atype:'xuexi'},
 		columns:[{
 			text:'题名',dataIndex:'title',editor:false,align:'left'
+		},{
+			text:'分类',dataIndex:'typename'
 		},{
 			text:'类型',dataIndex:'type'
 		},{
@@ -82,7 +82,7 @@ $(document).ready(function(){
 	  </div>
 	</div>  
 </td>
-<td width="10"></td>
+<td width="10" nowrap><div style="width:10px">&nbsp;</div></td>
 <td>	
 	<div>
 	<table width="100%"><tr>
@@ -92,7 +92,7 @@ $(document).ready(function(){
 		</td>
 		
 		<td style="padding-left:10px">
-		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="题名">
+		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="题名/分类">
 		</td>
 		<td style="padding-left:10px">
 			<button class="btn btn-default" click="search" type="button">搜索</button> 

@@ -37,8 +37,8 @@ class mode_emailmClassAction extends inputAction{
 			if($type == 1){
 				$emsa = $this->getrecename($arr['receid']);
 				if($emsa != ''){
-					$ccsa = $this->getrecename($arr['ccid']);
-					$fjar = m('file')->getfilepath('emailm', $id);
+					$ccsa 	= $this->getrecename($arr['ccid']);
+					$fjar 	= m('file')->getfilepath('emailm', $id);
 					m('email')->sendemailout($this->adminid, array(
 						'title' 	=> $arr['title'],
 						'body' 		=> $arr['content'],
@@ -48,7 +48,7 @@ class mode_emailmClassAction extends inputAction{
 						'ccname' 	=> $ccsa[1],
 						'attachpath'=> $fjar[0],
 						'attachname'=> $fjar[1],
-					));
+					), 1);//自己发送，不异步
 				}
 			}
 		}
@@ -99,6 +99,15 @@ class mode_emailmClassAction extends inputAction{
 			);
 		}
 		return $row;
+	}
+	
+	public function getzfcontAjax()
+	{
+		$zfid 	= (int)$this->get('zfid');
+		$rs 	= m('emailm')->getone($zfid,'title,content');
+		$zffes	= m('file')->copyfile('emailm', $zfid); //转发附件
+		$rs['filers'] = $zffes;
+		$this->returnjson($rs);
 	}
 }	
 			

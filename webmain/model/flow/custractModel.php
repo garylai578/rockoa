@@ -5,6 +5,7 @@ class flow_custractClassModel extends flowModel
 	public function initModel(){
 		$this->typearr		= array('收款合同','付款合同');
 		$this->typesarr		= array('收','付');
+		$this->statearr		= c('array')->strtoarray('待生效|blue,生效中|green,已过期|#888888');
 		$this->dtobj		= c('date');
 		$this->crmobj		= m('crm');
 	}
@@ -15,14 +16,18 @@ class flow_custractClassModel extends flowModel
 		$rs['type'] = $this->typearr[$type];
 		$statetext	= '';
 		$dt 		= $this->rock->date;
+		$htstatus	= 0;
 		if($rs['startdt']>$dt){
 			$statetext='待生效';
 		}else if($rs['startdt']<=$dt && $rs['enddt']>=$dt){
 			$jg = $this->dtobj->datediff('d', $dt, $rs['enddt']);
 			$statetext='<font color=green>生效中</font><br><font color=#888888>'.$jg.'天过期</font>';
 			if($jg==0)$statetext='<font color=green>今日到期</font>';
+			$htstatus = 1;
 		}else if($rs['enddt']<$dt){
 			$statetext='<font color=#888888>已过期</font>';
+			$rs['ishui'] 	= 1;
+			$htstatus = 2;
 		}
 		$rs['statetext']	= $statetext;
 		$nrss	 			= $this->crmobj->ractmoney($rs);
@@ -36,39 +41,24 @@ class flow_custractClassModel extends flowModel
 			$dsmoney		= '待'.$ts.'<font color=#ff6600>'.$moneys.'</font>';
 		}
 		$rs['moneys']		= $dsmoney;
+		$rs['htstatus']		= $htstatus;
 		return $rs;
 	}
 	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$where 	= '`uid`='.$uid.'';
-		$lxa 	= explode('_', $lx);
-		if($lxa[0]=='down'){
-			$where = m('admin')->getdownwheres('uid', $uid, 0);
+		
+		$month	= $this->rock->post('dt');
+		$where 	= '';
+		if($month!=''){
+			$where =" and `signdt` like '$month%'";
 		}
-		$lx 	= $lxa[1];
-		$key	= $this->rock->post('key');
-		if($lx=='ygq'){
-			$where.=" and `enddt`<'{$this->rock->date}'";
-		}
-		//全部收付款
-		if($lx=='qbsfk'){
-			$where.= ' and `ispay`=1';
-		}
-		//部分收付款
-		if($lx=='bfsfk'){
-			$where.= ' and `ispay`=2';
-		}
-		//待收付款
-		if($lx=='daisfk'){
-			$where.= ' and `ispay`=0';
-		}
-		if($key!=''){
-			$where.=" and (`num`='$key' or `custname` like '%$key%' or `optname`='$key')";
-		}
+	
+		
 		return array(
-			'where' => 'and '.$where,
-			'order' => '`optdt` desc'
+			'where' => $where,
+			'order' => '`optdt` desc',
+			'orlikefields' => 'custname'
 		);
 	}
 	
@@ -96,6 +86,34 @@ class flow_custractClassModel extends flowModel
 				$arr['money'] 	= $money;
 				m('custfina')->insert($arr);
 			}
+		}
+	}
+	
+	
+	/**
+	*	客户合同到期提醒
+	*/
+	public function custractdaoqi()
+	{
+		$dt 	= $this->rock->date;
+		$rows 	= $this->getall("status=1 and `enddt` is not null and `enddt`>='$dt'",'uid,num,custname,enddt','`uid`');
+		$txlist = m('option')->getval('crmtodo','0,3,7,15,30');//提醒的时间
+		$txarr 	= explode(',', $txlist);
+		$dtobj 	= c('date');
+		$txrows = array();
+		foreach($rows as $k=>$rs){
+			$jg = $dtobj->datediff('d', $dt, $rs['enddt']);
+			$uid= $rs['uid'];
+			if(in_array($jg, $txarr)){
+				$strs = ''.$jg.'天后('.$rs['enddt'].')';
+				if($jg==1)$strs='明天';
+				if($jg==0)$strs='今天';
+				if(!isset($txrows[$uid]))$txrows[$uid]='';
+				$txrows[$uid] .= '客户['.$rs['custname'].']的[合同:'.$rs['num'].']将在'.$strs.'到期;';
+			}
+		}
+		foreach($txrows as $uid=>$cont){
+			$this->push($uid, '客户,CRM', $cont, '客户合同到期提醒');
 		}
 	}
 }

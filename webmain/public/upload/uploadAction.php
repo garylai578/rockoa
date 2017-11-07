@@ -27,7 +27,7 @@ class uploadClassAction extends Action{
 		$maxsize= (int)$this->get('maxsize', 5);
 		$uptype	= $this->get('uptype', '*');
 		$thumbnail	= $this->get('thumbnail');
-		$upimg->initupfile($uptype, 'upload|'.date('Y-m').'', $maxsize);
+		$upimg->initupfile($uptype, ''.UPDIR.'|'.date('Y-m').'', $maxsize);
 		$upses	= $upimg->up('file');
 		$arr 	= c('down')->uploadback($upses, $thumbnail);
 		$this->returnjson($arr);
@@ -63,7 +63,7 @@ class uploadClassAction extends Action{
 	{
 		$this->display = false;
 		$upfile = c('upfile');
-		$upfile->initupfile('jpg|png|gif|jpeg','upload|'.date('Y-m').'', 5);
+		$upfile->initupfile('jpg|png|gif|jpeg',''.UPDIR.'|'.date('Y-m').'', 5);
 		$upses	= $upfile->up('imgFile');
 		if(is_array($upses)){
 			$url = $upses['allfilename'];

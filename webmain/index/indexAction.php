@@ -5,9 +5,9 @@ class indexClassAction extends Action{
 	{
 		$afrom 			= $this->get('afrom');
 		$this->tpltype	= 'html';
-		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`type`,`style`');
+		$my			= $this->db->getone('[Q]admin', "`id`='$this->adminid'",'`face`,`id`,`name`,`ranking`,`deptname`,`deptallname`,`type`,`style`');
 		$allmenuid	= m('sjoin')->getuserext($this->adminid, $my['type']);
-		
+		m('dept')->online(1);
 		$mewhere	= '';
 		$isadmin	= 1;
 		$myext		= $allmenuid;
@@ -20,14 +20,19 @@ class indexClassAction extends Action{
 			'isadmin'			=> $isadmin
 		));
 		$this->smartydata['topmenu'] 	= m('menu')->getall("`pid`=0 and `status`=1 $mewhere order by `sort`");
-		
-		
-		
-		$this->smartydata['showkey']	= $this->jm->base64encode($this->jm->getkeyshow());
+		$homeurl 						= $this->jm->base64decode($this->get('homeurl'));
+		$homename 						= $this->jm->base64decode($this->get('homename'));
+		$showkey						= $this->jm->base64encode($this->jm->getkeyshow());
+		if($homeurl=='')$showkey = '';
+		$this->smartydata['showkey']	= $showkey;
+		$this->smartydata['homeurl']	= $homeurl;
+		$this->smartydata['homename']	= $homename;
+		$this->smartydata['admintype']	= $isadmin;
 		$this->smartydata['my']			= $my;
 		$this->smartydata['afrom']		= $afrom;
 		$this->smartydata['face']		= $this->rock->repempt($my['face'], 'images/noface.png');
 		$this->smartydata['style']		= $this->rock->repempt($my['style'], '0');
+		if(!isempt($homename))$this->title = $homename;
 	}
 	
 	private function menuwheres()
@@ -115,6 +120,30 @@ class indexClassAction extends Action{
 		$file = ''.P.'/'.$surl.'.php';
 		if(!file_exists($file))$file = ''.P.'/'.$surl.'.shtml';
 		if(!file_exists($file))exit('404 not found '.$surl.'');
+		if(contain($surl,'home/index/rock_index'))$this->showhomeitems();//首页的显示
 		$this->displayfile = $file;
+	}
+	//显示桌面项目
+	private function showhomeitems()
+	{
+		$rows = m('homeitems')->getmyshow();
+		if(!$rows)$rows = json_decode('[{"num":"kjrk","row":"0","name":"快捷入口","sort":"0"},{"num":"gong","row":"0","name":"通知公告","sort":"1"},{"num":"kqdk","row":"0","name":"考勤打卡","sort":"2"},{"num":"gwwx","row":"0","receid":"u1","recename":"管理员","name":"微信办公","sort":"10"},{"num":"apply","row":"1","name":"我的申请","sort":"0"},{"num":"meet","row":"1","name":"今日会议","sort":"2"},{"num":"syslog","receid":"u1","recename":"管理员","row":"1","name":"系统日志","sort":"3"},{"num":"about","row":"1","receid":"u1","recename":"管理员","name":"关于信呼","sort":"10"}]', true);
+		$homeitems  = $homearrs = array(); 
+		foreach($rows as $k=>$rs){
+			$homeitems[$rs['row']][] = $rs['num'];
+			$homearrs[] = $rs['num'];
+		}
+		$this->assign('homeitems', $homeitems);
+		$this->assign('homearrs', $homearrs);
+	}
+	
+	//开发时快速打开文件
+	public function openfileAjax()
+	{
+		$file = $this->rock->jm->base64decode($this->get('file'));
+		$str  = ''.ROOT_PATH.'/'.$file.'';
+		$bo   = c('socket')->udpsend($str,'cmd');
+		if(is_string($bo))return $bo;
+		return 'ok';
 	}
 }

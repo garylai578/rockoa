@@ -1,7 +1,11 @@
-<?php 
+<?php
 /**
-*	api的接口请求访问：http://我的域名/api.php/index/test
+*	api的入口地址请求访问，访问方法：http://我的域名/api.php?m=index&a=方法
+*	主页：http://www.rockoa.com/
+*	软件：信呼
+*	作者：雨中磐石(rainrock)
 */
+define('ENTRANCE', 'api');
 include_once('config/config.php');
 $_paths = '';
 $d		= 'task';$m	= 'index';$a = 'index';

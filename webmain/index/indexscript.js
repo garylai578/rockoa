@@ -4,7 +4,7 @@
 	resizewh();
 	$(window).resize(resizewh);
 	clickhome();
-
+	if(show_key!='')jm.setJmstr(jm.base64decode(show_key));
 	var a = $("span[pmenuid]");
 	a.click(function(){
 		if(js.ajaxbool)return;
@@ -29,7 +29,7 @@
 	}];
 	if(js.request('afrom')=='')ddsata.push({name:'<i class="icon-signout"></i> 退出',num:'exit'});
 	$('#indexuserl').rockmenu({
-		width:170,top:50,
+		width:150,top:50,
 		data:ddsata,
 		itemsclick:function(d){
 			if(d.num=='exit'){
@@ -60,7 +60,27 @@
 	$('#indesearchmenu').click(function(){
 		_searchmenus();
 	});
+	
+	function _loadjsurl(){
+		js.importjs('web/res/mode/echarts/echarts.common.min.js');
+	}
+	setTimeout(_loadjsurl,1000);
+	
+	//每次ajax请求时判断
+	$.ajaxSetup({
+		statusCode:{
+			200:function(){
+			}
+		}
+	});
+	//禁止后退
+	$(document.body).keydown(function(e){
+		var lxs = e.target.nodeName.toLowerCase();
+		var bo  = (lxs=='input' || lxs=='textarea');
+		if(e.keyCode==8 && !bo)return false;
+	});
 }
+
 
 function _searchmenus(){
 	js.prompt('搜索菜单','请输入搜索菜单名：',function(jg,txt){
@@ -77,7 +97,7 @@ function _searchmenus(){
 function loadmenu(o){
 	var o1 = $(o);
 	o1.addClass('spanactive');
-	var id = o1.attr('pmenuid');
+	var id = o1.attr('pmenuid');if(!id)return;
 	$('#menulisttop').html(o1.html());
 	$('#menulist').html('<div style="padding:30px;" align="center"><img src="images/mloading.gif"></div>');
 	js.ajax(js.getajaxurl('getmenu','index'),{pid:id}, function(da){
@@ -110,22 +130,29 @@ function opentixiang(){
 }
 
 function clickhome(){
-	addtabs({num:'home',url:'home,index',icons:'home',name:'首页',hideclose:true});
+	var ad = {num:'home',url:'home,index',icons:'home',name:'首页',hideclose:true};
+	if(homeurl!='')ad.url= homeurl;
+	if(homename!='')ad.name= homename;
+	addtabs(ad);
 	return false;
 }
 
 function resizewh(){
-	var _lw = $('#indexmenu').width();
-	if(get('indexmenu').style.display=='none'){
-		_lw = $('#indexmenuss').width();
+	var _lw = 0;
+	if(get('indexmenu')){
+		_lw = $('#indexmenu').width()+5;
+		if(get('indexmenu').style.display=='none'){
+			_lw = $('#indexmenuss').width()+5;
+		}
 	}
-	var w = winWb()-_lw-5;
-	var h = winHb();
+	var w = winWb()-_lw;
+	var h = winHb(),_ht=0;
+	if(get('topheaderid'))_ht=50;
 	viewwidth = w; 
-	viewheight = h-50-44; 
+	viewheight = h-_ht-44;
 	$('#indexcontent').css({width:''+viewwidth+'px',height:''+(viewheight)+'px'});
 	$('#tabsindexm').css({width:''+viewwidth+'px'});
-	var nh = h-50;
+	var nh = h-_ht;
 	$('#indexmenu').css({height:''+nh+'px'});
 	$('#indexsplit').css({height:''+nh+'px'});
 	$('#indexmenuss').css({height:''+nh+'px'});
@@ -186,6 +213,15 @@ function closenowtabs(){
 	closetabs(nu);
 }
 
+function nowtabssettext(srt,icos){
+	var num=nowtabs.num;
+	var txt = srt;
+	tabsarr[num].name = srt;
+	nowtabs.name = srt;
+	if(icos)txt='<i class="icon-'+icos+'"></i>  '+txt+'';
+	$('#tabs_'+num+' font').html(txt);
+}
+
 function changetabs(num,lx){
 	if(coloebool)return;
 	if(!lx)lx=0;
@@ -196,6 +232,7 @@ function changetabs(num,lx){
 		$('#content_'+num+'').show();
 		$('#tabs_'+num+'').addClass('accive');
 		nowtabs = tabsarr[num];
+		if(typeof(nowtabs.onshow)=='function')nowtabs.onshow();
 		bo = true;
 	}
 	opentabs.push(num);
@@ -219,18 +256,77 @@ function _pdleftirng(){
 	var mw=get('tabs_title').scrollWidth;
 	if(mw>viewwidth){$('.jtcls').show();}else{$('.jtcls').hide();}
 }
+
+function addiframe(a){
+	a.url = 'index,iframe,url='+jm.base64encode(a.url)+'';
+	addtabs(a);
+}
+
+
+//选择卡右键
+function tabsright(num,e){
+	function _closeother(nu){
+		var nus,d1;
+		for(nus in tabsarr){
+			d1 = tabsarr[nus];
+			if(d1 && !d1.hideclose && nus!=nu)closetabs(nus);
+		}
+	}
+	if(typeof(tabsrights)=='undefined')tabsrights=$.rockmenu({
+		width:150,
+		data:[],
+		itemsclick:function(d){
+			var lx = d.lx,num=d.num;
+			if(lx==0)closetabs(num);
+			if(lx==1){
+				var d1 = tabsarr[num],s1=''+PROJECT+'/'+d1.urlpath+'';
+				var s  = '['+d1.name+']页面地址是：'+s1+'<div style="word-wrap:break-word;">，在[系统→基础管理→菜单管理]设置URL地址为：'+d1.url+'';
+				if(HOST=='127.0.0.1')s+='&nbsp;<a onclick="_openfile(\''+jm.base64encode(s1)+'\')" href="javascript:;">[打开]</a>';
+				s+='</div>';
+				js.alert(s);
+			}
+			if(lx==2)_closeother(num);
+			if(lx==3)location.reload();
+			if(lx==4)_opentabls(d.tobj);
+		}
+	});
+	var to= tabsarr[num],d = [];
+	if(!to.hideclose)d.push({'name':'关闭','num':num,lx:0});
+	if(num==nowtabs.num)d.push({'name':'关闭其它页面','num':num,lx:2});
+	if(admintype==1)d.push({'name':'查看页面地址','num':num,lx:1});
+	if(homeurl=='')d.push({'name':'新窗口打开',tobj:to,'num':num,lx:4});
+	d.push({'name':'全部刷新','num':num,lx:3});
+	tabsrights.setData(d);
+	tabsrights.showAt(e.clientX,e.clientY+5);
+}
+function _opentabls(d){
+	var url = '?homeurl='+jm.base64encode(d.url)+'&homename='+jm.base64encode(d.name)+'';
+	window.open(url);
+}
+
+//开发时打开文件
+function _openfile(s){
+	js.ajax(js.getajaxurl('openfile','index'),{file:s},function(ds){
+		if(ds!='ok')js.msg('msg', ds);
+	},'get');
+}
+
+/**
+*	添加选择卡
+*/
 function addtabs(a){
 	var url = a.url,
 		num	= a.num;
 	if(isempt(url))return false;
 	if(url.indexOf('add,')==0){openinput(a.name,url.substr(4));return;}
-	if(url.indexOf('http')==0){window.open(url);return;}
+	if(url.indexOf('open:')==0){window.open(url.substr(5));return;}
+	if(url.indexOf('http')==0 || url.substr(0,1)=='?'){addiframe(a);return;}
 	nowtabs = a;
 	if(changetabs(num))return true;
 
-	var s = '<td temp="tabs" nowrap onclick="changetabs(\''+num+'\',1)" id="tabs_'+num+'" class="accive">';
+	var s = '<td temp="tabs" oncontextmenu="tabsright(\''+num+'\',event);return false;"; nowrap onclick="changetabs(\''+num+'\',1)" id="tabs_'+num+'" class="accive"><font>';
 	if(a.icons)s+='<i class="icon-'+a.icons+'"></i>  ';
-	s+=a.name;
+	s+=a.name+'</font>';
 	if(!a.hideclose)s+='<span onclick="closetabs(\''+num+'\')" class="icon-remove"></span>';
 	s+='</td>';
 	objtabs.append(s);
@@ -256,7 +352,7 @@ function addtabs(a){
 	if(urlpms!='')urlpms = urlpms.substr(1);
 	var bgs = '<div id="mainloaddiv" style="width:'+viewwidth+'px;height:'+viewheight+'px;overflow:hidden;background:#000000;color:white;filter:Alpha(opacity=20);opacity:0.2;z-index:3;position:absolute;left:0px;line-height:'+viewheight+'px;top:0px;" align="center"><img src="images/mloading.gif"  align="absmiddle">&nbsp;加载中...</div>';
 	$('#indexcontent').append(bgs);
-	
+	a.urlpath = url+'.php';
 	objcont.append('<div temp="content" id="content_'+num+'"></div>');
 	$.ajax({
 		url:'?m=index&a=getshtml&surl='+jm.base64encode(url)+'',

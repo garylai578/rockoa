@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var atype=params.atype;
 	var a = $('#view_{rand}').bootstable({
 		tablename:'location',celleditor:true,fanye:true,sort:'id',dir:'desc',
-		modedir:'{mode}:{dir}',params:{'atype':atype},storeafteraction:'locationaftershow',storebeforeaction:'locationbeforeshow',
+		modedir:'{mode}:{dir}',params:{'atype':atype},modenum:'kqdw',
 		columns:[{
 			text:'部门',dataIndex:'deptname',align:'left'
 		},{
@@ -15,12 +15,24 @@ $(document).ready(function(){
 		},{
 			text:'星期',dataIndex:'week'
 		},{
+			text:'定位类型',dataIndex:'type',sortable:true
+		},{
 			text:'地址',dataIndex:'label'
+		},{
+			text:'精确到',dataIndex:'precision'
 		},{
 			text:'说明',dataIndex:'explain',align:'left'
 		},{
+			text:'图片',dataIndex:'imgpath',renderer:function(v){
+				var s='&nbsp;';
+				if(!isempt(v))s='<img height="60" onclick="$.imgview({url:this.src})" src="'+v+'">';
+				return s;
+			}
+		},{
 			text:'',dataIndex:'opt',renderer:function(v,d){
-				return '<a onclick="js.locationshow('+d.id+')" href="javascript:;">地图上打开</a>';
+				var s='&nbsp;';
+				if(!isempt(d.location_x))s='<a onclick="js.locationshow('+d.id+')" href="javascript:;">地图上打开</a>';
+				return s;
 			}
 		}]
 	});

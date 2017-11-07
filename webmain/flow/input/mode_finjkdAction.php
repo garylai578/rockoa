@@ -16,5 +16,42 @@ class mode_finjkdClassAction extends inputAction{
 		if(!$rs)$rs='';
 		$this->returnjson($rs);
 	}
+	
+	
+	//借款统计
+	public function jktotalbeforeshow($table)
+	{
+	
+		$kjk	= $this->post('kjk','0');
+		$key	= $this->post('key');
+		$atype	= $this->post('atype');
+		$where 	= '';
+		
+		if(!isempt($key))$where.=" and (`name` like '%$key%' or `ranking` like '%$key%' or `deptname` like '%$key%')";
+		if($kjk=='1'){
+			$str   = m('fina')->getjkdwhere();
+			$where.=" and `id` in($str)";
+		}
+		if($atype=='my')$where='and id='.$this->adminid.'';
+		
+		$fields = 'id,name,deptname,ranking,workdate,state';
+		return array('where'=>$where,'fields'=>$fields,'order'=>'`id`');
+	}
+	
+	public function jktotalaftershow($table, $rows)
+	{
+		$zta 	= m('flow:userinfo');
+		$uids 	= '0';
+		foreach($rows as $k=>$rs){
+			if($rs['state']==5)$rows[$k]['ishui']=1;
+			$rows[$k]['state'] = $zta->getuserstate($rs['state']);
+			$uids.=','.$rs['id'].'';
+		}
+		if($uids!='0')$rows = m('fina')->totalfkd($rows, $uids);
+		
+		return array(
+			'rows' => $rows
+		);
+	}
 }	
 			

@@ -8,14 +8,13 @@ $(document).ready(function(){
 		window:false,rand:'{rand}',tablename:'flow_element',
 		url:publicsave('{mode}','{dir}'),
 		params:{otherfields:'mid='+mid+''},
-		submitfields:'name,fields,fieldstype,dev,savewhere,sort,islu,isbt,iszs,data,iszb,attr,lens',
-		requiredfields:'name,fields,fieldstype,lens',aftersaveaction:'elemensavefields',
+		submitfields:'name,fields,fieldstype,dev,savewhere,placeholder,sort,istj,ispx,isalign,issou,islu,islb,isbt,iszs,data,iszb,attr,lens,gongsi,isonly,isdr',
+		requiredfields:'name,fields,fieldstype,lens',aftersaveaction:'elemensavefields',beforesaveaction:'elemensavefieldsbefore',
 		success:function(){
 			closenowtabs();
 			try{guanelementedit.reload();}catch(e){}
 		},
-		submitcheck:function(){
-			
+		submitcheck:function(d){
 			
 		}
 	});
@@ -43,6 +42,9 @@ $(document).ready(function(){
 		var val = this.value;
 		
 	});
+	blursehs{rand}=function(o1){
+		o1.value = o1.value.replace('select ','[SQL]');
+	}
 });
 
 </script>
@@ -74,7 +76,7 @@ $(document).ready(function(){
 		</tr>
 		
 		<tr>
-			<td  align="right" width="15%" nowrap ><font color=red>*</font> 字段类型：</td>
+			<td  align="right" width="15%" nowrap ><font color=red>*</font> <a target="_blank" href="<?=URLY?>view_element.html">?字段元素类型</a>：</td>
 			<td width="35%"  class="tdinput"><select name="fieldstype" class="form-control"><option value="">-字段-</option></select></td>
 			
 			<td  width="15%" align="right" nowrap>默认值：</td>
@@ -83,19 +85,27 @@ $(document).ready(function(){
 		
 		<tr>
 			<td align="right">字段分类：</td>
-			<td class="tdinput"><select name="iszb" class="form-control"><option value="0">主表字段</option><option value="1">多行子表字段</option></select></td>
+			<td class="tdinput"><select name="iszb" class="form-control"><option value="0">主表字段</option><option value="1">第1个多行子表字段</option><option value="2">第2个多行子表字段</option><option value="3">第3个多行子表字段</option><option value="4">第4个多行子表字段</option><option value="5">第5个多行子表字段</option><option value="6">第6个多行子表字段</option></select></td>
 			<td align="right">字段长度：</td>
 			<td class="tdinput"><input name="lens" value="0" maxlength="4" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
 		</tr>
 	
 		<tr>
 			<td align="right">数据源：</td>
-			<td class="tdinput" colspan="3"><textarea  name="data" style="height:60px" class="form-control"></textarea></td>
+			<td class="tdinput" colspan="3"><textarea placeholder="可以SQL,数据选项编号,自定义方法等" name="data" style="height:60px" onblur="blursehs{rand}(this)" class="form-control"></textarea></td>
 		</tr>
-	
+		
 		<tr>
 			<td align="right">属性：</td>
-			<td class="tdinput" colspan="3"><textarea  name="attr" style="height:60px" class="form-control"></textarea><font color=#888888>如果只读填写：readonly</font></td>
+			<td class="tdinput" colspan="3"><input name="attr" placeholder="如果只读填写：readonly" class="form-control"></td>
+		</tr>
+		<tr>
+			<td align="right">提示内容：</td>
+			<td class="tdinput" colspan="3"><input name="placeholder" placeholder="" class="form-control"></td>
+		</tr>
+		<tr>
+			<td align="right">计算公式：</td>
+			<td class="tdinput" colspan="3"><textarea  name="gongsi" style="height:60px" class="form-control"></textarea><font color=#888888>如：{price}*{shu}，更多公式详见<a target="_blank" href="<?=URLY?>view_gongsi.html">[帮助]</a>哦</font></td>
 		</tr>
 		
 		<tr>
@@ -106,6 +116,8 @@ $(document).ready(function(){
 		<tr>
 			<td align="right">排序号：</td>
 			<td class="tdinput"><input name="sort" value="0" maxlength="3" type="number"  onfocus="js.focusval=this.value" onblur="js.number(this)" class="form-control"></td>
+			<td align="right">对齐方式：</td>
+			<td class="tdinput"><select name="isalign" class="form-control"><option value="0">居中</option><option value="1">居左</option><option value="2">居右</option></select></td>
 		</tr>
 	
 		
@@ -115,6 +127,12 @@ $(document).ready(function(){
 				<label><input name="islu" value="1" checked type="checkbox"> 录入列?</label>&nbsp; &nbsp; 
 				<label><input name="isbt" value="1" checked type="checkbox"> 是否必填</label>&nbsp; &nbsp; 
 				<label><input name="iszs" value="1" checked type="checkbox"> 展示列</label>&nbsp; &nbsp; 
+				<label><input name="islb" value="1" checked type="checkbox"> 列表列</label>&nbsp; &nbsp; 
+				<label><input name="ispx" value="0" type="checkbox"> 列表列排序</label>&nbsp; &nbsp; 
+				<label><input name="issou" value="0" type="checkbox"> 可搜索筛选</label>&nbsp; &nbsp; 
+				<label><input name="istj" value="0" type="checkbox"> 可统计</label>&nbsp; &nbsp; 
+				<label><input name="isonly" value="0" type="checkbox"> 唯一值</label>&nbsp; &nbsp; 
+				<label><input name="isdr" value="0" type="checkbox"> 导入字段</label>&nbsp; &nbsp; 
 			</td>
 		</tr>
 
@@ -127,20 +145,5 @@ $(document).ready(function(){
 		
 		</table>
 		</form>
-		<div class="tishi" align="left">
-		<b>字段类型</b>：<br>
-		1、系统选项下拉框，数据源添加，【流程模块→数据选项】下对应的编号。<br>
-		2、下拉框：数据源填写，如：男,女，用,分开，也可以自定义数据源，写webmain/flow/input/mode_对应模块编号Action.php下方法返回数据源，自定义数据源方法abc，写在对应页面上如下：<br>
-<pre>
-public function abc(){
-	$rows[] = array(
-		'value' => 1,
-		'name' => '第一个下拉框',
-	);
-	return $rows;
-}
-</pre>		
-		3、编号，数据源填写编号规则，Ymd代表年月日，如：HTYmd，生成的编号为HT201610120001<br>
-		</div>
 </div>
 </div>

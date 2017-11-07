@@ -1,7 +1,7 @@
 /**
 *	桌面通知插件(支持IE啊)
 *	createname：雨中磐石
-*	homeurl：http://xh829.com/
+*	homeurl：http://www.rockoa.com/
 *	Copyright (c) 2016 rainrock (xh829.com)
 *	Date:2016-01-01
 *	var notify = notifyClass({
@@ -13,13 +13,15 @@
 */
 
 function notifyClass(opts){
-	this.title = '系统提醒';
-	this.icon  = 'images/logo.png';
-	this.notbool=true;
+	var me 		= this;
+	this.title 	= '系统提醒';
+	this.icon  	= 'images/logo.png';
+	this.notbool =true;
 	this.lastmsg = '';
 	this.sound 	 = '';
 	this.sounderr= '';
 	this.soundbo = true;
+	this.showbool= false;
 	this._init=function(){
 		if(opts)for(var o1 in opts)this[o1]=opts[o1];
 		var strsr = '';
@@ -55,6 +57,7 @@ function notifyClass(opts){
 		var can	= {body:msg,icon:this.icon,soundbo:this.soundbo,sound:this.sound,tag:'rockwebkitMeteoric',title:this.title,click:function(){}};
 		if(cans)for(var oi in cans)can[oi]=cans[oi];
 		var clsfun=can.click,title=can.title;
+		if(this.showbool)this.show(can);
 		if(!this.notbool){
 			this._showpopupie(msg,clsfun,can);
 			return;
@@ -70,6 +73,7 @@ function notifyClass(opts){
 			if(!salx)nwjs.winshow();
 			this.close();
 		};
+		
 		if(can.soundbo)this.playsound(can.sound);
 	};
 	this.playsound=function(src){
@@ -134,5 +138,54 @@ function notifyClass(opts){
 		}
 		return slx;
 	};
+	
+	
+	
+	//右边提示的
+	this.show=function(cans){
+		if(!cans)cans={};
+		var can	= {body:'',icon:'images/todo.png',type:'info',right:'30px',top:'80px',closetime:0,soundbo:this.soundbo,sound:this.sound,title:this.title,click:false,rand:js.getrand()};
+		if(cans)for(var oi in cans)can[oi]=cans[oi];
+		var coarr = {
+			'info':['#31708f', '#d9edf7','#bce8f1'],
+			'success':['#3c763d', '#dff0d8','#d6e9c6'],
+			'error':['#a94442', '#f2dede','#ebccd1'],
+			'wait':['#8a6d3b', '#fcf8e3','#faebcc'],
+		};
+		var cos = coarr[can.type],id = 'notify_show_'+can.rand+'';
+		$('#'+id+'').remove();
+		var wz  = this.showwei(can.right,can.top),mess=can.body
+		mess	= mess.replace(/\n/gi, '<br>');
+		var s = '<div id="'+id+'" temp="notifyshow" class="animate slideInRight boxs" style="position:absolute;z-index:70;right:'+wz[0]+';top:'+wz[1]+';border:1px '+cos[2]+' solid; background:'+cos[1]+';color:'+cos[0]+';border-radius:5px">';
+		if(can.closetime==0)s+='<div onclick="$(this).parent().fadeOut(function(){$(this).remove()})" style="position:absolute;right:3px;top:0px;cursor:pointer">×</div>';
+		s+='<table style="margin:15px"><tr valign="top">';
+		s+='	<td width="53px" align="left"><img style="width:40px;height:40px" src="'+can.icon+'"></td>';
+		s+='	<td id="'+id+'_td" align="left"><div style="padding-bottom:3px;font-size:14px"><b>'+can.title+'</b></div><div>'+mess+'</div></td>';
+		s+='</tr></table>';
+		s+='</div>';
+		$('body').append(s);
+		if(can.closetime>0)setTimeout(function(){me.showclose(id)}, can.closetime*1000);
+		if(typeof(can.click)=='function'){
+			var clsfun=can.click;
+			$('#'+id+'_td').click(function(){
+				var salx=clsfun(can);
+				me.showclose(id);
+			});
+		}
+	};
+	this.showwei=function(r,t){
+		var cas = $("div[temp='notifyshow']");
+		if(cas.length>0){
+			var o  = cas[cas.length-1];
+			var t1 = parseInt(o.style.top)+$(o).height()+20;
+			t = ''+t1+'px';
+		}
+		return [r,t];
+	};
+	
+	this.showclose=function(id){
+		$('#'+id+'').fadeOut(function(){$(this).remove();})
+	}
+	
 	this._init();
 }

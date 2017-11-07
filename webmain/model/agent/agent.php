@@ -13,7 +13,7 @@ class agentModel extends Model
 	public $event		= '';
 	public $agentrs;
 	public $moders;
-	public $flow;
+	public $flow		= null;
 	
 	public function getdatas($uid, $lx, $p){}
 	
@@ -52,7 +52,7 @@ class agentModel extends Model
 	public function getdata($uid, $num, $lx, $page)
 	{
 		if(!isempt($lx)){
-			$lxa = explode('_', $lx);
+			$lxa = explode('|', $lx);
 			if(isset($lxa[1]) && !isempt($lxa[1])){
 				$num = $lxa[1];
 				$lx  = $lxa[0];
@@ -63,6 +63,7 @@ class agentModel extends Model
 		$this->user_id 	= $uid;
 		$this->event 	= $lx;
 		$narr 	= $this->agentdata($uid, $lx);
+		$lx		= $this->event;
 		if(!$narr)$narr = $this->getdatalimit($uid, $lx);
 		$arr 	= array(
 			'wdtotal' 	=> 0,
@@ -77,17 +78,39 @@ class agentModel extends Model
 			'maxpage'	=> 0
 		);
 		if(is_array($narr))foreach($narr as $k=>$v)$arr[$k]=$v;
-		$arr['rows'] 	= $this->showrowsface($this->agentrows($arr['rows'],$arr['rowd'], $uid));
+		$barr 			= $this->agentrows($arr['rows'],$arr['rowd'], $uid);
+		$arr['rows'] 	= $this->showrowsface($barr);
 		$arr['stotal']	= $this->agenttotals($uid);
 		unset($arr['rowd']);
 		return $arr;
 	}
 	
+	//状态切换读取一般用于有流程
+	protected function agentrows_status($rows, $rowd){
+		foreach($rowd as $k=>$rs){
+			if($this->flow){
+				$rows[$k]['modename'] 	= $this->moders['name'];
+				$rows[$k]['modenum'] 	= $this->moders['num'];
+				if(isset($rs['status'])){
+					$zts = $this->flow->getstatus($rs);
+					$rows[$k]['statustext'] 	= $zts[0];
+					$rows[$k]['statuscolor'] 	= $zts[1];
+					if($rs['status']==5)$rows[$k]['ishui'] = 1;
+				}
+			}
+		}
+		return $rows;
+	}
+	
+	/**
+	*	应用上获取数据
+	*/
 	public function getdatalimit($uid, $lx)
 	{
 		if(!$this->flow)return array();
 		$nas 	= $this->flow->billwhere($uid, $lx);
 		$_wehs	= $nas['where'];
+		
 		$where 	= '1=1 '.$_wehs.'';
 		$fields = '*';
 		$order  = '';
@@ -116,7 +139,8 @@ class agentModel extends Model
 				if($f=='cont')$str = $this->contreplaces($str);
 				$jarr[$f] 	= $str;
 			}
-			$row[]  = $jarr;
+			$rows[$k] 	= $rs;
+			$row[]  	= $jarr;
 		}
 		$arr['rows'] 	= $row;
 		$arr['rowd'] 	= $rows;

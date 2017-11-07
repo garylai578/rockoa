@@ -1,20 +1,57 @@
 <?php 
-set_time_limit(0);
 header('Access-Control-Allow-Origin: *');
 class uploadClassAction extends apiAction
 {
+	/**
+	*	上传文件
+	*/
 	public function upfileAction()
 	{
 		if(!$_FILES)exit('sorry!');
 		$upimg	= c('upfile');
-		$maxsize= (int)$this->get('maxsize', 50);
-		$uptypes= '|jpg|png|gif|jpeg|bmp|docx|doc|zip|rar|xls|xlsx|ppt|pptx|pdf|mp3|mp4|flv|swf|';
+		$maxsize= (int)$this->get('maxsize', $upimg->getmaxzhao());//上传最大M
 		$uptypes= '*';
-		$upimg->initupfile($uptypes, 'upload|'.date('Y-m').'', $maxsize);
+		$upimg->initupfile($uptypes, ''.UPDIR.'|'.date('Y-m').'', $maxsize);
 		$upses	= $upimg->up('file');
 		if(!is_array($upses))exit($upses);
 		$arr 	= c('down')->uploadback($upses);
 		$this->returnjson($arr);
+	}
+	
+	/**
+	*	上传时初始化看是不是存在文件
+	*/
+	public function initfileAction()
+	{
+		$filesize	= $this->post('filesize');
+		$fileext	= $this->post('fileext');
+		$filename	= $this->getvals('filename');
+		$where 		= "`fileext`='$fileext' and `filesize`=$filesize";
+		if(!isempt($filename))$where.=" and `filename`='$filename'";
+		$frs 		= m('file')->getone($where,'*','`id` desc');
+		$bo 		= false;
+		if($frs){
+			$filepath = $frs['filepath'];
+			if(!isempt($filepath) && file_exists($filepath))$bo=true;
+		}
+		if($bo){
+			$this->showreturn(json_encode($frs));
+		}else{
+			$this->showreturn('','not found', 201);
+		}
+	}
+	
+	public function upfileappAction()
+	{
+		if(!$_FILES)$this->showreturn('', '禁止访问', 201);
+		$upimg	= c('upfile');
+		$maxsize= (int)$this->get('maxsize', $upimg->getmaxzhao());//上传最大M
+		$uptypes= '*';
+		$upimg->initupfile($uptypes, ''.UPDIR.'|'.date('Y-m').'', $maxsize);
+		$upses	= $upimg->up('file');
+		if(!is_array($upses))$this->showreturn('', $upses, 202);
+		$arr 	= c('down')->uploadback($upses);
+		$this->showreturn($arr);
 	}
 	
 	public function upcontAction()
@@ -31,7 +68,7 @@ class uploadClassAction extends apiAction
 	public function getfileAjax()
 	{
 		$cont = '';
-		$path = 'upload/uptxt'.$this->adminid.'.txt';
+		$path = ''.UPDIR.'/uptxt'.$this->adminid.'.txt';
 		if(file_exists($path)){
 			@$cont = file_get_contents($path);
 		}
@@ -52,5 +89,11 @@ class uploadClassAction extends apiAction
 		$fileid = (int)$this->post('fileid',0);
 		$rs 	= m('file')->getone($fileid);
 		$this->showreturn($rs);
+	}
+	
+	public function downAction()
+	{
+		$id  = (int)$this->jm->gettoken('id');
+		m('file')->show($id);
 	}
 }

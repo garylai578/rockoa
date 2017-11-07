@@ -1,10 +1,14 @@
+var daytime = 8;//每天上班默认8个小时
 function initbodys(){
-	$(form('stime')).blur(function(){
+	
+}
+function oninputblur(na){
+	if(na=='stime' || na=='etime'){
 		changetotal();
-	});
-	$(form('etime')).blur(function(){
-		changetotal();
-	});
+	}
+	if(na=='totals'){
+		changedays();
+	}
 }
 function changesubmit(d){
 	if(d.etime<=d.stime)return '截止时间必须大于开始时间';
@@ -28,6 +32,15 @@ function changetotal(){
 	}
 	js.ajax(geturlact('total'),{stime:st,etime:et}, function(a){
 		form('totals').value=a[0];
+		daytime = parseFloat(a[2]);
 		js.setmsg(a[1]);
+		changedays();
 	},'post,json');
+}
+//计算天数
+function changedays(){
+	if(!form('totday'))return;
+	var to = parseFloat(form('totals').value);
+	var day= js.float(to / daytime);
+	form('totday').value = day;
 }

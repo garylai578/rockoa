@@ -1,4 +1,7 @@
 <?php
+/**
+*	模块.图书借阅
+*/
 class flow_bookborrowClassModel extends flowModel
 {
 	public function flowrsreplace($rs)
@@ -12,19 +15,5 @@ class flow_bookborrowClassModel extends flowModel
 		if($rs['isgh'] != $isgh)$this->update('`isgh`='.$isgh.'', $rs['id']);
 		$rs['isgh'] = $fte;
 		return $rs;
-	}
-
-	protected function flowbillwhere($uid, $lx)
-	{
-		$where  = '';
-		$key 	= $this->rock->post('key');
-		$dt 	= $this->rock->post('dt');
-		if($key != '')$where.=" and (`bookname` like '%$key%' or `optname` like '%$key%')";
-		if($dt != '')$where.=" and (`applydt`='$dt' or `jydt`='$dt')";
-		
-		return array(
-			'where' => $where,
-			'order' => 'optdt desc'
-		);
 	}
 }

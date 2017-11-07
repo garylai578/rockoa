@@ -4,7 +4,7 @@ $(document).ready(function(){
 	{params}
 	var modenum = 'hrsalary';
 	var a = $('#view_{rand}').bootstable({
-		tablename:modenum,params:{'atype':'faf'},fanye:true,modenum:modenum,modedir:'{mode}:{dir}',statuschange:false,checked:true,
+		tablename:modenum,params:{'atype':'faf'},fanye:true,modenum:modenum,modedir:'{mode}:{dir}',statuschange:false,checked:true,storeafteraction:'xinzlfafter',
 		columns:[{
 			text:'部门',dataIndex:'udeptname',sortable:true
 		},{
@@ -13,6 +13,10 @@ $(document).ready(function(){
 			text:'职位',dataIndex:'ranking'
 		},{
 			text:'月份',dataIndex:'month',sortable:true
+		},{
+			text:'开户行',dataIndex:'bankname'
+		},{
+			text:'工资卡号',dataIndex:'banknum'
 		},{
 			text:'基本工资',dataIndex:'base',sortable:true
 		},{
@@ -29,6 +33,9 @@ $(document).ready(function(){
 		},
 		beforeload:function(){
 			btn(true);
+		},
+		itemdblclick:function(){
+			c.view();
 		}
 	});
 	
@@ -88,6 +95,7 @@ $(document).ready(function(){
 	};
 	js.initbtn(c);
 });
+
 </script>
 <div>
 	<table width="100%">
@@ -112,7 +120,7 @@ $(document).ready(function(){
 	<td width="80%" style="padding-left:10px">
 		<div id="stewwews{rand}" class="btn-group">
 		<button class="btn btn-default active" id="state{rand}_" click="changlx," type="button">全部</button>
-		<button class="btn btn-default" id="state{rand}_0" style="color:red" click="changlx,0" type="button">未发放</button>
+		<button class="btn btn-default" id="state{rand}_0" style="color:red" click="changlx,0" type="button">待发放</button>
 		<button class="btn btn-default" id="state{rand}_1" style="color:green" click="changlx,1" type="button">已发放</button>
 		</div>	
 	</td>
@@ -126,3 +134,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="tishi">标识已发放会将对应薪资信息(工资条)发送给对应人员。</div>

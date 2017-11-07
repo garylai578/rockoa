@@ -4,7 +4,7 @@ $(document).ready(function(){
 	{params}
 	var atype=params.atype,month=js.now('Y-m');
 	var a = $('#view_{rand}').bootstable({
-		tablename:'admin',params:{'atype':atype,'month':month},
+		tablename:'admin',params:{'atype':atype,'month':month},fanye:atype=='all',
 		modedir:'{mode}:{dir}',storeafteraction:'custtotalafter',storebeforeaction:'custtotalbefore',
 		columns:[{
 			text:'部门',dataIndex:'deptname'

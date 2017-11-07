@@ -9,19 +9,21 @@ $(document).ready(function(){
 				get('push_{rand}').value=a.reimpushurl;
 				get('host_{rand}').value=a.reimhost;
 				get('receid_{rand}').value=a.reimrecid;
+				get('chehui_{rand}').value=a.reimchehui;
 			});
 		},
 		save:function(o){
 			var d={push:get('push_{rand}').value};
 			d.host = get('host_{rand}').value;
 			d.receid = get('receid_{rand}').value;
+			d.chehui = get('chehui_{rand}').value;
 			js.setmsg('保存中...','','msgview_{rand}');
 			js.ajax(js.getajaxurl('setsave','{mode}','{dir}'), d, function(s){
 				js.setmsg('保存成功','green','msgview_{rand}');
 			});
 		},
 		testss:function(){
-			js.msg('wait','测试发送中...');
+			js.msg('wait','推送地址测试发送中...');
 			$.get(js.getajaxurl('testsend','{mode}','{dir}'), function(s){
 				js.msg('success',s);
 			});
@@ -29,8 +31,9 @@ $(document).ready(function(){
 		testsss:function(){
 			var url= get('host_{rand}').value.replace('ws','http');
 			if(url=='')return;
-			js.open(url,500,300);
-			js.confirm('如出现《<b>400 Bad Request</b>》说明成功，否则失败，打不开地址也是失败！');
+			js.confirm('看这个：如出现《<b>400 Bad Request</b>》说明<font color=green>成功</font>，否则失败，打不开地址也是失败！',function(jg){
+				if(jg=='yes')js.open(url,500,300);
+			});
 		},
 		kuanshu1:function(){
 			c.chengeread(true);
@@ -99,8 +102,13 @@ $(document).ready(function(){
 		</tr>
 		
 		<tr>
+			<td  align="right">可撤回时间(分钟)：</td>
+			<td class="tdinput"><input id="chehui_{rand}"  style="width:300px" placeholder="0不可撤回" type="number" class="form-control"></td>
+		</tr>
+		
+		<tr>
 			<td></td>
-			<td class="tdinput"><font color="#888888">不知道地址？请先安装并运行服务端，</font><a href="http://xh829.com/view_server.html" target="_blank">[去下载安装]</a></td>
+			<td class="tdinput"><font color="#888888">不知道地址？请先安装并运行服务端，</font><a href="<?=URLY?>view_server.html" target="_blank">[去下载安装，看帮助]</a></td>
 		</tr>
 		
 		<tr>
@@ -113,10 +121,10 @@ $(document).ready(function(){
 		</td>
 		</tr>
 		<tr>
-			<td  align="left" colspan="2"><div style="margin-left:100px" class="tishi">
+			<td  align="left" colspan="2"><div style="margin-left:100px;max-width:600px" class="tishi">
 			1、【快速设置(推荐)】请使用这个,用这个,用这个，设置完成点保存就可以了。<br>
 			2、【自定义设置】用于系统和服务端不在同一个服务器，或者你修改了服务端的config.php的配置。<br>
-			3、通信地址测试不成功，100%就是这个原因(服务端没有安装并启动或者服务器防火墙阻止了6552的端口)。<br>
+			3、通信地址测试不成功，100%就是这个原因(服务端没有安装并启动或者服务器防火墙阻止了6552的端口，需要把6552端口加入安全组让可外部访问)。<br>
 			4、推送地址测试不成功，100%就是这个原因(服务端没有安装并启动)。
 			</div></td>
 		</tr>

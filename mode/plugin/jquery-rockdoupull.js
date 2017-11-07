@@ -1,7 +1,7 @@
 /**
 *	jqury的下拉上拉加载插件，带样式滚动条，呵呵。
 *	createname：雨中磐石
-*	homeurl：http://xh829.com/
+*	homeurl：http://www.rockoa.com/
 *	Copyright (c) 2016 rainrock (xh829.com)
 *	Date:2016-11-24
 */	
@@ -268,4 +268,68 @@
 		return clsa;
 	};
 
+	/**
+	*	长按
+	*/
+	function longpress(element, options){
+		var me 		= this;
+		var opts 	= $.extend({
+			ondragstart:function(){return true;}, //按下前
+			ondragend:function(){return true;}, //按下后
+			downbgcolor:'#f1f1f1', 	//下拉背景
+			presstime:500,
+			onpress:function(){}
+		}, options);
+		
+		var obj 	= element;
+		
+		var obj 	= element;
+		this.ele	= obj;
+		this._init=function(){
+			this.mobj = $(obj);
+			for(var a in opts)this[a]=opts[a];
+			obj.addEventListener('touchstart',function(e){
+				me._dragstart(e);
+			},false);
+			obj.addEventListener('touchend',function(e){
+				me._dragend(e);
+			},false);
+		};
+		
+		this._dragstart=function(e){
+			if(!this.ondragstart(e))return false;
+			e.preventDefault();
+			this.oldbackcolor = obj.style.backgroundColor;
+			obj.style.backgroundColor = this.downbgcolor;
+			this.anxiamiao = 0;
+			clearInterval(this.shumiaotime);
+			this.shumiaotime=setInterval(function(){
+				me.downtimes(e);
+			},100);
+		};
+		
+		this.downtimes=function(e){
+			this.anxiamiao+=100;
+			
+			if(this.anxiamiao>=this.presstime){
+				this._dragend(e);
+				this.onpress();//触发
+			}
+		};
+		
+		this._dragend=function(e){
+			obj.removeEventListener('touchstart', function(){}, false);
+			clearInterval(this.shumiaotime);
+			if(typeof(this.oldbackcolor=='string'))obj.style.backgroundColor = this.oldbackcolor;
+			this.ondragend(this.anxiamiao>=this.presstime,e);
+		};
+	}
+	
+	$.fn.longpress	= function(options){
+		var can		= $.extend({}, options);
+		var clsa 	= new longpress(this[0], can);
+		clsa._init();
+		return clsa;
+	};
+	
 })(jQuery);

@@ -1,23 +1,39 @@
-var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='',ISDEMO=false;
+var MODE	= '',ACTION = '',DIR='',PROJECT='',HOST='',PARAMS='',QOM='xinhu_',apiurl='',token='',device='',ISDEMO=false,NOWURL='',nwjsgui=false;
 var windows	= null,ismobile=0;
 function initbody(){}
 function bodyunload(){}
 function globalbody(){}
 $(document).ready(function(){
+	try{if(typeof(nw)=='object'){nwjsgui = nw;}else{nwjsgui = require('nw.gui');}}catch(e){nwjsgui=false;}
 	$(window).scroll(js.scrolla);
 	HOST = js.gethost();
 	adminid=js.request('adminid');
 	token=js.request('token');
+	js.getsplit();
+	try{
+		var winobj = js.request('winobj');
+		if(nwjsgui)window.focus=function(){nw.Window.get().focus()}
+		if(winobj!='')opener.js.openarr[winobj]=window;
+	}catch(e){}
+	
 	globalbody();
 	initbody();
 	$('body').click(function(e){
 		js.downbody(this, e);
 	});
 	$(window).unload(function(){
+		js.onunload();
 		bodyunload();
 	});
+	var openfrom = js.request('openfrom',js.getoption('openfrom','', true));
+	js.setoption('openfrom', openfrom, true);
+	//移动端添加返回
+	if(ismobile==1 && history.length>1 && openfrom=='' && typeof(grouparr)=='undefined' && !get('header_title')){
+		var s = '<div onclick="js.back()" style="position:fixed;left:5px;top:40%;width:30px;height:30px; background:rgba(0,0,0,0.3);z-index:9;border-radius:50%;font-size:14px;color:white;text-align:center;line-height:30px">&lt;</div>';
+		$('body').append(s);
+	}
 });
-var js={path:'index',url:'',bool:false,login:{},initdata:{},scroll:function(){}};
+var js={path:'index',url:'',bool:false,login:{},initdata:{},openarr:{},scroll:function(){}};
 var isIE=true;
 if(!document.all)isIE=false;
 var get=function(id){return document.getElementById(id)};
@@ -55,7 +71,8 @@ js.getcan = function(i,dev){
 js.gethost=function(){
 	var url = location.href,sau='';
 	try{sau = url.split('//')[1].split('/')[0];}catch(e){}
-	if(sau.indexOf('xh829.com')>0)ISDEMO=true;
+	if(sau.indexOf('demo.rockoa.com')>=0)ISDEMO=true;
+	var lse = url.lastIndexOf('/');NOWURL = url.substr(0, lse+1);
 	return sau;
 }
 function winHb(){
@@ -140,30 +157,46 @@ js.serverdt=function(atype){
 	var dt=js.now(atype,d1);
 	return dt;
 }
-js.openarr={};
-js.open=function(url,w,h,wina,can){
-	if(wina){
-		try{
-		var owina	= this.openarr[wina];
-		owina.document.body;
-		owina.focus();
-		return false;
-		}catch(e){}
-	}
+js.open=function(url,w,h,wina,can,wjcan){
+	if(wina){try{var owina	= this.openarr[wina];owina.document.body;owina.focus();return owina;}catch(e){}}
+	if(!w)w=600;if(!h)h=500;
+	var l=(screen.width-w)*0.5,t=(screen.height-h)*0.5-50,rnd = parseInt(Math.random()*50);
+	if(rnd%2==0){l=l+rnd;t=t-rnd;}else{l=l-rnd;t=t+rnd;}
+	if(!can)can={};
+	var s='resizable=yes,scrollbars=yes,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no';
+	var a1={'left':''+l+'px','top':''+t+'px','width':''+w+'px','height':''+h+'px'};
+	a1 = js.apply(a1,can);
+	for(var o1 in a1)s+=','+o1+'='+a1[o1]+'';
 	var ja=(url.indexOf('?')>=0)?'&':'?';
-	if(!w)w=600;
-	if(!h)h=500;
-	if(!can)can='resizable=yes,scrollbars=yes';
-	var l=(screen.width-w)*0.5;
-	var t=(screen.height-h)*0.5;
-	var opar=window.open(url,'','width='+w+'px,height='+h+'px,left='+l+'px,top='+t+'px,'+can+'');
+	if(wina)url+=''+ja+'winobj='+wina+'';
+	if(typeof(nw)=='undefined'){
+		var opar=window.open(url,'',s);
+	}else{
+		var ocsn=js.apply({'frame':true,width:w,height:h,x:l,y:t,icon:'images/logo.png'},wjcan);
+		if(url.substr(0,4)!='http')url=NOWURL+url;
+		var opar=nw.Window.open(url, ocsn);
+	}
 	if(wina)this.openarr[wina]=opar;
+	return false;
+}
+js.openrun=function(wina,act, ps1, ps2){
+	var owina	= this.openarr[wina];
+	try{
+		if(owina)owina[act](ps1,ps2);
+	}catch(e){
+		owina = false;
+	}
+	return owina;
 }
 js.onunload=function(){
 	var a=js.openarr;
 	for(var b in a){
 		try{a[b].close()}catch(e){}
 	}
+	try{
+		var winobj = js.request('winobj');
+		if(winobj!='')opener.js.openarr[winobj]=false;
+	}catch(e){}
 }
 js.decode=function(str){
 	var arr	= {length:-1};
@@ -173,37 +206,39 @@ js.decode=function(str){
 	return arr;
 }
 js.email=function(str){
-	var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
- 	return myreg.test(str);
+	if(isempt(str) || str.indexOf(' ')>-1)return false;
+	if(str.indexOf('.')==-1 || str.indexOf('@')==-1)return false;
+	var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+	if(reg.test(str))return false ;
+	return true;
 }
-js.move=function(id,event){
-	var _left=0,_top=0;
-	var obj	= id;
+js.move=function(id,rl){
+	var _left=0,_top=0,_x=0,_right=0,_y=0;
+	var obj	= id;if(!rl)rl='left';
 	if(typeof(id)=='string')obj=get(id);
-	var _Down=function(evt){
+	var _Down=function(e){
 		try{
 			var s='<div id="divmovetemp" style="filter:Alpha(Opacity=0);opacity:0;z-index:99999;width:100%;height:100%;position:absolute;background-color:#000000;left:0px;top:0px;cursor:move"></div>';
 			$('body').prepend(s);
-			evt=window.event||evt;
-			_left=evt.clientX-parseInt(obj.style.left);
-			_top=evt.clientY-parseInt(obj.style.top);
+			_x = e.clientX;_y = e.clientY;_left=parseInt(obj.style.left);_top=parseInt(obj.style.top);_right=parseInt(obj.style.right);
 			document.onselectstart=function(){return false}
-		}catch(e){}		
+		}catch(e1){}		
 	}
-	var _Move=function(evt){
+	var _Move=function(e){
 		try{
 			var c=get('divmovetemp').innerHTML;
-			evt=window.event||evt;
-			obj.style.left=evt.clientX-_left+'px';
-			obj.style.top=evt.clientY-_top+'px';
-		}catch(e){_Down(evt)}
+			var x = e.clientX-_x,y = e.clientY-_y;
+			if(rl=='left')obj.style.left=_left+x+'px';
+			if(rl=='right')obj.style.right=_right-x+'px';
+			obj.style.top=_top+y+'px';
+		}catch(e1){_Down(e)}
 	}
 	var _Up=function(){
-		document.onmousemove="";
-		document.onselectstart=""
+		document.onmousemove='';
+		document.onselectstart='';
 		$('#divmovetemp').remove();	
 	}
-	document.onmousemove=_Move
+	document.onmousemove=_Move;
 	document.onmouseup=_Up;
 }
 js.setdev=function(val,dev){
@@ -236,7 +271,7 @@ js.winiframe=function(tit, url){
 	var mxw= 900;
 	var hm = winHb()-150;if(hm>800)hm=800;if(hm<400)hm=400;
 	if(url.indexOf('wintype=max')>0){
-		mxw= 1100;
+		mxw= 900;
 		hm=winHb()-45;
 	}
 	var wi = winWb()-150;if(wi>mxw)wi=mxw;if(wi<700)wi=700;
@@ -275,16 +310,17 @@ js.downupdel=function(sid, said, o1){
 	$('#'+said+'-inputEl').val(s1);
 	$('#fileid_'+said+'').val(s1);
 }
-js.downupshow=function(a, showid){
+js.downupshow=function(a, showid, nbj){
 	var s = '',i=0,s1='';
 	var o = $('#view_'+showid+'');
 	for(i=0; i<a.length; i++){
-		s='<div onmouseover="this.style.backgroundColor=\'#f1f1f1\'" onmouseout="this.style.backgroundColor=\'\'" style="padding:4px 5px;border-bottom:1px #eeeeee solid"><span>'+(i+1)+'</span><font style="display:none">'+a[i].id+'</font>、<a class="a" onclick="return js.downshow('+a[i].id+',\''+a[i].fileext+'\')" href="javascript:">'+a[i].filename+'</a> ('+a[i].filesizecn+')';
-		s+=' <a class="a" temp="dela" onclick="return js.downupdels('+a[i].id+',\''+showid+'\', this)" href="javascript:">×</a>';
+		s='<div onmouseover="this.style.backgroundColor=\'#f1f1f1\'" onmouseout="this.style.backgroundColor=\'\'" style="padding:4px 5px;border-bottom:1px #eeeeee solid;font-size:14px"><span>'+(i+1)+'</span><font style="display:none">'+a[i].id+'</font>、<img src="web/images/fileicons/'+js.filelxext(a[i].fileext)+'.gif" align="absmiddle"> <a class="a" onclick="return js.downshow('+a[i].id+',\''+a[i].fileext+'\')" href="javascript:;">'+a[i].filename+'</a> ('+a[i].filesizecn+')';
+		s+=' <a class="a" temp="dela" onclick="return js.downupdels('+a[i].id+',\''+showid+'\', this)" href="javascript:;">×</a>';
 		s+='</div>';
 		o.append(s);
 	}
 	js.downupdel(0, showid, false);
+	if(nbj)o.find('[temp]').remove();//禁止编辑
 }
 js.apiurl = function(m,a,cans){
 	var url='api.php?m='+m+'&a='+a+'';
@@ -303,7 +339,7 @@ js.getajaxurl=function(a,m,d,can){
 	var url	= ''+this.path+'.php?a='+a+'&m='+m+'&d='+d+'';
 	for(var c in can)url+='&'+c+'='+can[c]+'';
 	if(jga!='@')url+='&ajaxbool=true';	
-	url+='&rnd='+Math.random()+'';	
+	url+='&rnd='+parseInt(Math.random()*999999)+'';	
 	return url;
 }
 js.formatsize=function(size){
@@ -311,6 +347,24 @@ js.formatsize=function(size){
 	var e	= Math.floor(Math.log(size)/Math.log(1024));
 	var fs	= size/Math.pow(1024,Math.floor(e));
 	return js.float(fs)+' '+arr[e];
+}
+js.getselectval=function(o){
+	var str='';
+	for(var i=0;i<o.length;i++){
+		if(o[i].selected){
+			str+=','+o[i].value+'';
+		}
+	}
+	if(str!='')str=str.substr(1);
+	return str;
+}
+js.setselectval=function(o,val){
+	var str='',vals=','+val+',';
+	for(var i=0;i<o.length;i++){
+		if(vals.indexOf(','+o[i].value+',')>-1){
+			o[i].selected=true;
+		}
+	}
 }
 js.getformdata=function(nas){
 	var da	={},ona='',o,type,val,na,i,obj;
@@ -429,7 +483,7 @@ js.apply=function(a,b){
 js.tanbodyindex = 90;
 js.tanbody=function(act,title,w,h,can1){
 	this.tanbodyindex++;
-	var can	= js.applyIf(can1,{html:'',showfun:function(){},bodystyle:'',guanact:'',titlecls:'',btn:[]});
+	var can	= js.applyIf(can1,{html:'',msg:'',showfun:function(){},bodystyle:'',guanact:'',titlecls:'',btn:[]});
 	var l=(winWb()-w-50)*0.5,t=(winHb()-h-50)*0.5;
 	var s	= '';
 	var mid	= ''+act+'_main';
@@ -446,7 +500,7 @@ js.tanbody=function(act,title,w,h,can1){
 	s+='	<div id="'+act+'_body" style="'+can.bodystyle+'">';
 	s+=can.html;
 	s+='	</div>';
-	s+='	<div id="'+act+'_bbar" style="padding:5px 10px;background:#eeeeee;line-height:30px;" align="right"><span id="msgview_'+act+'"></span>&nbsp;';
+	s+='	<div id="'+act+'_bbar" style="padding:5px 10px;background:#eeeeee;line-height:30px;" align="right"><span id="msgview_'+act+'">'+can.msg+'</span>&nbsp;';
 	for(var i=0; i<can.btn.length; i++){
 		var a	= can.btn[i];
 		s+='<a class="btn btn-success" id="'+act+'_btn'+i+'" onclick="return false">';
@@ -507,8 +561,13 @@ js.number=function(obj){
 		obj.value=js.focusval;
 		obj.focus();
 	}else{
-		var min=$(obj).attr('minvalue');if(min && parseFloat(val)<parseFloat(min))val=min;
-		var max=$(obj).attr('maxvalue');if(max && parseFloat(val)>parseFloat(max))val=max;
+		var o1 = $(obj);
+		var min= o1.attr('minvalue');
+		if(isempt(min))min= o1.attr('min');
+		if(min && parseFloat(val)<parseFloat(min))val=min;
+		var max= o1.attr('maxvalue');
+		if(isempt(max))max= o1.attr('max');
+		if(max && parseFloat(val)>parseFloat(max))val=max;
 		obj.value=val;
 	}
 }
@@ -560,15 +619,17 @@ js.alert = function(txt,tit,fun){
 js.wait	= function(txt,tit,fun){
 	js.confirm(txt, fun, '', tit, 3, '');
 }
+js.tanstyle = 0;
 js.confirm	= function(txt,fun, tcls, tis, lx,ostr,bstr){
 	if(!lx)lx=0;
 	var h = '<div style="padding:20px;line-height:30px" align="center">',w=320;
+	if(lx==1)w= 350;
+	if(w>winWb())w=winWb()-10;
 	if(lx==1){
-		w=350;
 		if(!tcls)tcls='';if(!ostr)ostr='';if(!bstr)bstr='';
 		h='<div style="padding:10px;" align="center">'+ostr+'';
 		h+='<div align="left" style="padding-left:10px">'+txt+'</div>';
-		h+='<div ><textarea class="input" id="confirm_input" style="width:310px;height:60px">'+tcls+'</textarea></div>'+bstr+'';
+		h+='<div ><textarea class="input" id="confirm_input" style="width:'+(w-40)+'px;height:60px">'+tcls+'</textarea></div>'+bstr+'';
 	}else if(lx==3){
 		h+='<img src="images/mloading.gif" height="32" width="32" align="absmiddle">&nbsp; '+txt+'';
 	}else{
@@ -576,8 +637,15 @@ js.confirm	= function(txt,fun, tcls, tis, lx,ostr,bstr){
 	}
 	h+='</div>';
 	h+='<div style="padding:10px" align="center">';
-	h+='	<button id="confirm_btn1" class="btn btn-default webbtn" sattr="yes" type="button"><i class="icon-ok"></i>&nbsp;确定</button>';
-	if(lx<2)h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <button sattr="no" class="btn btn-danger webbtn" id="confirm_btn" type="button"><i class="icon-remove"></i>&nbsp;取消</button>';
+	var yts = (this.tanstyle==1) ? 'webbtn' : 'btn';
+	h+='	<button id="confirm_btn1" class="'+yts+' btn-default" sattr="yes" type="button">';
+	if(this.tanstyle==0)h+='<i class="icon-ok"></i>&nbsp;';
+	h+='确定</button>';
+	if(lx<2){
+		h+=' &nbsp;  &nbsp;  &nbsp;  &nbsp; <button sattr="no" class="'+yts+' btn-danger" id="confirm_btn" type="button">';
+		if(this.tanstyle==0)h+='<i class="icon-remove"></i>&nbsp;';
+		h+='取消</button>';
+	}
 	h+='</div>';
 	h+='<div class="blank10"></div>';
 	if(!tcls)tcls='danger';if(lx==1)tcls='info';
@@ -693,18 +761,19 @@ js.ajax = function(url,da,fun,type,efun, tsar){
 				fun(str);
 			}catch(e){
 				js.msg('msg', str);
+				js.debug(e);
 			}
 		},error:function(e){
 			js.ajaxbool=false;
 			js.msg('msg','处理出错:'+e.responseText+'');
-			efun();
+			efun(e.responseText);
 		}
 	};
 	if(dtyp)ajaxcan.dataType=dtyp;
 	$.ajax(ajaxcan);
 }
-js.setoption=function(k,v){
-	k=QOM+k;
+js.setoption=function(k,v,qzb){
+	if(!qzb)k=QOM+k;
 	try{
 		if(isempt(v)){
 			localStorage.removeItem(k);
@@ -716,9 +785,9 @@ js.setoption=function(k,v){
 	}
 	return true;
 }
-js.getoption=function(k,dev){
+js.getoption=function(k,dev, qzb){
 	var s = '';
-	k=QOM+k;
+	if(!qzb)k=QOM+k;
 	try{s = localStorage.getItem(k);}catch(e){s=js.cookie(k);}
 	if(s)s=unescape(s);
 	if(isempt(dev))dev='';
@@ -832,4 +901,28 @@ js.setselectdata = function(o, data, vfs, devs){
 		if(i==devs)sv=ty[i][vfs];
 	}
 	if(sv)o.value=sv;
+}
+//是否app上接口
+function appobj1(act, can1){
+	var bo = false;
+	if(typeof(appxinhu)=='object'){
+		if(appxinhu[act]){
+			try{appxinhu[act](can1);bo = true;}catch(e){}
+		}
+	}
+	return bo;
+}
+//向PC客户端发送命令
+js.cliendsend=function(at, cans, fun,ferr){
+	var url = unescape('http%3A//127.0.0.1%3A2829/%3Fatype');
+	if(!cans)cans={};if(!fun)fun=function(){};if(!ferr)ferr=function(){return false;}
+	url+='='+at+'&callback=?';
+	var i,v,bo=typeof(jm);
+	for(i in cans){
+		v = cans[i];
+		if(bo=='object')v='base64'+jm.base64encode(v)+'';
+		url+='&'+i+'='+v+'';
+	}
+	var timeoout = setTimeout(function(){if(!ferr())js.msg('msg','无法使用,可能没有登录PC客户端');},500);
+	$.getJSON(url, function(ret){clearTimeout(timeoout);fun(ret);});
 }

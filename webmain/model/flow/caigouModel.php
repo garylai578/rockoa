@@ -1,8 +1,9 @@
 <?php
-
 class flow_caigouClassModel extends flowModel
 {
+	public $minwidth	= 600;//子表最小宽
 	
+	//审核完成处理
 	protected function flowcheckfinsh($zt){
 		m('goodss')->update('status='.$zt.'',"`mid`='$this->id'");
 		$aid  = '0';
@@ -11,12 +12,19 @@ class flow_caigouClassModel extends flowModel
 		m('goods')->setstock($aid);
 	}
 
-	protected function flowchangedata(){
-		
-		$rows    = $this->db->getall('select b.name as aid,a.count,b.unit,a.price from `[Q]goodss` a left join `[Q]goods` b on a.aid=b.id where a.mid='.$this->id.' order by a.sort');
+	
+	//子表数据替换处理
+	protected function flowsubdata($rows, $lx=0){
+		$db = m('goods');
 		foreach($rows as $k=>$rs){
-			$rows[$k]['count'] 	= abs($rs['count']);
+			$one = $db->getone($rs['aid']);
+			if($one){
+				$name = $one['name'];
+				if(!isempt($one['xinghao']))$name.='('.$one['xinghao'].')';
+				if($lx==1)$rows[$k]['aid'] = $name; //1展示时
+				$rows[$k]['temp_aid'] = $name;
+			}
 		}
-		$this->rs['subdata0']	= $rows;
+		return $rows;
 	}
 }

@@ -1,11 +1,16 @@
-﻿var oldpass='',initlogo='images/logo.png',olduser;
+var oldpass='',initlogo='images/logo.png',olduser;
+
+function getpassobj(){
+	return $('input[type=password]');
+}
+
 function initbody(){
 	
 	form('adminuser').focus();
-	oldpass	= form('adminpass').value;
+	oldpass	= getpassobj().val();
 	olduser	= form('adminuser').value;
 	if(form('adminuser').value!=''){
-		form('adminpass').focus();
+		getpassobj().focus();
 	}
 	
 	resizewh();
@@ -23,7 +28,7 @@ function yunanimate(){
 	//$('#yun2').animate({'left':''+(whe)+'px'},20000);
 }
 function resizewh(){
-	var h = ($(document).height()-510)*0.5;
+	var h = ($(document).height()-500)*0.5;
 	$('#topheih').css('height',''+h+'px');
 }
 function changeuserface(v){
@@ -38,20 +43,21 @@ function changeuserface(v){
 function loginsubmit(){
 	if(js.bool)return false;
 	var user = form('adminuser').value;
-	var pass = form('adminpass').value;
+	var pass = getpassobj().val();
 	var device= js.cookie('deviceid');
 	if(device=='')device=js.now('time');
 	js.savecookie('deviceid', device, 365);
 	if(user==''){
-		js.setmsg('帐号不能为空','red');
+		js.setmsg('用户名不能为空','red');
 		form('adminuser').focus();
 		return false;
 	}
 	if(pass==''){
 		js.setmsg('密码不能为空','red');
-		form('adminpass').focus();
+		getpassobj().focus();
 		return false;
 	}
+	try{localStorage.clear();}catch(e){}
 	js.setmsg('登录中...','blue');
 	form('button').disabled=true;
 	var data	= js.getformdata();
@@ -66,14 +72,10 @@ function loginsubmit(){
 		if(a.success){
 			get('imglogo').src=a.face;
 			js.setoption('loginface', a.face);
-			js.setoption('uploadmaxsize',a.maxsize);
-			var ltype=js.request('ltype');
-			if(ltype=='1' && history.length>1){
-				history.back();
-			}else{
-				js.setmsg('登录成功,跳转中..','green');
-				location.href='?m=index';
-			}
+			var burl = js.request('backurl');
+			var curl = (burl=='')?'?m=index':jm.base64decode(burl);
+			js.setmsg('登录成功,<a href="'+curl+'">跳转中</a>...','green');
+			js.location(curl);
 		}else{
 			js.setmsg(a.msg,'red');
 			form('button').disabled=false;

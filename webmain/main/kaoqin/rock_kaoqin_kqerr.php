@@ -30,6 +30,9 @@ $(document).ready(function(){
 		},
 		beforeload:function(){
 			btn(true);
+		},
+		itemdblclick:function(d){
+			openxiangs('打卡异常',modenum,d.id);
 		}
 	});
 	

@@ -8,31 +8,40 @@ class beifenClassModel extends Model
 	public function start()
 	{
 		$alltabls 	= $this->db->getalltable();
-		$data = array();
+		$nobeifne	= array(''.PREFIX.'log',''.PREFIX.'logintoken',''.PREFIX.'kqanay',''.PREFIX.'email_cont',''.PREFIX.'reads'); //不备份的表;
+		
+		$beidir 	= ''.UPDIR.'/data/'.date('Y.m.d.H.i.s').'';
 		foreach($alltabls as $tabs){
-			$rows  	= $this->db->getall('select * from '.$tabs.'');
+			if(in_array($tabs, $nobeifne))continue;
+			$rows  	= $this->db->getall('select * from `'.$tabs.'`');
 			$fields	= $this->db->gettablefields($tabs);
+			$data 		 = array();
 			$data[$tabs] = array(
 				'fields' 	=> $fields,
 				'data'		=> $rows
 			);
+			$file	= ''.$tabs.'_'.count($fields).'_'.count($rows).'.json';
+			$str  	= $this->rock->jm->mcrypt_encrypt(json_encode($data));
+			$this->rock->createtxt(''.$beidir.'/'.$file.'', $str);
 		}
+		/*
 		$rnd  = str_shuffle('abcedfghijk').rand(1000,9999);
 		$file = 'databat_'.date('Ymd').'_'.$rnd.'.json';
 		$str  = $this->rock->jm->mcrypt_encrypt(json_encode($data));
-		$this->rock->createtxt('upload/data/'.$file.'', $str);
+		$this->rock->createtxt(''.UPDIR.'/data/'.$file.'', $str);
+		*/
 		return true;
 	}
 	
 	/**
 	*	获取备份的数据
 	*/
-	public function getbfdata($file)
+	public function getbfdata($file, $path='')
 	{
 		$str 	= array();
-		$file	= ''.ROOT_PATH.'/upload/data/'.$file.'';
-		if(file_exists($file)){
-			$cont = file_get_contents($file);
+		if($path=='')$path	= ''.ROOT_PATH.'/'.UPDIR.'/data/'.$file.'';
+		if(file_exists($path)){
+			$cont = file_get_contents($path);
 			if(substr($cont, 0, 2) != '{"'){
 				$cont = $this->rock->jm->mcrypt_decrypt($cont);
 			}
@@ -67,10 +76,11 @@ class beifenClassModel extends Model
 					if($fname!='id')$str.=','.$nstr.'';
 				}
 				$str .=',PRIMARY KEY (`id`)';
-				$sql  = "CREATE TABLE `$table`($str)ENGINE=MyISAM DEFAULT CHARSET=utf8";
+				$sql  = "CREATE TABLE `$table`($str)ENGINE=".getconfig('db_engine','MyISAM')." DEFAULT CHARSET=utf8";
 			}else{
 				foreach($fields as $k=>$frs){
 					$fname = $frs['name'];
+					if($fname=='id')continue;
 					$nstr  = $this->getfielstr($frs);
 					if(!isset($nowfiel[$fname])){
 						$str.=',add '.$nstr.'';

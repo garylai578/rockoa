@@ -29,6 +29,7 @@ class flowoptClassAction extends Action
 		$this->showreturn('ok');
 	}
 	
+	//审核
 	public function checkAjax()
 	{
 		$mid 	= (int)$this->post('mid');
@@ -36,16 +37,20 @@ class flowoptClassAction extends Action
 		$modenum= $this->post('modenum');
 		$sm 	= $this->post('sm');
 		$msg 	= m('flow')->opt('check', $modenum, $mid, $zt, $sm);
-		
-		backmsg('', $msg);
+		if($msg=='ok'){
+			return returnsuccess();
+		}else{
+			return returnerror($msg);
+		}
 	}
 	
+	//单据获取操作菜单
 	public function getoptnumAjax()
 	{
 		$mid 	= (int)$this->post('mid');
 		$num	= $this->post('num');
 		
-		$arr 	= m('flow')->getoptmenu($num, $mid, 1);
+		$arr 	= m('flow')->getoptmenu($num, $mid, 0);
 		$this->showreturn($arr);
 	}
 	
@@ -59,5 +64,38 @@ class flowoptClassAction extends Action
 		$msg 	= m('flow')->optmenu($num, $mid, $optid, $zt, $sm);
 		if($msg != 'ok')$this->showreturn('', $msg, 201);
 		$this->showreturn('');
+	}
+	
+	public function chehuiAjax()
+	{
+		$mid 	= (int)$this->post('mid');
+		$modenum= $this->post('modenum');
+		$sm 	= $this->post('sm');
+		$msg 	= m('flow')->opt('chehui', $modenum, $mid, $sm);
+		if($msg != 'ok')$this->showreturn('', $msg, 201);
+		$this->showreturn('');
+	}
+	
+	/**
+	*	模块统计
+	*/
+	public function flowtotalAjax()
+	{
+		$modenum= $this->post('modenum');
+		$rows 	= m('flow')->initflow($modenum)->flowtotal();
+		$barr['rows'] = $rows;
+		echo json_encode($barr);
+	}
+	
+	/**
+	*	将异常单据标识已完成
+	*/
+	public function oksuccessAjax()
+	{
+		$mid 	= (int)$this->post('mid');
+		$modenum= $this->post('modenum');
+		$sm 	= $this->post('sm');
+		$msg 	= m('flow')->opt('checkerror', $modenum, $mid, $sm);
+		return $msg;
 	}
 }

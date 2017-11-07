@@ -11,14 +11,17 @@ class JPushChajian extends Chajian{
 	
 	
 	
-	private $push_url 		= 'aHR0cDovL3hoODI5LmNvbS8:';
+	private $push_url 		= '';
 	private $push_urls 		= 'aHR0cDovLzEyNy4wLjAuMS9hcHAvcm9ja3hpbmh1d2ViLw::';
 	
 	
 	protected function initChajian()
 	{
-		if(getconfig('systype')=='dev')$this->push_url = $this->push_urls;
-		$this->push_url = $this->rock->jm->base64decode($this->push_url);
+		if(getconfig('systype')=='dev'){
+			$this->push_url = $this->rock->jm->base64decode($this->push_urls);
+		}else{
+			$this->push_url = URLY;
+		}
 		$this->push_url.= 'api.php?a=jpush';
 		$this->push_url.= '&version='.VERSION.'&rnd='.time().'';
 	}
@@ -79,6 +82,46 @@ class JPushChajian extends Chajian{
 				->send();
 		}		
 		$this->db->update('[Q]admin',"`lastpush`='".$this->rock->now."'", "id in($uids)");
+		return $result;
+	}
+	
+	
+	
+	//-------------最新原生app推送
+	public function push($title,$desc, $cont, $palias)
+	{
+		//使用官网来推送
+		$alias		= $palias['alias'];
+		$xmalias	= $palias['xmalias']; //小米的
+		$uids		= $palias['uids'];
+		if($this->app_key=='' || $this->master_secret==''){
+			$arr 	= array(
+				'alias' 	=> join(',', $alias),
+				'xmalias' 	=> join(',', $xmalias),
+				'uids'  => $uids,
+				'title' => $this->rock->jm->base64encode($title),
+				'cont'  => $this->rock->jm->base64encode($cont),
+				'desc'  => $desc
+			);
+			$runurl = c('xinhu')->geturlstr('jpushplat', $arr);
+			return c('curl')->getcurl($runurl);
+		}else{
+			return $this->sendMessage($alias, $title, $cont);
+		}	
+	}
+	
+	//发送消息的推送
+	public function sendMessage($alias, $title='', $cont='')
+	{
+		if(!$alias)return false;
+		$client = new JPush($this->app_key, $this->master_secret);
+		$obj 	= $client->push()->setPlatform('all');
+		$obj->addAlias($alias);
+		$result	= $obj
+			->setMessage($cont, $title) //发信息
+			->setOptions(null, 0)		//不保存离线消息
+			->send();
+		$msg = json_encode($result);	
 		return $result;
 	}
 }

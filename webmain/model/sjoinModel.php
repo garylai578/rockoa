@@ -1,16 +1,30 @@
 <?php
 class sjoinClassModel extends Model
 {
+	private $getgroupidarr=array();
 	
 	//获取用户所在组Id
-	public function getgroupid($uid)
+	public function getgroupid($uid, $fid='')
 	{
+		if($fid=='')$fid = 'id';
+		$keys   = ''.$fid.''.$uid.'';
+		if(isset($this->getgroupidarr[$keys]))return $this->getgroupidarr[$keys];
 		$gasql	= " ( id in( select `sid` from `[Q]sjoin` where `type`='ug' and `mid`='$uid') or id in( select `mid` from `[Q]sjoin` where `type`='gu' and `sid`='$uid') )";
 		$gsql	= "select `id` from `[Q]group` where $gasql ";
 		$rows 	= $this->db->getall($gsql);
 		$ids 	= '0';
-		foreach($rows as $k=>$rs)$ids.=','.$rs['id'].'';
+		foreach($rows as $k=>$rs)$ids.=','.$rs[$fid].'';
+		$this->getgroupidarr[$keys] = $ids;
 		return $ids;
+	}
+	
+	//把人员加到对应组上
+	public function addgroupuid($uid, $gid)
+	{
+		$where 	= "1=1 and ((`type`='gu' and `sid`=$uid ) or (`type`='ug' and `mid`=$uid))";
+		$this->delete($where);
+		if(isempt($gid))return;
+		$this->db->insert($this->table, '`type`,`mid`,`sid`,`indate`', "select 'ug','$uid',`id`,now() from `[Q]group` where id in($gid)", true);
 	}
 	
 	//获取权限菜单id
@@ -59,5 +73,20 @@ class sjoinClassModel extends Model
 			}
 		}
 		return $guid;
+	}
+	
+	/**
+	*	获取组列表
+	*/
+	public function getgrouparr()
+	{
+		return $this->db->getall("select `id`,`name` from `[Q]group` order by `sort`");
+	}
+	/**
+	*	获取组列表
+	*/
+	public function getgrouparrs()
+	{
+		return $this->db->getall("select `id` as value,`name` from `[Q]group` order by `sort`");
 	}
 }

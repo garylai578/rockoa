@@ -314,7 +314,7 @@ class PHPExcelChajian extends Chajian{
 		
 		$title	= $this->title;
 		$dir	= date('Y-m');
-		$path	= ''.ROOT_PATH.'/upload/'.$dir.'/';
+		$path	= ''.ROOT_PATH.'/'.UPDIR.'/'.$dir.'/';
 		if(!is_dir($path))mkdir($path);
 		$rand		= date('YmdHis');
 		$rands		= $rand;
@@ -332,7 +332,7 @@ class PHPExcelChajian extends Chajian{
 		//保存文件
 		$savefile	= $path.''.$this->iconvstr($filerand).'';
 		$objWriter->save($savefile);
-		$backfile	= 'upload/'.$dir.'/'.$filerand.'';
+		$backfile	= ''.UPDIR.'/'.$dir.'/'.$filerand.'';
 		
 		//下载
 		if($this->contain($type, 'down')){

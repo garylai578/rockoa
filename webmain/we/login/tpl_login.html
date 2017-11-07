@@ -10,6 +10,9 @@
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/jswx.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
+<?php
+if($web=='ding')echo '<script type="text/javascript" src="js/jsdd.js"></script>';
+?>
 <style>
 body,html{overflow:hidden;}
 body{background-color:#fbf9fe}
@@ -80,16 +83,51 @@ function loginsuccess(d){
 	js.setoption('deptallname',d.deptallname);
 	js.setoption('ranking',d.ranking);
 	js.setoption('adminid',d.uid);
-	js.setoption('uploadmaxsize',d.maxsize);
-	if(js.request('ltype')=='1'){
-		history.back();
-	}else{
-		js.location('?m=index&d=we');
-	}
+	
+	var burl = js.request('backurl');
+	var curl = (burl=='')?'?m=index&d=we':jm.base64decode(burl);
+	js.location(curl);
 }
 function yanzdengl(){
 	js.wx.load('处理中...');
-	js.location('?m=login&d=we&a=wxlogin');
+	var burl = js.request('backurl');
+	js.location('?m=login&d=we&a=wxlogin&backurl='+burl+'');
+}
+function dingdengl(){
+	js.wx.load('处理中...');
+	if(js.jssdkdingding){
+		js.jssdkdingding();
+	}else{
+		shidengl();
+	}
+}
+js.jssdkddcall=function(bo){
+	if(!bo){
+		shidengl();
+	}else{
+		dd.runtime.permission.requestAuthCode({
+			corpId: js.ddcorpId,
+			onSuccess: function(result){
+				dingdlogn(result.code);
+			},
+			onFail : function(err) {
+				shidengl();
+			}
+		});
+	}
+}
+function shidengl(){
+	js.wx.unload();
+	js.wx.alert('无法使用钉钉快捷登录');
+}
+function dingdlogn(code){
+	js.ajax('login','dingcheck',{code:code}, function(ret){
+		$('#adminuser').val(ret.user);
+		$('#adminpass').val(ret.ptoken);
+		loginsubmit(0);
+	},'none',false, function(str){
+		shidengl();
+	});	
 }
 </script>
 </head>
@@ -120,7 +158,14 @@ function yanzdengl(){
 	<input class="weui_btn weui_btn_primary" type="button" onclick="loginsubmit(0)" value="确定" id="btn0">
 </div>
 <?php 
-if($da['web']=='wxbro')echo '<div onclick="yanzdengl()" style="text-align:center;padding-top:10px;color:#04BE02">微信快捷登录</div>';
+if($iskj>0){
+	if($iskj==3){
+		echo '<div onclick="dingdengl()" style="text-align:center;padding-top:10px;color:#1389D3">钉钉快捷登录</div>';
+	}else{
+		echo '<div onclick="yanzdengl()" style="text-align:center;padding-top:10px;color:#1389D3">'.(($iskj==2)?'企业':'').'微信快捷登录</div>';
+	}
+}
+
 ?>
 
 

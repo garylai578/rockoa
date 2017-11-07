@@ -21,10 +21,6 @@ class mode_carmreseClassAction extends inputAction{
 		
 	}
 	
-	public function getcardata()
-	{
-		$rows = m('carm')->getall("`ispublic`=1 and `state`=1",'carnum as name,id as value');
-		return $rows;
-	}
+	
 }	
 			

@@ -22,7 +22,8 @@ class emailmClassModel extends Model
 		$time	= $this->optionobj->getval($ukey,'',3);
 		if(!isempt($time))$time = strtotime($time);
 		if(isempt($this->receyumi))return '未设置收信邮箱域名';
-		if(!contain($myurs['email'], $this->receyumi))return '邮箱域名必须是['.$this->receyumi.']';
+		if(isempt($myurs['email']))return '未设置邮箱，可到[系统→邮件管理→用户邮箱设置]下设置';
+		if(!contain($myurs['email'], $this->receyumi))return '邮箱域名必须是['.$this->receyumi.']，当前用户邮箱:'.$myurs['email'].'';
 		$rows 	= c('imap')->receemail($this->recehost, $myurs['email'], $myurs['emailpass'], $time);
 		if(!is_array($rows))return $rows;
 		$jf 	= 0;
@@ -37,7 +38,7 @@ class emailmClassModel extends Model
 			if($id>0)continue;
 			
 			$uarr['message_id'] = $message_id;
-			$uarr['title'] 		= $rs['subject'];
+			$uarr['title'] 		= $this->db->tocovexec($rs['subject'], 1);
 			$uarr['content'] 	= $this->db->tocovexec($rs['body'], 1);
 			$uarr['senddt'] 	= $rs['date'];
 			$uarr['optdt'] 		= $this->rock->now;
@@ -117,8 +118,10 @@ class emailmClassModel extends Model
 	//保存邮件的附件
 	private function saveattach($oi, $arr, $id)
 	{
-		$dbs = m('file');
+		$dbs 	= m('file');
+		$doobj 	= c('down');
 		foreach($arr as $k=>$rs){
+			
 			$fsad	= explode('.', $rs['filename']);
 			$sarr['filename'] 	= $rs['filename'];
 			$sarr['filesize'] 	= $rs['filesize'];
@@ -131,9 +134,10 @@ class emailmClassModel extends Model
 			$sarr['mid']	  	= $id;
 			$sarr['filesizecn']	= $this->upfileobj->formatsize($rs['filesize']);
 			$where 				= "`mtype`='emailm' and `mid`='$id' and `filename`='".$sarr['filename']."' and `filesize`='".$sarr['filesize']."'";
+			
 			if($dbs->rows($where)==0){
+				$sarr['filepath'] = $doobj->savefilecont($sarr['fileext'], $rs['attachcont']);//下载附件
 				$fid = $dbs->insert($sarr);
-				//异步下载附件到服务器
 			}
 		}
 	}

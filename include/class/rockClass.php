@@ -28,19 +28,46 @@ final class rockClass
 
 	public function __construct()
 	{		
-		$this->ip		= isset($_SERVER['REMOTE_ADDR'])	? $_SERVER['REMOTE_ADDR']	: '' ;
+		$this->ip		= $this->getclientip();
 		$this->host		= isset($_SERVER['HTTP_HOST'])		? $_SERVER['HTTP_HOST']		: '' ;
 		$this->url		= '';
-		$this->win		=  php_uname();
+		$this->isqywx	= false;
+		$this->win		= php_uname();
 		$this->HTTPweb	= isset($_SERVER['HTTP_USER_AGENT'])? $_SERVER['HTTP_USER_AGENT']	: '' ;
 		$this->web		= $this->getbrowser();
 		$this->unarr	= explode(',','1,2');
 		$this->now		= $this->now();
 		$this->date		= date('Y-m-d');
-		$this->lvlaras  = explode(',','select ,alter table,delete ,drop ,update ,insert into,load_file,outfile');
-		$this->lvlaraa  = explode(',','select,alter,delete,drop,update,insert,from,time_so_sec,convert,from_unixtime,unix_timestamp,curtime,time_format,union,concat,information_schema,group_concat,length,load_file,outfile,database,system_user,current_user,user(),found_rows,declare,master,exec');
+		$this->lvlaras  = explode(',','select ,alter table,delete ,drop ,update ,insert into,load_file,outfile,eval(,phpinfo(),select*from,select*,select%20,delete%20,drop%20,and%20');
+		$this->lvlaraa  = explode(',','select,alter,delete,drop,update,insert,from,time_so_sec,convert,from_unixtime,unix_timestamp,curtime,time_format,union,concat,information_schema,group_concat,length,load_file,outfile,database,system_user,current_user,user(),found_rows,declare,master,exec,(),select*from,select*');
 		$this->lvlarab	= array();
 		foreach($this->lvlaraa as $_i)$this->lvlarab[]='';
+	}
+	
+	/**
+	*	特殊字符过滤
+	*/
+	public function xssrepstr($str)
+	{
+		$xpd  = explode(',','(,), ,<,>,\\,.,*,&,%,$,^,!,@,#,-,+,:,;\'');
+		$xpds = array();
+		foreach($xpd as $xpd1)$xpds[]='';
+		$str = str_replace(',', '',$str);
+		return str_ireplace($xpd, $xpds, $str);
+	}
+	
+	//获取IP
+	public function getclientip()
+	{
+		$ip = 'unknow';
+		if(isset($_SERVER['HTTP_CLIENT_IP'])){
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		}else if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}else if(isset($_SERVER['REMOTE_ADDR'])){
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+		return $ip;
 	}
 	
 	public function initRock()
@@ -53,8 +80,7 @@ final class rockClass
 	
 	public function iconvsql($str,$lx=0)
 	{
-		$str = strtolower($str);
-		$str = str_replace($this->lvlaraa,$this->lvlarab,$str);
+		$str = str_ireplace($this->lvlaraa,$this->lvlarab,$str);
 		$str = str_replace("\n",'', $str);
 		if($lx==1)$str = str_replace(array(' ',' ','	'),array('','',''),$str);
 		return $str;
@@ -96,6 +122,7 @@ final class rockClass
 		return $this->jmuncode($val, $lx, $name);
 	}
 	
+	//get和post参数处理$lx=1:rockjm，6:basejm, 3:判断是否rockjm
 	public function jmuncode($s, $lx=0, $na)
 	{
 		$jmbo = false;
@@ -108,14 +135,15 @@ final class rockClass
 				if($jmbo)$s = $this->jm->uncrypt($s);
 			}
 		}
-		if(substr($s, 0, 7)=='basejm_'){
-			$s = $this->jm->base64decode(substr($s,7));
+		if(substr($s, 0, 7)=='basejm_' || $lx==5){
+			$s = str_replace('basejm_', '', $s);
+			$s = $this->jm->base64decode($s);
 		}
 		$s=str_replace("'", '&#39', $s);
 		if($lx==2)$s=str_replace(array('{','}'), array('[H1]','[H2]'), $s);
 		$str = strtolower($s);
 		foreach($this->lvlaras as $v1)if($this->contain($str, $v1)){
-			$this->debug(''.$na.'《'.$s.'》error:包含非法字符《'.$v1.'》','params');
+			$this->debug(''.$na.'《'.$s.'》error:包含非法字符《'.$v1.'》','params_err');
 			$s = str_replace($v1,'', $str);
 		}
 	
@@ -124,10 +152,15 @@ final class rockClass
 	public function debug($txt, $lx)
 	{
 		if(!DEBUG)return;
-$txt	= ''.$txt.'
-URL：'.$_SERVER['QUERY_STRING'].'
-';
-		$this->createtxt('upload/'.date('Y-m').'/'.$lx.''.date('YmdHis').'_'.rand(1000,9000).'.log', $txt);
+		$txt	= ''.$txt.''.chr(10).'【URL】'.chr(10).''.$this->nowurl().'';
+		if($_POST){
+			$pstr = '';
+			foreach($_POST as $k=>$v)$pstr.=''.chr(10).'['.$k.']：'.$v.'';
+			$txt.=''.chr(10).''.chr(10).'【POST】'.$pstr.'';
+		}
+		$txt.=''.chr(10).''.chr(10).'【IP】'.chr(10).''.$this->ip.'';
+		$txt.=''.chr(10).''.chr(10).'【浏览器】'.chr(10).''.$this->HTTPweb.'';
+		$this->createtxt(''.UPDIR.'/'.date('Y-m').'/'.$lx.''.date('YmdHis').'_'.rand(1000,9000).'.log', $txt);
 	}
 	
 	private function isjm($s)
@@ -253,7 +286,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		$web 	= $this->HTTPweb;
 		$val	= 'IE';
 		$parr	= array(
-			array('MSIE 5'),array('MSIE 6'),array('MSIE 7'),array('MSIE 8'),array('MSIE 9'),array('MSIE 10'),array('MSIE 11'),array('rv:11','MSIE 11'),array('MSIE 12'),array('MicroMessenger','wxbro'),
+			array('MSIE 5'),array('MSIE 6'),array('XIAOMI','xiaomi'),array('HUAWEI','huawei'),array('XINHUAPP','xinhu'),array('DingTalk','ding'),array('MSIE 7'),array('MSIE 8'),array('MSIE 9'),array('MSIE 10'),array('MSIE 11'),array('rv:11','MSIE 11'),array('MSIE 12'),array('MicroMessenger','wxbro'),
 			array('MSIE 13'),array('Firefox'),array('OPR/','Opera'),array('Chrome'),array('Safari'),array('Android'),array('iPhone')
 		);
 		foreach($parr as $wp){
@@ -263,6 +296,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 				break;
 			}
 		}
+		if($val=='wxbro' && $this->contain($web, 'wxwork'))$this->isqywx = true;
 		return $val;
 	}
 	
@@ -287,11 +321,11 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	/**
 		全角半角转换
 	*/
-	public function replace($str,$type='ban')
+	public function replace($str,$quantoban=true)
 	{
 		$search=array('0','1','2','3','4','5','6','7','8','9',',','.','?','\'','(',')',';','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 		$replace=array('０','１','２','３','４','５','６','７','８','９','，','。','？','’','（','）','；','ａ','ｂ','ｃ','ｄ','ｅ','ｆ','ｇ','ｈ','ｉ','ｊ','ｋ','ｌ','ｍ','ｎ','ｏ','ｐ','ｑ','ｒ','ｓ','ｔ','ｕ','ｖ','ｗ','ｘ','ｙ','ｚ','Ａ','Ｂ','Ｃ','Ｄ','Ｅ','Ｆ','Ｇ','Ｈ','Ｉ','Ｊ','Ｋ','Ｌ','Ｍ','Ｎ','Ｏ','Ｐ','Ｑ','Ｒ','Ｓ','Ｔ','Ｕ','Ｖ','Ｗ','Ｚ','Ｙ','Ｚ');
-		if($type=='ban'){
+		if($quantoban){
 			$str=str_replace($replace,$search,$str);
 		}else{
 			$str=str_replace($search,$replace,$str);
@@ -513,9 +547,9 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	public function debugs($str, $lxs='')
 	{
 		if(!DEBUG)return;
-		$msg 	= '['.$this->now.']:'.$str.'';
-		$mkdir 	= 'upload/'.date('Y-m').'';
-		$this->createtxt(''.$mkdir.'/'.$lxs.''.time().'_'.rand(100,999).'.log', $msg);
+		$msg 	= '['.$this->now.']:'.$this->nowurl().''.chr(10).''.$str.'';
+		$mkdir 	= ''.UPDIR.'/'.date('Y-m').'';
+		$this->createtxt(''.$mkdir.'/'.$lxs.''.date('Y-m-d.H.i.s').'_'.rand(100,999).'.log', $msg);
 	}
 	
 	public function arrvalue($arr, $k, $dev='')
@@ -526,7 +560,7 @@ URL：'.$_SERVER['QUERY_STRING'].'
 	}
 	
 	/*
-	*	获取当前访问url
+	*	获取当前访问全部url
 	*/
 	public function nowurl()
 	{
@@ -534,5 +568,42 @@ URL：'.$_SERVER['QUERY_STRING'].'
 		$url = 'http://'.$_SERVER['HTTP_HOST'];
 		if(isset($_SERVER['REQUEST_URI']))$url.= $_SERVER['REQUEST_URI'];
 		return $url;
+	}
+	
+	/**
+	*	获取当前访问URL地址
+	*/
+	public function url()
+	{
+		$url 	= $this->nowurl();
+		$wz 	= strrpos($url,'/');
+		return substr($url,0, $wz+1);
+	}		
+	
+	/**
+	*	匹配
+	*/
+	public function matcharr($str, $lx=0)
+	{
+		$match	= '/\{(.*?)\}/';
+		if($lx==1)$match	= '/\[(.*?)\]/';
+		if($lx==2)$match	= '/\`(.*?)\`/';
+		preg_match_all($match, $str, $list);
+		$barr = array();
+		foreach($list[1] as $k=>$nrs){
+			$barr[] = $nrs;
+		}
+		return $barr;
+	}
+	
+	/**
+	*	函数参数转为key
+	*/
+	public function getfunkey($arr=array(),$qz='a')
+	{
+		$s = '';
+		foreach($arr as $k=>$v)$s.='_'.$v.'';
+		$s = ''.$qz.''.$s.'';
+		return $s;
 	}
 }

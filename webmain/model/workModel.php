@@ -1,11 +1,14 @@
 <?php
 class workClassModel extends Model
 {
-	//为完成统计的
+	/**
+	*	未完成统计的也可以用m('flow')->initflow('work')->getdaiban();
+	*/
 	public function getwwctotals($uid)
 	{
 		$s 	= $this->rock->dbinstr('distid', $uid);
-		$to	= $this->rows('`status`=1 and `state` in(0,2) and '.$s.'');
+		$to	= $this->rows('`status` in(3,4) and '.$s.'');
+		
 		return $to;
 	}
 }

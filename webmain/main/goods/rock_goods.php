@@ -1,13 +1,15 @@
 <?php if(!defined('HOST'))die('not access');?>
+
 <script >
 $(document).ready(function(){
+
 	var a = $('#view_{rand}').bootstable({
-		tablename:'goods',celleditor:true,fanye:true,modenum:'goods',
+		tablename:'goods',celleditor:true,fanye:true,modenum:'goods',autoLoad:false,
 		url:publicstore('{mode}','{dir}'),storebeforeaction:'beforeshow',storeafteraction:'aftershow',
 		columns:[{
-			text:'名称',dataIndex:'name'
+			text:'名称',dataIndex:'name',align:'left'
 		},{
-			text:'分类',dataIndex:'typeid'
+			text:'分类',dataIndex:'typeid',align:'left'
 		},{
 			text:'单价',dataIndex:'price',sortable:true
 		},{
@@ -28,7 +30,8 @@ $(document).ready(function(){
 			openxiang('goods',d.id);
 		}
 	});
-	goodsrocks = function(s){
+	
+	goodsrocks{rand} = function(s){
 		a.reload();
 	}
 	var c = {
@@ -44,18 +47,37 @@ $(document).ready(function(){
 			if(lx==1){
 				id = a.changeid;
 			};
-			openinput('物品产品','goods', id, 'goodsrocks');
+			openinput('物品产品','goods', id, 'goodsrocks{rand}');
 		},
 		piliang:function(){
-			goodsmanagesss=a;
-			addtabs({num:'goodspladd',url:'main,goods,pladd',icons:'plus',name:'批量添加物品产品'});
+			managelistgoods = a;
+			addtabs({num:'daorugoods',url:'flow,input,daoru,modenum=goods',icons:'plus',name:'导入物品'});
 		},
 		rukuchu:function(o1, lx){
-			var s='物品产品入库';
-			if(lx==1)s='物品产品出库';
+			var s='物品入库';
+			if(lx==1)s='物品出库';
 			addtabs({num:'rukuchugood'+lx+'',url:'main,goods,churuku,type='+lx+'',icons:'plus',name:s});
-		}
+		},
+		relaodkc:function(){
+			js.ajax(js.getajaxurl('reloadkc','{mode}','{dir}'),{},function(){
+				a.reload();
+			},'get','','刷新中...,刷新完成');
+		},
+		daochu:function(){
+			a.exceldown();
+		},
+		
+		
+		
+		mobj:a,
+		title:'物品分类',
+		stable:'goods',
+		optionview:'optionview_{rand}',
+		optionnum:'goodstype',
+		rand:'{rand}'
 	};
+	
+	var c = new optionclass(c);
 	
 	function btn(bo){
 		get('del_{rand}').disabled = bo;
@@ -63,31 +85,45 @@ $(document).ready(function(){
 	}
 	
 	js.initbtn(c);
+	
 });
 </script>
+<table width="100%">
+<tr valign="top">
+<td>
+	<div style="border:1px #cccccc solid;width:220px">
+	<div id="optionview_{rand}" style="height:400px;overflow:auto;"></div>
+	</div>  
+</td>
+<td width="10" nowrap>&nbsp;</td>
+<td width="95%">
+
+
 <div>
 <table width="100%"><tr>
 	<td nowrap>
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
 	</td>
 	<td  style="padding-left:10px">
-		<button class="btn btn-primary" click="piliang" type="button">批量添加</button>
+		<button class="btn btn-default" click="piliang" type="button">导入</button>
 	</td>
-	<td  style="padding-left:10px">
-		<div class="input-group" style="width:250px">
-			<input class="form-control" id="key_{rand}"   placeholder="名称">
-			<span class="input-group-btn">
-				<button class="btn btn-default" click="search" type="button"><i class="icon-search"></i></button>
-			</span>
-		</div>
+	<td style="padding-left:10px">
+	<input class="form-control" style="width:150px" id="key_{rand}"   placeholder="物品名">
+	</td>
+	<td style="padding-left:10px">
+		<button class="btn btn-default" click="search" type="button">搜索</button> 
 	</td>
 	<td  width="80%" style="padding-left:10px">
 		<div class="btn-group">
-		<button class="btn btn-default" click="rukuchu,0" type="button">入库操作</button>
-		<button class="btn btn-default" click="rukuchu,1" type="button">出库操作</button>
+		<button class="btn btn-default" click="rukuchu,0" type="button">入库</button>
+		<button class="btn btn-default" click="rukuchu,1" type="button">出库</button>
 		</div>
 	</td>
+	<td  style="padding-right:10px">
+		<button class="btn btn-default" click="daochu" type="button">导出</button>
+	</td>
 	<td align="right" nowrap>
+		<button class="btn btn-default" click="relaodkc" type="button">刷新库存</button> &nbsp; 
 		<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
 		<button class="btn btn-info" id="edit_{rand}" click="clickwin,1" disabled type="button"><i class="icon-edit"></i> 编辑 </button>
 	</td>
@@ -95,3 +131,8 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="tishi">在出入库详情需要已审核才会计算库存的，表goodss上字段status=1时。</div>
+
+</td>
+</tr>
+</table>

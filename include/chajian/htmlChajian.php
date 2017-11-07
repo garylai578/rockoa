@@ -32,9 +32,9 @@ class htmlChajian extends Chajian{
 	}
 	
 	
-	public function createtable($fields, $arr, $title='',$lx='')
+	public function createtable($fields, $arr, $title='',$lx='',$bcolor='')
 	{
-		$bcolor = '#cccccc';
+		if(isempt($bcolor))$bcolor = '#cccccc';
 		if($lx=='print'){
 			$bcolor = '#000000';
 			$title='';
@@ -53,6 +53,14 @@ class htmlChajian extends Chajian{
 		$s .='</table>';
 		
 		return $s;
+	}
+	
+	/**
+	*	单据详情默认展示的
+	*/
+	public function xiangtable($fields, $arr,$bcolor='', $lx='')
+	{
+		return $this->createtable($fields, $arr,'',$lx, $bcolor);
 	}
 	
 	/**
@@ -113,7 +121,8 @@ class htmlChajian extends Chajian{
 	public function execltable($title, $headArr, $rows, $lx='')
 	{
 		if($lx=='')$lx='xls';
-		$sty 	= 'style="white-space:nowrap;border:.5pt solid #000000;font-size:12px;"';
+		$borst  = '.5pt';
+		$sty 	= 'style="white-space:nowrap;border:'.$borst.' solid #000000;font-size:12px;"';
 		$s 		= '<html><head><meta charset="utf-8"><title>'.$title.'</title></head><body>';
 		$s 	   .= '<table border="0" style="border-collapse:collapse;">';
 		$hlen 	= 1;
@@ -138,13 +147,17 @@ class htmlChajian extends Chajian{
 		$s.='</table>';
 		
 		$s.='</body></html>';
-		$mkdir 	= 'upload/'.date('Y-m').'';
-		if(!is_dir($mkdir))mkdir($mkdir);
 		
-		$filename 	= ''.$title.'_'.time().'.'.$lx.'';
+		$mkdir 	= ''.UPDIR.'/'.date('Y-m').'';
+		
+		if(contain(strtolower(PHP_OS),'linux')){
+			$title = c('pingyin')->get($title, 1);//linux要用拼音，不然会乱码
+		}
+		
+		$filename 	= ''.$title.'_'.date('d_His').'.'.$lx.'';
 		$filename	= str_replace('/','',$filename);
 		$url 		= ''.$mkdir.'/'.$filename.'';
-		$bo 		= file_put_contents(iconv('utf-8','gb2312',$url), $s);
+		$bo 		= $this->rock->createtxt(iconv('utf-8','gb2312',$url), $s);
 		return $url;
 	}
 	
@@ -160,6 +173,7 @@ class htmlChajian extends Chajian{
 	public function htmlremove($str)
 	{
 		$str = preg_replace("/<[^>]*>/si",'',$str);
+		$str = str_replace(array(' ','	',"\n"),array('','',''), $str);
 		return $str;
 	}
 	
@@ -170,7 +184,21 @@ class htmlChajian extends Chajian{
 		return implode('', $chars);  
 	} 
 	
-	
+	//判断字符串是否包含html代码
+	public function ishtml($val)
+	{
+		$bo = false;
+		if(isempt($val))return $bo;
+		$valstr = strtolower($val);
+		$sparr 	= explode(',','p,div,span,font,table,b,a');
+		foreach($sparr as $sp){
+			if(contain($valstr,'<'.$sp.'')){
+				$bo=true;
+				break;
+			}
+		}
+		return $bo;
+	}
 	
 	
 	

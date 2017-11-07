@@ -7,7 +7,7 @@ $(document).ready(function(){
 		columns:[{
 			text:'名称',dataIndex:'name'
 		},{
-			text:'说明',dataIndex:'explain',align:'left'
+			text:'说明',dataIndex:'explain',align:'left',width:'45%'
 		},{
 			text:'更新时间',dataIndex:'updatedt'
 		},{
@@ -20,7 +20,7 @@ $(document).ready(function(){
 			text:'详情',dataIndex:'view'
 		},{
 			text:'操作',dataIndex:'opt',align:'left',renderer:function(v,d){
-				if(d.isaz=='0')return '<font color=#888888>还不能安装</font>';
+				if(d.isaz=='0')return '<font color=#888888>无需安装</font>';
 				var s='';
 				if(v==1)s='<font color=green>已安装</font> ';
 				if(v==2)s='<button onclick="upsho{rand}(2,'+d.id+',\''+d.key+'\')" class="btn btn-danger btn-sm" type="button">升级</button>';
@@ -52,18 +52,22 @@ $(document).ready(function(){
 		reloads:function(){
 			a.reload();
 		},
+		bool:false,
 		upsho:function(lx,id,key, slx){
+			if(this.bool){js.msg('msg','其他模块升级中,请稍后');return;}
 			var msgid='msg'+id+'_{rand}',lxs='安装';
 			if(lx==2)lxs='升级';
 			js.setmsg(''+lxs+'中...','', msgid);
 			this.msgid  = msgid;
 			this.lxsss  = lxs;
 			this.upadd	= {id:id,key:key,slx:slx};
+			this.bool	= true;
 			js.ajax(js.getajaxurl('shengjian','{mode}','{dir}'),this.upadd,function(d){
 				if(d.success){
 					c.uparr = d.data;
 					c.upstart(0);
 				}else{
+					c.bool=false;
 					js.setmsg(d.msg,'red', c.msgid);
 				}
 			},'post,json');
@@ -80,6 +84,7 @@ $(document).ready(function(){
 				}else{
 					a.reload();
 				}
+				c.bool=false;
 				return;
 			}
 			var d = this.uparr[oi];
@@ -92,13 +97,14 @@ $(document).ready(function(){
 				if(s=='ok'){
 					c.upstart(oi+1);
 				}else{
+					c.bool=false;
 					js.setmsg(s,'red', c.msgid);
 				}
 			},'post');
 		},
 		upshos:function(lx,id,kes){
 			if(kes=='null')kes='';
-			js.prompt('模块安装','请输入安装key',function(lxbd,msg){
+			js.prompt('模块安装','安装key(免费模块可不输入,直接点确定)',function(lxbd,msg){
 				if(lxbd=='yes'){
 					if(lx==2&&msg)msg=jm.uncrypt(msg);
 					c.upsho(lx,id,msg, 0);
@@ -119,6 +125,7 @@ $(document).ready(function(){
 		}
 	};
 	upsho{rand}=function(lx,id,kes){
+		if(ISDEMO){js.msg('msg','演示系统不要操作');return;}
 		c.upshos(lx,id,kes);
 	}
 	downup{rand}=function(id,na){
@@ -127,6 +134,7 @@ $(document).ready(function(){
 	js.initbtn(c);
 	
 	upfetwontbu=function(lx, o){
+		if(ISDEMO){js.msg('msg','演示系统不要操作');return;}
 		if(!istongbu && lx!=3){
 			js.alert('请先升级系统到最新才能同步');
 			return;
@@ -156,7 +164,9 @@ $(document).ready(function(){
 <div class="blank10"></div>
 <div>1、同步菜单，系统上操作菜单会和官网同步，也可到【系统→菜单管理】下管理。<a onclick="upfetwontbu(0,this)" href="javascript:;">[同步]</a></div>
 <div class="blank10"></div>
-<div>2、同步流程模块，流程模块会和官网同步，也可到【流程模块】下管理。<a onclick="upfetwontbu(1,this)" href="javascript:;">[同步]</a></div>
+<div>2、同步流程模块，流程模块会和官网同步，也可到【流程模块】下管理。<a onclick="upfetwontbu(1,this)" href="javascript:;">[1.同步]</a>，<a onclick="upfetwontbu(4,this)" href="javascript:;">[2.同步完全和官网一致]</a></div>
+<div style="color:#888888"><font color=white>2、</font>[1.同步]：同步了不会覆盖自己的配置信息，[2.同步完全和官网一致]：会完成和官网一致，同时会删除自己配置和新建的模块，谨慎。</div>
+<!--<div><font color=white>2、</font>输入要同步的模块编号：<input style="width:250px" placeholder="模块编号多个,分开，输入all为全部" class="inputs"></div>-->
 <div class="blank10"></div>
 <div>3、同步桌面版/手机上应用，应用会和官网同步，也可到【系统→即时通信管理→应用管理】下管理。<a onclick="upfetwontbu(2,this)" href="javascript:;">[同步]</a></div>
 <div class="blank10"></div>

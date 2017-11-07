@@ -16,6 +16,8 @@ $(document).ready(function(){
 		},{
 			text:'星期',dataIndex:'week'
 		},{
+			text:'纪要人',dataIndex:'jyname'
+		},{
 			text:'开始时间',dataIndex:'startdt'
 		},{
 			text:'结束时间',dataIndex:'enddt'

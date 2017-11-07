@@ -6,8 +6,18 @@ class agentClassAction extends apiAction
 	*/
 	public function dataAction()
 	{
-		$agentarr			= m('reim')->getagent($this->adminid);
-		$arr['agentjson']	= json_encode($agentarr);
+		$agentarr			= m('reim')->getappagent($this->adminid);
+		$arr['agentjson']	= json_encode($agentarr['rows']);
+		$this->showreturn($arr);
+	}
+	
+	/**
+	*	app上读取数组的
+	*/
+	public function dataappAction()
+	{
+		$agentarr			= m('reim')->getappagent($this->adminid);
+		$arr['agentarr']	= $agentarr;
 		$this->showreturn($arr);
 	}
 	

@@ -1,5 +1,7 @@
 <?php
-
+/**
+*	客户.收付款单
+*/
 class mode_custfinaClassAction extends inputAction{
 	
 
@@ -32,13 +34,18 @@ class mode_custfinaClassAction extends inputAction{
 	
 	public function selectcust()
 	{
-		$rows = m('crm')->getmycust($this->adminid);
+		$rows = m('crm')->getmycust($this->adminid, $this->rock->arrvalue($this->rs, 'custid'));
 		return $rows;
 	}
 	
 	public function hetongdata()
 	{
-		$rows = m('crm')->getmyract($this->adminid, (int)$this->get('mid'));
+		$htid = 0;
+		$mid  = (int)$this->get('mid','0');
+		if($mid>0){
+			$htid = (int)$this->flow->getmou('htid', $mid); //当前记录也要显示合同ID
+		}
+		$rows = m('crm')->getmyract($this->adminid, $htid);
 		$arr  = array();
 		foreach($rows as $k=>$rs){
 			$arr[] = array(

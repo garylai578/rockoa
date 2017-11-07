@@ -5,12 +5,12 @@ class flow_custsaleClassModel extends flowModel
 	public function initModel(){
 		$this->statearr		 = c('array')->strtoarray('跟进中|blue,已成交|green,已丢失|#888888');
 	}
-	
 
 	
 	public function flowrsreplace($rs)
 	{
 		$zt = $this->statearr[$rs['state']];
+		$rs['statess']	 = $rs['state'];
 		$rs['state']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
 		if($rs['htid']>0)$rs['state'].=',<font color=#888888>并建立合同</font>';
 		return $rs;
@@ -37,44 +37,9 @@ class flow_custsaleClassModel extends flowModel
 		}	
 	}
 	
-	protected function flowprintrows($rows)
-	{
-		foreach($rows as $k=>$rs){
-			$zt = $this->statearr[$rs['state']];
-			$rows[$k]['state']		= '<font color="'.$zt[1].'">'.$zt[0].'</font>';;
-		}
-		return $rows;
-	}
-	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$key 	= $this->rock->post('key');
-		$zt 	= $this->rock->post('zt');
-		$where 	= '`uid`='.$uid.'';
-		if($lx=='down'){
-			$where = m('admin')->getdownwheres('uid', $uid, 0);
-		}
-		
-		if($lx=='def'){
-			$where.=' and `state`=0';
-		}
-		if($lx=='saleycj'){
-			$where 	= '`uid`='.$uid.' and `state`=1';
-		}
-		if($lx=='saleyds'){
-			$where 	= '`uid`='.$uid.' and `state`=2';
-		}
-		if($lx=='saleall'){
-			$where 	= '`uid`='.$uid.'';
-		}
-		
-		if($zt!='')$where.=" and `state`='$zt'";
-		if(!isempt($key)){
-			$where.=" and (`custname` like '%$key%' or `optname`='$key')";
-		}
 		return array(
-			'where' => 'and '.$where,
-			'fields'=> 'id,custname,laiyuan,optname,state,money,optdt,createname,`explain`,htid',
 			'order' => '`state`,`optdt` desc'
 		);
 	}

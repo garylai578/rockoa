@@ -8,15 +8,18 @@ class indexreimClassAction extends apiAction
 	{
 		$viewobj 	= m('view');
 		$dbs 		= m('reim');
-		$deptarr 	= m('dept')->getdata();
-		$userarr 	= m('admin')->getuser(1);
+		
+		$udarr 		= m('dept')->getdeptuserdata();
+		$userarr 	= $udarr['uarr'];
+		$deptarr 	= $udarr['darr'];
+		
 		$grouparr 	= $dbs->getgroup($this->adminid);
 		$agentarr	= $dbs->getagent($this->adminid);
 		$historyarr	= $dbs->gethistory($this->adminid);
 		$applyarr	= m('mode')->getmoderows($this->adminid,'and islu=1');
 		$modearr	= array();
 		foreach($applyarr as $k=>$rs){
-			if(!$viewobj->isadd($rs['id'], $this->adminid))continue;
+			if(!$viewobj->isadd($rs, $this->adminid))continue;
 			$modearr[]=array('type'=>$rs['type'],'num'=>$rs['num'],'name'=>$rs['name']);
 		}
 		
@@ -35,15 +38,43 @@ class indexreimClassAction extends apiAction
 	}
 	
 	/**
+	*	REIM的初始化
+	*/
+	public function reiminitAction()
+	{
+		$dbs 		= m('reim');
+		
+		$udarr 		= m('dept')->getdeptuserdata();
+		$userarr 	= $udarr['uarr'];
+		$deptarr 	= $udarr['darr'];
+		
+		$grouparr 	= $dbs->getgroup($this->adminid);
+		$historyarr	= $dbs->gethistory($this->adminid);
+		$agentarr	= $dbs->getagent($this->adminid);
+		
+		$arr['deptjson']	= json_encode($deptarr);
+		$arr['userjson']	= json_encode($userarr);
+		$arr['groupjson']	= json_encode($grouparr);
+		$arr['historyjson'] = json_encode($historyarr);
+		$arr['agentjson']	= json_encode($agentarr);
+		$arr['config'] 		= $dbs->getreims();
+		$arr['loaddt'] 		= $this->now;
+		$arr['ip'] 			= $this->ip;
+		m('login')->uplastdt();
+		
+		$this->showreturn($arr);
+	}
+	
+	/**
 	*	手机网页版读取
 	*/
 	public function mwebinitAction()
 	{
 		$dbs 		= m('reim');
-		$agentarr	= $dbs->getagent($this->adminid);
+		$agentarr	= $dbs->getappagent($this->adminid);
 		$historyarr	= $dbs->gethistory($this->adminid);
 		
-		$arr['agentjson']	= json_encode($agentarr);
+		$arr['agentjson']	= json_encode($agentarr['rows']);
 		$arr['historyjson'] = json_encode($historyarr);
 		$arr['loaddt'] 		= $this->now;
 		m('login')->uplastdt();
@@ -61,9 +92,11 @@ class indexreimClassAction extends apiAction
 		if($type=='dept')$json 	= m('dept')->getdata();
 		if($type=='user')$json 	= m('admin')->getuser();
 		if($type=='agent')$json = $dbs->getagent($this->adminid);
+		if($type=='config')$json = m('reim')->getreims();
 		
 		$arr['json'] 	= json_encode($json);	
 		$arr['loaddt']  = $this->now;
+		$arr['ip']  	= $this->ip;
 		$arr['type']  	= $type;
 		m('login')->uplastdt();
 		$this->showreturn($arr);
@@ -87,9 +120,12 @@ class indexreimClassAction extends apiAction
 	
 	public function showmyinfoAction()
 	{
-		$arr = m('admin')->getone($this->adminid,'`id`,`deptallname`,`ranking`,`face`,`name`');
+		$arr = m('admin')->getone($this->adminid,'`id`,`deptallname`,`ranking`,`face`,`name`,`user`,`mobile`');
 		if(!$arr)$this->showreturn('','not user', 201);
 		if(isempt($arr['face']))$arr['face']='images/noface.png';
+		$arr['admintoken']  = $this->admintoken;
+		//$arr['isgzh'] 		= m('wxgzh:index')->isusegzh(1); //判断是否有设置公众号
+		
 		$this->showreturn($arr);
 	}
 	
@@ -97,9 +133,19 @@ class indexreimClassAction extends apiAction
 	public function tongbufaceAction()
 	{
 		$reim = m('reim');
-		if(!$reim->isanwx())$this->showreturn('','没安装微信企业号',201);
-		$barr 	= m('weixin:user')->anayface($this->userrs['user'], true);
-		if($barr['errcode'] != 0)$this->showreturn('',$barr['msg'],202);
-		$this->showreturn($barr);
+		if($reim->isanwx()){
+			$barr 	= m('weixin:user')->anayface($this->userrs['user'], true);
+			if($barr['errcode'] != 0)$this->showreturn('',$barr['msg'],202);
+			$this->showreturn($barr);
+		}else{
+			if($reim->installwx(1)){
+				$barr 	= m('weixinqy:user')->anayface($this->userrs['user'], true);
+				if($barr['errcode'] != 0)$this->showreturn('',$barr['msg'],202);
+				$this->showreturn($barr);
+			}else{
+				$this->showreturn('','没安装微信企业号',201);
+			}
+		}
+		
 	}
 }

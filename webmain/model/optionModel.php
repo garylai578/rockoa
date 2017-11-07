@@ -1,6 +1,8 @@
 <?php
 class optionClassModel extends Model
 {
+	private	$getypsarr = array();
+	
 	/**
 		获取选项
 	*/
@@ -18,15 +20,22 @@ class optionClassModel extends Model
 		return $val;
 	}
 	
-	public function getdata($num, $whe='')
+	private function getpids($num)
 	{
 		if(!is_numeric($num)){
 			$id  = (int)$this->getmou('id', "`num`='$num'");
-			if($id == 0)$id = -1;
+			if($id == 0)$id = -829;
 		}else{
 			$id = $num;
 		}
-		return $this->getall("`pid`='$id' and `valid`=1 $whe order by `sort`,`id`");
+		return $id;
+	}
+	
+	//获取数据
+	public function getdata($num, $whe='')
+	{
+		$pid = $this->getpids($num);
+		return $this->getall("`pid`='$pid' and `valid`=1 $whe order by `sort`,`id`",'`id`,`name`,`value`,`num`,`receid`,`recename`,`pid`');
 	}
 	
 	public function getmnum($num)
@@ -34,23 +43,35 @@ class optionClassModel extends Model
 		return $this->getdata($num);
 	}
 	
+	//获取树形结构
 	public function getselectdata($num, $tbo=false)
 	{
-		$arr = $this->getdata($num);
-		$rows= array();
+		$this->getselectdatad = array();
+		$this->getselectdatas($num,0, $tbo);
+		return $this->getselectdatad;
+	}
+	private function getselectdatas($num,$lev=0, $tbo=false)
+	{
+		$pid = $this->getpids($num);
+		$fied= '';
+		if($tbo)$fied=',(select count(1) from `[Q]option` where `pid`=a.`id` and `valid`=1)as stotal';
+		$arr = $this->db->getall("select a.`id`,a.`name`,a.`num`,a.`value`".$fied." from `[Q]option` a where a.`pid`='$pid' and a.`valid`=1 order by a.`sort`,a.id");
 		foreach($arr as $k=>$rs){
-			$rows[] = $rs;
-			if($tbo){
-				$sarr = $this->getdata($rs['id']);
-				foreach($sarr as $k1=>$rs1){
-					$rs1['name'] = '&nbsp;&nbsp;├'.$rs1['name'].'';
-					$rows[] = $rs1;
-				}
-			}
+			$rs['nameo']	= $rs['name'];
+			$strs 	= '';
+			for($i=0;$i<$lev;$i++)$strs.='&nbsp;&nbsp;&nbsp;&nbsp;';
+			if($lev>0)$rs['name'] = ''.$strs.'├'.$rs['name'].'';
+			
+			$rs['padding']	= $lev*24;
+			$this->getselectdatad[] = $rs;
+	
+			if($tbo && $rs['stotal']>0)$this->getselectdatas($rs['id'], $lev+1, $tbo);
 		}
-		return $rows;
 	}
 	
+	
+	
+	//设置选项值
 	public function setval($num, $val='', $name=null, $isub=true)
 	{
 		$numa	= explode('@', $num);
@@ -80,7 +101,7 @@ class optionClassModel extends Model
 	
 	private function getfoldrowsss($pid)
 	{
-		$rows 	= $this->db->getall("select `id`,`pid`,`name`,`optdt`,`sort` from [Q]option where `pid`='$pid' and `valid`=1 order by `sort`,`id`");
+		$rows 	= $this->db->getall("select `id`,`pid`,`name`,`optdt`,`sort`,`receid`,`recename` from [Q]option where `pid`='$pid' and `valid`=1 order by `sort`,`id`");
 		foreach($rows as $k=>$rs){
 			$rows[$k]['expanded']	= true;
 			$rows[$k]['children'] 	= $this->getfoldrowsss($rs['id']);
@@ -103,5 +124,63 @@ class optionClassModel extends Model
 			$barr[$rs['num']] = $rs['value'];
 		}
 		return $barr;
+	}
+	
+	//获取所有下级Id
+	public function getalldownid($id)
+	{
+		$str  = $id;
+		$rows = $this->getall('`pid`='.$id.' and `valid`=1','`id`');
+		foreach($rows as $k=>$rs){
+			$str1= $this->getalldownid($rs['id']);
+			$str.=','.$str1.'';
+		}
+		return $str;
+	}
+	
+	//根据receid获取记录 $type=0，默认1其他
+	public function getreceiddownall($uid, $optid=0, $type=0)
+	{
+		$rstr = m('admin')->getjoinstr('`receid`', $uid, 1,1);
+		$whe  = '';
+		if($optid>0)$whe=' and `optid`='.$optid.'';
+		$rows = $this->getall('`valid`=1 and `type`='.$type.' and ('.$rstr.') '.$whe.'','`id`');
+		$strs = '';
+		foreach($rows as $k=>$rs){
+			$str1 = $this->getalldownid($rs['id']);
+			$strs.=','.$str1.'';
+		}
+		if($strs!='')$strs = substr($strs, 1);
+		return $strs;
+	}
+	
+	/**
+	*	根据名称如：技术姿势/PHP知识 得到对应ID
+	*/
+	public function gettypeid($djnum,$s)
+	{
+		if(isset($this->getypsarr[$s]))return $this->getypsarr[$s];
+		$sid = 0;
+		$s 	 = str_replace(',','/', $s);
+		$djid= $this->getval($djnum,'0',2);
+		if(isempt($djid)){
+			$djid = $this->insert(array('name' => '分类','num' => $djnum,'pid'=> 0,'valid'=> 1));
+		}
+		$dsja= $djid;
+		$sarr= explode('/', $s);
+		foreach($sarr as $safs){
+			$pid 	= $djid;
+			$djid 	= (int)$this->getmou('id', "`pid`='$pid' and `name`='$safs'");
+			if($djid==0){
+				$djid = $this->insert(array(
+					'name' => $safs,
+					'pid'  => $pid,
+					'valid'  => 1,
+				));
+			}
+		}
+		if($djid != $dsja)$sid 	= $djid;
+		$this->getypsarr[$s] 	= $sid;
+		return $sid;
 	}
 }

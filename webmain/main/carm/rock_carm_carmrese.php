@@ -19,6 +19,12 @@ $(document).ready(function(){
 		},{
 			text:'驾驶员',dataIndex:'jianame'
 		},{
+			text:'起始公里',dataIndex:'kmstart'
+		},{
+			text:'起始公里',dataIndex:'kmend'
+		},{
+			text:'归还时间',dataIndex:'returndt'
+		},{
 			text:'申请人',dataIndex:'optname'
 		},{
 			text:'操作时间',dataIndex:'optdt'

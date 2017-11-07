@@ -1,6 +1,13 @@
 <?php
+/**
+*	人事模块.调动的
+*/
 class flow_hrtransferClassModel extends flowModel
 {
+	//审核完成处理
+	protected function flowcheckfinsh($zt){
+		m('hr')->hrrun();
+	}
 
 	protected function flowbillwhere($uid, $lx)
 	{

@@ -1,28 +1,7 @@
 <?php if(!defined('HOST'))die('not access');?>
 <script >
 $(document).ready(function(){
-	{params};
-	var num = params.num,pid,optlx=0;
-	var typeid=0,sspid=0;
-	var at = $('#optionview_{rand}').bootstree({
-		url:js.getajaxurl('gettreedata','option','system',{'num':'knowtikutype'}),
-		columns:[{
-			text:'题库分类',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%'
-		},{
-			text:'ID',dataIndex:'id',width:'20%'
-		}],
-		load:function(d){
-			if(sspid==0){
-				typeid = d.pid;
-				sspid = d.pid;
-				c.loadfile('0','所有题库');
-			}
-		},
-		itemdblclick:function(d){
-			typeid = d.id;
-			c.loadfile(d.id,d.name);
-		}
-	});;
+	
 	var modenum='knowtiku';
 	var a = $('#view_{rand}').bootstable({
 		tablename:modenum,celleditor:true,autoLoad:false,modenum:modenum,fanye:true,params:{atype:'guan'},
@@ -30,6 +9,8 @@ $(document).ready(function(){
 			text:'',dataIndex:'caozuo'
 		},{
 			text:'题名',dataIndex:'title',editor:false,align:'left'
+		},{
+			text:'分类',dataIndex:'typename'
 		},{
 			text:'类型',dataIndex:'type'
 		},{
@@ -50,49 +31,6 @@ $(document).ready(function(){
 	});
 
 	var c = {
-		reload:function(){
-			at.reload();
-		},
-		loadfile:function(spd,nsd){
-			$('#megss{rand}').html(nsd);
-			a.setparams({'typeid':spd}, true);
-		},
-		genmu:function(){
-			typeid = sspid;
-			at.changedata={};
-			this.loadfile('0','所有题库');
-		},
-		clicktypeeidt:function(){
-			var d = at.changedata;
-			if(d.id)c.clicktypewin(false, 1, d);
-		},
-		clicktypewin:function(o1, lx, da){
-			var h = $.bootsform({
-				title:'题库分类',height:250,width:300,
-				tablename:'option',labelWidth:50,
-				isedit:lx,submitfields:'name,sort,pid',cancelbtn:false,
-				items:[{
-					labelText:'名称',name:'name',required:true
-				},{
-					labelText:'上级id',name:'pid',value:0,type:'hidden'
-				},{
-					labelText:'排序号',name:'sort',type:'number',value:0
-				}],
-				success:function(){
-					if(optlx==0)at.reload();
-					if(optlx==1)a.reload();
-				}
-			});
-			if(lx==1)h.setValues(da);
-			if(lx==0)h.setValue('pid', typeid);
-			optlx = 0;
-			return h;
-		},
-		typedel:function(o1){
-			at.del({
-				url:js.getajaxurl('deloption','option','system'),params:{'stable':'assetm'}
-			});
-		},
 		del:function(){
 			a.del();
 		},
@@ -105,39 +43,49 @@ $(document).ready(function(){
 		search:function(){
 			var s=get('key_{rand}').value;
 			a.setparams({key:s},true);
-		}
+		},
+		daoru:function(){
+			
+			managelistknowtiku = a;
+			addtabs({num:'daoruknowtiku',url:'flow,input,daoru,modenum=knowtiku',icons:'plus',name:'导入题库'});
+			
+		},
+		
+		mobj:a,
+		title:'题库分类',
+		stable:'knowtiku',
+		optionview:'optionview_{rand}',
+		optionnum:'knowtikutype',
+		rand:'{rand}'
 	};
+	
+	var c = new optionclass(c);
+	
 	js.initbtn(c);
-	$('#optionview_{rand}').css('height',''+(viewheight-70)+'px');
+
 });
 </script>
 
 
 <table width="100%">
 <tr valign="top">
-<td width="220">
-	<div style="border:1px #cccccc solid">
-	  <div id="optionview_{rand}" style="height:400px;overflow:auto;"></div>
-	  <div  class="panel-footer">
-		<a href="javascript:" click="clicktypewin,0" onclick="return false"><i class="icon-plus"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="typedel" onclick="return false"><i class="icon-trash"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="reload" onclick="return false"><i class="icon-refresh"></i></a>
-	  </div>
+<td>
+	<div style="border:1px #cccccc solid;width:220px">
+	<div id="optionview_{rand}" style="height:400px;overflow:auto;"></div>
 	</div>  
 </td>
-<td width="10"></td>
-<td>	
+<td width="10" nowrap><div style="width:10px">&nbsp;</div></td>
+<td width="95%">	
 	<div>
 	<table width="100%"><tr>
 		<td align="left" nowrap>
 			<button class="btn btn-primary" click="adds"  type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
-			<button class="btn btn-default" click="genmu"  type="button">所有题库</button>&nbsp; 
+			<button class="btn btn-default" click="allshow"  type="button">所有题库</button>&nbsp; 
 			
 		</td>
 		
 		<td style="padding-left:10px">
-		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="题名">
+		<input class="form-control" style="width:200px" id="key_{rand}"   placeholder="题名/分类">
 		</td>
 		<td style="padding-left:10px">
 			<button class="btn btn-default" click="search" type="button">搜索</button> 
@@ -145,7 +93,8 @@ $(document).ready(function(){
 		<td width="90%">
 			&nbsp;&nbsp;<span id="megss{rand}"></span>
 		</td>
-		<td align="right">
+		<td align="right" nowrap>
+			<button class="btn btn-default"  click="daoru" type="button">导入题库</button>&nbsp;
 			<button class="btn btn-default"  click="daochu" type="button">导出</button>
 		</td>
 	</tr></table>

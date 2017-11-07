@@ -39,14 +39,21 @@ class modeClassAction extends ActionNot
 		$this->smartydata['arr'] = $arr;
 		
 		$spagepath 	= P.'/flow/page/viewpage_'.$num.'_1.html';
+		if(!file_exists($spagepath))$spagepath 	= P.'/flow/page/viewpage_'.$num.'.html';
 		if(!file_exists($spagepath)){
 			$spagepath = '';
 		}
 		$isheader = 0;
-		if($this->web != 'wxbro' && $this->get('show')=='we')$isheader=1;
+		if($this->web != 'wxbro' && $this->web != 'xinhu' && $this->web != 'ding' && $this->get('show')=='we')$isheader=1;
 		$this->assign('isheader', $isheader);
 		$this->smartydata['spagepath']		= $spagepath;
 		$this->smartydata['pagetitle']		= $pagetitle;
+		
+		$inputjspath	= P.'/flow/input/inputjs/mode_'.$num.'.js';
+		if(!file_exists($inputjspath)){
+			$inputjspath = '';
+		}
+		$this->smartydata['inputjspath']	= $inputjspath;
 	}
 	
 	//pc端页面详情
@@ -67,6 +74,7 @@ class modeClassAction extends ActionNot
 		$this->smartydata['arr'] = $arr;
 		
 		$spagepath 	= P.'/flow/page/viewpage_'.$num.'_0.html';
+		if(!file_exists($spagepath))$spagepath 	= P.'/flow/page/viewpage_'.$num.'.html';
 		if(!file_exists($spagepath)){
 			$spagepath = '';
 		}
@@ -76,6 +84,13 @@ class modeClassAction extends ActionNot
 		if($stype=='word'){
 			m('file')->fileheader($arr['modename'].'.doc');
 		}
+		$this->smartydata['bordercolor']	= getconfig('bcolorxiang', '#888888');
+		
+		$inputjspath	= P.'/flow/input/inputjs/mode_'.$num.'.js';
+		if(!file_exists($inputjspath)){
+			$inputjspath = '';
+		}
+		$this->smartydata['inputjspath']	= $inputjspath;
 	}
 	
 	//下载

@@ -2,6 +2,7 @@
 <script >
 $(document).ready(function(){
 	var gid = 0;
+	var changdata={},idboog=false;
 	var a = $('#veiw_{rand}').bootstable({
 		tablename:'im_group',celleditor:false,url:publicstore('{mode}','{dir}'),storeafteraction:'groupafter',keywhere:'and type<>2',defaultorder:'type,sort',modenum:'huihua',
 		columns:[{
@@ -15,7 +16,13 @@ $(document).ready(function(){
 		},{
 			text:'人员数',dataIndex:'utotal'
 		},{
+			text:'组织结构id',dataIndex:'deptid'
+		},{
 			text:'ID',dataIndex:'id'	
+		},{
+			text:'',dataIndex:'optdt',renderer:function(s,d){
+				return '<button onclick="openchat('+d.id+',1)" class="btn btn-primary btn-xs"><i class="icon-comment-alt"></i> 发消息</button>';
+			}
 		}],
 		itemclick:function(){
 			btn(false);
@@ -23,27 +30,35 @@ $(document).ready(function(){
 		itemdblclick:function(ad,oi,e){
 			$('#downshow_{rand}').html('<b>['+ad.name+']</b>下的人员');
 			gid=ad.id;
+			changdata = ad;
 			at.setparams({gid:gid},true);
 		}
 	});
 	
 	var at = $('#veiwuser_{rand}').bootstable({
-		tablename:'admin',sort:'sort',dir:'asc',
+		tablename:'admin',sort:'sort',dir:'asc',fanye:true,
 		url:publicstore('{mode}','{dir}'),
 		autoLoad:false,storebeforeaction:'groupusershow',
 		columns:[{
 			text:'用户名',dataIndex:'user',sortable:true
 		},{
-			text:'姓名',dataIndex:'name',sortable:true
-		},{
 			text:'部门',dataIndex:'deptname',sortable:true
 		},{
+			text:'姓名',dataIndex:'name',sortable:true
+		},{
+			text:'职位',dataIndex:'ranking',sortable:true
+		},{
 			text:'操作',dataIndex:'opt',renderer:function(v,d){
-				return '<a href="javascript:" onclick="return deluserr{rand}('+d.id+')"><i class="icon-trash"> 删</a>';
+				var s = '&nbsp;';
+				if(isempt(changdata.deptid))s = '<a href="javascript:;" onclick="return deluserr{rand}('+d.id+')"><i class="icon-trash"> 删</a>';
+				return s;
 			}
 		}],
-		load:function(){
-			get('add_{rand}').disabled=false;
+		load:function(d){
+			var bo = false;
+			if(!isempt(changdata.deptid))bo=true;
+			if(changdata.deptid=='0')bo=false;
+			get('add_{rand}').disabled=bo;
 		}
 	});
 	
@@ -56,10 +71,15 @@ $(document).ready(function(){
 				title:'会话',height:400,width:400,
 				tablename:'im_group',isedit:lx,
 				url:js.getajaxurl('publicsave','imgroup','main'),
-				params:{int_filestype:'sort,type'},
-				submitfields:'name,sort,type,explain',
+				params:{int_filestype:'sort,type'},aftersaveaction:'savegroupafter',
+				submitfields:'name,sort,type,explain,deptid',
 				items:[{
-					labelText:'名称',name:'name',required:true
+					labelText:'会话名称',type:'changeuser',changeuser:{
+						type:'deptcheck',idname:'deptid',title:'选择所属部门'
+					},name:'name',clearbool:true,required:true
+					
+				},{
+					name:'deptid',type:'hidden',value:'0'
 				},{
 					labelText:'序号',name:'sort',type:'number',value:'0'
 				},{
@@ -73,6 +93,7 @@ $(document).ready(function(){
 				h.setValues(a.changedata);
 			}
 			h.getField('name').focus();
+			h.getField('name').readOnly=false;
 		},
 		refresh:function(){
 			a.reload();
@@ -103,6 +124,13 @@ $(document).ready(function(){
 				js.msg('success','删除成功');
 				at.reload();
 			},'post');
+		},
+		relaodss:function(){
+			js.msg('wait','刷新中...');
+			js.ajax(js.getajaxurl('reloadall','{mode}','{dir}'),false,function(){
+				js.msg();
+				a.reload();
+			});
 		}
 	};
 	
@@ -131,7 +159,8 @@ $(document).ready(function(){
 	<div>
 	<ul class="floats">
 		<li class="floats50">
-			<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
+			<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>&nbsp;&nbsp;
+			<button class="btn btn-default" click="relaodss" type="button">刷新</button>
 		</li>
 		<li class="floats50" style="text-align:right">
 			<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
@@ -141,7 +170,7 @@ $(document).ready(function(){
 	</div>
 	<div class="blank10"></div>
 	<div id="veiw_{rand}"></div>
-	<div class="tishi">双击查看对应人员</div>
+	<div class="tishi">双击查看对应人员，有组织结构id会自动添加删除会话里的人员。</div>
 </td>
 <td width="10"></td>
 <td>

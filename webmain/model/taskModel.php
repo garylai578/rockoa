@@ -1,14 +1,23 @@
 <?php
 class taskClassModel extends Model
 {
-	public function getrunlist($dt)
+	/**
+	*	读取计划任务运行列表
+	*/
+	public function getrunlist($dt='', $lx=0, $ntime=0)
 	{
-		$rows 	= $this->getrows('`status`=1 order by `sort`','`id`,`url`,`type`,`time`');
+		if($dt=='')$dt = $this->rock->date;
+		$fields = '`id`,`url`,`type`,`time`';
+		if($lx==1)$fields.=',`name`';
+		$rows 	= $this->getrows('`status`=1 order by `sort`', $fields);
 		$runa	= array();
 		$sdts	= strtotime($dt);
 		$edts	= strtotime($dt.' 23:59:59');
-		$ntime 	= time();
+		if($ntime==0)$ntime = time();
+		$ntime	= $ntime-20;//稍微减一下防止出现跳过的
 		$brows	= array();
+		$dtobj 	= c('date');
+		$w 		= (int)date('w', $sdts);if($w==0)$w=7;//星期7
 		foreach($rows as $k=>$rs){
 			$ate = explode(',', $rs['type']);
 			$ati = explode(',', $rs['time']);
@@ -16,7 +25,7 @@ class taskClassModel extends Model
 			$len = count($ate);
 			$rs['adminid'] 	= 1;
 			$rs['atype'] 	= 'runurl';
-			$rs['url'] 		= $this->showgeurl($rs['url'],$rs['id']);
+			$rs['url'] 		= $this->showgeurl($rs['url'],$rs['id'], $lx);
 			for($i=0;$i<$len;$i++){
 				$rs['type'] = $ate[$i];
 				$rs['time'] = $ati[$i];
@@ -28,16 +37,19 @@ class taskClassModel extends Model
 			$type 	= $rs['type'];
 			$atime  = $rs['time'];
 			
-			$jg		= (int)str_replace(array('d','i','h'),array('',''), $type);
+			$jg		= (int)str_replace(array('d','i','h','m','w'),array('','','','',''), $type);
 			if($jg==0)$jg=1;
 			$type 	= str_replace($jg,'', $type);
+			$jgs 	= $jg; if($jg<10)$jgs = '0'.$jg.'';
 			$time 	= '';
+			//每天
 			if($type=='d'){
 				$time = $dt.' '.$rs['time'];
 				$rs['runtimes'] 	= $time;
 				$rs['runtime'] = strtotime($time);
 				$runa[] = $rs;
 			}
+			//分钟
 			if($type=='i'){
 				$ges = $jg*60;
 				for($i=$sdts;$i<=$edts;$i=$i+$ges){
@@ -46,6 +58,7 @@ class taskClassModel extends Model
 					$runa[] = $rs;
 				}
 			}
+			//小时
 			if($type=='h'){
 				for($i=0;$i<=23;$i=$i+$jg){
 					$time 			= date('Y-m-d H:'.$atime.'', $sdts+$i*3600);
@@ -54,19 +67,42 @@ class taskClassModel extends Model
 					$runa[] = $rs;
 				}
 			}
+			//每月
+			if($type=='m'){
+				$time 			= date('Y-m-'.$atime.'');
+				$rs['runtimes'] = $time;
+				$rs['runtime'] 	= strtotime($time);
+				$runa[] = $rs;
+			}
+			//周
+			if($type=='w' && $jg==$w){
+				$time 			= date('Y-m-d '.$atime.'');
+				$rs['runtimes'] = $time;
+				$rs['runtime'] 	= strtotime($time);
+				$runa[] = $rs;
+			}
+			//每年
+			if($type=='y'){
+				$time 			= date('Y-'.$atime.'');
+				$rs['runtimes'] = $time;
+				$rs['runtime'] 	= strtotime($time);
+				$runa[] = $rs;
+			}
 		}
 		$brun	= array();
 		foreach($runa as $k=>$rs){
-			if($rs['runtime']>=$ntime)$brun[]=$rs;
+			$_runti = $rs['runtime'];
+			if($_runti >= $ntime && $_runti<=$edts)$brun[]=$rs;
 		}
 		$brun 	= c('array')->order($brun, 'runtime','asc');
 		return $brun;
 	}
 	
-	private function gettaskurl()
+	//$lx=2必须使用本地地址
+	private function gettaskurl($lx=0)
 	{
 		$turl	= getconfig('taskurl');
-		if($turl=='')$turl	= getconfig('localurl', URL);
+		if($turl=='' || $lx==2)$turl	= getconfig('localurl', URL);
 		return $turl;
 	}
 	
@@ -78,15 +114,16 @@ class taskClassModel extends Model
 		return $url;
 	}*/
 	
-	//获取运行url
-	private function showgeurl($url, $id)
+	//获取运行url,$lx=2必须使用本地地址
+	private function showgeurl($url, $id, $lx=0)
 	{
 		if(contain($url, 'http://') || contain($url, 'https://')){
 			
 		}else{
 			$aurl 	= explode(',', $url);
-			$turl	= $this->gettaskurl();
-			$url 	= ''.$turl.'task.php?m='.$aurl[0].'|runt&a='.$aurl[1].'&runid='.$id.'';
+			$turl	= $this->gettaskurl($lx);
+			$yurl 	= 'task.php?m='.$aurl[0].'|runt&a='.arrvalue($aurl, 1, 'run').'&runid='.$id.'';
+			$url 	= ''.$turl.''.$yurl.'';
 		}
 		return $url;
 	}
@@ -159,6 +196,22 @@ class taskClassModel extends Model
 		return $stime;
 	}
 	
+	private function tasklistpath()
+	{
+		return ''.ROOT_PATH.'/'.UPDIR.'/'.date('Y-m').'/tasklist.json';
+	}
+	
+	/**
+	*	清空
+	*/
+	public function cleartask()
+	{
+		@unlink($this->tasklistpath());
+	}
+	
+	/**
+	*	开启计划任务(自己服务端)
+	*/
 	public function starttask()
 	{
 		$turl	= $this->gettaskurl();
@@ -166,7 +219,53 @@ class taskClassModel extends Model
 		$barr 	= m('reim')->pushserver('starttask', array(
 			'url' => $url
 		));
+		$this->cleartask();
 		return $barr;
+	}
+	
+	//创建json数组
+	public function createjson($time)
+	{
+		$barr 	= $this->getrunlist($this->rock->date, 2, $time);
+		@file_put_contents($this->tasklistpath(), json_encode($barr));
+		return $barr;
+	}
+	
+	/**
+	*	cli 运行每5分钟运行的，运行curl的
+	*/
+	public function runjsonlist($time)
+	{
+		$barr	= array();
+		$fstr	= '';
+		$fpath	= $this->tasklistpath();
+		$dt 	= date('Y-m-d', $time);
+		if(file_exists($fpath)){
+			$lastdt = date('Y-m-d H:i:s',filemtime($fpath));//最后修改的时间
+			$editdt = date('Y-m-d H:i:s',filectime($fpath));//上次修改时间
+			if(contain($lastdt, $dt) && contain($editdt, $dt))$fstr	= @file_get_contents($fpath);
+		}
+		if(isempt($fstr)){
+			$barr = $this->createjson($time);
+			m('option')->setval('systaskrun', $this->rock->now);//记录运行时间
+		}else{
+			$barr = json_decode($fstr, true);
+		}
+		$oi 	= $cg = $sb = 0;
+		$ntime 	= strtotime(date('Y-m-d H:i:00', $time));
+		$curl 	= c('curl');
+		foreach($barr as $k=>$rs){
+			if($rs['runtime']==$ntime){
+				$oi++;
+				$cont = $curl->getcurl($rs['url']);
+				if($cont=='success'){
+					$cg++;
+				}else{
+					$sb++;
+				}
+			}
+		}
+		return 'runtask('.$oi.'),success('.$cg.'),fail('.$sb.')';
 	}
 	
 	//获取运行列表

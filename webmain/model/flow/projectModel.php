@@ -1,41 +1,42 @@
 <?php
+/**
+*	项目的
+*/
 class flow_projectClassModel extends flowModel
 {
-
+	
 	public function initModel()
 	{
-		$this->statearr		 = c('array')->strtoarray('待执行|blue,已完成|green,执行中|#ff6600,终止|#888888');
+		$this->workobj = m('work');
 	}
 	
-	protected function flowchangedata(){
-		$this->rs['stateid'] = $this->rs['state'];
-		$zt = $this->statearr[$this->rs['state']];
-		$this->rs['state']	 = '<font color="'.$zt[1].'">'.$zt[0].'</font>';
-	}
-	
-	protected function flowprintrows($rows)
-	{
-		foreach($rows as $k=>$rs){
-			$zt = $this->statearr[$rs['state']];
-			$rows[$k]['state']		= '<font color="'.$zt[1].'">'.$zt[0].'</font>';;
-		}
-		return $rows;
-	}
-	
-
-	
+	/**
+	*	进度报告时更新对应状态
+	*/
 	protected function flowaddlog($a)
 	{
 		if($a['name']=='进度报告'){
-			$state 	= $a['status'];
-			$arr['state'] = $state;
+			$arr['status'] = $a['status'];
 			$this->update($arr, $this->id);
 		}
 	}
 	
+	public function flowrsreplace($rs, $slx=0){
+		$zts 		= $rs['status'];
+		$str 		= $this->getstatus($rs,'','',1);
+		$rs['status']= $str;
+		$id			= $rs['id'];
+		$wwc	= $this->workobj->rows('projectid='.$id.' and `status` not in(1,5)');
+		$wez	= $this->workobj->rows('projectid='.$id.'');
+		if($wwc>0)$wwc='<font color=red>'.$wwc.'</font>';
+		$rs['workshu'] = ''.$wwc.'/'.$wez.'';
+		
+		return $rs;
+	}
+	
 	public function flowisreadqx()
 	{
-		return $this->flowgetoptmenu('');
+		return $this->flowgetoptmenu('shwview');
 	}
 	
 	//显示操作菜单判断
@@ -45,39 +46,18 @@ class flow_projectClassModel extends flowModel
 		$runuserid 	= $this->rs['runuserid'];
 		$where 		= m('admin')->gjoin($fuzeid.','.$runuserid, 'ud', $blx='where');
 		$where 		= 'id='.$this->adminid.' and ('.$where.')';
-		$bo 		= true;
+		$bo 		= null;
+		if($num=='shwview')$bo = true;
 		if(m('admin')->rows($where)==0)$bo=false;
 		return $bo;
 	}
 	
 	protected function flowbillwhere($uid, $lx)
 	{
-		$key 	= $this->rock->post('key');
-		$zt 	= $this->rock->post('zt');
-		$where	= 'and optid='.$uid.'';
-		
-		if($lx=='my' || $lx=='wwc'){
-			$where = m('admin')->getjoinstr('runuserid', $uid);
-		}
-		
-		if($lx=='wwc'){
-			$where.=' and `state` in(0,2)';
-		}
-		
-		if($lx=='myfz'){
-			$where	= 'and '.$this->rock->dbinstr('fuzeid', $uid).'';
-		}
-		if($lx=='all'){
-			$where	= '';
-		}
-		
-		if($zt!='')$where.=' and `state`='.$zt.'';
-		if(!isempt($key))$where.=" and (`title` like '%$key%' or `type` like '%$key%' or `fuze` like '%$key%')";
 		
 		return array(
-			'where' => $where,
-			'fields'=> 'id,type,num,fuze,startdt,title,enddt,state,optname,runuser,progress',
-			'order' => 'pid,optdt desc'
+			'where' => '',
+			'order' => 'optdt desc'
 		);
 	}
 }

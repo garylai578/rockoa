@@ -2,6 +2,9 @@
 class fworkClassAction extends Action
 {
 	
+	/**
+	*	流程申请获取数组
+	*/
 	public function getmodearrAjax()
 	{
 		$rows = m('mode')->getmoderows($this->adminid,'and islu=1');
@@ -9,9 +12,41 @@ class fworkClassAction extends Action
 		$viewobj = m('view');
 		foreach($rows as $k=>$rs){
 			$lx = $rs['type'];
-			if(!$viewobj->isadd($rs['id'], $this->adminid))continue;
+			if(!$viewobj->isadd($rs, $this->adminid))continue;
 			if(!isset($row[$lx]))$row[$lx]=array();
 			$row[$lx][] = $rs;
+		}
+		$this->returnjson(array('rows'=>$row));
+	}
+	
+	/**
+	*	单据查看获取数组
+	*/
+	public function getmodesearcharrAjax()
+	{
+		$rows = m('mode')->getmoderows($this->adminid);
+		$row  = array();
+		$mid  = '0';
+		foreach($rows as $k=>$rs){
+			$path = ''.P.'/flow/page/rock_page_'.$rs['num'].'.php';
+			if(!file_exists($path) || $rs['isscl']==0)continue;
+			$lx = $rs['type'];
+			$mid.=','.$rs['id'].'';
+			$row[$lx][] = $rs;
+		}
+		if($mid!='0'){
+			$where 	= m('admin')->getjoinstr('syrid', $this->adminid, 1);
+			$wrows 	= m('flow_where')->getrows('`setid` in('.$mid.') and `status`=1 and `islb` and `num` is not null and ('.$where.') and `pnum` is null group by `setid`','`setid`,min(sort),`num`');
+			$atypea = array();
+			foreach($wrows as $k1=>$rs1){
+				$nus = $rs1['setid'];
+				if(!isset($atypea[$nus]))$atypea[$nus] = $rs1['num'];
+			}
+			foreach($row as $lx=>$rowaa){
+				foreach($rowaa as $k2=>$rs2){
+					$row[$lx][$k2]['atype'] = $this->rock->arrvalue($atypea, $rs2['id']);
+				}
+			}
 		}
 		$this->returnjson(array('rows'=>$row));
 	}
@@ -20,10 +55,10 @@ class fworkClassAction extends Action
 	
 	
 	
-	
 	public function flowbillbefore($table)
 	{
 		$lx 	= $this->post('atype');
+		$this->atypess = $lx;
 		$dt 	= $this->post('dt1');
 		$key 	= $this->post('key');
 		$zt 	= $this->post('zt');
@@ -32,22 +67,48 @@ class fworkClassAction extends Action
 		$where	= 'and a.uid='.$uid.'';
 		//待办
 		if($lx=='daib'){
-			$where	= 'and a.`status`=0 and '.$this->rock->dbinstr('a.nowcheckid', $uid);
+			$where	= 'and a.`status` not in(1,2) and '.$this->rock->dbinstr('a.nowcheckid', $uid);
 		}
 		
+		//我下属申请
 		if($lx=='xia'){
 			$where	= 'and '.$this->rock->dbinstr('b.superid', $uid);
 		}
 		
+		//我参与
 		if($lx=='jmy'){
 			$where	= 'and '.$this->rock->dbinstr('a.allcheckid', $uid);
 		}
 		
+		//未通过
 		if($lx=='mywtg'){
 			$where.=" and a.status=2";
 		}
 		
-		if($zt!='')$where.=" and a.status='$zt'";
+		//异常
+		if($lx=='error'){
+			$whers = m('flowbill')->errorwhere('a.');
+			$where = ' and '.$whers.'';
+		}
+		
+		
+		//授权单据查看
+		if($lx=='grantview'){
+			$where =' and 1=2';
+			if($modeid>0){
+				$moders	= m('flow_set')->getone($modeid);
+				$where 	= m('view')->viewwhere($moders, $uid);
+			}
+		}
+		
+		if($zt!=''){
+			if($zt!='6'){
+				$where.=" and a.`status`='$zt'";
+				if($zt!='5')$where.=' and a.`isturn`=1';
+			}else{
+				$where.=" and a.`status` not in(5) and a.`isturn`=0 "; //未提交
+			}
+		}
 		if($dt!='')$where.=" and a.applydt='$dt'";
 		if($modeid>0)$where.=' and a.modeid='.$modeid.'';
 		if(!isempt($key))$where.=" and (b.`name` like '%$key%' or b.`deptname` like '%$key%' or a.sericnum like '$key%')";
@@ -64,13 +125,88 @@ class fworkClassAction extends Action
 	public function flowbillafter($table, $rows)
 	{
 		$rows = m('flowbill')->getbilldata($rows);
+		$flowarr = array();
+		if($this->atypess!='error'){
+			$flowarr = m('mode')->getmodemyarr($this->adminid);
+		}else if($rows){
+			foreach($rows as $k=>$rs){
+				$errorsm	= '';
+				$chuli 		= '到[流程模块→流程审核步骤]下对应的步骤设置审核人';
+				$errtype	= 0;//有步骤没审核人
+				if(isempt($rs['nowcheckid'])){
+					if($rs['nowcourseid']=='0'){
+						$errorsm = '<font color=blue>当前没有审核步骤</font>';
+						$chuli 		= '到[流程模块→流程单据查看]删除最后一条处理记录，然后[重新匹配流程]';
+						$errtype	= 1; //没有步骤
+					}else{
+						$errorsm = '<font color=red>当前没有审核人</font>';
+					}
+				}else{
+					$errorsm = '<font color=#800000>审核人帐号已停用</font>';
+					$errtype	= 2; //人员停用
+				}
+				$rows[$k]['errorsm'] = $errorsm;
+				$rows[$k]['chuli'] 	 = $chuli;
+				$rows[$k]['errtype'] = $errtype;
+			}
+		}
 		return array(
 			'rows'		=> $rows,
-			'flowarr' 	=> m('mode')->getmodemyarr($this->adminid)
+			'flowarr' 	=> $flowarr
 		);
 	}
 	
 	
+	public function flowtodosbefore($table)
+	{
+		$dt 	= $this->post('dt1');
+		$key 	= $this->post('key');
+		$zt 	= $this->post('zt');
+		$modenum= $this->post('modeid');
+		$uid 	= $this->adminid;
+		$where	= 'and `uid`='.$uid.'';
+		if(!isempt($modenum))$where.=" and `modenum`='$modenum'";
+		if(!isempt($dt))$where.=" and `adddt` like '$dt%'";
+		
+		return array(
+			'where' => $where,
+			'order' => '`id` desc'
+		);
+	}
+	public function flowtodosafter($table, $rows)
+	{
+		$nums = "''";
+		$mors = $this->db->getall('select `modenum` from `[Q]flow_todos` where `uid`='.$this->adminid.' group by `modenum`');
+		foreach($mors as $k=>$rs)$nums.=",'".$rs['modenum']."'";
+		$flowarr = m('mode')->getrows("`status`=1 and `num` in($nums)",'`num`,`name`,`summary`,`type`','sort');
+		$modearr = array();
+		foreach($flowarr as $k=>$rs){
+			$modearr[$rs['num']] = $rs['summary'];
+		}
+		if($rows){
+			foreach($rows as $k=>$rs){
+				//$rows[$k]['id'] = $rs['mid'];
+				$rers 			= $this->db->getone('[Q]'.$rs['table'].'', $rs['mid']);
+				$summary		= '';
+				if($rers){
+					$summary	= $this->rock->reparr(arrvalue($modearr, $rs['modenum']), $rers);
+					$rows[$k]['optdt']   = arrvalue($rers,'optdt');
+					$rows[$k]['optname'] = arrvalue($rers,'optname');
+				}
+				$rows[$k]['summary'] = $summary;
+				if($rs['isread']=='1'){
+					$rows[$k]['ishui']  = 1;
+					$rows[$k]['isread'] = '<font color="#888888">已读</font>';
+				}else{
+					$rows[$k]['isread'] = '<font color="red">未读</font>';
+				}
+			}
+		}
+		return array(
+			'rows'		=> $rows,
+			'flowarr' 	=> $flowarr
+		);
+	}
 	
 	public function meetqingkbefore($table)
 	{
@@ -133,4 +269,12 @@ class fworkClassAction extends Action
 		
 		return $arr;
 	}
+	
+	public function deltodoAjax()
+	{
+		$id = $this->post('id','0');
+		m('flow_todos')->delete('id in('.$id.') and `uid`='.$this->adminid.'');
+		$this->backmsg();
+	}
+		
 }

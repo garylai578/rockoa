@@ -27,6 +27,8 @@ $(document).ready(function(){
 		columns:[{
 			text:'姓名',dataIndex:'name'
 		},{
+			text:'性别',dataIndex:'sex'
+		},{
 			text:'单位',dataIndex:'unitname'
 		},{
 			text:'电话',dataIndex:'tel',editor:true
@@ -101,8 +103,8 @@ $(document).ready(function(){
 			a.exceldown();
 		},
 		daoru:function(){
-			vcardgroupd = a;
-			addtabs({num:'vcardaddpl',url:'system,geren,vcardadd',name:'导入通讯录'});
+			managelistvcard = a;
+			addtabs({num:'daoruvcard',url:'flow,input,daoru,modenum=vcard',icons:'plus',name:'导入个人通讯录'});
 		}
 	};
 	js.initbtn(c);
@@ -140,13 +142,11 @@ $(document).ready(function(){
 		<td style="padding-left:10px">
 			<button class="btn btn-default" click="search" type="button">搜索</button> 
 		</td>
-		<td style="padding-left:10px">
-			<button class="btn btn-default" click="daoru" type="button">导入</button> 
-		</td>
 		<td width="90%">
 			&nbsp;&nbsp;<span id="megss{rand}"></span>
 		</td>
 		<td align="right" nowrap>
+			<button class="btn btn-default" click="daoru" type="button">导入个人通讯录</button>&nbsp;&nbsp;
 			<button class="btn btn-default"  click="daochu" type="button">导出</button>
 		</td>
 	</tr></table>

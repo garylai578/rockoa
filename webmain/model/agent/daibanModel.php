@@ -15,8 +15,7 @@ class agent_daibanClassModel extends agentModel
 	
 	private function getdbtotal($uid)
 	{
-		$sws	= $this->rock->dbinstr('nowcheckid', $uid);
-		$stotal	= $this->rows("`isdel`=0 and `status`=0 and $sws");
+		$stotal	= m('flowbill')->daibanshu($uid);
 		return $stotal;
 	}
 	
@@ -29,7 +28,7 @@ class agent_daibanClassModel extends agentModel
 	
 	protected function agentdata($uid, $lx)
 	{
-		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $this->page, $this->limit);
+		$arr 	= m('flowbill')->getrecord($uid, $this->agentnum.'_'.$lx, $this->page, $this->limit, 0);
 		return $arr;
 	}
 }

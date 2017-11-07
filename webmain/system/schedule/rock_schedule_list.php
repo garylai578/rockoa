@@ -31,7 +31,7 @@ $(document).ready(function(){
 			openinput('日程','schedule',0,'opegs{rand}');
 		},
 		guanli:function(){
-			addtabs({num:'guanlieschedule',url:'{dir},{mode},guan',name:'日程管理'});
+			addtabs({num:'guanlieschedule',url:'flow,page,schedule,atype=my',name:'日程管理'});
 		},
 		calendarshow:function(){
 			addtabs({num:'guanlieschedulemonth',url:'{dir},{mode},calendar',name:'日程月视图'});
@@ -85,3 +85,4 @@ $(document).ready(function(){
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div class="tishi">列表上显示的是：我创建的日程/提醒给我的</div>

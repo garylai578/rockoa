@@ -11,31 +11,31 @@
 <script type="text/javascript" src="js/base64-min.js"></script>
 <script type="text/javascript" src="<?=$da['p']?>/<?=$da['d']?><?=$da['m']?>/<?=$da['m']?>script.js"></script>
 <style>
-.lmaisft{width:450px;border-radius:5px;text-align:left; background-color:#C4E0F4;background: rgba(255,255,255,0.3);}
-.yuning{position:absolute;left:-50px;top:-30px;opacity:0.3;filter:alpha(opacity=30);}
+.lmaisft{width:450px;border-radius:10px;text-align:left;background:white;border:1px #dddddd solid;}
+.box{box-shadow:0px 5px 15px 1px rgba(0,0,0,0.1);}
 </style>
 </head>
 
 
-<body style="background:#66A8E5 url(images/loginbg.jpg) top center no-repeat">
-<div id="yumpng" style="position:absolute;left:0px;top:0px;width:100%;height:500px; overflow:hidden">
-</div>
+<body style="background:#E5F3FC;">
+
 <div align="center" style="position:absolute;width:100%">
 	<div id="topheih" class="blank40"></div>
-	<div class="ltoplog"><img style="border-radius:50px;border:1px #ffffff solid; background:white" src="images/logo.png" id="imglogo" align="absmiddle" height="100" width="100"><b style="font-size:22px"></b></div>
+
+	<div style="font-size:20px"><?=$da['title']?></div>
 	<div class="blank30"></div>
-	<div class="lmaisft">
-		
+	<div class="lmaisft box">
+		<div class="blank20"></div>
+		<div  align="center"><img title="<?=URL?>" class="box" onclick="location.reload()" style="border-radius:50%;border:1px #ffffff solid; background:white" src="images/logo.png" id="imglogo" align="absmiddle" height="100" width="100"><b style="font-size:22px"></b></div>
+		<div class="blank10"></div>
 		<form style="padding:20px;padding-left:80px" name="myform">
-			<div style="font-size:20px">系统登录</div>
-			<div class="blank10"></div>
 			<div>
-				<div><input type="text" style="height:40px;width:300px" class="input" onKeyUp="if(event.keyCode==13)get('adminpasss').focus()" value="<?=$da['ca_adminuser']?>"  placeholder="请输入用户名/姓名" name="adminuser" ></div>
+				<div><input type="text" style="height:40px;width:300px" class="input" onKeyUp="if(event.keyCode==13)getpassobj().focus()" value="<?=$da['ca_adminuser']?>"  placeholder="请输入用户名/姓名/手机号/邮箱" name="adminuser" ></div>
 			</div>
 
 			<div class="blank30"></div>
 			<div>
-				<div><input  style="height:40px;width:300px" class="input"  onKeyUp="if(event.keyCode==13)loginsubmit()" value="<?php if($da['ca_rempass']=='1')echo $da['ca_adminpass'];?>"  name="adminpass" id="adminpasss" type="password" placeholder="请输入密码"></div>
+				<div><input  style="height:40px;width:300px" class="input"  onKeyUp="if(event.keyCode==13)loginsubmit()" value="<?php if($da['ca_rempass']=='1')echo $da['ca_adminpass'];?>"   type="password" placeholder="请输入密码"></div>
 			</div>
 
 			<div class="blank10"></div>
@@ -59,7 +59,7 @@
 	<div class="blank20"></div>
 	<div align="center" style="height:30px;line-height:30px;color:#555555">
 		Copyright &copy;<?=date('Y')?> <?=$da['title']?>v<?=VERSION?> &nbsp; - &nbsp; 
-		技术支持：<a href="http://xh829.com/" style="color:#1F83C1" target="_blank">信呼开发团队</a>
+		技术支持：<a href="<?=URLY?>" style="color:#1F83C1" target="_blank">信呼开发团队</a>
 	</div>
 
 </div>

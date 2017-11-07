@@ -23,19 +23,21 @@ class flow_hrsalaryClassModel extends flowModel
 		if($dt!='')$where.=" and `month`='$dt'";
 		return array(
 			'where' => $where,
-			'fields'=> 'id,status,udeptname,uname,ranking,optdt,month,optname,base,money,isturn,ispay',
+			'table'	=> '`[Q]'.$this->mtable.'` a',
+			'fields'=> 'id,status,xuid,udeptname,status,uname,ranking,optdt,month,optname,base,money,isturn,ispay',
 			'order' => '`optdt` desc'
 		);
 	}
 	
 	public function flowrsreplace($rs){
-		$s = '<font color=red>未发放</font>';
+		$s = '<font color=red>待发放</font>';
+		$rs['ispays']	= $rs['ispay'];
 		if($rs['ispay']==1)$s = '<font color=green>已发放</font>';
 		$rs['ispay'] = $s;
 		
-		$s = '<font color=red>未核算</font>';
+		$s = '<font color=red>待核算</font>';
 		if($rs['isturn']==1)$s = '<font color=green>已核算</font>';
-		$rs['isturn'] = $s;
+		$rs['isturnss'] = $s;
 		return $rs;
 	}
 	
@@ -100,5 +102,120 @@ class flow_hrsalaryClassModel extends flowModel
 			$this->insert($arr);
 		}
 		return '成功成功'.$count.'条';
+	}
+	
+	//导入数据的测试显示
+	public function flowdaorutestdata()
+	{
+		$barr = array(
+			'uname' 		=> '貂蝉',
+			'month' 		=> '[2017-08]',
+			'base' 			=> '1700',
+			'skilljt' 		=> '3500',
+			'telbt' 		=> '0',
+			'travelbt' 		=> '0',
+			'postjt' 		=> '500',
+			'reward' 		=> '0',
+			'jiabans' 		=> '0',
+			
+			'punish' 		=> '0', //处罚
+			'socials' 		=> '0', 
+			'taxes' 		=> '0', 
+			'money' 		=> '5700', 
+			'explain' 		=> '本月薪资', 
+			'isturn' 		=> '是', 
+			'status' 		=> '是',
+			
+		);
+		$barr1 = array(
+			'uname' 		=> '大乔',
+			'month' 		=> '[2017-08]',
+			'base' 			=> '1700',
+			'skilljt' 		=> '3000',
+			'telbt' 		=> '0',
+			'travelbt' 		=> '0',
+			'postjt' 		=> '500',
+			'reward' 		=> '0',
+			'jiabans' 		=> '0',
+			
+			'explain' 		=> '本月薪资',
+			
+			'punish' 		=> '0', //处罚
+			'socials' 		=> '0', 
+			'taxes' 		=> '0', 
+			'money' 		=> '5200', 
+			'isturn' 		=> '是', 
+			'status' 		=> '是', 
+			
+		);
+		$barr2 = array(
+			'uname' 		=> '小乔',
+			'month' 		=> '[2017-08]',
+			'base' 			=> '1700',
+			'skilljt' 		=> '2500',
+			'telbt' 		=> '0',
+			'travelbt' 		=> '0',
+			'postjt' 		=> '500',
+			'reward' 		=> '0',
+			'jiabans' 		=> '0',
+			
+			'explain' 		=> '导入',
+			
+			'punish' 		=> '5', //处罚
+			'socials' 		=> '0', 
+			'taxes' 		=> '0', 
+			'money' 		=> '4695', 
+			'isturn' 		=> '是', 
+			'status' 		=> '是', 
+			
+		);
+		return array($barr,$barr1,$barr2);
+	}
+	
+	//导入之前判断
+	public function flowdaorubefore($rows)
+	{
+		$inarr	= array();
+		$uarra	= array();
+		foreach($rows as $k=>$rs){
+			$name 	= $rs['uname'];
+			
+			$month 	= str_replace('[','', $rs['month']);
+			$month 	= substr(str_replace(']','', $month),0,7);
+			
+			$arr 	= $rs;
+			$urs 	= $this->adminmodel->getone("`name`='$name'");
+			if(!$urs)continue;
+			
+			$to 	= $this->rows("`xuid`='".$urs['id']."' and `month`='$month'");
+			if($to>0)continue;//已经存在了
+			
+			$arr['month'] = $month;
+			$arr['xuid'] = $urs['id'];
+			$arr['udeptname'] = $urs['deptname'];
+			$arr['ranking'] = $urs['ranking'];
+			
+			$arr['isturn']  = (arrvalue($arr,'isturn')=='是') ? 1 : 0;
+			$arr['status']  = (arrvalue($arr,'status')=='是') ? 1 : 0;
+			
+			if($arr['status']==1)$arr['isturn'] = 1;
+			
+			$inarr[] = $arr;
+		}
+		
+		return $inarr;
+	}
+	
+	//导入后处理,未审核需要提交审核
+	public function flowdaoruafter($drdata=array())
+	{
+		foreach($drdata as $k=>$rs){
+			//
+			if($rs['status']==0 && $rs['isturn']==1){
+				$id = $rs['id'];
+				$this->loaddata($id, false);
+				$this->submit('提交');
+			}
+		}
 	}
 }

@@ -104,7 +104,7 @@ class jmChajian extends Chajian{
 		if(is_numeric($lx)&&$lx>0){
 			$st = $this->getrandstr($lx);
 		}else if(is_string($lx)){
-			if(strlen($lx)==26)$st=lx;
+			if(strlen($lx)==26)$st=$lx;
 		}
 		return $st;
 	}
@@ -219,6 +219,7 @@ class jmChajian extends Chajian{
 	public function mcrypt_encrypt($str)
 	{
 		if(isempt($str))return '';
+		if(!function_exists('mcrypt_encrypt'))return $str;
 		$key		= substr(md5($this->jmsstr),0,8);
 		$getstr 	= mcrypt_encrypt(MCRYPT_DES, $key, $str, MCRYPT_MODE_ECB);
 		return $this->base64encode($getstr);
@@ -227,6 +228,7 @@ class jmChajian extends Chajian{
 	public function mcrypt_decrypt($str)
 	{
 		if(isempt($str))return '';
+		if(!function_exists('mcrypt_decrypt'))return $str;
 		$str 		= $this->base64decode($str);
 		$key		= substr(md5($this->jmsstr),0,8);
 		$getstr 	= mcrypt_decrypt(MCRYPT_DES, $key, $str, MCRYPT_MODE_ECB);

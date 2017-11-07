@@ -40,6 +40,7 @@ class agent_gongClassModel extends agentModel
 				}else{
 					$rows[$k]['ishui']			= 1;
 				}
+				$rows[$k]['picurl'] = $rs['fengmian'];
 			}
 		}
 		return $rows;

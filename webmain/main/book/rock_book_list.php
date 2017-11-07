@@ -1,28 +1,8 @@
 <?php if(!defined('HOST'))die('not access');?>
 <script >
 $(document).ready(function(){
-	var pid,optlx=0;
-	var typeid=0,sspid=0,modenum='book';
-	var at = $('#optionview_{rand}').bootstree({
-		url:js.getajaxurl('gettreedata','option','system',{'num':'booktype'}),
-		columns:[{
-			text:'图书分类',dataIndex:'name',align:'left',xtype:'treecolumn',width:'79%'
-		},{
-			text:'ID',dataIndex:'id',width:'20%'
-		}],
-		load:function(d){
-			if(sspid==0){
-				typeid = d.pid;
-				sspid = d.pid;
-				c.loadfile('0','所有图书');
-			}
-		},
-		itemdblclick:function(d){
-			typeid = d.id;
-			c.loadfile(d.id,d.name);
-		}
-	});;
 	
+	var modenum = 'book';
 	var a = $('#view_{rand}').bootstable({
 		tablename:modenum,celleditor:true,autoLoad:false,modenum:modenum,
 		columns:[{
@@ -42,7 +22,7 @@ $(document).ready(function(){
 		},{
 			text:'操作时间',dataIndex:'optdt'
 		},{
-			text:'',dataIndex:'opt',renderer:function(v,d,oi){
+			text:'',notexcel:true,dataIndex:'opt',renderer:function(v,d,oi){
 				return '<a href="javascript:;" onclick="openxiangs(\'图书\',\''+modenum+'\','+d.id+')">查看</a>';
 			}
 		}],
@@ -56,49 +36,7 @@ $(document).ready(function(){
 
 
 	var c = {
-		reload:function(){
-			at.reload();
-		},
-		loadfile:function(spd,nsd){
-			$('#megss{rand}').html(nsd);
-			a.setparams({'typeid':spd}, true);
-		},
-		genmu:function(){
-			typeid = sspid;
-			at.changedata={};
-			this.loadfile('0','所有图书');
-		},
-		clicktypeeidt:function(){
-			var d = at.changedata;
-			if(d.id)c.clicktypewin(false, 1, d);
-		},
-		clicktypewin:function(o1, lx, da){
-			var h = $.bootsform({
-				title:'图书分类',height:250,width:300,
-				tablename:'option',labelWidth:50,
-				isedit:lx,submitfields:'name,sort,pid',cancelbtn:false,
-				items:[{
-					labelText:'名称',name:'name',required:true
-				},{
-					labelText:'上级id',name:'pid',value:0,type:'hidden'
-				},{
-					labelText:'排序号',name:'sort',type:'number',value:0
-				}],
-				success:function(){
-					if(optlx==0)at.reload();
-					if(optlx==1)a.reload();
-				}
-			});
-			if(lx==1)h.setValues(da);
-			if(lx==0)h.setValue('pid', typeid);
-			optlx = 0;
-			return h;
-		},
-		typedel:function(o1){
-			at.del({
-				url:js.getajaxurl('deloption','option','system'),params:{'stable':'book'}
-			});
-		},
+
 		del:function(){
 			a.del();
 		},
@@ -108,34 +46,44 @@ $(document).ready(function(){
 		search:function(){
 			var s=get('key_{rand}').value;
 			a.setparams({key:s},true);
-		}
+		},
+		daochu:function(){
+			a.exceldown();
+		},
+		daoru:function(){
+			managelistbook = a;
+			addtabs({num:'daorubook',url:'flow,input,daoru,modenum=book',icons:'plus',name:'导入图书'});
+		},
+		
+		mobj:a,
+		title:'图书分类',
+		stable:'book',
+		optionview:'optionview_{rand}',
+		optionnum:'booktype',
+		rand:'{rand}'
 	};
+	
+	var c = new optionclass(c);
+	
 	js.initbtn(c);
-	$('#optionview_{rand}').css('height',''+(viewheight-70)+'px');
 });
 </script>
 
 
 <table width="100%">
 <tr valign="top">
-<td width="220">
-	<div style="border:1px #cccccc solid">
-	  <div id="optionview_{rand}" style="height:400px;overflow:auto;"></div>
-	  <div  class="panel-footer">
-		<a href="javascript:" click="clicktypewin,0" onclick="return false"><i class="icon-plus"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="clicktypeeidt" onclick="return false"><i class="icon-edit"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="typedel" onclick="return false"><i class="icon-trash"></i></a>&nbsp; &nbsp; 
-		<a href="javascript:" click="reload" onclick="return false"><i class="icon-refresh"></i></a>
-	  </div>
+<td>
+	<div style="border:1px #cccccc solid;width:220px">
+	<div id="optionview_{rand}" style="height:400px;overflow:auto;"></div>
 	</div>  
 </td>
-<td width="10"></td>
-<td>	
+<td width="10" nowrap>&nbsp;</td>
+<td width="95%">
 	<div>
 	<table width="100%"><tr>
 		<td align="left" nowrap>
 			<button class="btn btn-primary" click="adds"  type="button"><i class="icon-plus"></i> 新增</button>&nbsp; 
-			<button class="btn btn-default" click="genmu"  type="button">所有图书</button>&nbsp; 
+			<button class="btn btn-default" click="allshow"  type="button">所有图书</button>&nbsp; 
 			
 		</td>
 		
@@ -148,7 +96,9 @@ $(document).ready(function(){
 		<td width="90%">
 			&nbsp;&nbsp;<span id="megss{rand}"></span>
 		</td>
-		<td align="right">
+		<td nowrap align="right">
+			<button class="btn btn-default"  click="daoru" type="button">导入图书</button>&nbsp;
+			<button class="btn btn-default"  click="daochu" type="button">导出</button>&nbsp;
 			<button class="btn btn-danger" id="del_{rand}" disabled click="del" type="button"><i class="icon-trash"></i> 删除</button>
 		</td>
 	</tr></table>

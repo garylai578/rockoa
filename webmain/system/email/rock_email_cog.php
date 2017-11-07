@@ -67,6 +67,7 @@ $(document).ready(function(){
 			a.reload();
 		},
 		yunx:function(){
+			if(ISDEMO){js.msg('success','demo上就不要测试，我们都测试通过的');return;}
 			var url = js.getajaxurl('testsend','{mode}','{dir}');
 			js.ajax(url,{id:a.changeid},function(s){
 				js.msg('success', s);

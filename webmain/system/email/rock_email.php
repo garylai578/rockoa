@@ -134,14 +134,13 @@ $(document).ready(function(){
 		}
 	};
 	js.initbtn(c);
-	
 });
 </script>
 
 
 <table width="100%">
 <tr valign="top">
-<td width="180">
+<td width="180" nowrap>
 	<div>
 		<div style="width:100%" class="btn-group">
 		<button style="width:50%" onclick="openinput('写邮件','emailm')" class="btn btn-default" type="button"><i class="icon-pencil"></i> 写信</button>
@@ -163,7 +162,7 @@ $(document).ready(function(){
 		<a class="list-group-item"><i class="icon-plus"></i> 新建文件夹</a>
 	</div>
 </td>
-<td width="10"></td>
+<td width="10" nowrap></td>
 <td>	
 	<div>
 	<table width="100%"><tr>
@@ -191,7 +190,7 @@ $(document).ready(function(){
 	</tr></table>
 	</div>
 	<div class="blank10"></div>
-	<div id="view_{rand}"></div>
+	<div style="overflow:auto;min-width:800px"><div id="view_{rand}"></div></div>
 </td>
 </tr>
 </table>

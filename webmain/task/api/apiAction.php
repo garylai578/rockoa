@@ -2,8 +2,8 @@
 /**
 *	接口文件
 *	createname：雨中磐石
-*	homeurl：http://xh829.com/
-*	Copyright (c) 2016 rainrock (xh829.com)
+*	homeurl：http://www.rockoa.com/
+*	Copyright (c) 2016 rainrock (www.rockoa.com)
 *	Date:2016-01-01
 *	explain：返回200为正常
 */
@@ -23,7 +23,7 @@ class apiAction extends ActionNot
 		$this->adminid 	 = (int)$this->request('adminid', $this->adminid);
 		$this->adminname = '';
 		$boss = (M == 'login|api');
-		if(!$boss && HOST!='127.0.0.1'){
+		if(!$boss){
 			if($this->isempt($this->token))$this->showreturn('','token invalid', 299);
 			$to = m('logintoken')->rows("`token`='$this->token' and `uid`='$this->adminid' and `online`=1");
 			if($to==0)$this->showreturn('','登录失效，请重新登录', 199);

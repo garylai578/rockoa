@@ -13,16 +13,20 @@ class flow_knowledgeClassModel extends flowModel
 	protected function flowbillwhere($uid, $lx)
 	{
 		$where  = '';
-		$typeid = $this->rock->post('typeid','0');
+		$typeid = (int)$this->rock->post('typeid','0');
 		$key 	= $this->rock->post('key');
 		if($typeid!='0'){
-			$where .= ' and `typeid`='.$typeid.'';
+			$alltpeid = m('option')->getalldownid($typeid);
+			$where .= ' and a.`typeid` in('.$alltpeid.')';
 		}
-		if($key != '')$where.=" and `title` like '%$key%'";
+		if($key != ''){
+			$where.=" and (a.`title` like '%$key%' or b.`name` like '%$key%')";
+		}
 		return array(
 			'where' => $where,
-			'order' => 'optdt desc',
-			'fields'=> 'id,title,adddt,optdt,optname'
+			'order' => 'a.`sort`,a.`optdt` desc',
+			'table'	=> '`[Q]'.$this->mtable.'` a left join `[Q]option` b on a.`typeid`=b.`id`',
+			'fields'=> 'a.id,a.title,a.adddt,a.optdt,a.optname,b.`name` as typename,a.`sort`'
 		);
 	}
 }

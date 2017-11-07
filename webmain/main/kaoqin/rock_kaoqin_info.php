@@ -5,13 +5,9 @@ $(document).ready(function(){
 		tablename:'kqinfo',params:{'atype':'all'},celleditor:true,fanye:true,modedir:'{mode}:{dir}',
 		storeafteraction:'kqinfoaftershow',storebeforeaction:'kqinfobeforeshow',
 		columns:[{
-			text:'',dataIndex:'caozuo'
-		},{
 			text:'部门',dataIndex:'deptname',align:'left'
 		},{
 			text:'姓名',dataIndex:'name'
-		},{
-			text:'操作时间',dataIndex:'optdt',sortable:true
 		},{
 			text:'类型',dataIndex:'kind',sortable:true
 		},{
@@ -21,28 +17,46 @@ $(document).ready(function(){
 		},{
 			text:'截止时间',dataIndex:'etime',sortable:true
 		},{
-			text:'时间',dataIndex:'totals',sortable:true
+			text:'时间(小时)',dataIndex:'totals',sortable:true
+		},{
+			text:'加班兑换',dataIndex:'jiatype'
 		},{
 			text:'说明',dataIndex:'explain',align:'left'
 		},{
 			text:'状态',dataIndex:'status'
 		},{
 			text:'操作人',dataIndex:'optname'
-		}]
+		},{
+			text:'操作时间',dataIndex:'optdt',sortable:true
+		},{
+			text:'',dataIndex:'caozuo'
+		}],
+		itemdblclick:function(d){
+			openxiangs(d.modename,d.modenum,d.id);
+		}
 	});
 	var c = {
 		search:function(){
 			var s=get('key_{rand}').value;
-			a.setparams({key:s,dt1:get('dt1_{rand}').value,keys:get('keys_{rand}').value},true);
+			a.setparams({key:s,dt1:get('dt1_{rand}').value,dt2:get('dt2_{rand}').value,keys:get('keys_{rand}').value},true);
 		},
 		clickdt:function(o1, lx){
 			$(o1).rockdatepicker({initshow:true,view:'month',inputid:'dt'+lx+'_{rand}'});
 		},
 		daochu:function(){
-			a.exceldown('考勤信息');
+			a.exceldown();
 		},
 		clickwin:function(){
 			openinput('考勤信息','leavehr');
+		},
+		addnianjia:function(){
+			var dt = get('dt1_{rand}').value;
+			if(isempt(dt)){js.msg('msg','请先选择日期从');return;}
+			js.msg('wait','处理中...');
+			js.ajax(js.getajaxurl('addnianjia','{mode}','{dir}'),{dt:dt},function(s){
+				js.msg('success', s);
+				a.reload();
+			});
 		}
 	};
 	
@@ -55,13 +69,13 @@ $(document).ready(function(){
 	<td style="padding-right:10px">
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增</button>
 	</td>
+	<td nowrap>日期从&nbsp;</td>
 	<td nowrap>
-		<div style="width:140px"  class="input-group">
-			<input placeholder="月份" readonly class="form-control" id="dt1_{rand}" >
-			<span class="input-group-btn">
-				<button class="btn btn-default" click="clickdt,1" type="button"><i class="icon-calendar"></i></button>
-			</span>
-		</div>
+		<input style="width:110px" onclick="js.changedate(this)" readonly class="form-control datesss" id="dt1_{rand}" >
+	</td>
+	<td nowrap>&nbsp;至&nbsp;</td>
+	<td nowrap>
+		<input style="width:110px" onclick="js.changedate(this)" readonly class="form-control datesss" id="dt2_{rand}" >
 	</td>
 	<td  style="padding-left:10px">
 		<input class="form-control" style="width:150px" id="key_{rand}"   placeholder="姓名/部门">
@@ -71,6 +85,9 @@ $(document).ready(function(){
 	</td>
 	<td  style="padding-left:10px">
 		<button class="btn btn-default" click="search" type="button">搜索</button>
+	</td>
+	<td  style="padding-left:10px">
+		<button class="btn btn-default" click="addnianjia" type="button">添加年假</button>
 	</td>
 	
 	<td width="80%"></td>

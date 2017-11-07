@@ -5,6 +5,10 @@ class sysClassAction extends runtAction
 	public function beifenAction()
 	{
 		m('beifen')->start();
+		$this->todoarr	= array(
+			'title' 	=> '数据库备份',
+			'cont' 		=> '数据库在['.$this->now.']备份了。',
+		);
 		echo 'success';
 	}
 	public function upgtxAction()
@@ -28,16 +32,22 @@ class sysClassAction extends runtAction
 			if($state==2)$str.='模块['.$na.']可<font color=red>升级</font>;';
 		}
 		if($str!=''){
-			m('todo')->add($this->runrs['todoid'],'安装升级',$str.'请到[系统→系统工具→系统升级]下处理');
+			$this->todoarr	= array(
+				'title' 	=> '安装升级',
+				'cont' 		=> $str.'请到[系统→系统工具→系统升级]下处理',
+			);
 		}
 		echo 'success';
 	}
 	
 	
-	//数据更新
+	//数据更新,更新用户的
 	public function dataupAction()
 	{
 		m('admin')->updateinfo();
+		$reim 	= m('reim');
+		if($reim->installwx(0))m('weixin:user')->getuserlist();
+		if($reim->installwx(1))m('weixinqy:user')->getuserlist();
 		echo 'success';
 	}
 }

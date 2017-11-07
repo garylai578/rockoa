@@ -3,7 +3,7 @@
 $(document).ready(function(){
 	var gid = 0;
 	var a = $('#veiw_{rand}').bootstable({
-		tablename:'group',celleditor:false,url:publicstore('{mode}','{dir}'),storeafteraction:'groupafter',
+		tablename:'group',celleditor:true,url:publicstore('{mode}','{dir}'),storeafteraction:'groupafter',
 		modenum:'group',
 		columns:[{
 			text:'组名',dataIndex:'name',editor:true
@@ -71,6 +71,7 @@ $(document).ready(function(){
 		},
 		refresh:function(){
 			a.reload();
+			if(gid>0)at.reload();
 		},
 		addguser:function(){
 			var cans = {
@@ -128,7 +129,8 @@ $(document).ready(function(){
 	<div>
 	<ul class="floats">
 		<li class="floats50">
-			<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增组</button>
+			<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增组</button>&nbsp; 
+			<button class="btn btn-default" click="refresh,0" type="button">刷新</button>
 		</li>
 		<li class="floats50" style="text-align:right">
 			<button class="btn btn-danger" id="del_{rand}" click="del" disabled type="button"><i class="icon-trash"></i> 删除</button> &nbsp; 
@@ -138,7 +140,7 @@ $(document).ready(function(){
 	</div>
 	<div class="blank10"></div>
 	<div id="veiw_{rand}"></div>
-	<div class="tishi">双击查看对应人员</div>
+	<div class="tishi">先双击对应组查看人员，在添加组下人员</div>
 </td>
 <td width="10"></td>
 <td>

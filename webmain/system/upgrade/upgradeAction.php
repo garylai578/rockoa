@@ -47,6 +47,9 @@ class upgradeClassAction extends Action
 		$this->returnjson($arr);
 	}
 	
+	/**
+	*	获取需要更新的文件
+	*/
 	public function shengjianAjax()
 	{
 		$id 	= $this->post('id');
@@ -58,6 +61,10 @@ class upgradeClassAction extends Action
 		$rows 	= $data['rows'];
 		$uparr  = array();
 		$huira  = $this->gethuiarr($id);
+		
+		//获取模块忽略升级文件，停用也不升级
+		$morrs	= $this->getmodeuprs();
+		
 		foreach($rows as $k=>$rs){
 			$file 	= $rs['filepath'];
 			$bo 	= true;
@@ -67,6 +74,10 @@ class upgradeClassAction extends Action
 			}
 			if($rs['isup']==1)$bo = true;
 			if(isset($huira[$rs['id']]))$bo = false;
+			
+			//如果模块忽略升级，就不升级。
+			if(in_array($file, $morrs))$bo = false;
+			
 			if($bo){
 				$uparr[] = $rs;
 			}
@@ -103,6 +114,32 @@ class upgradeClassAction extends Action
 			'optdt' 	=> $this->now,
 		),$where);
 	}
+	
+	//获取模块忽略升级文件，停用也不升
+	private function getmodeuprs()
+	{
+		$rows = m('flow_set')->getall('1=1', '`num`,`status`,`isup`','`sort`');
+		$hurs = array();
+		foreach($rows as $k=>$rs){
+			$num = $rs['num'];
+			//停用就不升级了
+			if($rs['status']=='0' || $rs['isup']=='0'){
+				$hurs[] = ''.P.'/flow/input/inputjs/mode_'.$num.'.js'; //模块录入js文件
+				$hurs[] = ''.P.'/flow/input/mode_'.$num.'Action.php'; //模块控制器
+				$hurs[] = ''.P.'/flow/page/input_'.$num.'.html'; //PC录入模版
+				$hurs[] = ''.P.'/flow/page/view_'.$num.'_0.html'; //PC展示模版
+				$hurs[] = ''.P.'/flow/page/view_'.$num.'_1.html'; //手机展示模版
+				$hurs[] = ''.P.'/flow/page/viewpage_'.$num.'.html'; //子模版展示
+				$hurs[] = ''.P.'/flow/page/viewpage_'.$num.'_0.html';//子模版PC展示
+				$hurs[] = ''.P.'/flow/page/viewpage_'.$num.'_1.html';//子模版手机展示
+				$hurs[] = ''.P.'/flow/page/rock_page_'.$num.'.php'; //列表页面
+				$hurs[] = ''.P.'/model/flow/'.$num.'Model.php'; //模块接口文件
+			}
+		}
+		return $hurs;
+	}
+	
+	//弃用
 	public function shengjianssAjax()
 	{
 		$mid 	= (int)$this->post('id');
@@ -130,6 +167,7 @@ class upgradeClassAction extends Action
 				}
 				if($type==9){
 					$this->rock->createdir($filepath);
+					$this->beifenfile($filepath);//备份原来的文件到upload/当前月份
 					@$bo = file_put_contents($filepath, $fcont);
 					if(!$bo)exit('无法写入：'.$filepath.'');
 				}
@@ -142,6 +180,25 @@ class upgradeClassAction extends Action
 			$this->upsueecc($mid, $udt, $key);
 		}
 		echo 'ok';
+	}
+	
+	//备份原来的文件
+	private function beifenfile($path)
+	{
+		if(!file_exists($path))return;
+		$wz 	= strripos($path, '/');
+		$dir 	= '';
+		if($wz===false){
+			$file = $path;
+		}else{
+			$dir  = substr($path, 0, $wz);
+			$file = substr($path, $wz+1);
+		}
+		$dir	= str_replace('/','-', $dir);
+		$nfile 	= ''.$dir.''.date('YmdHis').'@'.$file.'';
+		$topath = ''.UPDIR.'/'.date('Y-m').'/'.$nfile.'';
+		$this->rock->createdir($topath);
+		@copy($path, $topath);
 	}
 	
 	private function shengjifile($frs, $key, $modeid)
@@ -159,7 +216,7 @@ class upgradeClassAction extends Action
 		if($barr['code']!=200)exit($barr['msg']);
 		$fcont 	= $this->jm->base64decode($barr['data']);
 		if(isempt($fcont))return;
-		$mkdir	= 'upload/'.date('Y-m');
+		$mkdir	= ''.UPDIR.'/'.date('Y-m');
 		if($frs['type']==0){
 			if(!is_dir($mkdir))mkdir($mkdir);
 			$filemy = $mkdir.'/install'.time().rand(1000,9999).'.zip';
@@ -190,6 +247,7 @@ class upgradeClassAction extends Action
 		$data 	= $barr['data'];
 		if($lx==0)$this->tonbbumenu($data['menu']);
 		if($lx==1)$this->tonbbumode($data['mode']);
+		if($lx==4)$this->tonbbumodewq($data['mode']);//完全和官网一样
 		if($lx==2)$this->tonbbuying($data['yydata']);
 		if($lx==3)$this->tonbbutask($data['task']);
 		
@@ -203,6 +261,9 @@ class upgradeClassAction extends Action
 		foreach($data as $k=>$rs){
 			$id = $rs['id'];
 			if($db->rows('id='.$id.'')>0){
+				unset($rs['status']);
+				unset($rs['ispir']);
+				unset($rs['ishs']);
 				$db->update($rs, 'id='.$id.'');
 			}else{
 				$db->insert($rs);
@@ -218,25 +279,71 @@ class upgradeClassAction extends Action
 		$db2 	= m('flow_menu');
 		$db3 	= m('flow_extent');
 		$db5 	= m('flow_course');
+		$db6 	= m('flow_where');
 		foreach($data as $num=>$arr){
-			$modeid 	= (int)$db->getmou('id', "`num`='$num'");
+			$moders 	= $db->getone("`num`='$num'",'`id`,`isup`');
+			$modeid		= 0;
+			$isup		= 1;
+			if($moders){
+				$modeid	= (int)$moders['id'];
+				$isup	= (int)$moders['isup'];
+				if($isup==0)continue;
+			}
+			
 			$flow_set 	= $arr['flow_set'];
+			if(isset($flow_set['id']))unset($flow_set['id']);
 			$isadd		= false;
 			if($modeid==0){
 				$modeid = $db->insert($flow_set);
 				$isadd	= true;
 			}else{
 				$db->update(array(
-					'summary' => $flow_set['summary'],
-					'summarx' => $flow_set['summarx']
+					'where' 	=> $flow_set['where'],
+					'sort' 		=> $flow_set['sort'],
+					'type' 		=> $flow_set['type'],
+					'summary' 	=> $flow_set['summary'],
+					'summarx' 	=> $flow_set['summarx'],
+					'tables' 	=> $flow_set['tables'],
+					'names' 	=> $flow_set['names'],
+					'isscl' 	=> $flow_set['isscl'],
+					'statusstr' => $flow_set['statusstr']
 				), $modeid);
+				/*
+				unset($flow_set['pctx']);
+				unset($flow_set['mctx']);
+				unset($flow_set['wxtx']);
+				unset($flow_set['emtx']);
+				unset($flow_set['isup']);
+				unset($flow_set['receid']);
+				unset($flow_set['recename']);
+				unset($flow_set['status']);
+				$db->update($flow_set, $modeid);*/
 			}
+			
+			//流程模块条件
+			$flow_where = $arr['flow_where'];
+			foreach($flow_where as $k6=>$rs6){
+				$rs6['setid'] = $modeid;
+				if(isset($rs6['id']))unset($rs6['id']);
+				$num 			= $rs6['num'];
+				if(isempt($num))continue;
+				$where 			= "`setid`='$modeid' and `num`='$num'";
+				if($db6->rows($where)==0){
+					$db6->insert($rs6);
+				}else{
+					$db6->update($rs6, $where);
+				}
+			}
+			
+			//if($isup==0)continue; //不同步更新，就跳过
+			
 			
 			//字段
 			$flow_element= $arr['flow_element'];
 			foreach($flow_element as $k1=>$rs1){
 				$rs1['mid'] = $modeid;
-				$where 		= "`mid`='$modeid' and `fields`='".$rs1['fields']."'";
+				if(isset($rs1['id']))unset($rs1['id']);
+				$where 		= "`mid`='$modeid' and `fields`='".$rs1['fields']."' and `iszb`='".$rs1['iszb']."'";
 				if($db1->rows($where)==0){
 					$db1->insert($rs1);
 				}else{
@@ -259,24 +366,76 @@ class upgradeClassAction extends Action
 			
 			//操作菜单
 			$flow_menu= $arr['flow_menu'];
+			$sids 	  = '0';
 			foreach($flow_menu as $k2=>$rs2){
 				$rs2['setid'] = $modeid;
 				$sid  = $rs2['id'];
 				if($db2->rows('id='.$sid.'')>0){
+					$sids.=','.$sid.'';
 					$db2->update($rs2, 'id='.$sid.'');
 				}else{
 					$db2->insert($rs2);
+					$sids.=','.$this->db->insert_id().'';
+				}
+			}
+			$db2->delete("`id` not in($sids)");
+			
+			//审核步骤
+			if(isset($arr['flow_course'])){
+				if($db5->rows('setid='.$modeid.'')==0){
+					$flow_course = $arr['flow_course'];
+					foreach($flow_course as $k5=>$rs5){
+						if(isset($rs5['id']))unset($rs5['id']);
+						$rs5['setid'] = $modeid;
+						$db5->insert($rs5);
+					}
 				}
 			}
 			
-			//审核步骤
-			if($isadd && isset($arr['flow_course'])){
-				$flow_course = $arr['flow_course'];
-				foreach($flow_course as $k5=>$rs5){
-					$rs5['setid'] = $modeid;
-					$db5->insert($rs5);
-				}
-			}
+		}
+	}
+	
+	//跟官网完全一样同步模块
+	private function tonbbumodewq($data)
+	{
+		$db 	= m('flow_set');
+		$this->initstalltable('flow_set');
+		$this->initstalltable('flow_element');
+		$this->initstalltable('flow_menu');
+		$this->initstalltable('flow_extent');
+		$this->initstalltable('flow_course');
+		$this->initstalltable('flow_where');
+		
+		foreach($data as $num=>$arr){
+			$flow_set 		= $arr['flow_set'];
+			$flow_element 	= $arr['flow_element'];
+			$flow_menu 		= $arr['flow_menu'];
+			$flow_extent 	= $arr['flow_extent'];
+			$flow_course 	= $arr['flow_course'];
+			$flow_where 	= $arr['flow_where'];
+			
+			
+			$db->insert($flow_set);
+			
+			$this->insertdata($flow_element, 'flow_element');
+			$this->insertdata($flow_menu, 'flow_menu');
+			$this->insertdata($flow_extent, 'flow_extent');
+			$this->insertdata($flow_course, 'flow_course');
+			$this->insertdata($flow_where, 'flow_where');
+		}
+	}
+	private function initstalltable($table)
+	{
+		$sql1 = "delete from `[Q]".$table."`";
+		$sql2 = "alter table `[Q]".$table."` AUTO_INCREMENT=1";
+		$this->db->query($sql1, false);
+		$this->db->query($sql2, false);
+	}
+	private function insertdata($data, $table)
+	{
+		$db 	= m($table);
+		if($data)foreach($data as $k=>$rs){
+			$db->insert($rs);
 		}
 	}
 	
@@ -300,6 +459,11 @@ class upgradeClassAction extends Action
 				$db->update(array(
 					'face' 		=> $rs['face'],
 					'url' 		=> $rs['url'],
+					'types' 	=> $rs['types'],
+					'sort' 		=> $rs['sort'],
+					'urlpc' 	=> $rs['urlpc'],
+					'urlm' 		=> $rs['urlm'],
+					'yylx' 		=> $rs['yylx'],
 					'name' 		=> $rs['name'],
 					'iconfont' 	=> $rs['iconfont'],
 					'iconcolor' => $rs['iconcolor'],
@@ -372,6 +536,9 @@ class upgradeClassAction extends Action
 		$mrs 	= $data['rs'];
 		$rows 	= $data['rows'];
 		$uparr  = array();
+		
+		$morrs	= $this->getmodeuprs();
+		
 		foreach($rows as $k=>$rs){
 			$file 	= $rs['filepath'];
 			$bo 	= true;
@@ -383,6 +550,10 @@ class upgradeClassAction extends Action
 			}
 			if($rs['type']==1)$zt = '';
 			if($rs['isup']==1)$bo = true;
+			
+			$rs['ting'] = 0;
+			if(in_array($file, $morrs))$rs['ting'] = 1;
+			
 			if($bo){
 				$rs['zt']= $zt;
 				$uparr[] = $rs;
@@ -392,6 +563,7 @@ class upgradeClassAction extends Action
 		foreach($uparr as $k=>$rs1){
 			$ishui = 0;
 			if(isset($huira[$rs1['id']]))$ishui = 1;
+			if($rs1['ting']==1)$ishui=1;
 			$uparr[$k]['ishui'] = $ishui;
 		}
 		$this->returnjson(array('rows'=>$uparr));

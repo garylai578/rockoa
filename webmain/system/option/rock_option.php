@@ -2,7 +2,7 @@
 <script >
 $(document).ready(function(){
 	{params};
-	var num = params.num,pid,optlx=0,dpid=0;
+	var num = params.num,pid,optlx=0,dpid=0,nowid=0;
 	
 	var at = $('#optionview_{rand}').bootstable({
 		tablename:'option',celleditor:true,sort:'sort',dir:'asc',url:js.getajaxurl('getlist', 'option', 'system'),
@@ -20,8 +20,7 @@ $(document).ready(function(){
 			//c.showmenu(ad,e);
 		},
 		itemdblclick:function(ad,oi,e){
-			$('#downshow_{rand}').html('<b>['+ad.id+'.'+ad.name+']</b>的下级选项');
-			a.search("and `pid`="+ad.id+"");
+			c.zhankai(ad);
 		},
 		load:function(ad){
 			pid = ad.pid;
@@ -30,8 +29,8 @@ $(document).ready(function(){
 	});
 	
 	var a = $('#view_{rand}').bootstable({
-		tablename:'option',celleditor:true,sort:'sort',dir:'asc',
-		autoLoad:false,where:'and pid=-1',
+		tablename:'option',celleditor:true,sort:'sort',dir:'asc',modedir:'{mode}:{dir}',storeafteraction:'downshuafter',
+		autoLoad:false,where:'and pid=-1',bodyStyle:'height:'+(viewheight-72)+'px;overflow:auto',
 		columns:[{
 			text:'名称',dataIndex:'name',sortable:true,editor:true
 		},{
@@ -41,16 +40,45 @@ $(document).ready(function(){
 		},{
 			text:'排序号',dataIndex:'sort',editor:true,sortable:true
 		},{
+			text:'下级数',dataIndex:'dcount'
+		},{
+			text:'启用',dataIndex:'valid',type:'checkbox',editor:true
+		},{
+			text:'说明',dataIndex:'explain',type:'textarea',editor:true,align:'left'
+		},{
 			text:'ID',dataIndex:'id'
+		},{
+			text:'',dataIndex:'optd',renderer:function(v,d,oi){
+				var s = '&nbsp;';
+				s='<a href="javascript:;" onclick="zhankai{rand}('+oi+')">展开</a>';
+				return s;
+			}
 		}],
 		load:function(){
 			get('add_{rand}').disabled=false;
+			get('del_{rand}').disabled=true;
 		},
 		itemclick:function(){
 			get('del_{rand}').disabled=false;
+		},
+		beforeload:function(){
+			get('del_{rand}').disabled=true;
 		}
 	});
+	zhankai{rand}=function(oi){
+		var d=a.getData(oi);
+		c.zhankai(d);
+	}
 	var c = {
+		zhankai:function(ad){
+			$('#downshow_{rand}').html('<b>['+ad.id+'.'+ad.name+']</b>的下级选项');
+			nowid = ad.id;
+			a.search("and `pid`="+ad.id+"");
+		},
+		search:function(){
+			var s = get('key_{rand}').value;
+			at.setparams({key:s},true);
+		},
 		showmenu:function(d,e){
 			if(!this.menuobj)this.menuobj = $.rockmenu({data:[],width:150,itemsclick:function(d){
 				c.cliemmenus(d);
@@ -62,6 +90,7 @@ $(document).ready(function(){
 			this.menuobj.setData(da);
 			setTimeout(function(){c.menuobj.showAt(e.clientX,e.clientY);},0);
 		},
+		
 		cliemmenus:function(d){
 			var ad = this.optdata;
 			if(d.lx==0){
@@ -96,7 +125,7 @@ $(document).ready(function(){
 		clickwin:function(o, lx){
 			var a = this.clicktypewin(false, 0);
 			optlx = 1;
-			a.setValue('pid', at.changedata.id);
+			a.setValue('pid', nowid);
 		},
 		clicktypeeidt:function(){
 			var d = at.changedata;
@@ -128,14 +157,14 @@ $(document).ready(function(){
 			return h;
 		},
 		typedel:function(o1){
-			at.del();
+			at.del({url:js.getajaxurl('deloption','option','system')});
 		},
 		del:function(){
-			a.del();
+			a.del({url:js.getajaxurl('deloption','option','system')});
 		}
 	};
 	js.initbtn(c);
-	$('#optionview_{rand}').css('height',''+(viewheight-102)+'px');
+	$('#optionview_{rand}').css('height',''+(viewheight-142)+'px');
 });
 </script>
 
@@ -145,7 +174,15 @@ $(document).ready(function(){
 <td width="350">
 	<div class="panel panel-info" style="margin:0px">
 	  <div class="panel-heading">
-		<h3 class="panel-title">选项列表</h3>
+		<h3 class="panel-title">选项列表(双击展开)</h3>
+	  </div>
+	  <div>
+		<div class="input-group" style="width:200px">
+			<input class="form-control" id="key_{rand}" placeholder="选项名称/编号">
+			<span class="input-group-btn">
+				<button class="btn btn-default" click="search" type="button"><i class="icon-search"></i></button>
+			</span>
+		</div>
 	  </div>
 	  <div id="optionview_{rand}" style="height:400px;overflow:auto"></div>
 	  <div  class="panel-footer">
@@ -155,7 +192,7 @@ $(document).ready(function(){
 		&nbsp; 
 		<a href="javascript:" click="xiajili" onclick="return false">[管理下级]</a>&nbsp; 
 		<a href="javascript:" click="dingji" onclick="return false">[回到顶级]</a>
-		<!--<a href="javascript:" style="float:right" click="typedel" onclick="return false"><i class="icon-trash"></i></a>-->
+		<a href="javascript:" style="float:right" click="typedel" onclick="return false"><i class="icon-trash"></i></a>
 	  </div>
 	</div>
 </td>

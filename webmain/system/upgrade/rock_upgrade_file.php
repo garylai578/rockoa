@@ -19,9 +19,10 @@ $(document).ready(function(){
 		},{
 			text:'文件说明',dataIndex:'explain'
 		},{
-			text:'',dataIndex:'ishui',renderer:function(v){
+			text:'',dataIndex:'ishui',renderer:function(v, d){
 				var s='<font color="green">可更新</font>';
 				if(v==1)s='已忽略';
+				if(d.ting=='1')s='停用/不更新的模块';
 				return s;
 			}
 		},{

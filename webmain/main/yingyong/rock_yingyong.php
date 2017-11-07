@@ -3,32 +3,26 @@
 $(document).ready(function(){
 	var a = $('#view_{rand}').bootstable({
 		tablename:'im_group',where:'and type=2',sort:'sort',dir:'asc',celleditor:true,
-		url:js.getajaxurl('yingyongdata','{mode}','{dir}'),modenum:'yingyong',
+		modenum:'yingyong',storeafteraction:'yingyongafter',modedir:'{mode}:{dir}',
 		columns:[{
 			text:'图标',dataIndex:'face',align:'left',renderer:function(v,d){
 				var s='';
-				if(d.leave==2){
-					s+='<div style="padding-left:24px">';
-				}else{
-					s+='<div>';
-				}
-				s+='<img src="'+v+'" align="absmiddle" width="20" height="20">';
+				s='<div>';
+				s+='<img src="'+v+'" align="absmiddle" width="24" height="24">';
 				s+='&nbsp; '+d.name+'';
 				s+='</div>';
 				return s;
 			}
 		},{
-			text:'字体图标',dataIndex:'iconfont',editor:true
+			text:'分类',dataIndex:'types',editor:true,sortable:true
 		},{
-			text:'字体图标颜色',dataIndex:'iconcolor',editor:true
+			text:'图标颜色',dataIndex:'iconcolor',editor:true
 		},{
 			text:'编号',dataIndex:'num'
 		},{
 			text:'排序号',dataIndex:'sort',editor:true
 		},{
 			text:'地址',dataIndex:'url'
-		},{
-			text:'上级id',dataIndex:'pid'
 		},{
 			text:'状态',dataIndex:'valid',type:'checkbox',editor:true,sortable:true
 		},{
@@ -58,13 +52,13 @@ $(document).ready(function(){
 	function btn(bo){
 		get('del_{rand}').disabled = bo;
 		if(!bo && a.changedata.leave!=1)bo=true;
-		get('adds_{rand}').disabled = bo;
+		//get('adds_{rand}').disabled = bo;
 	}
 	
 	var c = {
 		clickwin:function(o1,lx){
 			var pid=0;
-			if(lx==1 && a.changedata.leave==1)pid=a.changeid;
+			listyingyongobj = a;
 			addtabs({num:'yingyongedit0',url:'main,yingyong,edit,id=0,pid='+pid+'',name:'新增应用'});
 		},
 		del:function(){
@@ -90,7 +84,6 @@ $(document).ready(function(){
 <ul class="floats">
 	<li class="floats50">
 		<button class="btn btn-primary" click="clickwin,0" type="button"><i class="icon-plus"></i> 新增应用</button> &nbsp; 
-		<button class="btn btn-info" disabled id="adds_{rand}" click="clickwin,1" type="button"><i class="icon-plus"></i> 新增下级应用</button>
 	</li>
 	<li class="floats50" style="text-align:right">
 		

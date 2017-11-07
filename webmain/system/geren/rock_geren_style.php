@@ -25,8 +25,8 @@ $(document).ready(function(){
 <div align="left" style="padding:50px">
 	<table>
 		<tr>
-			<td align="center" style="padding:15px"><label><div style="width:60px;height:60px;overflow:hidden; background-color:#1ABC9C"></div><input type="radio" name="_stylechange" value="0"></label></td>
-			<td align="center" style="padding:15px"><label><div style="width:60px;height:60px;overflow:hidden; background-color:#1389D3"></div><input type="radio" name="_stylechange" value="1"></label></td>
+			<td align="center" style="padding:15px"><label><div style="width:60px;height:60px;overflow:hidden; background-color:#1389D3"></div><input type="radio" name="_stylechange" value="0"></label></td>
+			<td align="center" style="padding:15px"><label><div style="width:60px;height:60px;overflow:hidden; background-color:#1ABC9C"></div><input type="radio" name="_stylechange" value="1"></label></td>
 			<td align="center" style="padding:15px"><label><div style="width:60px;height:60px;overflow:hidden; background-color:#E95420"></div><input type="radio" name="_stylechange" value="2"></label></td>
 		</tr>
 		

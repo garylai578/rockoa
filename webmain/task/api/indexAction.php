@@ -14,11 +14,27 @@ class indexClassAction extends apiAction
 		$dbs 			= m('reim');
 		$ntime			= floatval($this->post('ntime'));
 		$uid 			= $this->adminid;
-		//$reimarr 		= m('reim')->getwdarr($uid);
-		//$arr['reimarr'] = $reimarr;
 		$arr['loaddt']  	= $this->now;
 		$arr['splittime'] 	= (int)($ntime/1000-time());
 		$arr['reimarr']		= $dbs->gethistory($uid);
+		$this->showreturn($arr);
+	}
+	
+	/**
+	* app首页接口截止
+	*/
+	public function indexappAction()
+	{
+		$dbs 			= m('reim');
+		$ntime			= floatval($this->post('ntime'));
+		$uid 			= $this->adminid;
+		$agent 			= $dbs->getappagent($uid);
+		$arr['loaddt']  	= $this->now;
+		$arr['splittime'] 	= (int)($ntime/1000-time());
+		$arr['reimarr']		= $dbs->gethistory($uid);
+		$arr['agentarr']	= $agent['rows'];
+		$arr['agentstotal']	= $agent['stotal'];
+		$arr['maxupsize']	= c('upfile')->getmaxzhao();//最大上传大小M
 		$this->showreturn($arr);
 	}
 	

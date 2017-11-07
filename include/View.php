@@ -29,6 +29,7 @@ $actpath	= $rock->strformat('?0/?1/?2?3',ROOT_PATH, $p, $d, $_m);
 define('ACTPATH', $actpath);
 $actfile	= $rock->strformat('?0/?1Action.php',$actpath, $m);
 $actfile1	= $rock->strformat('?0/?1Action.php',$actpath, $_m);
+$actbstr 	= null;
 if(file_exists($actfile1))include_once($actfile1);
 if(file_exists($actfile)){
 	include_once($actfile);
@@ -38,7 +39,9 @@ if(file_exists($actfile)){
 	if($ajaxbool == 'true')$actname	= ''.$a.'Ajax';
 	if(method_exists($xhrock, $actname)){
 		$xhrock->beforeAction();
-		$xhrock->$actname();
+		$actbstr  = $xhrock->$actname();
+		if(is_string($actbstr)){echo $actbstr;$xhrock->display=false;}
+		if(is_array($actbstr)){echo json_encode($actbstr);$xhrock->display=false;}
 	}else{
 		$methodbool = false;
 		if($ajaxbool == 'false')echo ''.$actname.' not found';

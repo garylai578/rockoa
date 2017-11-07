@@ -75,6 +75,7 @@ class flowClassModel extends Model
 	{
 		$srows 	= $this->db->getrows('[Q]flow_set','status=1 and isflow=1 '.$whe.'','`num`,`name`,`table`,id,`where`','sort');
 		$str 	= '';
+		$dbs 	= m('flow_bill');
 		foreach($srows as $k=>$rs){
 			$where = $rs['where'];
 			if(!isempt($where)){
@@ -82,7 +83,7 @@ class flowClassModel extends Model
 				$where = "and $where";
 			}
 			$flow = $this->initflow($rs['num']);
-			$rows = $this->db->getrows('[Q]'.$rs['table'].'','status in(0,2) and isturn=1 '.$where.'');
+			$rows = $this->db->getrows('[Q]'.$rs['table'].'','status not in(1,5) and isturn=1 '.$where.'');
 			$hshu = 0;
 			$yics = 0;
 			foreach($rows as $k1=>$rs1){
@@ -95,6 +96,15 @@ class flowClassModel extends Model
 			if($yics>0)$str.=''.$rs['name'].'<font color=red>('.$yics.')条没审核人</font>;';
 		}
 		if($str=='')$str = '无从新匹配记录';
+		
+		$rows	= $this->db->getall("select a.`id`,b.`name`,b.`deptname` from `[Q]flow_bill` a left join `[Q]admin` b on a.`uid`=b.`id` where b.`id` is not null and (ifnull(a.uname,'')='' or ifnull(a.udeptname,'')='')");
+		foreach($rows as $k=>$rs){
+			$dbs->update(array(
+				'uname' => $rs['name'],
+				'udeptname' => $rs['deptname'],
+			), $rs['id']);
+		}
+		$dbs->update('`isturn`=1','`status`=1');
 		return $str;
 	}
 }

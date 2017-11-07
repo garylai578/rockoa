@@ -6,11 +6,12 @@ class crmClassModel extends Model
 		$this->settable('customer');
 	}
 	
-	//读取我的客户和分享给我的
-	public function getmycust($uid)
+	//读取我的客户和共享给我的
+	public function getmycust($uid, $id=0)
 	{
-		//$s		= $this->rock->dbinstr('shateid', $uid);
-		$rows 	= $this->getrows("`status`=1 and uid='$uid'",'id as value,name,id','`name`');
+		if(isempt($id))$id = 0;
+		$s		= $this->rock->dbinstr('shateid', $uid);
+		$rows 	= $this->getrows("`status`=1 and ((`uid`='$uid') or (`id`=$id) or (".$s."))",'id as value,name,id','`name`');
 		return $rows;
 	}
 	
@@ -32,6 +33,7 @@ class crmClassModel extends Model
 		return $rows;
 	}
 	
+	//更新合同状态
 	public function ractmoney($htid)
 	{
 		if(isempt($htid))return false;
@@ -45,7 +47,7 @@ class crmClassModel extends Model
 		$oispay	= $ors['ispay'];
 		$htid	= $ors['id'];
 		$money 	= $this->db->getmou('[Q]custfina','sum(money)','htid='.$htid.' and `ispay`=1');
-		$moneyy	= $this->getmoneys($htid);
+		$moneyy	= $this->getmoneys($htid); //已创建收付款单金额
 		$symon	= $zmoney - $money;
 		$ispay	= 0;
 		$isover	= 0;
@@ -157,6 +159,34 @@ class crmClassModel extends Model
 		foreach($rows as $k=>$rs){
 			$custid = $rs['custid'];
 			$this->update('htshu='.$rs['htshu'].'', $custid);
+		}
+	}
+	
+	//合同状态金额更新
+	public function custractupzt($htid='')
+	{
+		$where1= $where2= '';
+		if(!isempt($htid)){
+			$where1="and `htid` in($htid)";
+			$where2="and `id` in($htid)";
+		}
+		$this->db->update('[Q]custract','`ispay`=0,`isover`=0,`moneys`=money','`id`>0 '.$where2.'');
+		
+		$rows = $this->db->getall('SELECT `htid` FROM `[Q]custfina` where `htid`>0 '.$where1.' GROUP BY htid');
+		foreach($rows as $k=>$rs){
+			$htid = $rs['htid'];
+			$this->ractmoney($htid);
+		}
+		
+		//更新收付款单
+		$rows = $this->db->getall('SELECT a.id,a.htid,a.htnum,b.num FROM `[Q]custfina` a left join `[Q]custract` b on a.htid=b.id where a.htid>0 and a.htnum<>b.num ');
+		foreach($rows as $k=>$rs){
+			$htid = $rs['htid'];
+			if(isempt($rs['num']))$htid = 0;
+			$this->db->record('[Q]custfina', array(
+				'htid' 	=> $htid,
+				'htnum' => $rs['num'],
+			), $rs['id']);
 		}
 	}
 }

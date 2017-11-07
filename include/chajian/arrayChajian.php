@@ -50,8 +50,10 @@ class arrayChajian extends Chajian{
 			$a2	= explode('|', $a1);
 			$k 	= $a2[0];
 			$v 	= $a2[0];
-			if(count($a2)>1)$v 	= $a2[1];
-			$arr[] = array($k, $v);
+			$c	= '';
+			if(isset($a2[1]))$v = $a2[1];
+			if(isset($a2[2]))$c = $a2[2];
+			$arr[] = array($k, $v, $c);
 		}
 		return $arr;
 	}

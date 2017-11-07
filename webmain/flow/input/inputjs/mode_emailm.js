@@ -7,6 +7,21 @@ function initbodys(){
 	get('btnchange_ccname').onclick=function(){
 		changeuserss(1);
 	}
+	//读取转发邮件的内容
+	var zfid = js.request('zfid');
+	if(mid==0&&zfid){
+		js.ajax(geturlact('getzfcont',{zfid:zfid}),false,function(a){
+			form('title').value='转发：'+a.title+'';
+			form('content').value=a.content;
+			if(ismobile==1)form('content').value=a.content.replace(/<br>/g,"\n");
+			if(ismobile==0)c.editorobj['content'].html(a.content);
+			js.downupshow(a.filers,'fileidview');
+		},'get,json');
+	}
+	if(mid==0){
+		form('isturn').checked=true;
+	}
+	get('AltS').value='发送(S)';
 }
 var txlbool=false,txldata=[];
 function changestype(lx){

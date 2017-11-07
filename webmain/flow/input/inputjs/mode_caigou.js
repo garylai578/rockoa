@@ -1,55 +1,20 @@
 function initbodys(){
-	$(form('money')).click(function(){
-		//cchangtongss();
-	});
-	$(form('custid')).change(function(){
-		var val = this.value,txt='';
-		if(val!=''){
-			txt = this.options[this.selectedIndex].text;
-		}
-		form('custname').value=txt;
-	});
-	addchengesss();
-}
-function addchengesss(){
-	if(isedit==0)return;
-	$("[name^='aid0_']").unbind('change').change(function(){
-		changeaidtssk(this);
-		cchangtongss();
-	});
-	$("[name^='count0_']").unbind('change').change(function(){
-		cchangtongss();
-	});
-	$("[name^='price0_']").unbind('change').change(function(){
-		cchangtongss();
-	});
-}
-function changesubmit(){
+	
 	
 }
-function changesubmitbefore(){
-	cchangtongss();
+
+
+//触发事件
+function oninputblur(na,zb,obj){
+	if(zb==0)return;
+	if(na=='temp_aid')changeaidtssk(obj);
 }
-function eventaddsubrows(){
-	cchangtongss();
-	addchengesss();
-}
-function eventdelsubrows(){
-	cchangtongss();
-}
-function cchangtongss(){
-	var d=c.getsubdata(0);
-	var to=0,i,len=d.length;
-	for(i=0;i<len;i++){
-		to=to+parseFloat(d[i].count)*parseFloat(d[i].price);
-	}
-	form('money').value=js.float(to)+'';
-}
+
 function changeaidtssk(o1){
-	var val=o1.value;
-	var nam = o1.name.replace('aid','').split('_');
+	var nam = c.getxuandoi(o1.name);
+	var val = form('aid'+nam[2]+'').value;
 	js.ajax(geturlact('getgoods'),{aid:val},function(d){
 		c.setrowdata(nam[0],nam[1],d);
-		cchangtongss();
+		c.inputblur(form('money'), 0);
 	},'get,json');
 }

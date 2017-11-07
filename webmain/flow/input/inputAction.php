@@ -1,15 +1,18 @@
 <?php
-class inputAction extends ActionNot
+class inputAction extends Action
 {
 	public $mid = 0;
 	public $flow;
+	public $rs 	= array();
 	
 	public function initAction()
 	{
+		/*
 		$aid 	= (int)$this->get('adminid');
 		$token 	= $this->get('token');
-		m('login')->autologin($aid, $token);
-		$this->getlogin(1);
+		$uid 	= m('login')->autologin($aid, $token);
+		$this->getlogin();
+		$this->loginnot();*/
 	}
 	
 	private $fieldarr = array();
@@ -24,6 +27,12 @@ class inputAction extends ActionNot
 	//保存后处理，主要用于判断是否可以保存
 	protected function saveafter($table,$arr, $id, $addbo){}
 	
+	//生成列表页，数据读取前处理
+	protected function storebefore($table){}
+	
+	//生成列表页，数据读取后处理
+	protected function storeafter($table, $rows){}
+	
 	//过滤html代码
 	private function xxsstolt($uaarr)
 	{
@@ -35,6 +44,10 @@ class inputAction extends ActionNot
 		}
 		return $uaarr;
 	}
+	
+	/**
+	*	录入的保存
+	*/
 	public function saveAjax()
 	{
 		$id				= (int)$this->request('id');
@@ -48,10 +61,11 @@ class inputAction extends ActionNot
 		$table			= $this->moders['table'];
 		$checkobj		= c('check');
 		if($this->isempt($table))$this->backmsg('模块未设置表名');
-		$fieldsarr		= m('flow_element')->getrows("`mid`='$modeid' and `islu`=1 and `iszb`=0",'`name`,`fields`,`isbt`,`fieldstype`,`savewhere`,`data`,`iszb`','`sort`');
+		$fieldsarr		= $this->flow->fieldsarr;
 		if(!$fieldsarr)$this->backmsg('没有录入元素');
 		$db	   = m($table);$subna = '提交';$addbo = false;$where = "`id`='$id'"; $oldrs = false;
 		$this->mdb = $db;
+		
 		if($id==0){
 			$where = '';
 			$addbo = true;
@@ -66,7 +80,8 @@ class inputAction extends ActionNot
 			}
 			$subna = '编辑';
 		}
-		$uaarr = $farrs = array();
+		if($oldrs)$this->rs = $oldrs;
+		$uaarr = $farrs 	= array();
 		foreach($fieldsarr as $k=>$rs){
 			$fid = $rs['fields'];
 			if(substr($fid, 0, 5)=='temp_')continue;
@@ -102,7 +117,9 @@ class inputAction extends ActionNot
 		if(in_array('optdt', $allfields))$uaarr['optdt'] = $this->now;
 		if(in_array('optid', $allfields))$uaarr['optid'] = $this->adminid;
 		if(in_array('optname', $allfields))$uaarr['optname'] = $this->adminname;
-		if(in_array('uid', $allfields))$uaarr['uid'] = $this->post('uid', $this->adminid);
+		if(in_array('uid', $allfields) && $addbo){
+			$uaarr['uid'] = $this->post('uid', $this->adminid);
+		}
 		if(in_array('applydt', $allfields) && $id==0)$uaarr['applydt'] = $this->post('applydt', $this->date);
 		if($addbo){
 			if(in_array('createdt', $allfields))$uaarr['createdt'] = $this->now;
@@ -126,7 +143,8 @@ class inputAction extends ActionNot
 		
 		//判断保存前的
 		$ss 	= '';
-		$befa 	= $this->savebefore($table, $uaarr, $id, $addbo);
+		$befa 	= $this->savebefore($table, $this->getsavenarr($uaarr, $oldrs), $id, $addbo);
+		$notsave= array();//不保存的字段
 		if(is_string($befa)){
 			$ss = $befa;
 		}else{
@@ -134,26 +152,73 @@ class inputAction extends ActionNot
 			if(isset($befa['rows'])){
 				if(is_array($befa['rows']))foreach($befa['rows'] as $bk=>$bv)$uaarr[$bk]=$bv;
 			}
+			if(isset($befa['notsave'])){
+				$notsave=$befa['notsave'];
+				if(is_string($notsave))$notsave = explode(',', $notsave);
+			}
 		}
 		if(!$this->isempt($ss))$this->backmsg($ss);
+		
+		//不保存字段过滤掉
+		if(is_array($notsave))foreach($notsave as $nofild)if(isset($uaarr[$nofild]))unset($uaarr[$nofild]);
+		
 		$uaarr	= $this->xxsstolt($uaarr);//过滤特殊文字
+		
+		foreach($uaarr as $kf=>$kv){
+			if(!in_array($kf, $allfields)){
+				$this->backmsg('模块主表['.$this->flow->mtable.']上字段['.$kf.']不存在');
+			}
+		}
+		
+		//isonly唯一值的判断
+		foreach($fieldsarr as $k=>$rs){
+			$fiesd  = $rs['fields'];
+			if($rs['isonly']=='1' && isset($uaarr[$fiesd])){
+				$dval = $uaarr[$fiesd];
+				if(!isempt($dval)){
+					if($db->rows("`id`<>'$id' and `$fiesd`='$dval'")>0)$this->backmsg(''.$rs['name'].'['.$dval.']已存在了');
+				}
+			}
+		}
+		
+		
 		$bo = $db->record($uaarr, $where);;
 		if(!$bo)$this->backmsg($this->db->error());
 		
 		if($id==0)$id = $this->db->insert_id();
 		m('file')->addfile($this->post('fileid'), $table, $id);
 		
-		$this->savesubtable($id, 0, $addbo);//保存第一个多行表
-		$this->savesubtable($id, 1, $addbo);//保存第二个多行表
+		//保存多行子表
+		$tabless	 = $this->moders['tables'];
+		if(!isempt($tabless)){
+			$tablessa = explode(',', $tabless);
+			foreach($tablessa as $zbx=>$tablessas){
+				$this->savesubtable($tablessas, $id, $zbx, $addbo);
+			}
+		}
 		
 		//保存后处理
-		$this->saveafter($table,$uaarr, $id, $addbo);
+		$this->saveafter($table,$this->getsavenarr($uaarr, $oldrs), $id, $addbo);
 		
+		//保存修改记录
+		$editcont = '';
+		if($oldrs){
+			$newrs = $db->getone($id);
+			$editcont = m('edit')->recordsave($farrs, $table, $id, $oldrs, $newrs);
+		}
 		$msg 	= '';
+		$this->flow->editcont = $editcont;
 		$this->flow->loaddata($id, false);
 		$this->flow->submit($subna);
 		
 		$this->backmsg('', $msg, $id);
+	}
+	
+	private function getsavenarr($nsrr, $bos=false)
+	{
+		if(!is_array($bos))$bos = array();
+		if($nsrr)foreach($nsrr as $k=>$v)$bos[$k]=$v;
+		return $bos;
 	}
 	
 	public function getsubtabledata($xu)
@@ -171,6 +236,7 @@ class inputAction extends ActionNot
 			$uaarr['id'] = $sid;
 			foreach($farr as $k=>$rs){
 				$fid= $rs['fields'];
+				if(substr($fid,0,5)=='temp_')continue;
 				$na = ''.$fid.''.$xu.'_'.$i.'';
 				$val= $this->post($na);
 				if($rs['isbt']==1&&$this->isempt($val))$bos=false;
@@ -185,31 +251,28 @@ class inputAction extends ActionNot
 	}
 	
 	//多行子表的保存
-	private function savesubtable($mid, $xu, $addbo)
+	private function savesubtable($tables, $mid, $xu, $addbo)
 	{
-		$tablesa= $this->moders['tables'];
-		if(isempt($tablesa))return;
-		$tablesa= explode(',', $tablesa);
-		if(!isset($tablesa[$xu]))return;
-		$tables	= $tablesa[$xu];
-		if(isempt($tables))return;
-		
-		$data 	= $this->getsubtabledata($xu);
-		$len 	= count($data);
-		if($len<=0)return;
-		$idss		= '0';
 		$dbs 		= m($tables);
-		
+		$data 		= $this->getsubtabledata($xu);
+		$len 		= count($data);
+		$idss		= '0';
+		$whes 		= '';
+
 		$allfields 	= $this->db->getallfields('[Q]'.$tables.'');
 		$oarray 	= array();
 		if(in_array('optdt', $allfields))$oarray['optdt'] 		= $this->now;
 		if(in_array('optid', $allfields))$oarray['optid'] 		= $this->adminid;
 		if(in_array('optname', $allfields))$oarray['optname'] 	= $this->adminname;
-		if(in_array('uid', $allfields))$oarray['uid'] 			= $this->post('uid', $this->adminid);
+		if(in_array('uid', $allfields) && $addbo)$oarray['uid'] = $this->post('uid', $this->adminid);
 		if(in_array('applydt', $allfields) && $addbo)$oarray['applydt']	= $this->post('applydt', $this->date);
 		if(in_array('status', $allfields))$oarray['status']		= 0;
+		if(in_array('sslx', $allfields)){
+			$oarray['sslx']	= $xu;
+			$whes			= ' and `sslx`='.$xu.'';
+		}
 		
-		foreach($data as $k=>$uaarr){
+		if($data)foreach($data as $k=>$uaarr){
 			$sid 			= $uaarr['id'];
 			$where			= "`id`='$sid'";
 			$uaarr['mid'] 	= $mid;
@@ -220,7 +283,7 @@ class inputAction extends ActionNot
 			if($sid==0)$sid = $this->db->insert_id();
 			$idss.=','.$sid.'';
 		}
-		$delwhere = "`mid`='$mid' and `id` not in($idss)";
+		$delwhere = "`mid`='$mid'".$whes." and `id` not in($idss)";
 		$dbs->delete($delwhere);
 	}
 	
@@ -230,15 +293,6 @@ class inputAction extends ActionNot
 		$flownum = $this->request('flownum');
 		$id		 = (int)$this->request('mid');
 		$arr 	 = m('flow')->getdataedit($flownum, $id);
-		$tables	 = $arr['tables'];
-		$modeid	 = $arr['modeid'];
-		$subdata0	 = array();
-		if(!isempt($tables)){
-			$subdata0 = m($tables)->getall('mid='.$id.'','*','`sort`');
-		}
-		$arr['subdata'] = array(
-			'subdata0'	=> $subdata0
-		);
 		$this->backmsg('', '', $arr);
 	}
 	
@@ -247,7 +301,7 @@ class inputAction extends ActionNot
 	{
 		$this->ismobile = 1;
 		$isheader = 0;
-		if($this->web != 'wxbro' && $this->get('show')=='we')$isheader=1;
+		if($this->web != 'wxbro' && $this->web != 'xinhu' && $this->web != 'ding' && $this->get('show')=='we')$isheader=1;
 		$this->assign('isheader', $isheader);
 		$this->luactions();
 	}
@@ -267,9 +321,18 @@ class inputAction extends ActionNot
 		$fields	= str_replace(',',"','", $fields);
 		$stwhe	= "and `fields` in('$fields')";
 		$this->luactions(1, $stwhe);
-	}	
+	}
+
+	//高级搜索显示框
+	public function highsouAction()
+	{
+		$this->displayfile = ''.P.'/flow/input/tpl_input_lus.html';
+		$this->ismobile = 1;
+		$this->luactions(0, '', 1);
+	}
 	
-	private function luactions($slx=0, $stwhe='')
+	//$lutype=1高级搜索用的
+	private function luactions($slx=0, $stwhe='', $lutype=0)
 	{
 		$this->tpltype = 'html';
 		$uid		= $this->adminid;
@@ -279,6 +342,8 @@ class inputAction extends ActionNot
 		$this->rs   = array();
 		$this->flow = m('flow')->initflow($num);
 		$moders		= $this->flow->moders;
+		$modename 	= $moders['name'];
+		if($moders['status']=='0')exit('模块['.$modename.']已停用了;');
 		$this->smartydata['moders']	= array(
 			'num' 	=> $moders['num'],
 			'id' 	=> $moders['id'],
@@ -287,41 +352,75 @@ class inputAction extends ActionNot
 			'isflow'=> $moders['isflow'],
 		);
 		$modeid 	= $moders['id'];
-		if($mid==0){
+		if($mid==0 && $lutype==0){
 			$isadd = m('view')->isadd($modeid, $uid);
-			if(!$isadd)exit('无权添加['.$moders['name'].']的数据;');
+			if(!$isadd)exit('无权添加['.$modename.']的数据;');
 		}
 		
 		$content 	= '';
 		$oldrs 		= m($moders['table'])->getone($mid);
 		$this->rs 	= $oldrs;
-
+		$this->gongsiarr = array();
 		
-		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`=0 $stwhe",'fields,fieldstype,name,dev,data,isbt,islu,attr,iszb','`sort`');
+		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`=0 $stwhe",'fields,fieldstype,name,dev,data,isbt,islu,attr,iszb,issou,gongsi,placeholder','`sort`');
 		$modelu		= '';
 		foreach($fieldarr as $k=>$rs){
 			if($slx==1 && $oldrs){
 				$rs['value'] = $oldrs[$rs['fields']];
 			}
+			if($lutype==1){
+				$rs['isbt'] = 0;
+				if($rs['issou']==1)$modelu.='{'.$rs['fields'].'}';
+			}else{	
+				if($rs['islu'] || $stwhe!='')$modelu.='{'.$rs['fields'].'}';
+				if(!isempt($rs['gongsi']))$this->gongsiarr[] = array(
+					'iszb' 	 => 0,
+					'fields' => $rs['fields'],
+					'gongsi' => $rs['gongsi'],
+				);
+			}
 			$this->fieldarr[$rs['fields']] = $rs;
-			if($rs['islu'] || $stwhe!='')$modelu.='{'.$rs['fields'].'}';
 		}
 		
 		$this->smartydata['fieldsjson']	= json_encode($fieldarr);
 		$this->moders	= $moders;
+		$zbshu			= 0;
+		$tableas		= false;
+		if(!isempt($moders['tables'])){
+			$tableas = explode(',', $moders['tables']);
+			$zbshu	 = count($tableas);
+		}
+		$path 			= ''.P.'/flow/page/input_'.$num.'.html';
+		$pclucont 		= '';
+		if(file_exists($path))$pclucont 	= file_get_contents($path);
+		$isupfile		= 0;
+		$nameaas 		= explode(',', $moders['names']); //子表名
 		
+		//PC端
 		if($this->ismobile==0){
-			$path 			= ''.P.'/flow/page/input_'.$num.'.html';
-			if(file_exists($path)){
-				$content 	= file_get_contents($path);
-			}
+			$content = $pclucont;
 		}else{
 			$content = $modelu;
-			$zbstr 	 = m('input')->getsubtable($modeid,1,1,1);
-			if($zbstr!='')$content.='<tr><td  style="padding:5px;" colspan="2"><div><b>'.$moders['names'].'</b></div><div>'.$zbstr.'</div></td></tr>';
+			if($tableas){
+				foreach($tableas as $k1=>$tableass){
+					$zbstr 	 = m('input')->getsubtable($modeid,$k1+1,1,1);
+					if($zbstr!=''){
+						$content.='<tr><td style="padding:5px;" colspan="2"><div><b>'.arrvalue($nameaas, $k1).'</b></div>';
+						if($this->flow->minwidth>300){
+							$content.='<div tmp="mobilezbiao" style="width:280px;overflow:auto;"><div 
+						style="min-width:'.$this->flow->minwidth.'px">'.$zbstr.'</div></div>';
+						}else{
+							$content.='<div>'.$zbstr.'</div>';
+						}
+						$content.= '</td></tr>';
+					}
+				}
+			}
+			$isupfile = contain($pclucont, '{file_content}') ? 1 : 0;
+			
 		}
 		
-		if($content=='')exit('未设置录入页面');
+		if($content=='')exit('未设置录入页面,请到[流程模块→表单元素管理]下设置');
 		
 		
 		$this->actclss	= $this;
@@ -333,6 +432,7 @@ class inputAction extends ActionNot
 			$this->actclss->flow 	= $this->flow;
 			$this->actclss->mid 	= $this->mid;
 			$this->actclss->rs 		= $this->rs;
+			$this->actclss->ismobile= $this->ismobile;
 		}
 		
 		//初始表单插件元素
@@ -348,46 +448,72 @@ class inputAction extends ActionNot
 			$str		= $this->inputobj->getfieldcont($nrs, $this->actclss);
 			$content	= str_replace('{'.$nrs.'}', $str, $content);
 		}
-		
-		$content 	 	= $this->pisubduolie($content, $modeid, 1);//多列子表匹配的是[]
+		$this->subfielsa = array();
+		$content 	 	= $this->pisubduolie($content, $modeid, $nameaas);//多列子表匹配的是[]
 		$content		= str_replace('*','<font color=red>*</font>', $content);
 		
 		$course			= array();
-		if($moders['isflow']==1){
+		$nowcourseid	= 0;
+		if($moders['isflow']==1 && $lutype==0 && $moders['isbxs']==0){
 			$course[]= array('name'=>'提交','id'=>0);
-			$courses = m('flow_course')->getall('setid='.$modeid.' and `status`=1','name,checktype,id,checktypename,`explain`','`sort`,id asc');
+			$courses	= $this->flow->getflowpipei($this->adminid);
+			if($mid>0){
+				$nowcourseid = $this->flow->billmodel->getmou('nowcourseid',"`table`='".$this->flow->mtable."' and `mid`='$mid'");
+			}
 			foreach($courses as $k=>$rs1){
 				$na = $rs1['name'];
 				if(!$this->isempt($rs1['explain']))$na.= '<br><span style="font-size:12px">('.$rs1['explain'].')</span>';
 				$rs1['name'] = $na;
+				$rs1['k'] 	 = $k;
+				$rs1['isnow']= $rs1['id']==$nowcourseid;
 				$course[]=$rs1;
 			}
 			$course[]= array('name'=>'结束','id'=>-1);
 		}
 		$this->title  	= $moders['name'];
 		$this->smartydata['content']	= $content;
+		$this->smartydata['gongsiarr']	= $this->gongsiarr;
+		$this->smartydata['subfielsa']	= $this->subfielsa;
 		$this->smartydata['mid']		= $mid;
 		$this->smartydata['course']		= $course;
+		$this->smartydata['zbnamearr']	= $nameaas;
+		$this->smartydata['zbshu']		= $zbshu;//子表数
+		$this->smartydata['isupfile']	= $isupfile;//是否有上传
 	}
 	
-	//多行子表的
-	private function pisubduolie($content, $modeid, $xu)
+	//多行子表内替换
+	private function pisubduolie($content, $modeid, $nameaas)
 	{
-		$oi 		= $xu-1;
-		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`='$xu'",'fields,fieldstype,name,dev,data,isbt,islu,attr','`sort`');
+		$fieldarr 	= m('flow_element')->getrows("`mid`='$modeid' and `iszb`>0",'fields,fieldstype,name,dev,data,isbt,islu,attr,iszb,gongsi','`sort`');
 		if(!$fieldarr)return $content;
 		$this->fieldarr = array();
-		$this->fieldarr['xuhao'.$oi.''] = array(
-			'fields' 	=> 'xuhao'.$oi.'',
-			'fieldstype'=> 'xuhao',
-			'data' 		=> '',
-			'attr' 		=> 'style="text-align:center" readonly temp="xuhao"',
-			'dev'	 	=> '1',
-			'isbt'		=> '0',
-			'fieldss'	=> 'sid'.$oi.''
-		);
 		foreach($fieldarr as $k=>$rs){
+			$oi = $rs['iszb']-1;
+			$this->fieldarr['xuhao'.$oi.''] = array(
+				'fields' 	=> 'xuhao'.$oi.'',
+				'fieldstype'=> 'xuhao',
+				'data' 		=> '',
+				'attr' 		=> 'style="text-align:center" readonly temp="xuhao"',
+				'dev'	 	=> '1',
+				'isbt'		=> '0',
+				'fieldss'	=> 'sid'.$oi.''
+			);
 			$this->fieldarr[$rs['fields'].''.$oi.''] = $rs;
+			if(!isempt($rs['gongsi']))$this->gongsiarr[] = array(
+				'iszb' 	 => $rs['iszb'],
+				'fields' => $rs['fields'],
+				'gongsi' => $rs['gongsi'],
+			);
+			if($rs['isbt']=='1'){
+				$this->subfielsa[] = array(
+					'name' 	 => $rs['name'],
+					'fields' => $rs['fields'],
+					'type'   => $rs['fieldstype'],
+					'isbt' => $rs['isbt'],
+					'iszb' => (int)$rs['iszb'],
+					'zbname'=> arrvalue($nameaas, $oi)
+				);
+			}
 		}
 		$this->inputobj->fieldarr 	= $this->fieldarr;
 		preg_match_all('/\[(.*?)\]/', $content, $list);
@@ -396,7 +522,7 @@ class inputAction extends ActionNot
 				$fida= explode(',', $nrs);$xu0='0';
 				if(isset($fida[1]))$xu0=$fida[1];
 				
-				$str		= $this->inputobj->getfieldcont($fida[0], $this->actclss,'_'.$xu0.'', $xu);
+				$str		= $this->inputobj->getfieldcont($fida[0], $this->actclss,'_'.$xu0.'', 1);
 				$content	= str_replace('['.$nrs.']', $str, $content);
 			}
 		}
@@ -407,10 +533,225 @@ class inputAction extends ActionNot
 	{
 		$rows 	= array();
 		$act	= $this->get('act');
-		if(!isempt($act) && method_exists($this, $act)){
+		$modenum= $this->get('sysmodenum');
+		
+		//用:读取model上的数据
+		if(!isempt($act) && contain($act,':')){
+			$acta = explode(':', $act);
+			$objs = m($acta[0]);
+			if(method_exists($objs, $acta[1])){
+				$rows = $objs->$acta[1]();
+			}
+		}
+		
+		if(!$rows && !isempt($act) && method_exists($this, $act)){
 			$rows = $this->$act();
 		}
-		$this->returnjson($rows);
+		//从Model上读取
+		if(!$rows && !isempt($modenum)){
+			$this->flow = m('flow')->initflow($modenum);
+			if(method_exists($this->flow, $act)){
+				$rows = $this->flow->$act();
+			}
+		}
+		
+		return $rows;
+	}
+	
+	
+	
+	
+	
+	/**
+	*	公共读取数据之前处理
+	*/
+	public function storebeforeshow($table)
+	{
+		$this->atypearr	= false;
+		$this->modeid 	= (int)$this->get('modeid');
+		if($this->post('atype')=='grant'){
+			$this->atypearr = array();
+			$this->atypearr[] = array(
+				'id'	=> 0,
+				'num'	=> 'grant',
+				'name'  => ''.$this->flow->modename.'授权查看',
+			);
+		}else if($this->loadci==1 && $this->adminid>0){
+			$this->atypearr = m('where')->getmywhere($this->modeid, $this->adminid, $this->get('pnum'));
+		}
+		return $this->storebefore($table);
+	}
+	
+	/**
+	*	公共读取数据之后处理，展示列数
+	*/
+	public function storeaftershow($table, $rows)
+	{
+		$barr['rows'] 		= $rows;
+		$barr['atypearr'] 	= $this->atypearr;
+		if($this->loadci==1){
+			$barr['isadd'] 		= m('view')->isadd($this->modeid, $this->adminid); //判断是否可添加
+			$barr['isdaoru'] 	= m('view')->isdaoru($this->modeid, $this->adminid); //判断是否可导入
+		}
+		
+		$scarr 				= $this->storeafter($table, $rows);
+		if(is_array($scarr))foreach($scarr as $k=>$v)$barr[$k]=$v;
+		return $barr;
+	}
+	
+	//获取可搜索列表
+	public function getcolumnsAjax()
+	{
+		$modeid 	= (int)$this->get('modeid');
+		$modenum 	= $this->get('modenum');
+		$flow 		= m('flow')->initflow($modenum);
+
+		$souarr 	= array();
+		$this->input= c('input');
+		foreach($flow->fieldsarra as $k=>$rs){
+			
+			if($rs['issou']==1){
+				$rs['store'] = $this->input->getdatastore($rs['fieldstype'], $this, $rs['data']);
+				$souarr[] = $rs;
+			}
+		}
+		$this->returnjson($souarr);
+	}
+	
+	//初始化导入
+	public function initdaoruAjax()
+	{
+		$modenum 	= $this->get('modenum');
+		$flow 		= m('flow')->initflow($modenum);
+		$rows 		= m('flow_element')->getall('mid='.$flow->modeid.' and `isdr`=1','name,isbt,fields','`sort`,`id`');
+		return $rows;
+	}
+	//确定导入数据
+	public function daorudataAjax()
+	{
+		$modenum 	= $this->post('modenum');
+		$flow 		= m('flow')->initflow($modenum);
+		$rows 		= m('flow_element')->getall('mid='.$flow->modeid.' and `isdr`=1','name,isbt,fields,isonly','`sort`,`id`');
+		$fields 	= $fieldss = '';
+		if(!$rows)return returnerror('没有导入的字段');
+		$onlyfield	= array();
+		foreach($rows as $k=>$rs){
+			$fields.=','.$rs['fields'].'';
+			if($rs['isbt']=='1')$fieldss.=','.$rs['fields'].'';
+			if($rs['isonly']=='1')$onlyfield[] = $rs['fields']; //唯一字段
+		}
+		$fields = substr($fields, 1);
+		if($fieldss!='')$fieldss = substr($fieldss,1);
+		
+		$data  	= c('html')->importdata($fields, $fieldss); //获取提交过来要导入的数据库
+		if(!$data)return returnerror('没有可导入的数据,注意*是必填的哦');
+		
+		
+		
+		//保存前判断
+		if(method_exists($flow,'flowdaorubefore')){
+			$data = $flow->flowdaorubefore($data);
+			if(is_string($data))return returnerror($data);
+		}
+		
+		//判断是否有重复
+		$ldata 	= array();
+		foreach($data as $k=>$rs){
+			$bos 	= true;
+			foreach($onlyfield as $onid){
+				$val = arrvalue($rs, $onid);
+				if(!isempt($val)){
+					$tos = $flow->rows("`$onid`='$val'");
+					if($tos>0){$bos = false;break;}
+				}
+			}
+			if($bos)$ldata[] = $rs;
+		}
+		if(!$ldata)return returnerror('没有可导入的数据,可能有存在重复数据');
+		$allfields = $this->db->getallfields('[Q]'.$flow->mtable.'');
+		
+		$oi 	= 0;
+		$dorudat= array();
+		foreach($ldata as $k=>$rs){
+			
+			if(!isset($rs['uid']) && in_array('uid', $allfields))$rs['uid'] = $this->adminid;
+			if(!isset($rs['optid']) && in_array('optid', $allfields))$rs['optid'] = $this->adminid;
+			if(!isset($rs['createid']) && in_array('createid', $allfields))$rs['createid'] = $this->adminid;
+			
+			if(!isset($rs['optname']) && in_array('optname', $allfields))$rs['optname'] = $this->adminname;
+			if(!isset($rs['createname']) && in_array('createname', $allfields))$rs['createname'] = $this->adminname;
+			if(!isset($rs['optdt']) && in_array('optdt', $allfields))$rs['optdt'] = $this->now;
+			if(!isset($rs['adddt']) && in_array('adddt', $allfields))$rs['adddt'] = $this->now;
+			if(!isset($rs['createdt']) && in_array('createdt', $allfields))$rs['createdt'] = $this->now;
+			
+			if(!isset($rs['applydt']) && in_array('applydt', $allfields))$rs['applydt'] = $this->date;
+			
+			
+			$bo = $flow->insert($rs);
+			if($bo){
+				$rs['id'] = $bo;
+				$dorudat[]= $rs;
+				$oi++;
+			}
+		}
+		
+		if($oi==0)return returnerror('导入数据为0条');
+		
+		//保存后判断
+		if(method_exists($flow,'flowdaoruafter')){
+			$flow->flowdaoruafter($dorudat);
+		}
+
+		return returnsuccess('成功导入'.$oi.'条数据');
+	}
+	
+	//下载导入的模版
+	public function daoruexcelAction()
+	{
+		$this->display = false;
+		$modenum 	= $this->get('modenum');
+		$flow 		= m('flow')->initflow($modenum);
+		$rows 		= m('flow_element')->getall('mid='.$flow->modeid.' and `isdr`=1','name,isbt,fields','`sort`,`id`');
+		if(!$rows)return '对应模块没有设置导入字段';
+		
+		$testdata	= array();
+		if(method_exists($flow,'flowdaorutestdata')){
+			$testdata = $flow->flowdaorutestdata();
+		}
+		m('file')->fileheader(''.$modenum.'import.xls');
+		$str1 	= '';
+		$str2 	= '';
+		$col 	= 0;
+		foreach($rows as $k=>$rs){
+			$col++;
+			$xi 	= $rs['isbt']=='1'? '<font color=red>*</font>' : '';
+			$str1.='<td style="border:.5pt #000000 solid; background:#cdf79e" height="30" align="center">'.$xi.'<b>'.$rs['name'].'('.$rs['fields'].')</b></td>';
+		}
+		if($testdata){
+			$texdata = $testdata;
+			if(!isset($testdata[0]))$texdata = array($testdata);
+			foreach($texdata as $j=>$jrs){
+				$str2.='<tr>';
+				foreach($rows as $k=>$rs){
+					$val  = arrvalue($jrs, $rs['fields']);
+					$str2.='<td style="border:.5pt #000000 solid;" height="30" align="center">'.$val.'</td>';
+				}
+				$str2.='</tr>';
+			}
+		}
+
+		$str = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<table style="border-spacing: 0;border-collapse: collapse;"><tr bgcolor="#f1f1f1">'.$str1.'</tr>'.$str2.'';
+		for($i=1;$i<=100;$i++){
+			$str.='<tr>';
+			for($j=1;$j<=$col; $j++){
+				$str.='<td style="border:.5pt #000000 solid" height="30" align="center"></td>';
+			}
+			$str.='</tr>';
+		}
+		$str.= '</table>';
+		
+		return $str;
 	}
 }
 

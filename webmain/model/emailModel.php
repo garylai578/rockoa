@@ -1,6 +1,9 @@
 <?php
 class emailClassModel extends Model
 {
+	
+	private $errorinfo = '';
+	
 	public function initModel()
 	{
 		$this->settable('email_cog');
@@ -59,7 +62,7 @@ class emailClassModel extends Model
 				'title' 		=> $title,
 				'body' 			=> $body,
 			), true);
-			if(!$bo)$msg = '发送失败';
+			if(!$bo)$msg = $this->errorinfo;
 		}else{
 			//异步发送邮件
 			$uarr['title'] 		= $title;
@@ -80,7 +83,39 @@ class emailClassModel extends Model
 		return $msg;
 	}
 	
-	private function sendddddd($arr, $jbs)
+	/**
+	*	
+	*/
+	public function sendtoemail($params=array())
+	{
+		$setrs		= m('option')->getpidarr(-1);
+		if(!$setrs)return '未设置发送邮件';
+		
+		$serversmtp 	= $this->rock->arrvalue($setrs, 'email_sendhost');
+		$emailuser  	= $this->rock->arrvalue($setrs, 'email_sysuser');
+		$emailname  	= $this->rock->arrvalue($setrs, 'email_sysname');
+		$emailpass  	= $this->rock->arrvalue($setrs, 'email_syspass');
+		$serverport  	= $this->rock->arrvalue($setrs, 'email_sendport');
+		$emailsecure  	= $this->rock->arrvalue($setrs, 'email_sendsecure');
+		
+		$barr 			= array(
+			'emailpass' 	=> $emailpass,
+			'serversmtp' 	=> $serversmtp,
+			'serverport' 	=> $serverport,
+			'emailsecure' 	=> $emailsecure,
+			'emailuser' 	=> $emailuser,
+			'emailname' 	=> $emailname,
+			'receemail' 	=> '',
+			'recename' 		=> '',
+			'title' 		=> '',
+			'body' 			=> '',
+		);
+		foreach($params as $k=>$v)$barr[$k]=$v;
+		return $this->sendddddd($barr, true);
+	}
+	
+	//$jbs 密码是否加密 保存日志$log
+	private function sendddddd($arr, $jbs, $log=false)
 	{
 		extract($arr);
 		$pass	= $emailpass;
@@ -98,6 +133,9 @@ class emailClassModel extends Model
 		}
 		$mail->sendMail($title, $body);
 		$bo		= $mail->isSuccess();
+		if(!$bo){
+			$this->errorinfo = 'error:'.$mail->getErrror().';to:'.$receemail.'';
+		}
 		return $bo;
 	}
 	
@@ -115,7 +153,7 @@ class emailClassModel extends Model
 	public function sendemailcont($id)
 	{
 		$rs 	= m('email_cont')->getone($id);
-		if(!$rs)return;
+		if(!$rs)return '记录不存在';
 		$stype	= (int)$this->rock->get('stype');
 		if($stype == 0){
 			$msg 	= $this->sendmail($rs['title'],$rs['body'], $rs['receid'], array(), 1);
@@ -136,6 +174,7 @@ class emailClassModel extends Model
 		$uarr['status'] = $status;
 		$uarr['senddt'] = $this->rock->now();
 		m('email_cont')->update($uarr, $id);
+		return $msg;
 	}
 	
 	
@@ -188,7 +227,7 @@ class emailClassModel extends Model
 				'title' 		=> $title,
 				'body' 			=> $body,
 			), false);
-			if(!$bo)$msg = '发送失败';
+			if(!$bo)$msg = $this->errorinfo;
 		}else{
 			//异步发送邮件
 			$uarr['title'] 		= $title;
@@ -205,6 +244,7 @@ class emailClassModel extends Model
 			$uarr['optname'] 	= $this->adminname;
 			$uarr['status'] 	= 0;
 			$sid 	= m('email_cont')->insert($uarr);
+			
 			m('reim')->asynurl('asynrun','sendemail', array(
 				'id' 	=> $sid,
 				'stype' => 1

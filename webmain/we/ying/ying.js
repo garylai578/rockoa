@@ -2,8 +2,10 @@ var myScroll=false,yy={
 	sousoukey:'',
 	resizehei:function(){
 		var hei= this.getheight();
-		var ob = this.showobj.css({'height':''+hei+'px'});
-		return ob;
+		if(agentlx==0){
+			var ob = this.showobj.css({'height':''+hei+'px'});
+			return ob;
+		}
 	},
 	getheight:function(ss){
 		var hei = 0;if(!ss)ss=0;
@@ -13,7 +15,7 @@ var myScroll=false,yy={
 		return $(window).height()-hei+ss;
 	},
 	initScroll:function(){
-		if(get('searsearch_bar')){
+		if(get('searsearch_bar') && agentlx==0){
 			this.touchobj = $('#mainbody').rockdoupull({
 				upbool:true,
 				onupbefore:function(){
@@ -26,6 +28,7 @@ var myScroll=false,yy={
 			});
 		}
 	},
+	
 	init:function(){
 		this.num = json.num;
 		this.showobj = $('#mainbody');
@@ -38,6 +41,86 @@ var myScroll=false,yy={
 		$(window).resize(function(){
 			yy.resizehei();
 		});
+		if(agentlx==1){
+			window.onhashchange=function(){
+				//var has = location.hash;
+				//yy.loadshow();
+			}
+			$(window).scroll(function(){
+				yy.scrollnew();
+			});
+		}
+	},
+	
+	//显示
+	scrollnew:function(){
+		var top = $(document).scrollTop();
+		if(top>50){
+			if(!get('backtuodiv')){
+				var s = '<div id="backtuodiv" onclick="js.backtop()" style="position:fixed;right:5px;bottom:10px;width:30px;height:30px; background:rgba(0,0,0,0.4);z-index:9;border-radius:50%;font-size:14px;color:white;text-align:center;line-height:30px"><i class="icon-angle-up"></i></div>';
+				$('body').append(s);
+			}
+		}else{
+			$('#backtuodiv').remove();
+		}
+	},
+	
+	loadshow:function(){
+		var url = location.href,arr = json.menu;
+		var urla= url.split('#'),darr = this.getfirstnum(arr);
+		var dkey= darr[0];
+		if(urla[1])dkey = urla[1];
+		this.getdata(dkey,1);
+		if(darr[1]>-1){
+			var tit = arr[darr[1]].name;
+			if(darr[2]>-1)tit = arr[darr[1]].submenu[darr[2]].name;
+			this.showtabstr(darr[1], tit);
+		}
+	},
+	
+	//第一个条件编号
+	getfirstnum:function(d){
+		var dbh = 'def',bh='',a = d[0],i,len,lens,subs;
+		if(a){
+			bh = a.url;
+			if(a.submenu[0])bh=a.submenu[0].url;
+		}
+		try{
+			var site = sessionStorage.getItem(''+json.num+'_event');
+			if(site)bh = site;
+		}catch(e){}
+		
+		if(isempt(bh))bh=dbh;
+		len = d.length;
+		var goi = -1,goj=-1;
+		for(i=0;i<len;i++){
+			subs = d[i].submenu;
+			lens = subs.length;
+			if(goi>-1)break;
+			if(lens>0){
+				for(var j=0;j<lens;j++){
+					if(subs[j].url==bh){
+						goi = i;
+						goj = j;
+						break;
+					}
+				}
+			}else{
+				if(d[i].url==bh){
+					goi = i;
+					break;
+				}
+			}
+		}
+		return [bh,goi,goj];
+	},
+	showtabstr:function(oi, tit){
+		$('[temp="tablx"]').removeClass('active');
+		$('[temp="tablx"]:eq('+oi+')').addClass('active');
+		$('[temp="tabying"]').css({'color':'','border-top':''});
+		$('[temp="tabying"]:eq('+oi+')').css({'color':'#1389D3','border-top':'1px #1389D3 solid'});
+		$('[temp="tabying"]:eq('+oi+')').find('font').html(tit);
+		this.settitle(tit);
 	},
 	clickmenu:function(oi,o1){
 		var sid='menushoess_'+oi+'';
@@ -50,16 +133,34 @@ var myScroll=false,yy={
 		this.menuname1 = a.name;
 		this.menuname2 = '';
 		if(slen<=0){
-			this.clickmenus(a);
+			this.clickmenus(a,oi);
 		}else{
-			var o=$(o1),w=1/json.menu.length*100;
-			var s='<div id="'+sid+'" style="position:fixed;z-index:5;left:'+(o.offset().left)+'px;bottom:50px; background:white;width:'+w+'%" class="menulist r-border-r r-border-l">';
-			for(i=0;i<slen;i++){
-				a1=a.submenu[i];
-				s+='<div onclick="yy.clickmenua('+oi+','+i+')" class="r-border-t" style="color:'+a1.color+';">'+a1.name+'</div>';
+			if(agentlx==0){
+				var o=$(o1),w=1/json.menu.length*100;
+				var s='<div id="'+sid+'" style="position:fixed;z-index:5;left:'+(o.offset().left)+'px;bottom:50px; background:white;width:'+w+'%" class="menulist r-border-r r-border-l">';
+				for(i=0;i<slen;i++){
+					a1=a.submenu[i];
+					s+='<div onclick="yy.clickmenua('+oi+','+i+')" class="r-border-t" style="color:'+a1.color+';">'+a1.name+'</div>';
+				}
+				s+='</div>';
+				$('body').append(s);
 			}
-			s+='</div>';
-			$('body').append(s);
+			if(agentlx==1){
+				var da = [];
+				for(i=0;i<slen;i++){
+					a1=a.submenu[i];
+					a1.oi = oi;
+					a1.i = i;
+					da.push(a1);
+				}
+				js.showmenu({
+					data:da,
+					width:150,
+					onclick:function(d){
+						yy.clickmenua(d.oi,d.i);
+					}
+				});
+			}
 		}
 	},
 	searchuser:function(){
@@ -80,22 +181,29 @@ var myScroll=false,yy={
 	clickmenua:function(i,j){
 		var a = json.menu[i].submenu[j];
 		this.menuname2 = a.name;
-		this.clickmenus(a);
+		this.clickmenus(a,i);
 	},
 	onclickmenu:function(a){
 		return true;
 	},
-	clickmenus:function(a){
+	
+	settitle:function(tit){
+		document.title = tit;
+		$('#header_title').html(tit);
+	},
+	
+	//点击菜单了
+	clickmenus:function(a,oi){
 		$("div[id^='menushoess']").remove();
 		if(!this.onclickmenu(a))return;
 		var tit = this.menuname1;
-		if(this.menuname2!='')tit+='→'+this.menuname2+'';
-		document.title = tit;
-		$('#header_title').html(tit);
+		//if(this.menuname2!='')tit+='→'+this.menuname2+'';
+		if(this.menuname2!='')tit=this.menuname2;
 		if(a.type==0){
 			this.searchcancel();
 			this.sousoukey='';
-			this.clickevent(a);return;
+			this.clickevent(a);
+			this.showtabstr(oi, tit);
 		}
 		if(a.type==1){
 			var url=a.url,amod=this.num;
@@ -107,7 +215,12 @@ var myScroll=false,yy={
 		}
 	},
 	clickevent:function(a){
-		this.getdata(a.url, 1);
+		this.getdata(a.url, 1);return;
+		if(agentlx==1){
+			js.location('#'+a.url+'');
+		}else{
+			this.getdata(a.url, 1);
+		}
 	},
 	data:[],
 	_showstotal:function(d){
@@ -129,6 +242,7 @@ var myScroll=false,yy={
 	},
 	getdata:function(st,p, mo){
 		this.nowevent=st;
+		try{sessionStorage.setItem(''+json.num+'_event', st);}catch(e){}
 		this.nowpage = p;
 		if(!mo)mo='mode';
 		var key = ''+this.sousoukey;
@@ -167,11 +281,11 @@ var myScroll=false,yy={
 		this.temparr 	= {oi:oi};
 		var da = [{name:'详情',lx:998,oi:oi}];
 		var subdata = this.suboptmenu[''+nus+'_'+ids+''];
-		if(!subdata){
+		if(typeof(subdata)=='object'){
+			for(i=0;i<subdata.length;i++)da.push(subdata[i]);
+		}else{
 			da.push({name:'<img src="images/loadings.gif" align="absmiddle"> 加载菜单中...',lx:999});
 			this.loadoptnum(nus,ids);
-		}else{
-			for(i=0;i<subdata.length;i++)da.push(subdata[i]);
 		}
 		js.showmenu({
 			data:da,
@@ -185,7 +299,10 @@ var myScroll=false,yy={
 		js.ajax('agent','getoptnum',{num:nus,mid:id},function(ret){
 			yy.suboptmenu[''+nus+'_'+id+'']=ret;
 			yy.showmenu(yy.temparr.oi);
-		},'none');
+		},'none',false,function(estr){
+			yy.suboptmenu[''+nus+'_'+id+'']=[];
+			yy.showmenu(yy.temparr.oi);
+		});
 	},
 	showmenuclick:function(d){
 		d.num=this.num;d.mid=this.tempid;
@@ -206,7 +323,7 @@ var myScroll=false,yy={
 			});
 			return;
 		}
-		if(lx==1 || lx==9 || lx==10){
+		if(lx==1 || lx==9 || lx==10 || lx==13 || lx==15 || lx==16 || lx==17){
 			var bts = (d.issm==1)?'必填':'选填';
 			js.wx.prompt(d.name,'请输入['+d.name+']说明('+bts+')：',function(text){
 				if(!text && d.issm==1){
@@ -217,9 +334,16 @@ var myScroll=false,yy={
 			});
 			return;
 		}
+		//添加提醒设置
+		if(lx==14){
+			var url='index.php?a=lum&m=input&d=flow&num=remind&mid='+d.djmid+'&def_modenum='+d.modenum+'&def_mid='+d.mid+'&def_explain=basejm_'+jm.base64encode(d.smcont)+'&show=we';
+			js.location(url);
+			return;
+		}
 		if(lx==11){
 			var url='index.php?a=lum&m=input&d=flow&num='+d.modenum+'&mid='+d.mid+'&show=we';
-			js.location(url);return;
+			js.location(url);
+			return;
 		}
 		this.showmenuclicks(d,'');
 	},
@@ -267,6 +391,7 @@ var myScroll=false,yy={
 					}
 				}
 				if(d.optdt)s+='<div class="dt">'+d.optdt+'</div>';
+				if(d.picurl)s+='<div onclick="yy.showmenu('+oi+')" class="imgs"><img src="'+d.picurl+'" width="100%"></div>';
 				if(d.cont)s+='<div  onclick="yy.showmenu('+oi+')" class="cont">'+d.cont.replace(/\n/g,'<br>')+'</div>';
 				if(d.id && d.modenum){
 					s+='<div class="xq r-border-t"><font onclick="yy.showmenu('+oi+')">操作<i class="icon-angle-down"></i></font><span onclick="yy.xiang('+oi+')">详情&gt;&gt;</span>';

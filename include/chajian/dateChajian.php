@@ -132,16 +132,16 @@ class dateChajian extends Chajian
 		return $this->rock->isempt($str);
 	}	
 	
-	public function diffstr($start, $end, $str, $lx=0)
+	public function diffstr($start, $end, $str, $lx=0, $restr='')
 	{
 		$time1 	= strtotime($start);
 		$time2 	= strtotime($end);
 		$sj		= $time1-$time2;
 		if($lx==1 && $sj<=0)return '';
-		return $this->sjdate($sj, $str);
+		return $this->sjdate($sj, $str, $restr);
 	}
 	
-	public function sjdate($sj, $str='')
+	public function sjdate($sj, $str='', $restr='')
 	{
 		$h 	= $i = $s = $d = 0;
 		$d 	= floor($sj/3600/24);
@@ -151,6 +151,10 @@ class dateChajian extends Chajian
 		$i 	= floor($sj/60);
 		$s  = $sj - $i * 60;
 		$str = str_replace(array('d','H','i','s'),array($d,$h,$i,$s), $str);
+		if($restr!=''){
+			$resta = explode(',', $restr);
+			foreach($resta as $restas)$str = str_replace($restas,'', $str);
+		}
 		return $str;
 	}
 	

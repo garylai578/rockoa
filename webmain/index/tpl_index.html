@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?=$da['title']?></title>
 <link rel="stylesheet" type="text/css" href="mode/bootstrap3.3/css/bootstrap.min.css"/>
@@ -12,28 +11,33 @@
 <link rel="stylesheet" type="text/css" href="web/res/mode/menu/jquery-rockmenu.css"/>
 <link rel="stylesheet" type="text/css" href="mode/plugin/css/jquery-rockdatepicker.css"/>
 <link rel="shortcut icon" href="favicon.ico" />
-<script type="text/javascript" src="js/jquery.1.9.1.min.js"></script>
+<script type="text/javascript" src="web/res/js/jquery.1.9.1.min.js"></script>
 <script type="text/javascript" src="js/js.js"></script>
 <script type="text/javascript" src="js/base64-min.js"></script>
-<script type="text/javascript" src="<?=$da['p']?>/<?=$da['p']?>Script.js"></script>
 <script type="text/javascript" src="<?=$da['p']?>/<?=$da['d']?><?=$da['m']?>/<?=$da['m']?>public.js"></script>
 <script type="text/javascript" src="<?=$da['p']?>/<?=$da['d']?><?=$da['m']?>/<?=$da['m']?>script.js"></script>
 <script type="text/javascript" src="web/res/mode/menu/jquery-rockmenu.js"></script>
 <script type="text/javascript">
 js.servernow	= '<?=$da['now']?>';
 PROJECT			= '<?=$da['p']?>';
+adminip			= '<?=$da['ip']?>';
 VERSION			= '<?=VERSION?>';
+var show_key 	= '<?=$da['showkey']?>',homeurl = '<?=$da['homeurl']?>',homename='<?=$da['homename']?>';
 function globalbody(){
 	adminid		= '<?=$da['adminid']?>';
+	adminface	= '<?=$da['face']?>';
 	adminname	= '<?=$da['adminname']?>';
 	adminuser	= '<?=$da['adminuser']?>';
 	adminstyle	= '<?=$da['style']?>';
+	admintype	= '<?=$da['admintype']?>';
+	deptallname	= '<?=$da['my']['deptallname']?>';
+	adminranking= '<?=$da['my']['ranking']?>';
 }
 </script>
 </head>
 <body style="padding:0px;margin:0px; overflow:hidden;" scroll="no">
-
-<div class="topheader" >
+<?php if(isempt($da['homeurl'])){?>
+<div class="topheader" id="topheaderid">
 	<table border="0" width="100%" cellspacing="0" cellpadding="0">
 	<tr>	
 		<td height="50" nowrap>
@@ -55,14 +59,16 @@ function globalbody(){
 </div>
 
 <div class="topcenter"  align="right">
-	<span id="indexuserl" ><img src="<?=$da['face']?>" style="border:1px #cccccc solid;background:#ffffff;border-radius:15px;cursor:pointer;margin-right:10px" align="absmiddle" id="myface" height="30" width="30">你好，<?=$da['adminname']?>&nbsp; <i class="icon-caret-down"></i></span>
-	<?php 
-	if($da['afrom']=='')echo '<span onclick="openwangyban()"><i class="icon-globe"></i> 桌面版</span>';
+	<span id="indexuserl" ><img src="<?=$da['face']?>" style="border:1px #cccccc solid;background:#ffffff;border-radius:15px;cursor:pointer;margin-right:10px" align="absmiddle" id="myface" height="30" width="30"><?=$da['adminname']?>&nbsp; <i class="icon-caret-down"></i></span>
+	<?php
+	if(getconfig('reim_show',true))echo '<span title="REIM即时通信" onclick="openreim()"><i class="icon-comments-alt"></i> REIM <font class="badge red" id="reim_stotal"></font></span>';
+	if(getconfig('mobile_show', true))echo '<span onclick="openmobile()"><i class="icon-tablet"></i> 手机版</span>';
 	?>
-	<span onclick="openmobile()"><i class="icon-tablet"></i> 手机版</span>
 </div>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<?php }?>
+<table width="100%" style="background-color:white" border="0" id="zhutable" cellspacing="0" cellpadding="0">
 <tr valign="top">
+	<?php if(isempt($da['homeurl'])){?>
 	<td >
 		<div id="indexmenu" class="menubg">
 			<div class="menutoptext">
@@ -78,6 +84,7 @@ function globalbody(){
 	<td>
 		<div id="indexsplit" class="indexsplit" style="overflow:hidden;width:5px"></div>
 	</td>
+	<?php }?>
 	<td width="100%">
 		<div style="overflow:hidden;position:relative;">
 			<div class="jtcls" id="jtcls_left" onclick="_changesrcool(1)">&gt;</div>
@@ -90,14 +97,18 @@ function globalbody(){
 	</td>
 </tr>
 </table>
-
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstable.js"></script>
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootsform.js"></script>
-<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstree.js"></script>
-<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script>
-<script type="text/javascript" src="web/res/js/jquery-rockupload.js"></script>
-<script type="text/javascript" src="web/res/js/jquery-changeuser.js"></script>
-<script type="text/javascript" src="web/res/mode/calendar/jquery-rockcalendar.js"></script>
-<script type="text/javascript" src="web/res/mode/calendar/jquery-rocklunar.js"></script>
+<link rel="stylesheet" type="text/css" href="<?=$da['p']?>/css/animate.css"/><!--动画CSS-->
+<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstable.js"></script><!--表格插件-->
+<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootsform.js"></script><!--表单插件-->
+<script type="text/javascript" src="mode/bootstrapplugin/jquery-bootstree.js"></script><!--表格树形插件-->
+<script type="text/javascript" src="mode/plugin/jquery-rockdatepicker.js"></script><!--日期选择插件-->
+<script type="text/javascript" src="web/res/js/jquery-imgview.js"></script><!--图片预览-->
+<script type="text/javascript" src="web/res/perfectscrollbar/jquery.mousewheel.js"></script><!--鼠标-->
+<script type="text/javascript" src="web/res/js/jquery-rockupload.js"></script><!--上传插件-->
+<script type="text/javascript" src="web/res/js/jquery-changeuser.js"></script><!--人员选择-->
+<script type="text/javascript" src="web/res/mode/calendar/jquery-rockcalendar.js"></script><!--日期插件-->
+<script type="text/javascript" src="web/res/mode/calendar/jquery-rocklunar.js"></script><!--农历-->
+<script type="text/javascript" src="js/option.js"></script><!--数据选项-->
+<script type="text/javascript" src="web/res/js/notify.js"></script><!--通知提醒插件-->
 </body>
 </html>

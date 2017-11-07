@@ -17,6 +17,7 @@ body,html{overflow:hidden}
 .hd img{height:100px;width:100px;border-radius:50px}
 </style>
 <script>
+ismobile = 1;
 function gotochar(){
 	js.location('?m=chat&d=we&type=user&uid=<?=$arr['id']?>');
 }
@@ -28,7 +29,7 @@ function showface(o1){
 
 
 <body>
-<?php if($web!='wxbro'){?>
+<?php if($showheader==1){?>
 <div>
 	<div class="r-header">
 		<div class="r-header-text" id="header_title"><?=$arr['name']?></div>
@@ -82,7 +83,12 @@ function showface(o1){
 			</div>
 			<span class="weui_cell_right"><?=$arr['email']?></span>
 		</a>
-		
+		<a class="weui_cell">
+			<div class="weui_cell_bd weui_cell_primary">
+				<p style="color:#888888">用户Id</p>
+			</div>
+			<span style="color:#000000"><?=$arr['id']?></span>
+		</a>
 	</div>
 
 	

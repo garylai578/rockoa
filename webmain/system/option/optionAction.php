@@ -5,9 +5,16 @@ class optionClassAction extends Action
 	{
 		$num	= $this->request('num');
 		$name	= $this->request('name');
+		$key 	= $this->post('key');
 		$id		= $this->option->getnumtoid($num, $name, false);
-		$rows	= $this->db->getall("select *,(select count(1) from `[Q]option` where pid=a.id)as stotal from `[Q]option` a where a.`pid`='$id' order by a.`sort`, a.`id`");
+		$this->option->update("`pid`=1,`name`='行政选项'","`num`='goods'"); //行政选项移动到数据选项下
+		if(isempt($key)){
+			$where = "a.`pid`='$id'";
+		}else{
+			$where = "1=1 and a.`name` is not null and (a.`name` like '%$key%' or a.`num`='$key') ";
+		}
 		
+		$rows	= $this->db->getall("select *,(select count(1) from `[Q]option` where pid=a.id)as stotal from `[Q]option` a where $where order by a.`sort`, a.`id`");
 		echo json_encode(array(
 			'totalCount'=> $this->db->count,
 			'rows'		=> $rows,
@@ -46,5 +53,33 @@ class optionClassAction extends Action
 		$this->option->delete($id);
 		if($stable!='')m($stable)->update('`typeid`=0', "`typeid`='$id'");
 		$this->showreturn();
+	}
+	
+	//分类移动
+	public function movetypeAjax()
+	{
+		$id 	= (int)$this->post('id','0');
+		$toid 	= (int)$this->post('toid','0');
+		$lx 	= (int)$this->post('lx','0');
+		$spath 	= $this->db->getpval('[Q]option','pid','pid', $toid,'],[');
+		$spath	= '['.$spath.']';
+		if(contain($spath,'['.$id.']')){
+			echo '不能移动到自己的下级';
+		}else{
+			$this->option->update('pid='.$toid.'', $id);
+			echo 'ok';
+		}
+	}
+	
+	public function downshuafter($table, $rows)
+	{
+		$db = m($table);
+		foreach($rows as $k=>$rs){
+			$dcount = $db->rows('pid='.$rs['id'].'');
+			if($dcount>0)$rows[$k]['dcount'] = $dcount;
+		}
+		return array(
+			'rows' => $rows
+		);
 	}
 }

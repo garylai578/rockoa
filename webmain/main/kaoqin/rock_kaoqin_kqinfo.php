@@ -25,6 +25,8 @@ $(document).ready(function(){
 		},{
 			text:'时间',dataIndex:'totals',sortable:true
 		},{
+			text:'加班兑换',dataIndex:'jiatype'
+		},{
 			text:'说明',dataIndex:'explain',align:'left'
 		},{
 			text:'状态',dataIndex:'status'
@@ -33,12 +35,15 @@ $(document).ready(function(){
 		}],
 		load:function(d){
 			$('#kqtong{rand}').html(d.totalstr);
+		},
+		itemdblclick:function(d){
+			openxiangs(d.modename,d.modenum,d.id);
 		}
 	});
 	var c = {
 		search:function(){
 			var s=get('key_{rand}').value;
-			a.setparams({key:s,dt1:get('dt1_{rand}').value,keys:get('keys_{rand}').value},true);
+			a.setparams({key:s,dt1:get('dt1_{rand}').value,dt2:get('dt2_{rand}').value,keys:get('keys_{rand}').value},true);
 		},
 		clickdt:function(o1, lx){
 			$(o1).rockdatepicker({initshow:true,view:'month',inputid:'dt'+lx+'_{rand}'});
@@ -64,13 +69,13 @@ $(document).ready(function(){
 	<td style="padding-right:10px">
 		<button class="btn btn-primary" click="clickwin,1" type="button">新增加班单</button>
 	</td>
+	<td nowrap>日期从&nbsp;</td>
 	<td nowrap>
-		<div style="width:140px"  class="input-group">
-			<input placeholder="月份" readonly class="form-control" id="dt1_{rand}" >
-			<span class="input-group-btn">
-				<button class="btn btn-default" click="clickdt,1" type="button"><i class="icon-calendar"></i></button>
-			</span>
-		</div>
+		<input style="width:110px" onclick="js.changedate(this)" readonly class="form-control datesss" id="dt1_{rand}" >
+	</td>
+	<td nowrap>&nbsp;至&nbsp;</td>
+	<td nowrap>
+		<input style="width:110px" onclick="js.changedate(this)" readonly class="form-control datesss" id="dt2_{rand}" >
 	</td>
 	<td  style="padding-left:10px">
 		<input class="form-control" style="width:150px" id="key_{rand}"   placeholder="姓名/部门">

@@ -16,8 +16,10 @@ class loginClassAction extends ActionNot{
 		$pass	= $this->jm->base64decode($this->post('adminpass'));
 		$rempass= $this->post('rempass');
 		$jmpass	= $this->post('jmpass');
+		$cfrom	= $this->post('cfrom','pc');
 		if($jmpass == 'true')$pass=$this->jm->uncrypt($pass);
-		$arr 	= m('login')->start($user, $pass, 'pc');
+		$userp	= $user;
+		$arr 	= m('login')->start($user, $pass, $cfrom);
 		$barr 	= array();
 		if(is_array($arr)){
 			$uid 	= $arr['uid'];
@@ -26,23 +28,23 @@ class loginClassAction extends ActionNot{
 			$token 	= $arr['token'];
 			$face 	= $arr['face'];
 			m('login')->setsession($uid, $name, $token, $user);
-			$this->rock->savecookie('ca_adminuser', $user);
+			$this->rock->savecookie('ca_adminuser', $userp);
 			$this->rock->savecookie('ca_rempass', $rempass);
 			$ca_adminpass	= $this->jm->encrypt($pass);
 			if($rempass=='0')$ca_adminpass='';
 			$this->rock->savecookie('ca_adminpass', $ca_adminpass);
 			$barr['success'] = true;
 			$barr['face'] 	 = $face;
-			$barr['maxsize'] = c('upfile')->getmaxzhao();
 		}else{
 			$barr['success'] = false;
 			$barr['msg'] 	 = $arr;
 		}
-		$this->returnjson($barr);
+		return $barr;
 	}
 	
 	public function exitAction()
 	{
+		m('dept')->online(0);//离线
 		m('login')->exitlogin('pc',$this->admintoken);
 		$this->rock->location('?m=login');
 	}

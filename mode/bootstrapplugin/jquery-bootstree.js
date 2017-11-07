@@ -101,7 +101,7 @@
 		
 		this._createjd	= function(d, oi, xlx){
 			var a	= can.columns;
-			var s 	= '',i,len=d.length,j,jlen = a.length,s1,ionc,s2='',id, diss='';
+			var s 	= '',i,len=d.length,j,jlen = a.length,s1,ionc,s2='',s3,id, diss='',ov;
 			for(i=0;i<len;i++){
 				id = xlx+'_'+i;
 				s2 = '';
@@ -114,24 +114,29 @@
 					}
 				}
 				this._zoi++;
-				this._zoiarr[this._zoi] = d[i];
-				s+='<ul oi="'+this._zoi+'" dataid="'+d[i].id+'">';
+				ov	= d[i];
+				this._zoiarr[this._zoi] = ov;
+				s+='<ul oi="'+this._zoi+'" dataid="'+ov.id+'">';
 				if(can.checked){
 					s+='<li style="width:40px;text-align:center"><input name="treecheck_'+rand+'" value="'+this._zoi+'" type="checkbox"></li>';
 				}
 				for(j=0;j<jlen;j++){
-					s1 = d[i][a[j].dataIndex];
+					s1 = ov[a[j].dataIndex];
 					if(!s1)s1='';
+					if(typeof(a[j].renderer)=='function'){
+						s3 = a[j].renderer(s1, ov);
+						if(!isempt(s3))s1=s3;
+					}
 					s+='<li style="width:'+a[j].width+';text-align:'+a[j].align+'">';
 					if(a[j].xtype == 'treecolumn'){
 						ionc = 'folder-close-alt';
 						if(s2=='')ionc='file-alt';
-						if(d[i].icons)ionc = d[i].icons;
+						if(ov.icons)ionc = ov.icons;
 						s+= '<div style="padding-left:'+(24*oi+10)+'px">';
-						s+= this._getshlist(d[i], this._zoi);		
+						s+= this._getshlist(ov, this._zoi);		
 						s+= '	<i nodeclick="'+id+'" style="cursor:pointer" class="icon-'+ionc+'"';
 						if(s2 != '')s+=' temp="nodeclick"';
-						if(d[i].expanded)s+=' expanded="true"';
+						if(ov.expanded)s+=' expanded="true"';
 						s+= '></i> ';
 						s+= s1;
 						s+= '</div>';

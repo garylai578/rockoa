@@ -23,6 +23,7 @@
 		this.highorderstr = '';
 		this.otherparams = {};
 		this.loadci = 0;
+		this.options= can;
 		this.init	= function(){
 			this.tablename=can.tablename;
 			can.tablename=jm.encrypt(can.tablename);
@@ -63,12 +64,12 @@
 			for(i=0; i<can.columns.length; i++){
 				a = can.columns[i];
 				if(typeof(a.align)=='undefined')can.columns[i].align='center';
-				if(a.dataIndex=='caozuo')can.columns[i] = this._caozuochengs(a);
+				if(a.dataIndex=='caozuo')can.columns[i] = this._caozuochengs(a,i);
 			}
 		};
 		this._create	= function(){
 			var a	= can.columns;
-			var s 	= '',i,len=a.length,val,s1,s2='',s3='',s4='',s5='',le,st,ov,j,j1,na,attr,sty='',hs='',dis,dlen=this.data.length;
+			var s 	= '',i,len=a.length,val,s1,s2='',cols,s3='',s4='',s5='',le,st,ov,j,j1,na,attr,sty='',hs='',dis,dlen=this.data.length;
 			s+='<table id="tablemain_'+rand+'" class="table table-striped table-bordered table-hover" style="margin:0px">';
 			if(!can.hideHeaders){
 				s+='<thead><tr><th width="40"></th>';
@@ -76,9 +77,11 @@
 				for(i=0;i<len;i++){
 					hs = '';
 					attr = '';
+					cols = a[i].colspan;
 					if(can.sort == a[i].dataIndex)hs='style="color:#3399FF"';
 					if(a[i].width)attr+=' width="'+a[i].width+'"';
 					if(a[i].tooltip)attr+=' title="'+a[i].tooltip+'"';
+					if(cols && cols>1)attr+=' colspan="'+cols+'"';
 					s+='<th nowrap '+attr+'><div '+hs+' align="'+a[i].align+'" lfields="'+a[i].dataIndex+'">';
 					if(can.celleditor&&a[i].editor)s+='<i class="icon-pencil"></i>&nbsp;';
 					s+=a[i].text;
@@ -91,6 +94,7 @@
 						}
 					}
 					s+='</div></th>';
+					if(cols>1)i=i+cols-1;
 				}
 				s+='</tr></thead>';
 			}
@@ -151,7 +155,7 @@
 			s3 	= can.rendertr(ov, this, j);
 			s4  = can.rowsbody(ov, this, j);
 			if(s4)s5='rowspan="2"';
-			if(!s3 && ((can.statuschange && ov.status==0) || (ov.ishui==1)))s3='style="color:#aaaaaa"';
+			if(!s3 && ((can.statuschange && ov.status==0) || (ov.ishui==1) || (ov.status==5)))s3='style="color:#aaaaaa"';
 			s='<tr oi="'+j+'" dataid="'+ov.id+'" '+s3+'>';
 			s+='<td '+s5+' align="right" width="40">'+(j+1+can.pageSize*(this.page-1))+'</td>';
 			if(can.checked){
@@ -251,29 +255,33 @@
 				at		= '',
 				v		= a[fields];
 			$('#edittable_'+rand+'').remove();
+			if(b.editorbefore && !b.editorbefore(a))return; //编辑前判断
 			var s	= '<div id="edittable_'+rand+'" style="position:absolute;z-index:2;left:'+(l.left)+'px;top:'+(l.top+h)+'px">';
 			s+='<div style="border:1px #cccccc solid;background:white;padding:10px;box-shadow:0px 0px 10px rgba(0,0,0,0.3); border-radius:10px">';
 			s+='	<div>&nbsp;<b>'+b.text+'</b>：&nbsp;<span id="msgteita_'+rand+'"></span></div>';
 			s+='	<div class="blank10"></div>';
 			var wss = 200;
 			if(b.editorwidth)wss=b.editorwidth;
-			if(b.type=='checkbox'){
+			var flx = b.type,attr=b.editorattr;
+			if(!flx)flx='text';
+			if(!attr)attr='';
+			if(flx=='checkbox'){
 				if(v=='1')at='checked';
 				s+='<div><label><input type="checkbox" id="inputedit_'+rand+'" '+at+' value="1"> '+b.text+'</label></div>';
-			}else if(b.type=='textarea'){
-				s+='<div><textarea type="text" style="width:'+wss+'px;height:100px" id="inputedit_'+rand+'" class="input">'+v+'</textarea></div>';
-			}else if(b.type=='select' && b.store){
+			}else if(flx=='textarea'){
+				s+='<div><textarea type="text" style="width:'+wss+'px;height:100px" '+attr+' id="inputedit_'+rand+'" class="input">'+v+'</textarea></div>';
+			}else if(flx=='select' && b.store){
 				d=b.store;
-				s+='<div><select style="width:'+wss+'px" id="inputedit_'+rand+'" class="input">';
+				s+='<div><select style="width:'+wss+'px" id="inputedit_'+rand+'" '+attr+' class="input">';
 				len=b.store.length;for(i=0;i<len;i++){
 					sel='';if(d[i][0]==v||d[i][1]==v)sel='selected';
 					s+='<option value="'+d[i][0]+'" '+sel+'>'+d[i][1]+'</option>';
 				}
 				s+='</select></div>';
-			}else if(b.type=='date'){	
-				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" class="input datesss" onclick="js.datechange(this)" readonly value="'+v+'"></div>';
+			}else if(flx=='date'){	
+				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" '+attr+' class="input datesss" onclick="js.datechange(this)" readonly value="'+v+'"></div>';
 			}else{
-				s+='<div><input type="text" style="width:'+wss+'px" id="inputedit_'+rand+'" class="input" value="'+v+'"></div>';
+				s+='<div><input type="'+flx+'" style="width:'+wss+'px" id="inputedit_'+rand+'" '+attr+' class="input" value="'+v+'"></div>';
 			}
 			s+='	<div class="blank10"></div>';
 			if(!can.cellautosave)s+='	<div><a  id="inputeditsave_'+rand+'" href="javascript:"><i class="icon-ok"></i> 确定</a >&nbsp;  &nbsp; <a href="javascript:" class="hui" onclick="$(\'#edittable_'+rand+'\').remove()"><i class="icon-remove"></i> 取消</a></div>';
@@ -292,15 +300,23 @@
 			var arr = {oldvalue:v,fields:fields,type:b.type,id:a.id,obj:o,row:row}
 			if(can.cellautosave){
 				$(o3).blur(function(){
-					me._editforcuschen(this, arr);
+					me._editforcuschen(this, arr, b);
 				});
 			}else{
 				$('#inputeditsave_'+rand+'').click(function(){
-					me._editforcuschen(this, arr);
+					me._editforcuschen(this, arr, b);
 				});
 			}
 		};
-		this._editforcuschen = function(o1, a){
+		this.signature= function(da, url){
+			var time = parseInt(js.now('time')*0.001);
+			var siaa = ''+NOWURL+''+url+''+da.tablename+''+time+'_'+adminid+'';
+			var sign = md5(siaa);
+			da.sys_signature= sign;
+			da.sys_timeature= time;
+			return da;
+		};
+		this._editforcuschen = function(o1, a, farr){
 			var o1= get('inputedit_'+rand+'');
 			var v = o1.value,ov = a.oldvalue;
 			if(a.type=='checkbox')if(!o1.checked)v='0';
@@ -316,17 +332,22 @@
 			this.bool = true;
 			var data = {tablename:can.tablename,id:a.id,fieldname:a.fields,value:v,fieldsafteraction:can.fieldsafteraction};
 			$.ajax({
-				data:data,type:'post',url:can.cellurl,
-				success:function(){
-					js.setmsg('处理完成','green',vid);
-					$('#edittable_'+rand+'').remove();
+				data:this.signature(data, can.cellurl),type:'post',url:can.cellurl,
+				success:function(bstr){
 					me.bool = false;
+					$('#edittable_'+rand+'').remove();
+					if(bstr!='success'){
+						js.msg('msg', bstr);
+						return;
+					}
+					js.setmsg('处理完成','green',vid);
 					var ohtml = a.obj.html();
 					ohtml	  = ohtml.replace(ov, v);
 					if(a.type=='checkbox')ohtml='<img height="20" width="20" src="images/checkbox'+v+'.png">';
 					if(a.type=='select')ohtml=selv;
 					a.obj.html(ohtml);
 					me.data[a.row][a.fields] = v;
+					if(farr.editorafter)farr.editorafter();//保存后处理
 				},
 				error:function(e){
 					js.msg('msg',e.responseText);
@@ -345,8 +366,20 @@
 			can.itemclick(a, oi, e);
 		};
 		this._itemdblclick= function(o1, e){
-			var o = $(o1);
-			var oi = parseFloat(o.attr('oi'));
+			var o 	= $(o1),oi,lxs,o1,cell,farr,o2;
+			oi 	= parseFloat(o.attr('oi'));
+			o2  = e.target;
+			lxs = o2.nodeName.toLowerCase();
+			if(lxs!='td'){
+				o2  = e.target.parentNode;
+				lxs = o2.nodeName.toLowerCase();
+			}
+			if(lxs=='td'){
+				o1  = $(o2);
+				cell= parseFloat(o1.attr('cell'));
+				farr= can.columns[cell];
+				if(farr.editor)return;//单元格是编辑就退出
+			}
 			can.itemdblclick(this.changedata, oi, e);
 		};
 		this._loaddata = function(p, donbo){
@@ -361,7 +394,7 @@
 			das.where = jm.encrypt(das.where.replace(/\'/g, '[F]'));
 			das.start = can.pageSize*(p-1);
 			das.limit = can.pageSize;
-			if(!can.fanye)das.limit = 0;
+			if(!can.fanye)das.limit = can.limit;
 			das		  = js.apply(das, can.params);
 			das		  = js.apply(das, this.otherparams);
 			if(donbo)return das;
@@ -393,23 +426,32 @@
 				}
 			});
 		};
-		this.exceldown = function(bt){
+		this.exceldown = function(bt, lxs){
 			if(this.bool)return;
 			var excelfields='',excelheader='',i,a=can.columns;
-			var das = this._loaddata(1, true);
-			das.limit = 2000;
-			das.execldown 	= 'true';if(!bt)bt=nowtabs.name;
-			das.exceltitle	= jm.encrypt(bt);
-			this.bool = true;
-			js.msg('wait', '下载处理中...');
+			var np	= (lxs==2) ? this.page : 1;
+			var das = this._loaddata(np, true);
+			das.limit = 10000;
+			das.execldown 	= 'true';
+			if(!bt)bt=nowtabs.name;
+			das.exceltitle	= bt;
 			for(i=0;i<a.length;i++){
 				if(!a[i].notexcel){
 					excelfields+=','+a[i].dataIndex+'';
 					excelheader+=','+a[i].text+'';
 				}
 			}
-			das.excelfields = jm.encrypt(excelfields.substr(1));
-			das.excelheader = jm.encrypt(excelheader.substr(1));
+			das.excelfields = excelfields.substr(1);
+			das.excelheader = excelheader.substr(1);
+			if(lxs==1)return das;
+			if(lxs==2){
+				das.limit	= can.pageSize;
+			}
+			das.exceltitle  = jm.encrypt(das.exceltitle);
+			das.excelfields = jm.encrypt(das.excelfields);
+			das.excelheader = jm.encrypt(das.excelheader);
+			this.bool = true;
+			js.msg('wait', '导出处理中...');
 			$.ajax({
 				url:can.url,type:'POST',data:das,dataType:'json',
 				success:function(a1){
@@ -421,6 +463,9 @@
 					me.bool = false;
 				}
 			});
+		};
+		this.exceldownnow = function(bt){
+			this.exceldown(bt,2);
 		};
 		this.setparams = function(cans, relo){
 			if(!cans)cans={};
@@ -652,9 +697,9 @@
 			this.reload();
 		};
 		
-		this._caozuochengs=function(a){
+		this._caozuochengs=function(a,oj){
 			a.renderer=function(v,d,oi){
-				var s='<a oi="'+oi+'" temp="caozuomenu_'+rand+'">操作<i class="icon-angle-down"></i></a>';
+				var s='<a oi="'+oi+'" oj="'+oj+'" temp="caozuomenu_'+rand+'">操作<i class="icon-angle-down"></i></a>';
 				if(!d.id)s='&nbsp;';
 				return s;
 			};
@@ -662,28 +707,83 @@
 			return a;
 		};
 		this._caozuochengss=function(o1){
-			var oi= parseFloat($(o1).attr('oi'));
-			var d=this.getData(oi);
-			var num=can.modenum;if(num=='')num=this.tablename;
-			var mid = d.id;if(d.modenum)num=d.modenum;
-			var modename=can.modename;if(d.modename)modename=d.modename;
-			new optmenuclass(o1,num,mid,this,modename,oi);
+			var oi,d,num,mid,modename,o2;
+			o2= $(o1);
+			oi= parseFloat(o2.attr('oi'));
+			oj= parseFloat(o2.attr('oj'));
+			d = this.getData(oi);
+			num=can.modenum;if(num=='')num=this.tablename;
+			mid = d.id;if(d.modenum)num=d.modenum;
+			modename=can.modename;if(d.modename)modename=d.modename;
+			new optmenuclass(o1,num,mid,this,modename,oi,can.columns[oj]);
 		};
+		
+		
+		this.geturlparams=function(bt,ocans){
+			var cshu = this.exceldown(bt, 1),i;
+			cshu.tablename_abc = jm.uncrypt(cshu.tablename_abc);
+			cshu = js.apply(cshu,ocans);
+			return [can.url, cshu];
+		}
 	};
+	
+	/**
+		表格中常用方法
+		1、reload(); //刷新数据源
+		2、getchecked();//获取复选框对应记录ID聚
+		3、getcheckdata();//获取复选框选中的数据数组[]
+		4、insert({name:''});//表格中插入一行
+		5、setparams({key:''},true);//设置参数并搜索
+		6、geturlparams();获取当前Url地址参数,订阅时用到的
+	*/
 	
 	
 	$.fn.bootstable	= function(options){
 		var defaultVal = {
-			columns:[],selectColor:'#DFF0D8',
-			pageSize:15,bodyStyle:'',height:0,
-			url:'',celleditor:false,cellautosave:true,celledittype:'dblclick',
-			data:[],autoLoad:true,tree:false,itemdblclick:function(){},searchwidth:500,
-			defaultorder:'',where:'',hideHeaders:false,modename:'',modenum:'',statuschange:true,
-			checked:false,fanye:false,sort:'',dir:'',storeafteraction:'',storebeforeaction:'',fieldsafteraction:'',modedir:'',keywhere:'',params:{},cellurl:'',
-			tablename:'',selectcls:'success',itemclick:function(da, index, e){},beforeload:function(){},load:function(){},loadbefore:function(){},
-			outsearch:function(){return  ''},searchview:'',
-			rendertr:function(){return  ''},rowsbody:function(){return ''},
-			celldblclick:false
+			columns:[],		//表头
+			selectColor:'#DFF0D8', //选中时行颜色
+			pageSize:15,   	//默认分页数
+			limit:0,		//没有分页时展示条数
+			bodyStyle:'',	
+			height:0,		//高度
+			url:'',			//请求地址
+			celleditor:false,	//是否可编辑单元格
+			cellautosave:true,	//编辑单元格是否自动保存
+			celledittype:'dblclick', //编辑单元格用双击
+			cellurl:'',  			//编辑单元格保存地址
+			fieldsafteraction:'', 	//编辑单元格时保存后触发
+			data:[],				//初始数据
+			autoLoad:true,			//是否初始化后就加载
+			tree:false,				//是否树形显示
+			itemdblclick:function(){},	//双击行调用
+			searchwidth:500,  //没用
+			defaultorder:'', //默认排序
+			where:'',   //条件
+			hideHeaders:false, //是否隐藏头部表头
+			modename:'',  //对应模块名称
+			modenum:'',   //对应模块编号
+			statuschange:true,  //当行的status=0时自动变成灰色
+			checked:false, //是否多选
+			fanye:false,  //是否可翻页
+			sort:'',  //排序字段
+			dir:'',   //排序类型desc和asc
+			storeafteraction:'',  //数据源请求后先处理函数
+			storebeforeaction:'',//数据源请求时先处理函数，可返回条件字段等
+			
+			modedir:'',  //当前文件路径，一般都是写：'{mode}:{dir}'
+			keywhere:'', //条件
+			params:{},   //其他参数
+			tablename:'', //请求数据表格名，如有指定modenum，会加载对应模块上设置的表
+			selectcls:'success', //选中样式
+			itemclick:function(da, index, e){},  //单击行触发
+			beforeload:function(){}, //数据加载前触发
+			load:function(){}, //数据加载完成后触发
+			loadbefore:function(){}, //数据加载完成后但还没有渲染出来时触发
+			outsearch:function(){return  ''}, //外搜索条件
+			searchview:'',  //没用
+			rendertr:function(){return  ''}, //少用
+			rowsbody:function(){return ''}, //少用
+			celldblclick:false //没用
 		};
 		if(typeof(bootstableobj)=='undefined')bootstableobj={};
 		var can = $.extend({}, defaultVal, options);

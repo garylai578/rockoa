@@ -1,7 +1,7 @@
 /**
 	rockdatepicker 时间选择插件
 	caratename：chenxihu
-	caratetime：214-05-13 21:40:00
+	caratetime：2014-05-13 21:40:00
 	email:qqqq2900@126.com
 	homepage:www.xh829.com
 */
@@ -45,12 +45,11 @@
 			if(lx=='H:i:00'||lx=='H:i'||lx=='i:s')can.view='time';
 			var minv	= can.mindate;
 			if(isempt(minv))minv= obj.attr('mindate');
-			if(isempt(minv))minv= '1970-01-01 00:00:00';
+			if(isempt(minv))minv= '1930-01-01 00:00:00';//最小时间
 			can.mindate	= minv;
-			
 			var maxv	= can.maxdate;
 			if(isempt(maxv))maxv= obj.attr('maxdate');
-			if(isempt(maxv))maxv= '2050-12-31 23:59:59';
+			if(isempt(maxv))maxv= '2050-12-31 23:59:59';//最大时间
 			can.maxdate	= maxv;
 			
 			this.max	= this.shijienges(can.maxdate)
@@ -322,7 +321,7 @@
 			var nh		= get('rockdatepicker_'+rand+'').clientHeight,
 				nw		= get('rockdatepicker_'+rand+'').clientWidth,
 				t		= off.top+can.top,
-				dy		= t+nh-winHb()-$('body,html').scrollTop(),
+				dy		= t+nh-winHb()-$(document).scrollTop(),
 				l		= off.left+can.left,
 				jl		= l+nw-winWb(),
 				jl1		= 5;

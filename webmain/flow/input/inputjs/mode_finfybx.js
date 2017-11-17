@@ -66,13 +66,4 @@ function cchangtongss(){
 	form('money').value=js.float(to)+'';
 	form('moneycn').value=AmountInWords(to);
 
-	//当付款方式选择“银行转账”时，需要填写相关信息
-	if(form('paytype').value == "银行转账"){
-		if(form("cardid").value == "")
-			alert("收款账户不能为空");
-	    else if(form("openbank").value =="")
-            alert("开户行不能为空");
-		else if(form("fullname").value == "")
-			alert("收款人全称不能为空");
-	}
 }

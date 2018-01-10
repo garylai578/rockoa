@@ -29,39 +29,48 @@ class crmClassModel extends Model
 	public function getmyract($uid, $id=0)
 	{
 		$where 	= '`uid`='.$uid.' and (`isover`=0 or `id`='.$id.')';
-		$rows 	= m('custract')->getrows($where, 'id,custid,custname,money,num');
+		$rows 	= m('custract')->getrows($where, 'id,custid,custname,money,num,project');
 		return $rows;
 	}
 	
 	//更新合同状态
-	public function ractmoney($htid)
-	{
-		if(isempt($htid))return false;
-		if(!is_array($htid)){
-			$ors  	= $this->db->getone('[Q]custract','id='.$htid.'','money,moneys,ispay,id,isover');
-		}else{
-			$ors	= $htid;
-		}
-		if(!$ors)return false;
-		$zmoney	= $ors['money']; $moneys	= $ors['moneys'];
-		$oispay	= $ors['ispay'];
-		$htid	= $ors['id'];
-		$money 	= $this->db->getmou('[Q]custfina','sum(money)','htid='.$htid.' and `ispay`=1');
-		$moneyy	= $this->getmoneys($htid); //已创建收付款单金额
-		$symon	= $zmoney - $money;
-		$ispay	= 0;
-		$isover	= 0;
-		if($symon<=0){
-			$ispay = 1;
-		}else if($money>0){
-			$ispay = 2;
-		}
-		if($moneyy>=$zmoney)$isover = 1;
-		if($ispay != $oispay || $symon!= $moneys || $isover != $ors['isover']){
-			$this->db->update('[Q]custract','`ispay`='.$ispay.',`moneys`='.$symon.',`isover`='.$isover.'', $htid);
-		}
-		return array($ispay, $symon);
-	}
+    public function ractmoney($htid)
+    {
+        if(isempt($htid))return false;
+        if(!is_array($htid)){
+            $ors  	= $this->db->getone('[Q]custract','id='.$htid.'','money,moneys,ispay,id,isover,custid');
+        }else{
+            $ors	= $htid;
+        }
+        if(!$ors)return false;
+        $zmoney	= $ors['money']; $moneys	= $ors['moneys'];
+        $oispay	= $ors['ispay'];
+        $htid	= $ors['id'];
+        $custid = $ors['custid'];
+        $money 	= $this->db->getmou('[Q]custfina','sum(money)','htid='.$htid.' and `ispay`=1');
+        $moneyy	= $this->getmoneys($htid); //已创建收付款单金额
+        $symon	= $zmoney - $money;
+        $ispay	= 0;
+        $isover	= 0;
+        if($symon<=0){
+            $ispay = 1;
+        }else if($money>0){
+            $ispay = 2;
+        }
+        if($moneyy>=$zmoney)$isover = 1;
+        if($ispay != $oispay || $symon!= $moneys || $isover != $ors['isover']){
+            $this->db->update('[Q]custract','`ispay`='.$ispay.',`moneys`='.$symon.',`isover`='.$isover.'', $htid);
+            //更新“我的客户”里的待收金额
+            $customer = $this->db->getone('[Q]customer','id='.$custid.'','moneyd');
+            if($customer) {
+                $moneyd = $customer['moneyd'];
+                if(!$moneyd) $moneyd = 0;
+                $moneyd += $symon;
+                $this->db->update('[Q]customer', '`moneyd`='.$moneyd, $custid);
+            }
+        }
+        return array($ispay, $symon);
+    }
 	
 	public function getmoneys($htid, $id=0)
 	{

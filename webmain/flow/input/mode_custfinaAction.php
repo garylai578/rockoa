@@ -50,11 +50,29 @@ class mode_custfinaClassAction extends inputAction{
 		foreach($rows as $k=>$rs){
 			$arr[] = array(
 				'value' => $rs['id'],
-				'name' 	=> '['.$rs['num'].']'.$rs['custname'],
+				'name' 	=> '['.$rs['num'].']'.$rs['custname'].'-'.$rs['project'],
 			);
 		}
 		return $arr;
 	}
+
+/*    public function projectname()
+    {
+        $htid = 0;
+        $mid  = (int)$this->get('mid','0');
+        if($mid>0){
+            $htid = (int)$this->flow->getmou('htid', $mid); //当前记录也要显示合同ID
+        }
+        $rows = m('crm')->getmyract($this->adminid, $htid);
+        $arr  = array();
+        foreach($rows as $k=>$rs){
+            $arr[] = array(
+                'value' => $rs['id'],
+                'name' 	=>$rs['project'],
+            );
+        }
+        return $arr;
+    }*/
 	
 	public function ractchangeAjax()
 	{

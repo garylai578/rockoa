@@ -47,6 +47,23 @@ class mode_custractClassAction extends inputAction{
 		if($saleid > 0){
 			$dbs->update('htid='.$id.'', "`id`='$saleid'");
 		}
+
+		//更新客户的合同数量和合同金额
+        $custid = (int)$arr['custid'];
+        $rows = m('custract')->getall('custid='.$custid.'', "`money`");
+		$htnums = 0;
+		$sum = 0;
+        foreach($rows as $k=>$rs){
+            $sum += $rs['money'];
+            $htnums++;
+        }
+        if($sum >0 || $htnums >0){
+            $uarr			= array();
+            $uarr['htshu'] 	= $htnums;
+            $uarr['moneyz']= $sum;
+            $dbs = m('customer');
+            $result = $dbs->update($uarr, 'id='.$custid.'');
+        }
 	}
 	
 	public function remoneyAjax()

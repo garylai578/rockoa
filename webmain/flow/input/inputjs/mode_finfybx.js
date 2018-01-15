@@ -26,6 +26,9 @@ function initbodys(){
     $(form('project')).change(function(){
         var val = this.value,txt='';
         listchange(val);
+        var sel = document.getElementsByName('project');
+        var index = sel[0].selectedIndex;
+        form('projectName').value = sel[0][index].innerHTML;
     });
 }
 function addchengesss(){
@@ -98,7 +101,7 @@ function listchange(v){
 		len = 0;
         form('sub_totals0').value = 1;
     	if(a) {
-    		//首先增加子表
+    		//增加子表
             for (j = 0; j < a.length; ++j) {
             	if(j!=0 && j >= len)
             		c.addrow(this,0);

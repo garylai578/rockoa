@@ -239,7 +239,7 @@ class inputAction extends Action
 				if(substr($fid,0,5)=='temp_')continue;
 				$na = ''.$fid.''.$xu.'_'.$i.'';
 				$val= $this->post($na);
-				if($rs['isbt']==1&&$this->isempt($val))$bos=false;
+				if($rs['isbt']==1&&$this->isempt($val))$bos=false;  //如果是必填项，并且该项为空，能运行到这里，说明这条记录被删除了。反过来说，子表中至少需要有一项必填，否则不能删除！！！
 				$uaarr[$fid] = $val;
 			}
 			if(!$bos)continue;

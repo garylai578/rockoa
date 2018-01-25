@@ -12,9 +12,9 @@ function initbodys(){
 		salechange(this.value);
 	});
 
-/*    $(form('money')).click(function(){
+    $(form('money')).click(function(){
         countMoney();
-    });*/
+    });
     $("[name^='money0_']").click(function(){
     	countMoney();
 	})

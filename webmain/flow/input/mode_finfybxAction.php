@@ -28,8 +28,10 @@ class mode_finfybxClassAction extends inputAction{
      * @param $addbo
      */
 	protected function saveafter($table, $arr, $id, $addbo){
-        //更新合同清单中的以采购数量
+        //更新合同清单中的已采购数量
 	    $mid 	= $arr['project'];        //合同id
+        if(!$mid)
+            return;
         $subtables[] = $this->getsubtabledata("0");
         foreach($subtables as $k=>$rs){
             for($j=0; $j< sizeof($rs); ++$j){
@@ -70,7 +72,8 @@ class mode_finfybxClassAction extends inputAction{
         if($mid>0){
             $htid = (int)$this->flow->getmou('htid', $mid); //当前记录也要显示合同ID
         }
-        $rows = m('crm')->getmyract($this->adminid, $htid);
+        $where 	= '`isover`=0 or `id`='.$mid.'';
+        $rows = m('custract')->getrows($where, 'id,custid,custname,money,num,project');
         $arr  = array();
         foreach($rows as $k=>$rs){
             $arr[] = array(

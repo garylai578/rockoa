@@ -67,11 +67,7 @@ class mode_finfybxClassAction extends inputAction{
 	}
 
 	public function hetongdata(){
-        $htid = 0;
         $mid  = (int)$this->get('mid','0');
-        if($mid>0){
-            $htid = (int)$this->flow->getmou('htid', $mid); //当前记录也要显示合同ID
-        }
         $where 	= '`isover`=0 or `id`='.$mid.'';
         $rows = m('custract')->getrows($where, 'id,custid,custname,money,num,project');
         $arr  = array();

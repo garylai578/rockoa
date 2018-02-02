@@ -61,7 +61,16 @@ class flow_custractClassModel extends flowModel
 			'orlikefields' => 'custname'
 		);
 	}
-	
+
+    //是否有查看权限
+    protected function flowisreadqx()
+    {
+        $bo = false;
+        $shateid = ','.$this->rs['shateid'].',';
+        if(contain($shateid,','.$this->adminid.','))$bo=true;
+        return $bo;
+    }
+
 	protected function flowoptmenu($ors, $arrs)
 	{
 		//创建待收付款单
@@ -87,7 +96,26 @@ class flow_custractClassModel extends flowModel
 				m('custfina')->insert($arr);
 			}
 		}
-	}
+
+        //共享
+        if($ors['num']=='shate'){
+            $cname 	 = $arrs['cname'];
+            $cnameid = $arrs['cnameid'];
+            $this->update(array(
+                'shateid' 	=> $cnameid,
+                'shate' 	=> $cname,
+            ), $this->id);
+            $this->push($cnameid, '客户管理', ''.$this->adminname.'将一个客户【{name}】共享给你');
+        }
+
+        //取消共享
+        if($ors['num']=='unshate'){
+            $this->update(array(
+                'shateid' 	=> '',
+                'shate' 	=> '',
+            ), $this->id);
+        }
+    }
 	
 	
 	/**

@@ -114,6 +114,33 @@ class deptClassAction extends Action
 		$udarr 		= m('dept')->getdeptuserdata();
 		$userarr 	= $udarr['uarr'];
 		$deptarr 	= $udarr['darr'];
+
+		// 增加自定义组别的显示
+        $rows = m('flow_cname')->getall("`pid`=0 and `num` is not null",'num,name,checkid,checkname','`sort`');
+        $id = 112010; //自定义开始的id，避免和原有的id重复
+        foreach($rows as $k=>$rs){
+            $usersID = explode(",", $rs['checkid']);
+            $ntotal = $stotal = count($usersID);
+            $pid = $sort = 0;
+            $name = $rs['name'];
+            $group = array('id'=>$id, 'name'=>$name,'pid'=> $pid, 'sort'=>$sort, 'stotal'=>$stotal, 'ntotal'=>$ntotal);
+            array_push($deptarr,$group); //把组增加到数组中
+            for($j=0; $j < $ntotal; ++$j){
+                $fields = '`id`,`name`,`deptid`,`deptname`,`deptpath`,`deptallname`,`mobile`,`ranking`,`tel`,`face`,`sex`,`email`,`pingyin`';
+                $result = m('admin')->getone("`id`=$usersID[$j] and `status`=1",$fields);
+                $py   = c('pingyin');
+                $result['face'] = m('admin')->getface($result['face']);
+                if(isempt($result['pingyin'])){
+                    $result['pingyin'] = $py->get($result['name'],1);
+                }
+                $result['deptid'] = $id;    //把人员的从属部门id修改为组的id
+                foreach($result as $k=>$v)
+                    if($v==null)
+                        $result[$k] = '';
+                array_push($userarr,$result);   //把人员信息增加到数组里
+            }
+            $id++;
+        }
 		
 		$arr['deptjson']	= json_encode($deptarr);
 		$arr['userjson']	= json_encode($userarr);

@@ -9,9 +9,9 @@ defined('HOST') or die ('not access');
 <script>
 $(document).ready(function(){
 	{params}
-	var modenum = 'findi',modename='抵票列表',isflow=1,modeid='75',atype = params.atype,pnum=params.pnum;
+	var modenum = 'findi',modename='抵票列表',isflow=0,modeid='75',atype = params.atype,pnum=params.pnum;
 	if(!atype)atype='';if(!pnum)pnum='';
-	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"fixed","ispx":"0","isalign":"0","islb":"1"},{"fields":"company","name":"\u5f00\u7968\u516c\u53f8","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"piaonum","name":"\u7968\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"1","isalign":"0","islb":"1"},{"fields":"applydt","name":"\u6536\u7968\u65e5\u671f","fieldstype":"datetime","ispx":"1","isalign":"0","islb":"1"},{"fields":"projectName","name":"\u9879\u76ee\u540d\u79f0","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"paydt","name":"\u62b5\u5145\u65e5\u671f","fieldstype":"datetime","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= [];
+	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"fixed","ispx":"0","isalign":"0","islb":"1"},{"fields":"piaonum","name":"\u7968\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"1","isalign":"0","islb":"1"},{"fields":"applydt","name":"\u6536\u7968\u65e5\u671f","fieldstype":"datetime","ispx":"1","isalign":"0","islb":"1"},{"fields":"dkdt","name":"\u62b5\u6263\u65e5\u671f","fieldstype":"datetime","ispx":"0","isalign":"0","islb":"1"},{"fields":"dikouproject","name":"\u62b5\u6263\u9879\u76ee","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"fullname","name":"\u5f00\u7968\u516c\u53f8","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= [];
 	
 	var c = {
 		reload:function(){
@@ -194,7 +194,7 @@ $(document).ready(function(){
 		fanye:true,modenum:modenum,modename:modename,statuschange:false,tablename:jm.base64decode('ZmluaW5mb20:'),
 		url:c.storeurl(),storeafteraction:'storeaftershow',storebeforeaction:'storebeforeshow',
 		params:{atype:atype},
-		columns:[{text:"申请人",dataIndex:"base_name",sortable:true},{text:"申请人部门",dataIndex:"base_deptname",sortable:true},{text:"单号",dataIndex:"sericnum"},{text:"类型",dataIndex:"type"},{text:"开票公司",dataIndex:"company"},{text:"票号",dataIndex:"piaonum"},{text:"金额",dataIndex:"money",sortable:true},{text:"收票日期",dataIndex:"applydt",sortable:true},{text:"项目名称",dataIndex:"projectName"},{text:"抵充日期",dataIndex:"paydt"},{text:"说明",dataIndex:"explain"},{text:"状态",dataIndex:"statustext"},{
+		columns:[{text:"类型",dataIndex:"type"},{text:"票号",dataIndex:"piaonum"},{text:"金额",dataIndex:"money",sortable:true},{text:"收票日期",dataIndex:"applydt",sortable:true},{text:"抵扣日期",dataIndex:"dkdt"},{text:"抵扣项目",dataIndex:"dikouproject"},{text:"开票公司",dataIndex:"fullname"},{text:"说明",dataIndex:"explain"},{
 			text:'',dataIndex:'caozuo',callback:'opegs{rand}'
 		}],
 		itemdblclick:function(){
@@ -241,9 +241,9 @@ $(document).ready(function(){
 	<tr>
 		<td style="padding-right:10px;" id="tdleft_{rand}" nowrap><button id="addbtn_{rand}" class="btn btn-primary" click="clickwin,0" disabled type="button"><i class="icon-plus"></i> 新增</button></td>
 		<td>
-			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字/申请人/单号">
+			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字">
 		</td>
-		<td style="padding-left:10px"><select class="form-control" style="width:120px" id="selstatus_{rand}"><option value="">-全部状态-</option><option style="color:blue" value="0">待抵充</option><option style="color:green" value="1">已完成</option><option style="color:red" value="2"></option><option style="color:blue" value="3">待抵充</option><option style="color:#888888" value="5">已作废</option><option style="color:#17B2B7" value="23">退回</option></select></td>
+		
 		<td style="padding-left:10px">
 			<div style="width:85px" class="btn-group">
 			<button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button> 

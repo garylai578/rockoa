@@ -9,9 +9,9 @@ defined('HOST') or die ('not access');
 <script>
 $(document).ready(function(){
 	{params}
-	var modenum = 'finlai',modename='待收发票管理',isflow=1,modeid='73',atype = params.atype,pnum=params.pnum;
+	var modenum = 'finlai',modename='待收发票管理',isflow=0,modeid='73',atype = params.atype,pnum=params.pnum;
 	if(!atype)atype='';if(!pnum)pnum='';
-	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"fixed","ispx":"0","isalign":"0","islb":"0"},{"fields":"paydt","name":"\u5f00\u7968\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"textarea","ispx":"0","isalign":"0","islb":"0"},{"fields":"purpose","name":"\u6765\u6e90","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"tel","name":"\u8054\u7cfb\u65b9\u5f0f","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"contact","name":"\u8054\u7cfb\u4eba","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"paytype","name":"\u7968\u79cd","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"0","isalign":"0","islb":"1"},{"fields":"company","name":"\u5f00\u7968\u516c\u53f8","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"piaonum","name":"\u7968\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= [];
+	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"fixed","ispx":"0","isalign":"0","islb":"0"},{"fields":"buyer","name":"\u91c7\u8d2d\u5355\u4f4d","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"paytype","name":"\u4ed8\u6b3e\u65b9\u5f0f","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"bills","name":"\u9644\u5355\u636e(\u5f20)","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"piaonum","name":"\u7968\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"kpdt","name":"\u5f00\u7968\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"textarea","ispx":"0","isalign":"0","islb":"0"},{"fields":"purpose","name":"\u6765\u6e90","fieldstype":"rockcombo","ispx":"1","isalign":"0","islb":"1"},{"fields":"tel","name":"\u8054\u7cfb\u65b9\u5f0f","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"contact","name":"\u8054\u7cfb\u4eba","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"openpiaotype","name":"\u662f\u5426\u542b\u7a0e\u7968","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"0","isalign":"0","islb":"1"},{"fields":"company","name":"\u5f00\u7968\u516c\u53f8","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"num","name":"\u5408\u540c\u53f7\/\u8ba2\u5355\u53f7","fieldstype":"select","ispx":"0","isalign":"0","islb":"0"}],fieldsselarr= [];
 	
 	var c = {
 		reload:function(){
@@ -194,7 +194,7 @@ $(document).ready(function(){
 		fanye:true,modenum:modenum,modename:modename,statuschange:false,tablename:jm.base64decode('ZmluaW5mb20:'),
 		url:c.storeurl(),storeafteraction:'storeaftershow',storebeforeaction:'storebeforeshow',
 		params:{atype:atype},
-		columns:[{text:"申请人",dataIndex:"base_name",sortable:true},{text:"申请人部门",dataIndex:"base_deptname",sortable:true},{text:"单号",dataIndex:"sericnum"},{text:"开票日期",dataIndex:"paydt"},{text:"来源",dataIndex:"purpose"},{text:"联系方式",dataIndex:"tel"},{text:"联系人",dataIndex:"contact"},{text:"票种",dataIndex:"paytype"},{text:"金额",dataIndex:"money"},{text:"开票公司",dataIndex:"company"},{text:"票号",dataIndex:"piaonum"},{text:"状态",dataIndex:"statustext"},{
+		columns:[{text:"采购单位",dataIndex:"buyer"},{text:"付款方式",dataIndex:"paytype"},{text:"票号",dataIndex:"piaonum"},{text:"开票日期",dataIndex:"kpdt"},{text:"来源",dataIndex:"purpose",sortable:true},{text:"联系方式",dataIndex:"tel"},{text:"联系人",dataIndex:"contact"},{text:"是否含税票",dataIndex:"openpiaotype"},{text:"金额",dataIndex:"money"},{text:"开票公司",dataIndex:"company"},{
 			text:'',dataIndex:'caozuo',callback:'opegs{rand}'
 		}],
 		itemdblclick:function(){
@@ -241,9 +241,9 @@ $(document).ready(function(){
 	<tr>
 		<td style="padding-right:10px;" id="tdleft_{rand}" nowrap><button id="addbtn_{rand}" class="btn btn-primary" click="clickwin,0" disabled type="button"><i class="icon-plus"></i> 新增</button></td>
 		<td>
-			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字/申请人/单号">
+			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字">
 		</td>
-		<td style="padding-left:10px"><select class="form-control" style="width:120px" id="selstatus_{rand}"><option value="">-全部状态-</option><option style="color:blue" value="0">待处理</option><option style="color:green" value="1">已收</option><option style="color:red" value="2">退回处理中</option><option style="color:#ff6600" value="3">待抵扣</option><option style="color:#888888" value="5">已作废</option><option style="color:#17B2B7" value="23">退回</option></select></td>
+		
 		<td style="padding-left:10px">
 			<div style="width:85px" class="btn-group">
 			<button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button> 

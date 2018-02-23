@@ -26,5 +26,27 @@ class mode_finlaiClassAction extends inputAction{
 	protected function saveafter($table, $arr, $id, $addbo){
 		
 	}
+
+    /**
+     * 录入界面中“合同号/订单号”的数据来源，需要在“表单元素管理”里的合同选择中设置：字段元素类型是“下拉框”，数据源是本函数的名称
+     * @return array
+     */
+    public function hetongdata()
+    {
+        $htid = 0;
+        $mid  = (int)$this->get('mid','0');
+        if($mid>0){
+            $htid = (int)$this->flow->getmou('htid', $mid); //当前记录也要显示合同ID
+        }
+        $rows = m('crm')->getmyract($this->adminid, $htid); //crm表示使用model/crmModel.php里面的方法
+        $arr  = array();
+        foreach($rows as $k=>$rs){
+            $arr[] = array(
+                'value' => $rs['id'],
+                'name' 	=> '['.$rs['num'].']'.$rs['custname'].'-'.$rs['project'],
+            );
+        }
+        return $arr;
+    }
 }	
 			

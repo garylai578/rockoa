@@ -70,11 +70,15 @@ $(document).ready(function(){
 			};
 			darr[0].setparams(cnas, true);
 			darr[1].setparams(cnas, true);
+            darr[2].setparams(cnas, true);
+            darr[3].setparams(cnas, true);
 		}
 	};
 	
 	darr[0] = $('#view0_{rand}').bootstable(c.getparams(0,'b.`udeptname`','部门','pie'));
 	darr[1] = $('#view1_{rand}').bootstable(c.getparams(1,'left(a.`applydt`,7)','月份','line'));
+    darr[2] = $('#view2_{rand}').bootstable(c.getparams(2,'a.`projectName`','项目','pie'));
+    darr[3] = $('#view3_{rand}').bootstable(c.getparams(3,'a.`company`','公司开支','pie'));
 	
 	js.initbtn(c);
 });
@@ -130,13 +134,33 @@ $(document).ready(function(){
 			<div id="view1_{rand}"></div>
 			<div id="viewchats1_{rand}" style="width:100%;height:250px;border:1px #dddddd solid;border-top:0px"></div>
 			</div>
-			
-			
-			
 		</td>
-		
-		
-		
 	</tr>
+
+        <tr valign="top">
+
+            <td width="50%">
+                <div align="left" style="min-width:300px" class="list-group">
+                    <div class="list-group-item  list-group-item-info">
+                        <i class="icon-bar-chart"></i> 根据项目统计
+                        <span style="float:right" ><a click="reload,0"><i class="icon-refresh"></i></a></span>
+                    </div>
+                    <div id="view2_{rand}"></div>
+                    <div id="viewchats2_{rand}" style="width:100%;height:250px;border:1px #dddddd solid;border-top:0px"></div>
+                </div>
+
+            </td>
+
+            <td style="padding-left:10px;">
+                <div align="left" class="list-group">
+                    <div class="list-group-item  list-group-item-success">
+                        <i class="icon-bar-chart"></i> 根据公司开支统计
+                        <span style="float:right" ><a click="reload,1"><i class="icon-refresh"></i></a></span>
+                    </div>
+                    <div id="view3_{rand}"></div>
+                    <div id="viewchats3_{rand}" style="width:100%;height:250px;border:1px #dddddd solid;border-top:0px"></div>
+                </div>
+            </td>
+        </tr>
 	</table>
 </div>

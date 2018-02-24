@@ -2488,8 +2488,14 @@ class flowModel extends Model
 		$where 	= $narr['where'];
 		$table	= $narr['table'];
 		if(!contain($table,' '))$table = '[Q]'.$table.'';
-		
-		$sql 	= 'select '.$fields.' as `name`,'.$tofiels.' as value from '.$table.' where 1=1 '.$where.' group by '.$fields.'';
+
+		if($fields == "a.`company`")
+		    $sql = 'select '.$fields.' as `name`,'.$tofiels.' as value from '.$table.' where 1=1 and a.status=1 and a.`projectName` is null '.$where.' group by '.$fields.'';
+		else if($fields == "a.`projectName`")
+            $sql 	= 'select '.$fields.' as `name`,'.$tofiels.' as value from '.$table.' where 1=1 and a.status=1 and '.$fields. ' is not null '.$where.' group by '.$fields.'';
+		else
+            $sql 	= 'select '.$fields.' as `name`,'.$tofiels.' as value from '.$table.' where 1=1 and a.status=1 '.$where.' group by '.$fields.'';
+
 		$sql 	= str_replace('[A]', $narr['asqom'], $sql);
 		
 		$rows 	= $this->db->getall($sql);

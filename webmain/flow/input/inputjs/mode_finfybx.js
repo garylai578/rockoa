@@ -24,8 +24,8 @@ function initbodys(){
 	}
 
     $(form('project')).change(function(){
-        var val = this.value,txt='';
-        listchange(val);
+/*        var val = this.value,txt='';
+        listchange(val);*/ //取消合同清单的加载-2018.2.26
         var sel = document.getElementsByName('project');
         var index = sel[0].selectedIndex;
         form('projectName').value = sel[0][index].innerHTML;

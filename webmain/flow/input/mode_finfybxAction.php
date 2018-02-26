@@ -28,7 +28,8 @@ class mode_finfybxClassAction extends inputAction{
      * @param $addbo
      */
 	protected function saveafter($table, $arr, $id, $addbo){
-        //更新合同清单中的已采购数量
+	    //取消合同清单的加载-2018.2.26
+ /*       //更新合同清单中的已采购数量
 	    $mid 	= $arr['project'];        //合同id
         if(!$mid)
             return;
@@ -56,7 +57,7 @@ class mode_finfybxClassAction extends inputAction{
                     m('custractlist')->update("`buynums`='$total'","`id`=$listid");
                 }
             }
-        }
+        }*/
 	}
 	
 	public function getlastAjax()

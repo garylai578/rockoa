@@ -75,7 +75,7 @@ $(document).ready(function(){
 		}
 	};
 	
-	darr[0] = $('#view0_{rand}').bootstable(c.getparams(0,'b.`udeptname`','部门','pie'));
+	darr[0] = $('#view0_{rand}').bootstable(c.getparams(0,'a.`category`','费用类别','pie'));
 	darr[1] = $('#view1_{rand}').bootstable(c.getparams(1,'left(a.`applydt`,7)','月份','line'));
     darr[2] = $('#view2_{rand}').bootstable(c.getparams(2,'a.`projectName`','项目','pie'));
     darr[3] = $('#view3_{rand}').bootstable(c.getparams(3,'a.`company`','公司开支','pie'));
@@ -116,7 +116,7 @@ $(document).ready(function(){
 		<td width="50%">
 			<div align="left" style="min-width:300px" class="list-group">
 			<div class="list-group-item  list-group-item-info">
-				<i class="icon-bar-chart"></i> 根据部门统计
+				<i class="icon-bar-chart"></i> 根据费用类别统计
 				<span style="float:right" ><a click="reload,0"><i class="icon-refresh"></i></a></span>
 			</div>
 			<div id="view0_{rand}"></div>

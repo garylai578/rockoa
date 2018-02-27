@@ -220,7 +220,8 @@ class flowbillClassModel extends Model
 			
 			$status = '<font color="'.$statuscolor.'">'.$statustext.'</font>';
 			if($wdst==0)$status= $statustext;
-			
+
+            $projectName = m('fininfom')->getone("id=".$rs['mid'], 'projectname');
 			$srows[]= array(
 				'id' 		=> $rs['mid'],
 				'optdt' 	=> $rs['optdt'],
@@ -228,6 +229,7 @@ class flowbillClassModel extends Model
 				'name' 		=> $rs['name'],
 				'deptname' 	=> $rs['deptname'],
 				'sericnum' 	=> $rs['sericnum'],
+                'projectname' => $projectName['projectname'],
 				'nowcheckid'=> $rs['nowcheckid'],
 				'nowcourseid'=> $rs['nowcourseid'], //当前步骤
 				'ishui' 	=> $ishui,

@@ -18,8 +18,6 @@ $(document).ready(function(){
 		},{
 			text:'单号',dataIndex:'sericnum'
 		},{
-            text:'项目名称',dataIndex:'projectname'
-        },{
 			text:'申请日期',dataIndex:'applydt',sortable:true
 		},{
 			text:'操作时间',dataIndex:'optdt',sortable:true

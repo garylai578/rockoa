@@ -33,17 +33,14 @@ class mode_finlaiClassAction extends inputAction{
      */
     public function hetongdata()
     {
-        $htid = 0;
         $mid  = (int)$this->get('mid','0');
-        if($mid>0){
-            $htid = (int)$this->flow->getmou('htid', $mid); //当前记录也要显示合同ID
-        }
-        $rows = m('crm')->getmyract($this->adminid, $htid); //crm表示使用model/crmModel.php里面的方法
+        $where 	= '`isover`=0 or `id`='.$mid.'';
+        $rows = m('custract')->getrows($where, 'id,custid,custname,money,num,project');
         $arr  = array();
         foreach($rows as $k=>$rs){
             $arr[] = array(
                 'value' => $rs['id'],
-                'name' 	=> '['.$rs['num'].']'.$rs['custname'].'-'.$rs['project'],
+                'name' 	=> '('.$rs['num'].')'.$rs['custname'].'-'.$rs['project'],
             );
         }
         return $arr;

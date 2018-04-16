@@ -10,7 +10,7 @@ class mode_finfybxClassAction extends inputAction{
         $paytype  = $arr['paytype'];
         $cardid = $arr['cardid'];
         $openbank = $arr['openbank'];
-        $fullname = $arr['fullname'];
+        $fullname = $arr['buyer'];
         if($paytype=="银行转账"){
             if($cardid == "")
                 return "收款账户不能为空";

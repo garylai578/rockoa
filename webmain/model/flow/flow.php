@@ -1520,7 +1520,7 @@ class flowModel extends Model
 		$ufied 	= array();
 		if($iszhuanyi == 0 && $zt!=2){
 			foreach($flowinfor['checkfields'] as $chef=>$chefv){
-				$ufied[$chef] = $this->rock->post('cfields_'.$chef.'');
+				$ufied[$chef] = $this->rock->post('cfields_'.$chef.''); //通过前端modeview.js里面的check(lx)方法获取需要审批人员填写的字段信息。
 				if(isempt($ufied[$chef]))$this->echomsg(''.$chefv['name'].'不能为空');
 				$_str = $this->savedatastr($ufied[$chef], $chefv['fieldsarr'], $this->rs);
 				if($_str!='')$this->echomsg($_str);
@@ -1544,7 +1544,20 @@ class flowModel extends Model
 			$bo = $this->update($ufied, $this->id);
 			if(!$bo)return 'dberr:'.$this->db->error();
 		}
-		
+
+		//更新销售单的成本信息
+        $cost_pids = $this->rock->post('cfields_costids');//产品的id集合
+        if($cost_pids!=null) {
+            $pids = explode("_", $cost_pids);
+            for ($j = 0; $j < sizeof($pids)-1; ++$j) {
+                $costupdates["costprice"] = $this->rock->post('cfields_costprice0_'.$j);//产品成本单价
+                $costupdates["costnum"] = $this->rock->post('cfields_costnum0_'.$j);//产品成本数量
+                $costupdates["costmoney"] = $this->rock->post('cfields_costmoney0_'.$j);//产品成本金额
+                m("saleproducts")->update($costupdates, 'id='.$pids[$j]);
+            }
+        }
+
+
 		$courseact 	= $flowinfor['courseact'];
 		$act 		= $courseact[$zt];
 		$statusname	= $act[0];//状态名称

@@ -1,0 +1,26 @@
+<script type="text/javascript">
+    //根据成本单价和成本数量自动计算成本金额
+    function getValue(id){
+        return document.getElementById(id);
+    }
+
+    function checkInt(o,index){
+/*        theV=isNaN(parseInt(o.value))?0:parseInt(o.value);
+        if(theV!=o.value){o.value=theV;}*/
+        getValue("costmoney0_"+""+index+"").value=getValue("costprice0_"+""+index+"").value*getValue("costnum0_"+""+index+"").value;
+    }
+
+    function checkP(o,index){
+        theV=isNaN(parseFloat(o.value))?0:parseFloat(o.value);
+        theV=parseInt(theV*100)/100;
+        if(theV!=o.value){
+            theV=(theV*100).toString();
+            theV=theV.substring(0,theV.length-2)+"."+theV.substring(theV.length-2,theV.length);
+            o.value=theV;
+        }
+        getValue("costmoney0_"+""+index+"").value=getValue("costprice0_"+""+index+"").value*getValue("costnum0_"+""+index+"").value;
+    }
+</script>
+
+<!--自定义销售单的详细页面-->
+<table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%"><tbody><tr><td class="ys1" align="right" height="34" width="15%">申请人</td><td class="ys2" width="35%">{base_name}{type}</td><td class="ys1" align="right" width="15%">*所属公司<br /></td><td class="ys2" width="35%">{company}</td></tr><tr><td class="ys1" align="right" height="34">*申请日期</td><td class="ys2">{applydt}</td><td class="ys1" align="right">日期<br /></td><td class="ys2">{date}<br /></td></tr><tr><td class="ys1" align="right" height="34">*客户名称<br /></td><td class="ys2">{cusname}<br /></td><td class="ys1" align="right">*部门<br /></td><td class="ys2">{dept}<br /></td></tr><tr><td class="ys1" align="right" height="34">*单号<br /></td><td class="ys2">{listid}<br /></td><td class="ys1" align="right"><br /></td><td class="ys2"><br /></td></tr><tr><td class="ys2" style="background-color:#CCCCCC;" colspan="4"><strong>销售清单</strong><br /></td></tr><tr><td class="ys0" colspan="4">{subdata0}<div style="background-color:#F1F1F1;"></div></td></tr><tr><td class="ys1" align="right" height="34">*销售金额</td><td class="ys2">{moneys}</td><td class="ys1" align="right">*大写金额</td><td class="ys2">{moneyscn}</td></tr><tr><td class="ys1" align="right" height="34">说明</td><td class="ys2" colspan="3">{explain}</td></tr><tr><td class="ys1" align="right" height="34">相关文件</td><td class="ys2" colspan="3">{file_content}</td></tr></tbody></table>

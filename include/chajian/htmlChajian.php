@@ -96,6 +96,8 @@ class htmlChajian extends Chajian{
 			$txt.= '<td style="'.$stls.'" bgcolor="#eeeeee" align="'.$head[$h][2].'"><b>'.$head[$h][1].'</b></td>';
 		}
 		$txt	.= '</tr>';
+        $index = 0;
+        $pids = '';
 		foreach($rows as $k=>$rs){
 			$txt	.= '<tr>';
 			for($h=0; $h<$thead; $h++){
@@ -107,10 +109,26 @@ class htmlChajian extends Chajian{
 					if($k==$rlen-1)$stls.=';border-bottom:none';
 				}
 				$val 	 = isset($rs[$head[$h][0]]) ? $rs[$head[$h][0]] : '';
-				$txt	.= '<td style="'.$stls.'" align="'.$head[$h][2].'">'.$val.'</td>';
+
+				// 如果是销售单里的成本单价、成本数量和成本金额，允许修改。
+				if(stripos($head[$h][0], "cost")!==false){
+                    if(stripos($head[$h][0], "money") !== false) {
+                        $pids .= $rs['id']."_";
+                        $txt .= '<td style="' . $stls . '" align="' . $head[$h][2] . '"><span fieidscheck="' . $head[$h][0] . '0_' . $index . '"></span><input class="inputs" type="number" value="'.$val.'" readonly="true" id="' . $head[$h][0] . '0_' . $index . '" name="' . $head[$h][0] . '0_' . $index . '"></td>';
+                    }
+                    elseif(stripos($head[$h][0], "price") !==false)
+                        $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'"><span fieidscheck="'.$head[$h][0].'0_'.$index.'"></span><input class="inputs" type="number" value="'.$val.'" onkeyup="checkP(this,'.$index.');" onpaste="checkP(this,'.$index.');" oncut="checkP(this,'.$index.');" ondrop="checkP(this,'.$index.');" onchange="checkP(this,'.$index.');"  id="'.$head[$h][0].'0_'.$index.'" name="'.$head[$h][0].'0_'.$index.'"></td>';
+                    elseif(stripos($head[$h][0], "num") !==false)
+                        $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'"><span fieidscheck="'.$head[$h][0].'0_'.$index.'"></span><input class="inputs" type="number" value="'.$val.'"  onkeyup="checkInt(this,'.$index.');" onpaste="checkInt(this,'.$index.');" oncut="checkInt(this,'.$index.');" ondrop="checkInt(this,'.$index.');" onchange="checkInt(this,'.$index.');" id="'.$head[$h][0].'0_'.$index.'" name="'.$head[$h][0].'0_'.$index.'"></td>';
+            }
+                else{
+                    $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'">'.$val.'</td>';
+                }
 			}	
 			$txt	.= '</tr>';
+            $index++;
 		}
+        $txt .= '<span fieidscheck="costids"><input hidden name="costids" value="'.$pids.'" id="costids"></span>';
 		$txt	.= '</table>';
 		return $txt;
 	}

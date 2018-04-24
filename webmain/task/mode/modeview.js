@@ -74,11 +74,15 @@ function check(lx){
 		}
 	}
 	if(!da.zynameid && da.zt!='2'){
+        //fieidscheck是在流程审批过程中，需要审批人填写的字段，系统通过post方法传递给后台处理：mode\flow\flow.php的第1523行
 		var fobj=$('span[fieidscheck]'),i,fid,fiad;
 		for(i=0;i<fobj.length;i++){
 			fiad = $(fobj[i]);
 			fid	 = fiad.attr('fieidscheck');
-			da['cfields_'+fid]=form(fid).value;
+			fiddoc = form(fid);
+			if(fiddoc==null)
+                fiddoc=document.getElementById(fid);
+			da['cfields_'+fid]=fiddoc.value;
 			if(da['cfields_'+fid]==''){js.setmsg(''+fiad.text()+'不能为空');return;}
 		}
 	}

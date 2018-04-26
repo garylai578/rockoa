@@ -128,7 +128,8 @@ class htmlChajian extends Chajian{
 			$txt	.= '</tr>';
             $index++;
 		}
-        $txt .= '<span fieidscheck="costids"><input hidden name="costids" value="'.$pids.'" id="costids"></span>';
+		if($pids)
+            $txt .= '<span fieidscheck="costids"><input hidden name="costids" value="'.$pids.'" id="costids"></span>';
 		$txt	.= '</table>';
 		return $txt;
 	}

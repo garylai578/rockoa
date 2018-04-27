@@ -238,6 +238,22 @@ class Action extends mainAction
 		$arr	= $this->limitRows($tables, $fields, $where, $order, array(
 			'group' => $group
 		));
+		//如果是销售报表，需要将产品的销售单信息写入数组
+		if($table == "saleproducts"){
+            foreach($arr['rows'] as $k=>$v){
+                $mid = $v['mid'];
+                $where = "id=".$mid."";
+                $rs = m("salelist")->getone($where);
+
+                $arr['rows'][$k]['company'] = $rs['company'];
+                $arr['rows'][$k]['date'] = $rs['date'];
+                $arr['rows'][$k]['listid'] = $rs['listid'];
+                $arr['rows'][$k]['cusname'] = $rs['cusname'];
+                $arr['rows'][$k]['dept'] = $rs['dept'];
+                $arr['rows'][$k]['paydate'] = $rs['paydate'];
+
+            }
+        }
 		$total	= $arr['total'];
 		$rows	= $arr['rows'];
 

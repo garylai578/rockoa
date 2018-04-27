@@ -19,7 +19,7 @@ class customerClassAction extends Action
 			$where .= m('admin')->getkeywhere($key);
 		}
 		return array(
-			'fields'=> 'id,name,deptname',
+			'fields'=> 'id, name, deptname',
 			'where'	=> $where,
 		);
 	}
@@ -128,4 +128,30 @@ class customerClassAction extends Action
 		}
 		echo 'ok';
 	}
+
+	//销售报表在加载前执行的动作
+    public function salechartbefore($table)
+    {
+        $where = '';
+        $uid = $this->adminid;
+        $lx	= $this->post('atype');
+        $start = $this->post('startdt', date('Y-01'));
+        $end = $this->post('enddt', date('Y-m'));
+        $key = $this->post('key');
+        if($lx=='my'){
+            $where=' and `id`='.$uid.'';
+        }
+        if($lx=='down'){
+            $s 		= m('admin')->getdownwheres('id', $uid, 0);
+            $where 	=' and ('.$s.' or `id`='.$uid.')';
+        }
+        if($key!=''){
+            $where .= m('admin')->getkeywhere($key);
+        }
+        return array(
+//            'fields'=> 'company,date,cusname,dept,paydate',
+            'fields'=> 'mid,product,unit,num,price,money,costnum,costprice,costmoney,remark',
+            'where'	=> $where,
+        );
+    }
 }

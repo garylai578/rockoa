@@ -13,7 +13,6 @@ class mode_salelistClassAction extends inputAction{
 	*	return array('msg'=>'错误提示内容','rows'=> array()) 可返回空字符串，或者数组 rows 是可同时保存到数据库上数组
 	*/
 	protected function savebefore($table, $arr, $id, $addbo){
-		
 	}
 	
 	/**
@@ -24,7 +23,14 @@ class mode_salelistClassAction extends inputAction{
 	*	$addbo Boolean 是否添加时
 	*/	
 	protected function saveafter($table, $arr, $id, $addbo){
-		
+        //根据客户的折扣率，更新每个产品的其他成本（=销售金额×折扣率）
+        $discount = m('customer')->getone("id=".$arr['custid'], 'discount')['discount'];
+        $products = m('saleproducts')->getall("mid=".$id);
+        foreach($products as $k=>$rs){
+            $money = $rs['money'];          //产品销售金额
+            $othercost = $money * $discount;
+            m('saleproducts')->update("`othercost`='$othercost'","`id`=".$rs['id']);
+        }
 	}
 
 	//客户名称的数据来源

@@ -150,7 +150,7 @@ class customerClassAction extends Action
         }
         return array(
 //            'fields'=> 'company,date,cusname,dept,paydate',
-            'fields'=> 'mid,product,unit,num,price,money,costnum,costprice,costmoney,remark',
+            'fields'=> 'mid,product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost',
             'where'	=> $where,
         );
     }

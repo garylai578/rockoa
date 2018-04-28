@@ -9,7 +9,7 @@
             columns:[{
                 text:'所属公司',dataIndex:'company'
             },{
-                text:'日期',dataIndex:'date'
+                text:'录入日期',dataIndex:'applydt'
             },{
                 text:'客户',dataIndex:'cusname'
             },{
@@ -67,8 +67,23 @@
             },
             search:function(){
                 //通过POST将参数传递到后台：customerAction
-                var s=get('key_{rand}').value, startdt = get('start_{rand}').value, enddt = get('end_{rand}').value;
-                a.setparams({key:s,'startdt':startdt,'enddt':enddt},true);
+                var s=get('key_{rand}').value, startdt = get('start_{rand}').value, enddt = get('end_{rand}').value, key2=get('key2_{rand}').value;
+                a.setparams({key:s,'key2':key2,'startdt':startdt,'enddt':enddt},true);
+            },
+            searchbtn:function(){
+                this.search({});
+            },
+            init:function(){
+                $('#key_{rand}').keyup(function(e){
+                    if(e.keyCode==13)c.searchbtn();
+                });
+                $('#key2_{rand}').keyup(function(e){
+                    if(e.keyCode==13)c.searchbtn();
+                });
+                this.initpage();
+            },
+            initpage:function(){
+
             },
             view:function(){
                 var d=a.changedata;
@@ -141,10 +156,16 @@
             </td>
             <td>&nbsp;&nbsp;</td>
             <td>
-                <input class="form-control" style="width:200px" id="key_{rand}"   placeholder="部门/人员">
+                <input class="form-control" style="width:200px" id="key2_{rand}"   placeholder="客户或所属公司关键字">
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <input class="form-control" style="width:200px" id="key_{rand}"   placeholder="产品关键字">
             </td>
             <td style="padding-left:10px">
-                <button class="btn btn-default" click="search" type="button">搜索</button>
+                <div style="width:85px" class="btn-group">
+                    <button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button>
+                </div>
             </td>
             <td  width="90%" style="padding-left:10px">
 
@@ -159,4 +180,4 @@
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
-<div class="tishi">系统是以收付款单上是所属日期算对应月份统计的，当月已收金额是收款时间是当月的统计。</div>
+<!--div class="tishi">系统是以收付款单上是所属日期算对应月份统计的，当月已收金额是收款时间是当月的统计。</div-->

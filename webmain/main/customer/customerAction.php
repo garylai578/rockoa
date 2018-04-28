@@ -138,6 +138,7 @@ class customerClassAction extends Action
         $start = $this->post('startdt', date('Y-01'));
         $end = $this->post('enddt', date('Y-m'));
         $key = $this->post('key');
+        $key2 = $this->post('key2');
         if($lx=='my'){
             $where=' and `id`='.$uid.'';
         }
@@ -145,13 +146,17 @@ class customerClassAction extends Action
             $s 		= m('admin')->getdownwheres('id', $uid, 0);
             $where 	=' and ('.$s.' or `id`='.$uid.')';
         }
+
         if($key!=''){
-            $where .= m('admin')->getkeywhere($key);
+            $where .= 'and `product` like "%'.$key.'%"';    //调用adminModel.php中的getkeywhere()方法
         }
         return array(
 //            'fields'=> 'company,date,cusname,dept,paydate',
             'fields'=> 'mid,product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost',
             'where'	=> $where,
+            'key2' => $key2,
+            'startdt' => $start,
+            'enddt' => $end,
         );
     }
 }

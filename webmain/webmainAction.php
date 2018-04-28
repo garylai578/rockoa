@@ -242,17 +242,41 @@ class Action extends mainAction
 		if($table == "saleproducts"){
             foreach($arr['rows'] as $k=>$v){
                 $mid = $v['mid'];
-                $where = "id=".$mid."";
+                $where = " `id`=".$mid."";
+                if(isset($nas['key2']) && $nas['key2'] != "") {
+                    $key = $nas['key2'];
+                    $where .= ' and (`company` like "%'.$key.'%" or `cusname` like "%'.$key.'%") '; //key2是客户或者公司关键字
+                }
+
                 $rs = m("salelist")->getone($where);
 
-                $arr['rows'][$k]['company'] = $rs['company'];
-                $arr['rows'][$k]['date'] = $rs['date'];
-                $arr['rows'][$k]['listid'] = $rs['listid'];
-                $arr['rows'][$k]['cusname'] = $rs['cusname'];
-                $arr['rows'][$k]['dept'] = $rs['dept'];
-                $arr['rows'][$k]['paydate'] = $rs['paydate'];
-
+                if($rs) {
+                    //根据输入的日期筛选
+                    if(isset($nas['startdt']) && $nas['startdt'] != ""){
+                        if($rs['applydt'] < $nas['startdt']){
+                            unset($arr['rows'][$k]);
+                            continue;
+                        }else{
+                            if(isset($nas['enddt']) && $nas['enddt'] != ""){
+                                $nas['enddt'] .= "-31";
+                                if($rs['applydt'] > $nas['enddt']){
+                                    unset($arr['rows'][$k]);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    $arr['rows'][$k]['company'] = $rs['company'];
+                    $arr['rows'][$k]['applydt'] = $rs['applydt'];
+                    $arr['rows'][$k]['listid'] = $rs['listid'];
+                    $arr['rows'][$k]['cusname'] = $rs['cusname'];
+                    $arr['rows'][$k]['dept'] = $rs['dept'];
+                    $arr['rows'][$k]['paydate'] = $rs['paydate'];
+                }else{
+                    unset($arr['rows'][$k]);
+                }
             }
+            $arr['rows'] = array_values($arr['rows']);
         }
 		$total	= $arr['total'];
 		$rows	= $arr['rows'];

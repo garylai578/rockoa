@@ -139,6 +139,7 @@ class customerClassAction extends Action
         $end = $this->post('enddt', date('Y-m'));
         $key = $this->post('key');
         $key2 = $this->post('key2');
+        $status = $this->post('status');
         if($lx=='my'){
             $where=' and `id`='.$uid.'';
         }
@@ -157,6 +158,7 @@ class customerClassAction extends Action
             'key2' => $key2,
             'startdt' => $start,
             'enddt' => $end,
+            'status' => $status,
         );
     }
 }

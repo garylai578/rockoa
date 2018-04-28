@@ -247,6 +247,13 @@ class Action extends mainAction
                     $key = $nas['key2'];
                     $where .= ' and (`company` like "%'.$key.'%" or `cusname` like "%'.$key.'%") '; //key2是客户或者公司关键字
                 }
+                if(isset($nas['status']) && $nas['status'] != ""){
+                    $status = $nas['status'];
+                    if($status == 1)        //已收款
+                        $where .= ' and `paydate` is not null ';
+                    elseif($status == 2)
+                        $where .= ' and `paydate` is null ';
+                }
 
                 $rs = m("salelist")->getone($where);
 
@@ -266,6 +273,7 @@ class Action extends mainAction
                             }
                         }
                     }
+
                     $arr['rows'][$k]['company'] = $rs['company'];
                     $arr['rows'][$k]['applydt'] = $rs['applydt'];
                     $arr['rows'][$k]['listid'] = $rs['listid'];

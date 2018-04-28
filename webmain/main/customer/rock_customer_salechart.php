@@ -67,8 +67,8 @@
             },
             search:function(){
                 //通过POST将参数传递到后台：customerAction
-                var s=get('key_{rand}').value, startdt = get('start_{rand}').value, enddt = get('end_{rand}').value, key2=get('key2_{rand}').value;
-                a.setparams({key:s,'key2':key2,'startdt':startdt,'enddt':enddt},true);
+                var s=get('key_{rand}').value, startdt = get('start_{rand}').value, enddt = get('end_{rand}').value, key2=get('key2_{rand}').value, status=get('selstatus_{rand}').value;
+                a.setparams({key:s,'key2':key2,'startdt':startdt,'enddt':enddt,'status':status},true);
             },
             searchbtn:function(){
                 this.search({});
@@ -162,6 +162,7 @@
             <td>
                 <input class="form-control" style="width:200px" id="key_{rand}"   placeholder="产品关键字">
             </td>
+            <td style="padding-left:10px"><select class="form-control" style="width:120px" id="selstatus_{rand}"><option value="">-全部状态-</option><option style="color:green" value="1">已收款</option><option style="color:red" value="2">未收款</option></select></td>
             <td style="padding-left:10px">
                 <div style="width:85px" class="btn-group">
                     <button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button>

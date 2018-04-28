@@ -4,7 +4,7 @@
         {params}
         var atype=params.atype,month=js.now('Y-m');
         var a = $('#view_{rand}').bootstable({
-            tablename:'saleproducts',params:{'atype':atype,'month':month},fanye:atype=='all',
+            tablename:'saleproducts',params:{'atype':atype,'month':month},fanye:atype=='all',celleditor:true,//允许编辑单元格，在jquery-bootstable.js中定义
             modedir:'{mode}:{dir}',storebeforeaction:'salechartbefore',
             columns:[{
                 text:'所属公司',dataIndex:'company'
@@ -40,8 +40,7 @@
                 text:'备注',dataIndex:'remark'
             },{
                 text:'收款日期',dataIndex:'paydate',
-                celleditor:true, //允许编辑单元格，在jquery-bootstable.js中定义，但是不起作用
-                celledittype:'dblclick'
+//                editor:true                  //允许编辑单元格，在mode/bootstrapplugin/jquery-bootstable.js中定义
             }],
             load:function(a){
                 c.loadcharts();
@@ -77,10 +76,10 @@
             },
             loadcharts:function(){
                 if(atype!='down')return;
-/*                if(!myChart){
-                    $('#view_{rand}').after('<div class="blank20"></div><div id="main_show{rand}" style="width:98%;height:500px;"></div>');
-                    myChart = echarts.init(get('main_show{rand}'));
-                }*/
+                /*                if(!myChart){
+                 $('#view_{rand}').after('<div class="blank20"></div><div id="main_show{rand}" style="width:98%;height:500px;"></div>');
+                 myChart = echarts.init(get('main_show{rand}'));
+                 }*/
                 var rows = a.getData('rows'),i,len=rows.length,v;
                 var xAxis=[],data=[];
                 for(i=0;i<len;i++){

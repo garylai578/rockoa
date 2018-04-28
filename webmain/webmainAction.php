@@ -448,7 +448,8 @@ class Action extends mainAction
 		$arr = array('success'=>$success,'msg'=>$msg,'id'=>$id);
 		echo json_encode($arr);
 	}
-	
+
+	//如果允许编辑单元格，编辑后会调用此方法更新到数据库中
 	public function publicsavevalueAjax()
 	{
 		$this->iszclogin();

@@ -1553,10 +1553,11 @@ class flowModel extends Model
                 $costupdates["costprice"] = $this->rock->post('cfields_costprice0_'.$j);//产品成本单价
                 $costupdates["costnum"] = $this->rock->post('cfields_costnum0_'.$j);//产品成本数量
                 $costupdates["costmoney"] = $this->rock->post('cfields_costmoney0_'.$j);//产品成本金额
+                $othercost = m("saleproducts")->getone('id='.$pids[$j],"othercost")['othercost'];
+                $costupdates["totalcost"] = $othercost + $costupdates["costmoney"];
                 m("saleproducts")->update($costupdates, 'id='.$pids[$j]);
             }
         }
-
 
 		$courseact 	= $flowinfor['courseact'];
 		$act 		= $courseact[$zt];

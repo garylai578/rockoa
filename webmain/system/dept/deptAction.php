@@ -115,7 +115,7 @@ class deptClassAction extends Action
 		$userarr 	= $udarr['uarr'];
 		$deptarr 	= $udarr['darr'];
 
-		// 增加自定义组别的显示
+		/*// 增加自定义组别的显示
         $rows = m('flow_cname')->getall("`pid`=0 and `num` is not null",'num,name,checkid,checkname','`sort`');
         $id = 112010; //自定义开始的id，避免和原有的id重复
         foreach($rows as $k=>$rs){
@@ -140,7 +140,7 @@ class deptClassAction extends Action
                 array_push($userarr,$result);   //把人员信息增加到数组里
             }
             $id++;
-        }
+        }*/
 		
 		$arr['deptjson']	= json_encode($deptarr);
 		$arr['userjson']	= json_encode($userarr);

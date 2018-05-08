@@ -9,7 +9,7 @@
             columns:[{
                 text:'所属公司',dataIndex:'company'
             },{
-                text:'录入日期',dataIndex:'applydt'
+                text:'销售日期',dataIndex:'date'
             },{
                 text:'客户',dataIndex:'cusname'
             },{

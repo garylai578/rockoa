@@ -275,7 +275,7 @@ class Action extends mainAction
                     }
 
                     $arr['rows'][$k]['company'] = $rs['company'];
-                    $arr['rows'][$k]['applydt'] = $rs['applydt'];
+                    $arr['rows'][$k]['date'] = $rs['date'];
                     $arr['rows'][$k]['listid'] = $rs['listid'];
                     $arr['rows'][$k]['cusname'] = $rs['cusname'];
                     $arr['rows'][$k]['dept'] = $rs['dept'];

@@ -82,8 +82,11 @@ class modeClassAction extends ActionNot
 		$this->smartydata['pagetitle']		= $pagetitle;
 		$this->assign('stype', $stype);
 		if($stype=='word'){
-			m('file')->fileheader($arr['modename'].'.doc');
+			m('file')->fileheader($arr['modename'].'.doc', "doc");
 		}
+        if($stype=='excel'){
+            m('file')->fileheader($arr['modename'].'.xls', "xls");
+        }
 		$this->smartydata['bordercolor']	= getconfig('bcolorxiang', '#888888');
 		
 		$inputjspath	= P.'/flow/input/inputjs/mode_'.$num.'.js';

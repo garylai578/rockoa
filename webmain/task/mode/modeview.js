@@ -178,6 +178,7 @@ var c={
 		if(lx=='0')c.clickprint(false);
 		if(lx=='6')c.clickprint(true);
 		if(lx=='5')c.daochuword();
+		if(lx=='44')c.daochuexcel();
 		if(lx=='1'){
 			var url='index.php?a=lu&m=input&d=flow&num='+modenum+'&mid='+mid+'';
 			js.location(url);
@@ -196,6 +197,10 @@ var c={
 		var url='task.php?a=p&num='+modenum+'&mid='+mid+'&stype=word';
 		js.location(url);
 	},
+	daochuexcel:function () {
+        var url='task.php?a=p&num='+modenum+'&mid='+mid+'&stype=excel';
+        js.location(url);
+    },
 	hideoth:function(){
 		$('.menulls').hide();
 		$('.menullss').hide();

@@ -743,8 +743,11 @@ js.getparenta=function(o, oi){
 }
 js.ajaxwurbo = false;
 js.ajaxbool = false;
-js.ajax = function(url,da,fun,type,efun, tsar){
+js.ajax = function(url,da,fun,type,efun, tsar,sync){
 	if(js.ajaxbool)return;
+	var issync=true;
+	if(sync!=null)
+		issync=sync;
 	if(!da)da={};if(!type)type='get';if(!tsar)tsar='';tsar=tsar.split(',');
 	if(typeof(fun)!='function')fun=function(){};
 	if(typeof(efun)!='function')efun=function(){};
@@ -753,7 +756,7 @@ js.ajax = function(url,da,fun,type,efun, tsar){
 	js.ajaxbool=true;if(tsar[0])js.msg('wait', tsar[0]);
 	var ajaxcan={
 		type:type,
-		data:da,url:url,
+		data:da,url:url,async:issync,
 		success:function(str){
 			js.ajaxbool=false;
 			try{

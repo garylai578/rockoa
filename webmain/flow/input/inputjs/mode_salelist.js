@@ -42,7 +42,7 @@ function addchengesss(){
 
 function changesubmit(){
     var jg = parseFloat(form('moneys').value);
-    if(jg<=0)return '报销金额不能小于0';
+    if(jg<=0)return '销售金额不能小于0';
 }
 function changesubmitbefore(){
     cchangtongss();

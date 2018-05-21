@@ -1,5 +1,5 @@
 <?php if(!defined('HOST'))die('not access');?>
-<script >
+<!--script-- >
     $(document).ready(function(){
         {params}
         var atype=params.atype,month=js.now('Y-m');
@@ -26,7 +26,10 @@
                 text:'数量',dataIndex:'num'
             },{
                 text:'金额',dataIndex:'money'
-            },{
+            },<?php
+/*                $ids = array('1', '2', '5'); //有权查看成本信息的员工id
+                if(in_array($_SESSION[QOM.'adminid'], $ids)) //只有有权限的人员才能查看成本相关的字段
+                    echo "{
                 text:'成本单价',dataIndex:'costprice'
             },{
                 text:'成本数量',dataIndex:'costnum'
@@ -36,7 +39,9 @@
                 text:'其他成本',dataIndex:'othercost'
             },{
                 text:'总成本',dataIndex:'totalcost'
-            },{
+            },";
+                */?>
+                {
                 text:'备注',dataIndex:'remark'
             },{
                 text:'收款日期',dataIndex:'paydate',
@@ -130,7 +135,74 @@
         js.initbtn(c);
         $('#month_{rand}').val(month);
     });
+</script-->
+<script type="text/javascript" src="webmain/task/mode/modeview.js"></script>
+
+<script>
+    $(document).ready(function(){
+        {params}
+        showdata();
+    });
+
+    function showdata(startdt, enddt, key, key2, status) {
+        var url = js.getajaxurl('getSaleChart','customer','main');
+        var ids = new Array("1","2","5");// todo 有权查看成本信息的员工id，需要从页面中获取
+        var userid="<?php echo $_SESSION[QOM.'adminid'];?>";
+
+        js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, key2:key2, status:status}, function (a){
+            if(!a.length)
+                alert("没有销售数据！");
+            for(j = 0 ,len=a.length; j < len; ++j) {
+                var str = "<tr oi='0' dataid='undefined' style=''>" +
+                    "<td fields='choose;'style='' row='0' cell='0' align='center'><input type='checkbox' id='choose_"+j+"' /></td>" +
+                    "<td align='right' width='40'>"+(j+1)+"</td>" +
+                    "<td style='' row='0' cell='1' align='center' id='company_"+j+"'>"+(a[j].company)+"</td>" +
+                    "<td style='' row='0' cell='2' align='center' id='date_"+j+"'>"+(a[j].date?a[j].date:"")+"</td>" +
+                    "<td style='' row='0' cell='3' align='center' id='custname_"+j+"'>"+a[j].cusname+"</td>" +
+                    "<td style='' row='0' cell='4' align='center' id='dept_"+j+"'>"+a[j].dept+"</td>" +
+                    "<td style='' row='0' cell='5' align='center' id='listid_"+j+"'>"+a[j].listid+"</td>" +
+                    "<td style='' row='0' cell='6' align='center' id='product_"+j+"'>"+a[j].product+"</td>" +
+                    "<td style='' row='0' cell='7' align='center' id='unit_"+j+"'>"+a[j].unit+"</td>" +
+                    "<td style='' row='0' cell='8' align='center' id='price_"+j+"'>"+a[j].price+"</td>" +
+                    "<td style='' row='0' cell='9' align='center' id='num_"+j+"'>"+a[j].num+"</td>" +
+                    "<td style='' row='0' cell='10' align='center' id='money_"+j+"'>"+a[j].money+"</td>";
+                if(contains(ids, userid)){
+                    str += "<td style='' row='0' cell='11' align='center' id='costprice_"+j+"'>"+a[j].costprice+"</td>" +
+                        "<td style='' row='0' cell='12' align='center' id='costnum_"+j+"'>"+a[j].costnum+"</td>" +
+                        "<td style='' row='0' cell='13' align='center' id='costmoney_"+j+"'>"+a[j].costmoney+"</td>" +
+                        "<td style='' row='0' cell='14' align='center' id='othercost_"+j+"'>"+a[j].othercost+"</td>" +
+                        "<td style='' row='0' cell='15' align='center' id='totalcost_"+j+"'>"+a[j].totalcost+"</td>";
+                }
+                str += "<td style='' row='0' cell='16' align='center' id='remark_"+j+"'>"+(a[j].remark?a[j].remark:"")+"</td>" +
+                    "<td style='' row='0' cell='17' align='center' id='paydate_"+j+"'>"+(a[j].paydate?a[j].paydate:"")+"</td>";
+                $("#salechattbody").append(str);
+            }
+        },'get,json'); //不要忘记加最后'get,json'这个参数，否则系统会认为是字符串，而不是json数据。调试这个花了半天时间。
+    }
+
+    function contains(arr, obj) {
+        var i = arr.length;
+        while (i--) {
+            if (arr[i] == obj) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function searchbtn(){
+        var start = document.getElementById('start_{rand}').value;
+        var end = document.getElementById('end_{rand}').value;
+        var key = document.getElementById('key_{rand}').value;
+        var key2= document.getElementById('key2_{rand}').value;
+        var status = document.getElementById('selstatus_{rand}').value;
+        var salechatbody = document.getElementById("salechattbody");
+        salechatbody.remove();
+        $("#salechattable").append("<tbody id='salechattbody'></tbody>");
+        showdata(start, end, key, key2, status);
+    }
 </script>
+
 <div>
     <table width="100%">
         <tr>
@@ -165,7 +237,7 @@
             <td style="padding-left:10px"><select class="form-control" style="width:120px" id="selstatus_{rand}"><option value="">-全部状态-</option><option style="color:green" value="1">已收款</option><option style="color:red" value="2">未收款</option></select></td>
             <td style="padding-left:10px">
                 <div style="width:85px" class="btn-group">
-                    <button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button>
+                    <button class="btn btn-default" onclick="javascript:searchbtn()" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button>
                 </div>
             </td>
             <td  width="90%" style="padding-left:10px">
@@ -181,4 +253,16 @@
 </div>
 <div class="blank10"></div>
 <div id="view_{rand}"></div>
+<div style="position:relative;" id="tablebody_{rand}">
+    <table id="salechattable" class="table table-striped table-bordered table-hover" style="margin:0px">
+        <thead><tr><th nowrap=""><div lfields="choose" align="center">选择</div></th><th nowrap=""><div lfields="index" align="center">序号</div></th><th nowrap=""><div lfields="company" align="center">所属公司</div></th><th nowrap=""><div lfields="date" align="center">销售日期</div></th><th nowrap=""><div lfields="cusname" align="center">客户</div></th><th nowrap=""><div lfields="dept" align="center">部门</div></th><th nowrap=""><div lfields="listid" align="center">单号</div></th><th nowrap=""><div lfields="product" align="center">产品名称</div></th><th nowrap=""><div lfields="unit" align="center">单位</div></th><th nowrap=""><div lfields="price" align="center">单价</div></th><th nowrap=""><div lfields="num" align="center">数量</div></th><th nowrap=""><div lfields="money" align="center">金额</div></th>
+            <?php
+            $ids = array('1', '2', '5'); //todo 有权查看成本信息的员工id，需要从页面中获取
+            $userid = $_SESSION[QOM.'adminid'];
+            if(in_array($userid, $ids))
+             echo "<th nowrap=''><div lfields='costprice' align='center'>成本单价</div></th><th nowrap=''><div lfields='costnum' align='center'>成本数量</div></th><th nowrap=''><div lfields='costmoney' align='center'>成本金额</div></th><th nowrap=''><div lfields='othercost' align='center'>其他成本</div></th><th nowrap=''><div lfields='totalcost' align='center'>总成本</div></th>";
+            ?>
+            <th nowrap=""><div lfields="remark" align="center">备注</div></th><th nowrap=""><div lfields="paydate" align="center">收款日期</div></th></tr></thead>
+        <tbody id="salechattbody"></tbody>
+    </table></div>
 <!--div class="tishi">系统是以收付款单上是所属日期算对应月份统计的，当月已收金额是收款时间是当月的统计。</div-->

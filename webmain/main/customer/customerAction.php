@@ -132,6 +132,7 @@ class customerClassAction extends Action
 	//销售报表在加载前执行的动作
     public function salechartbefore($table)
     {
+        $ids = array('1', '2', '5'); //有权查看成本信息的员工id
         $where = '';
         $uid = $this->adminid;
         $lx	= $this->post('atype');
@@ -151,15 +152,94 @@ class customerClassAction extends Action
         if($key!=''){
             $where .= 'and `product` like "%'.$key.'%"';    //调用adminModel.php中的getkeywhere()方法
         }
+        if(in_array($uid, $ids))
+            $fileds = 'mid,product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost';
+        else
+            $fileds = 'mid,product,unit,num,price,money,remark';
         return array(
 //            'fields'=> 'company,date,cusname,dept,paydate',
-            'fields'=> 'mid,product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost',
+            'fields'=> $fileds,
             'where'	=> $where,
             'key2' => $key2,
             'startdt' => $start,
             'enddt' => $end,
             'status' => $status,
         );
+    }
+
+    //销售报表在加载前执行的动作
+    public function getSaleChartAjax()
+    {
+        $rows="";
+        $ids = array('1', '2', '5'); //todo 有权查看成本信息的员工id，需要从页面中获取
+        $saleWhere = '';
+        $saleFields = 'id, company, cusname, dept, date, listid, paydate, applydt';
+        $productFields = 'product,unit,num,price,money,remark';
+        $uid = $this->get('userid');
+/*        $start = $this->get('startdt', date('Y-01'));
+        $end = $this->get('enddt', date('Y-m'));*/
+                $start = $this->get('startdt');
+                $end = $this->get('enddt');
+        $key = $this->get('key');
+        $key2 = $this->get('key2');
+        $status = $this->get('status');
+
+        if(in_array($uid, $ids)) {
+            $productFields = 'product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost';
+        }
+
+        if($key2 != ''){
+            $saleWhere = '(`cusname` like "%'.$key2.'%" or `company` like "%'.$key2.'%") ';
+        }
+        if($status == 1) {        //已收款
+            if($key2 != '')
+                $saleWhere .= " and ";
+            $saleWhere .= ' `paydate` is not null ';
+        }
+        elseif($status == 2) {
+            if($key2 != '')
+                $saleWhere .= " and ";
+            $saleWhere .= ' `paydate` is null ';
+        }
+
+        $rs = m("salelist")->getrows($saleWhere, $saleFields, " `date` desc");
+        //根据输入的日期筛选，删除不符合条件的数据
+        foreach ($rs as $k=>$v) {
+            if ($v) {
+                if (isset($start) && $start != "") {
+                    $start .= "-01";
+                    if ($v['applydt'] < $start) {
+                        unset($rs[$k]);
+                        continue;
+                    } else {
+                        if (isset($end) && $end != "") {
+                            $end .= "-31";
+                            if ($v['applydt'] > $end) {
+                                unset($rs[$k]);
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //获取该销售单的产品列表
+        foreach ($rs as $k=>$v) {
+            if ($v) {
+                $productWhere = '';
+                $mid = $v['id'];
+                $productWhere .= '`mid`='.$mid.' ';
+                if($key!=''){
+                    $productWhere .= ' and `product` like "%'.$key.'%" ';
+                }
+                $products = m("saleproducts")->getrows($productWhere, $productFields);
+                foreach ($products as $kk=>$vv) {
+                    $rows[] = array_merge($rs[$k], $products[$kk]);
+                }
+            }
+        }
+
+        echo json_encode($rows);
     }
 }
 

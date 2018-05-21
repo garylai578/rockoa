@@ -746,8 +746,10 @@ js.ajaxbool = false;
 js.ajax = function(url,da,fun,type,efun, tsar,sync){
 	if(js.ajaxbool)return;
 	var issync=true;
-	if(sync!=null)
-		issync=sync;
+	if(typeof(sync)!="undefined") {
+     	if(sync == true || syn == false)
+        issync = sync;
+    }
 	if(!da)da={};if(!type)type='get';if(!tsar)tsar='';tsar=tsar.split(',');
 	if(typeof(fun)!='function')fun=function(){};
 	if(typeof(efun)!='function')efun=function(){};

@@ -15,7 +15,13 @@ class crmClassModel extends Model
 		return $rows;
 	}
 	
-	
+	//读取所有的公司名称和id
+    public function getCompany($id=0){
+	    $where = '`id`='.$id;
+	    if(isempt($id)) $where = '';
+	    $rows = m('company')->getrows($where, 'id as value, name, id', '`name`');
+	    return $rows;
+    }
 	
 	//读取我的销售机会
 	public function getmysale($uid, $id=0)

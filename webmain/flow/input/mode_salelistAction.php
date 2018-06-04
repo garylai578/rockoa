@@ -39,5 +39,14 @@ class mode_salelistClassAction extends inputAction{
         $rows = m('crm')->getmycust($this->adminid, $this->rock->arrvalue($this->rs, 'custid'));
         return $rows;
     }
+
+    //公司名称的数据来源
+    public function selectcompany()
+    {
+        $rows = m('crm')->getCompany($this->rock->arrvalue($this->rs, 'companyid'));
+        return $rows;
+    }
+
+
 }	
 			

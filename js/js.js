@@ -747,7 +747,7 @@ js.ajax = function(url,da,fun,type,efun, tsar,sync){
 	if(js.ajaxbool)return;
 	var issync=true;
 	if(typeof(sync)!="undefined") {
-     	if(sync == true || syn == false)
+     	if(sync == true || sync == false)
         issync = sync;
     }
 	if(!da)da={};if(!type)type='get';if(!tsar)tsar='';tsar=tsar.split(',');

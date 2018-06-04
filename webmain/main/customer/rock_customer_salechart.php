@@ -139,6 +139,7 @@
 <script type="text/javascript" src="webmain/task/mode/modeview.js"></script>
 
 <script>
+    var num = 0;
     $(document).ready(function(){
         {params}
         showdata();
@@ -152,8 +153,8 @@
         js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, key2:key2, status:status}, function (a){
             if(!a.length)
                 alert("没有销售数据！");
-            for(j = 0 ,len=a.length; j < len; ++j) {
-                var str = "<tr oi='0' dataid='undefined' style=''>" +
+            for(j = 0 ,num=a.length; j < num; ++j) {
+                var str = "<tr oi='0' dataid='undefined' style=''>" + "<input type='hidden' id='pid_"+j+"' value='"+(a[j].id)+"'>" +
                     "<td fields='choose;'style='' row='0' cell='0' align='center'><input type='checkbox' id='choose_"+j+"' /></td>" +
                     "<td align='right' width='40'>"+(j+1)+"</td>" +
                     "<td style='' row='0' cell='1' align='center' id='company_"+j+"'>"+(a[j].company)+"</td>" +
@@ -167,11 +168,11 @@
                     "<td style='' row='0' cell='9' align='center' id='num_"+j+"'>"+a[j].num+"</td>" +
                     "<td style='' row='0' cell='10' align='center' id='money_"+j+"'>"+a[j].money+"</td>";
                 if(contains(ids, userid)){
-                    str += "<td style='' row='0' cell='11' align='center' id='costprice_"+j+"'>"+a[j].costprice+"</td>" +
-                        "<td style='' row='0' cell='12' align='center' id='costnum_"+j+"'>"+a[j].costnum+"</td>" +
-                        "<td style='' row='0' cell='13' align='center' id='costmoney_"+j+"'>"+a[j].costmoney+"</td>" +
+                    str += "<td style='' row='0' cell='11' align='center' id='costprice_"+j+"'>"+(a[j].costprice?a[j].costprice:"")+"</td>" +
+                        "<td style='' row='0' cell='12' align='center' id='costnum_"+j+"'>"+(a[j].costnum?a[j].costnum:"")+"</td>" +
+                        "<td style='' row='0' cell='13' align='center' id='costmoney_"+j+"'>"+(a[j].costmoney?a[j].costmoney:"")+"</td>" +
                         "<td style='' row='0' cell='14' align='center' id='othercost_"+j+"'>"+a[j].othercost+"</td>" +
-                        "<td style='' row='0' cell='15' align='center' id='totalcost_"+j+"'>"+a[j].totalcost+"</td>";
+                        "<td style='' row='0' cell='15' align='center' id='totalcost_"+j+"'>"+(a[j].totalcost?a[j].totalcost:"")+"</td>";
                 }
                 str += "<td style='' row='0' cell='16' align='center' id='remark_"+j+"'>"+(a[j].remark?a[j].remark:"")+"</td>" +
                     "<td style='' row='0' cell='17' align='center' id='paydate_"+j+"'>"+(a[j].paydate?a[j].paydate:"")+"</td>";
@@ -200,6 +201,52 @@
         salechatbody.remove();
         $("#salechattable").append("<tbody id='salechattbody'></tbody>");
         showdata(start, end, key, key2, status);
+    }
+
+    function chooseAll(){
+        var selAll = document.getElementById("chooseAll").checked;
+        if(selAll){
+            for(var j = 0; j < num; ++j){
+                document.getElementById('choose_'+j).checked = true;
+            }
+        }else{
+            for(var j = 0; j < num; ++j){
+                document.getElementById('choose_'+j).checked = false;
+            }
+        }
+    }
+    
+    function createCheckbill() {
+        var selected="";
+        var company = "";
+        var custname = "";
+        for(var j = 0; j < num; ++j){
+            if(document.getElementById('choose_'+j).checked){
+                var selCompany = document.getElementById('company_'+j).textContent;
+                var selCustName =  document.getElementById('custname_'+j).textContent;
+                if(company==""){
+                    company = selCompany;
+                    custname = selCustName;
+                }else if(company != selCompany || custname != selCustName){
+                    alert("所选的产品属于不同的客户或者属于不同的公司，请重新选择！");
+                    return;
+                }
+                selected = selected + "" + document.getElementById('pid_'+j).value + ",";
+            }
+        }
+        if(selected.length<=0) {
+            alert("请先选择产品！");
+            return;
+        }
+        selected = selected.substring(0, selected.length-1);
+        var url = js.getajaxurl('createCheckbill','customer','main');
+        js.ajax(url, {selected:selected}, function (a){
+            if(a.success==1){
+                alert("已经生成对账单，请在对账单报表中查看！");
+            }else{
+                alert("生成对账单失败，请重新尝试或者联系管理员！");
+            }
+        },'get,json');
     }
 </script>
 
@@ -244,8 +291,7 @@
 
             </td>
             <td align="right" nowrap>
-                <button class="btn btn-default" id="xiang_{rand}" click="view" disabled type="button">详情</button> &nbsp;
-                <button class="btn btn-default" click="daochu,1" type="button">导出</button>
+                <button class="btn btn-default" onclick="javascript:createCheckbill()" type="button">生成对账单</button>
             </td>
         </tr>
     </table>
@@ -255,7 +301,7 @@
 <div id="view_{rand}"></div>
 <div style="position:relative;" id="tablebody_{rand}">
     <table id="salechattable" class="table table-striped table-bordered table-hover" style="margin:0px">
-        <thead><tr><th nowrap=""><div lfields="choose" align="center">选择</div></th><th nowrap=""><div lfields="index" align="center">序号</div></th><th nowrap=""><div lfields="company" align="center">所属公司</div></th><th nowrap=""><div lfields="date" align="center">销售日期</div></th><th nowrap=""><div lfields="cusname" align="center">客户</div></th><th nowrap=""><div lfields="dept" align="center">部门</div></th><th nowrap=""><div lfields="listid" align="center">单号</div></th><th nowrap=""><div lfields="product" align="center">产品名称</div></th><th nowrap=""><div lfields="unit" align="center">单位</div></th><th nowrap=""><div lfields="price" align="center">单价</div></th><th nowrap=""><div lfields="num" align="center">数量</div></th><th nowrap=""><div lfields="money" align="center">金额</div></th>
+        <thead><tr><th nowrap=""><div lfields="choose" align="center"><input type='checkbox' id='chooseAll' onclick="javascript:chooseAll()"/>&nbsp;全选</div></th><th nowrap=""><div lfields="index" align="center">序号</div></th><th nowrap=""><div lfields="company" align="center">所属公司</div></th><th nowrap=""><div lfields="date" align="center">销售日期</div></th><th nowrap=""><div lfields="cusname" align="center">客户</div></th><th nowrap=""><div lfields="dept" align="center">部门</div></th><th nowrap=""><div lfields="listid" align="center">单号</div></th><th nowrap=""><div lfields="product" align="center">产品名称</div></th><th nowrap=""><div lfields="unit" align="center">单位</div></th><th nowrap=""><div lfields="price" align="center">单价</div></th><th nowrap=""><div lfields="num" align="center">数量</div></th><th nowrap=""><div lfields="money" align="center">金额</div></th>
             <?php
             $ids = array('1', '2', '5'); //todo 有权查看成本信息的员工id，需要从页面中获取
             $userid = $_SESSION[QOM.'adminid'];

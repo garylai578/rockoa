@@ -167,25 +167,23 @@ class customerClassAction extends Action
         );
     }
 
-    //销售报表在加载前执行的动作
+    //获取销售数据，用于销售报表菜单
     public function getSaleChartAjax()
     {
         $rows="";
         $ids = array('1', '2', '5'); //todo 有权查看成本信息的员工id，需要从页面中获取
         $saleWhere = '';
         $saleFields = 'id, company, cusname, dept, date, listid, paydate, applydt';
-        $productFields = 'product,unit,num,price,money,remark';
+        $productFields = 'id, product,unit,num,price,money,remark';
         $uid = $this->get('userid');
-/*        $start = $this->get('startdt', date('Y-01'));
-        $end = $this->get('enddt', date('Y-m'));*/
-                $start = $this->get('startdt');
-                $end = $this->get('enddt');
+        $start = $this->get('startdt');
+        $end = $this->get('enddt');
         $key = $this->get('key');
         $key2 = $this->get('key2');
         $status = $this->get('status');
 
         if(in_array($uid, $ids)) {
-            $productFields = 'product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost';
+            $productFields = 'id, product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost';
         }
 
         if($key2 != ''){
@@ -240,6 +238,82 @@ class customerClassAction extends Action
         }
 
         echo json_encode($rows);
+    }
+
+    /**
+     * 生成对账单
+     */
+    public function createCheckbillAjax() {
+        $pid = $this->get('selected');
+
+        $rs = array('success'=>"0");
+        if(!$pid||$pid=="") {
+            echo json_encode($rs);
+        }else{
+            $pids = explode(',',$pid);
+            $totalmoney = 0;
+            $startdate = '3000-01-01';
+            $enddate = '1900-01-01';
+            $date = date("Y-m-d");
+            $cusname="";
+            $companey="";
+            foreach($pids as $id){
+                $products = m("saleproducts")->getone("`id`=".$id, "mid, money");
+                $totalmoney += $products['money'];
+                $salelist = m("salelist")->getone("`id`=".$products['mid'], "cusname, company, date, companyid");
+                $cusname = $salelist['cusname'];
+                $companey = $salelist['company'];
+                if($salelist['date'] < $startdate)
+                    $startdate = $salelist['date'];
+                if($salelist['date'] > $enddate)
+                    $enddate = $salelist['date'];
+            }
+
+            $item['pids'] = $pid;
+            $item['custname'] = $cusname;
+            $item['company'] = $companey;
+            $item['moneys'] = $totalmoney;
+            $item['duration']=$startdate ." 至 ". $enddate;
+            $item['createdate'] = $date;
+            $item['companyid'] = $salelist['companyid'];
+            $result = m("checkbill")->insert($item);
+            if($result)
+                $rs['success']="1";
+        }
+        echo json_encode($rs);
+    }
+
+    /**
+     * 获取对账单的详细页面信息
+     */
+    public function getCheckbillDetailAjax(){
+        $rs = array();
+        $id = $this->get('mid');
+        $checkbill = m("checkbill")->getone("`id`=".$id, "pids, custname, company, moneys, companyid");
+        if($checkbill){
+            $rs['custname'] = $checkbill['custname'];
+            $rs['company'] = $checkbill['company'];
+            $rs['moneys'] = $checkbill['moneys'];
+            $pids = explode(',', $checkbill['pids']);
+            $rs['lengths'] = sizeof($pids);
+
+            $company = m("company")->getone('`id`='.$checkbill['companyid'], "bank, account, accountNum");
+            if($company) {
+                $rs['bank'] = $company['bank'];
+                $rs['account'] = $company['account'];
+                $rs['accountNum'] = $company['accountNum'];
+            }
+            for ($j = 0; $j < sizeof($pids); ++$j) {
+                $saleProducts = m("saleproducts")->getone('`id`=' . $pids[$j], "product, unit, num, price, money");
+                $rs['product_' . $j] = $saleProducts['product'];
+                $rs['unit_' . $j] = $saleProducts['unit'];
+                $rs['num_' . $j] = $saleProducts['num'];
+                $rs['price_' . $j] = $saleProducts['price'];
+                $rs['money_' . $j] = $saleProducts['money'];
+            }
+        }
+
+        echo json_encode($rs);
     }
 }
 

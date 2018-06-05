@@ -171,7 +171,6 @@ class customerClassAction extends Action
     public function getSaleChartAjax()
     {
         $rows="";
-        $ids = array('1', '2', '5'); //todo 有权查看成本信息的员工id，需要从页面中获取
         $saleWhere = '';
         $saleFields = 'id, company, cusname, dept, date, listid, paydate, applydt';
         $productFields = 'id, product,unit,num,price,money,remark';
@@ -181,6 +180,14 @@ class customerClassAction extends Action
         $key = $this->get('key');
         $key2 = $this->get('key2');
         $status = $this->get('status');
+
+        $mid = 1; // 该菜单的id，这里是1。菜单名和id都是手工添加的！！！
+        $rs = m('sjoin')->getrows('mid='.$mid.' and type="other"', 'sid');
+        $ids = array();
+        foreach($rs as $k=>$v){
+            array_push($ids, $v['sid']);
+        }
+        $rows['ids'] = $ids;
 
         if(in_array($uid, $ids)) {
             $productFields = 'id, product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost';
@@ -222,6 +229,7 @@ class customerClassAction extends Action
             }
         }
         //获取该销售单的产品列表
+        $length = 0;
         foreach ($rs as $k=>$v) {
             if ($v) {
                 $productWhere = '';
@@ -231,12 +239,14 @@ class customerClassAction extends Action
                     $productWhere .= ' and `product` like "%'.$key.'%" ';
                 }
                 $products = m("saleproducts")->getrows($productWhere, $productFields);
+                $length += sizeof($products);
                 foreach ($products as $kk=>$vv) {
                     $rows[] = array_merge($rs[$k], $products[$kk]);
                 }
             }
         }
 
+        $rows['length'] = $length;
         echo json_encode($rows);
     }
 

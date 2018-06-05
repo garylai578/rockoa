@@ -40,6 +40,9 @@ class extentClassAction extends Action
 			case 'mg';
 				$ntable = ''.PREFIX.'group';
 			break;
+            case 'other':
+                $ntable = ''.PREFIX.'admin';
+                break;
 		}
 		if($ntable != ''){
 			$this->db->insert($this->T('sjoin'),'`type`,`mid`,`sid`,`indate`',"select '$type','$mid',`id`,'$this->now' from `$ntable` where `id` in($checkaid)",true);

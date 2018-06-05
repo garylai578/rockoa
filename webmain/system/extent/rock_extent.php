@@ -31,7 +31,7 @@ $(document).ready(function(){
 			text:'ID',dataIndex:'id'
 		}]
 	};
-	
+
 	var gcans = {
 		tablename:'group',sort:'sort',dir:'asc',title:'组',
 		columns:[{
@@ -42,6 +42,19 @@ $(document).ready(function(){
 			text:'ID',dataIndex:'id',sortable:true
 		}]
 	};
+
+    var ocans = {
+        tablename:'menu',selectcls:'info',
+        url:js.getajaxurl('otherAuthority','menu','system',{'type':type}),
+        tree:true,title:'菜单',bodyStyle:'height:'+(viewheight-135)+'px;overflow:auto',
+        columns:[{
+            text:'权限名称',dataIndex:'name',align:'left'
+        },{
+            text:'编号',dataIndex:'num'
+        },{
+            text:'ID',dataIndex:'id'
+        }]
+    };
 	
 	var viewcan1,viewcan2;
 	
@@ -63,12 +76,13 @@ $(document).ready(function(){
 		viewcan1 = mcans;
 		viewcan2 = gcans;
 	}
-
-	
-	
 	if(type=='view'){
 		$('#viessban_{rand}').html('人员菜单权限有如下得来：1、根据[人员→菜单,菜单→人员]；2、如所在的组有权限，组下人员也有权限；3、在[菜单管理]没有开启验证的菜单任何人是都有权限。');
 	}
+    if(type=='other'){
+        viewcan1 = ocans;
+        viewcan2 = ucans;
+    }
 	
 	var bool = false,changeid=0;
 	

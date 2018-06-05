@@ -147,13 +147,14 @@
 
     function showdata(startdt, enddt, key, key2, status) {
         var url = js.getajaxurl('getSaleChart','customer','main');
-        var ids = new Array("1","2","5");// todo 有权查看成本信息的员工id，需要从页面中获取
+
         var userid="<?php echo $_SESSION[QOM.'adminid'];?>";
 
         js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, key2:key2, status:status}, function (a){
             if(!a.length)
                 alert("没有销售数据！");
             for(j = 0 ,num=a.length; j < num; ++j) {
+                var ids = a.ids;
                 var str = "<tr oi='0' dataid='undefined' style=''>" + "<input type='hidden' id='pid_"+j+"' value='"+(a[j].id)+"'>" +
                     "<td fields='choose;'style='' row='0' cell='0' align='center'><input type='checkbox' id='choose_"+j+"' /></td>" +
                     "<td align='right' width='40'>"+(j+1)+"</td>" +
@@ -303,7 +304,12 @@
     <table id="salechattable" class="table table-striped table-bordered table-hover" style="margin:0px">
         <thead><tr><th nowrap=""><div lfields="choose" align="center"><input type='checkbox' id='chooseAll' onclick="javascript:chooseAll()"/>&nbsp;全选</div></th><th nowrap=""><div lfields="index" align="center">序号</div></th><th nowrap=""><div lfields="company" align="center">所属公司</div></th><th nowrap=""><div lfields="date" align="center">销售日期</div></th><th nowrap=""><div lfields="cusname" align="center">客户</div></th><th nowrap=""><div lfields="dept" align="center">部门</div></th><th nowrap=""><div lfields="listid" align="center">单号</div></th><th nowrap=""><div lfields="product" align="center">产品名称</div></th><th nowrap=""><div lfields="unit" align="center">单位</div></th><th nowrap=""><div lfields="price" align="center">单价</div></th><th nowrap=""><div lfields="num" align="center">数量</div></th><th nowrap=""><div lfields="money" align="center">金额</div></th>
             <?php
-            $ids = array('1', '2', '5'); //todo 有权查看成本信息的员工id，需要从页面中获取
+            $mid = 1; // 该菜单的id，这里是1。菜单名和id都是手工添加的！！！
+            $rs = m('sjoin')->getrows('mid='.$mid.' and type="other"', 'sid');
+            $ids = array();
+            foreach($rs as $k=>$v){
+                array_push($ids, $v['sid']);
+            }
             $userid = $_SESSION[QOM.'adminid'];
             if(in_array($userid, $ids))
              echo "<th nowrap=''><div lfields='costprice' align='center'>成本单价</div></th><th nowrap=''><div lfields='costnum' align='center'>成本数量</div></th><th nowrap=''><div lfields='costmoney' align='center'>成本金额</div></th><th nowrap=''><div lfields='othercost' align='center'>其他成本</div></th><th nowrap=''><div lfields='totalcost' align='center'>总成本</div></th>";

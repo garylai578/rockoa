@@ -41,4 +41,13 @@ class menuClassAction extends Action
 		foreach($rows as $k=>$rs)$sid.=','.$rs['pid'].'';
 		if($sid!='')m('menu')->update('`ispir`=1', "`id` in($sid)");
 	}
+
+	public function otherAuthorityAjax(){
+        $rows = $this->db->getall('select * from `[Q]oauthority`');
+        echo json_encode(array(
+            'totalCount'=> 0,
+            'rows'		=> $rows
+        ));
+    }
+
 }

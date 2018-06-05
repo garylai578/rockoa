@@ -3,6 +3,6 @@ function initbodys(){
 	
 }
 function changesubmit(){
-	var jg = parseFloat(form('money').value);
-	if(jg<=0)return '开票金额不能小于0';
+/*	var jg = parseFloat(form('money').value);
+	if(jg<=0)return '开票金额不能小于0';*/
 }

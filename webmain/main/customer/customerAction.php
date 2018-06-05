@@ -314,12 +314,16 @@ class customerClassAction extends Action
                 $rs['accountNum'] = $company['accountNum'];
             }
             for ($j = 0; $j < sizeof($pids); ++$j) {
-                $saleProducts = m("saleproducts")->getone('`id`=' . $pids[$j], "product, unit, num, price, money");
+                $saleProducts = m("saleproducts")->getone('`id`=' . $pids[$j], "mid, product, unit, num, price, money");
                 $rs['product_' . $j] = $saleProducts['product'];
                 $rs['unit_' . $j] = $saleProducts['unit'];
                 $rs['num_' . $j] = $saleProducts['num'];
                 $rs['price_' . $j] = $saleProducts['price'];
                 $rs['money_' . $j] = $saleProducts['money'];
+
+                $salelist = m('salelist')->getone("`id`=".$saleProducts['mid'], "date, dept");
+                $rs['date_'.$j] = $salelist['date'];
+                $rs['dept_'.$j] = $salelist['dept'];
             }
         }
 

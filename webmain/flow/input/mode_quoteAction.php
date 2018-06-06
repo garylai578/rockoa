@@ -27,7 +27,7 @@ class mode_quoteClassAction extends inputAction{
 		
 	}
 
-	public function selectReceiver(){
+	/*public function selectReceiver(){
         $custid =  $this->rock->arrvalue($this->rs, 'custid');
 	    $receiver = m('quote')->getone("`custid`=".$custid, "receiver");
         $row = m('customer')->getone("`id`=".$custid, "linkname, linkname2, linkname3");
@@ -63,13 +63,14 @@ class mode_quoteClassAction extends inputAction{
             }
         }
         return $arr;
-    }
+    }*/
 
     //客户名称的数据来源
     public function selectcust(){
         $rows = m('crm')->getmycust($this->adminid, $this->rock->arrvalue($this->rs, 'custid'));
         return $rows;
     }
+
 
     //所属公司的数据来源
     public function selectCompany(){
@@ -78,27 +79,28 @@ class mode_quoteClassAction extends inputAction{
         return $rows;
     }
 
-    //选择发件人
+/*    //选择发件人
     public function selectfromAjax(){
         $companyid =  (int)$this->get('companyid');
         $row = m('company')->getone("`id`=".$companyid, "contacts1, tel1, contacts2, tel2, contacts3,tel3");
         $this->returnjson($row);
-    }
+    }*/
 
-    //选择收件人
+/*    //选择收件人
     public function selecttoAjax(){
         $custid =  (int)$this->get('custid');
-        $row = m('customer')->getone("`id`=".$custid, "linkname, tel, linkname2, tel2, linkname3,tel3");
-        $this->returnjson($row);
-    }
+        $rows = m('custdept')->getall("`mid`=".$custid, "contact, tel");
+        $this->returnjson($rows);
+    }*/
 
     //选择发件人和收件人
     public function selectCAjax(){
         $companyid =  (int)$this->get('companyid');
         $custid =  (int)$this->get('customerid');
         $row1 = m('company')->getone("`id`=".$companyid, "contacts1, tel1, contacts2, tel2, contacts3,tel3");
-        $row2 = m('customer')->getone("`id`=".$custid, "linkname, tel as link1, linkname2, tel2 as link2, linkname3,tel3 as link3");
-        $this->returnjson(array_merge($row1, $row2));
+        $custLinks = m('custdept')->getall("`mid`=".$custid, "contact, tel");
+        $custnums = array("custnums"=>sizeof($custLinks));
+        $this->returnjson(array_merge($row1, $custnums, $custLinks));
     }
 }	
 			

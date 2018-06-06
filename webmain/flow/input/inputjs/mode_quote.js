@@ -160,21 +160,13 @@ function setFromOptions(a){
  */
 function setToOPtions(a) {
     form('receiver').options.length=1;
-    newopt = document.createElement("option");
-    newopt.value =newopt.text = a.linkname;
-    To[0] = a.link1;
-    form('receiver').options.add(newopt, 1);
-
-    newopt2 = document.createElement("option");
-    newopt2.value = newopt2.text = a.linkname2;
-    To[1] = a.link2;
-    form('receiver').options.add(newopt2, 2);
-
-    newopt3 = document.createElement("option");
-    newopt3.value =  newopt3.text = a.linkname3;
-    To[2] = a.link3;
-    form('receiver').options.add(newopt3, 3);
-
+    len = a.custnums;
+    for(j=0; j<len; ++j) {
+        newopt = document.createElement("option");
+        newopt.value = newopt.text = a[j].contact;
+        To[j] = a[j].tel;
+        form('receiver').options.add(newopt, 1);
+    }
 }
 
 function selectContacts(){

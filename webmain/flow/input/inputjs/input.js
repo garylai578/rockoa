@@ -148,7 +148,7 @@ var c={
 		$.selectdata({
 			data:this.selectdatadata[fid],title:tit,
 			fid:fid,
-			url:geturlact('getselectdata',{'act':a1[0],'acttyle':acttyle,'sysmodenum':moders.num}),
+			url:geturlact('getselectdata',{'act':a1[0],'acttyle':acttyle,'sysmodenum':moders.num,param:idobj.value}),
 			checked:ced, nameobj:form(fid),idobj:idobj,
 			onloaddata:function(a){
 				c.selectdatadata[fid]=a;

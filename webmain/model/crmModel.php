@@ -22,6 +22,14 @@ class crmClassModel extends Model
 	    $rows = m('company')->getrows($where, 'id as value, name, id', '`name`');
 	    return $rows;
     }
+
+    public function getDept($custId)
+    {
+        if(isempt($custId)) return null;
+        $where = '`mid`='.$custId;
+        $rows = m('custdept')->getrows($where, 'id as value, deptname as name,id', '`deptname`');
+        return $rows;
+    }
 	
 	//读取我的销售机会
 	public function getmysale($uid, $id=0)

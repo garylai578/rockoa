@@ -174,10 +174,20 @@ function optmenuclass(o1,num,id,obj,mname,oi, cola){
 			openxiang(this.modenum,this.mid, this.callbackstr);
 		}
 	};
+	//自定义页面触发的函数
+	this.seldef=function(name){
+		var num=this.modenum,id = this.mid, cbal=this.callbackstr;
+        if(!id)id=0;
+        if(!cbal)cbal='';
+        var url = 'task.php?a=self&num='+num+'&mid='+id+'';
+        if(num.indexOf('?')>-1){url=num+'&callback='+cbal+'';}else{url+='&callback='+cbal+'';}
+        js.winiframe(name,url);
+        return false;
+	};
 	this.openedit=function(){
 		openinput(this.modename,this.modenum,this.mid, this.callbackstr);
 	};
-	this.showmenuclick=function(d){
+	this.showmenuclick=function(d){		// 菜单单击后的操作在这里定义！
 		d.num=this.modenum;d.mid=this.id;
 		d.modenum = this.modenum;
 		var lx = d.lx;if(!lx)lx=0;
@@ -216,6 +226,13 @@ function optmenuclass(o1,num,id,obj,mname,oi, cola){
 			openinput('提醒设置','remind',''+d.djmid+'&def_modenum='+this.modenum+'&def_mid='+this.mid+'&def_explain=basejm_'+jm.base64encode(d.smcont)+'', this.callbackstr);
 			return;
 		}
+		//自定义的页面
+		if(lx==44) {
+/*			url = d.optnum + "?mid="+d.mid+'&menuid='+d.optmenuid; //自定义的页面地址
+			 js.open(url, 800,500);
+			 return;*/
+            this.seldef(d.name);return;
+        }
 		if(lx==4){
 			js.prompt(d.name, '说明('+bts+')：', function(index, text){
 				if(index=='yes'){

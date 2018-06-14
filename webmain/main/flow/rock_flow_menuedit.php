@@ -51,7 +51,7 @@ $(document).ready(function(){
 		
 		<tr>
 			<td  align="right" >编号：</td>
-			<td class="tdinput"><input name="num" maxlength="20" onblur="this.value=strreplace(this.value)" class="form-control"></td>
+			<td class="tdinput"><input name="num" maxlength="150" onblur="this.value=strreplace(this.value)" class="form-control"></td>
 			
 			
 			
@@ -60,7 +60,7 @@ $(document).ready(function(){
 		<tr>
 			
 			<td  align="right" >类型：</td>
-			<td class="tdinput"><select name="type" class="form-control"><option value="1">弹出填写说明</option><option value="0">直接操作</option><option value="2">人员选择(单人)</option><option value="3">人员选择(多人)</option><option value="4">更新字段</option></select></td>
+			<td class="tdinput"><select name="type" class="form-control"><option value="1">弹出填写说明</option><option value="0">直接操作</option><option value="2">人员选择(单人)</option><option value="3">人员选择(多人)</option><option value="4">更新字段</option><option value="44">自定义页面</option></select></td><!-- 在webmain\index\indexpublic.js中showmenuclick()定义具体操作 -->
 			<td  align="right" >字段名称：</td>
 			<td class="tdinput"><input name="fields" class="form-control"></td>
 		</tr>

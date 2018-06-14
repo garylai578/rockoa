@@ -1,0 +1,108 @@
+<script type="text/javascript" src="webmain/flow/input/inputjs/mode_rent.js"></script>
+
+<script type="text/javascript">
+    window.onload = function() {
+        var detail = getRentDetail(mid);
+        document.getElementById("lastnum").textContent = detail.lastnum;
+        document.getElementById("lastnumc").textContent = detail.lastnumc;
+        document.getElementById("lastdt").textContent = detail.lastdt;
+    }
+</script>
+
+<div class="ptitle">抄表通知</div>
+<table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%"  id="excelContant">
+    <tbody>
+    <tr>
+        <td>公司名称：</td>
+        <td class="underline" >{custname}</td>
+        <td align="right" >所属业务：<br/></td>
+        <td class="underline">{belong}</td>
+    </tr>
+    <tr>
+        <td >下属部门：</td>
+        <td class="underline">{dept}</u></td>
+        <td align="right" >所属维修：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/></td>
+    </tr>
+    <tr>
+        <td >联系人员：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/></td>
+        <td align="right" >操作人员：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/></td>
+    </tr>
+    <tr>
+        <td >联系电话：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/></td>
+        <td align="right" >工作日期：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/></td>
+    </tr>
+
+    <tr ><td height="50px" colspan=6><hr height="50px"/></td></tr>
+
+    <tr>
+        <td >机器品牌：<br/></td>
+        <td class="underline">{brand}</u><br/></td>
+        <td align="right" >合约基本租金：<br/></td>
+        <td align="left" class="underline">{rental}<br/></td>
+        <td align="right" >本次抄表数(黑)：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/></td>
+    </tr>
+
+    <tr>
+        <td >机器型号：<br/></td>
+        <td class="underline">{model}<br/></td>
+        <td align="right" >超数单价(黑)：<br/></td>
+        <td class="underline">{priceb}<br/></td>
+        <td align="right" >本次实用数(黑)：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/></td>
+    </tr>
+
+    <tr>
+        <td >机身号码：<br/></td>
+        <td class="underline">{series}<br/></td>
+        <td align="right" >超数单价(彩)：<br/></td>
+        <td class="underline">{pricec}<br/></td>
+        <td align="right" >本次抄表数(彩)：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/></td>
+    </tr>
+
+    <tr>
+        <td >合约基本量(黑)：<br/></td>
+        <td class="underline">{basenumb}<br/></td>
+        <td align="right" >上次抄表日：<br/></td>
+        <td class="underline" id="lastdt"><br/></td>
+        <td align="right" >本次实用数(彩)：<br/></td>
+        <td class="underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/></td>
+    </tr>
+
+    <tr>
+        <td>合约基本量(彩)：<br/></td>
+        <td class="underline">{basenumc}<br/></td>
+        <td align="right" >上次抄表数：<br/></td>
+        <td id="lastnum" class="underline"><br/></td>
+        <td align="right" >上次抄表数(彩)：<br/></td>
+        <td id="lastnumc" class="underline"><br/></td>
+    </tr>
+
+    <tr ><td height="50px" colspan=6><hr height="50px"/></td></tr>
+
+    <tr>
+        <td >本次超量租金(黑)：<br/></td>
+        <td class="underline"> <br/></td>
+        <td align="right" >本次超量租金(彩)：<br/></td>
+        <td class="underline"> <br/></td>
+        <td align="right" >本次总金额：<br/></td>
+        <td class="underline"> <br/></td>
+    </tr>
+
+    <tr>
+        <td >抄表人：<br/></td>
+        <td class="underline"> <br/></td>
+        <td></td>
+        <td></td>
+        <td align="right" >客户确认：<br/></td>
+        <td class="underline"> <br/></td>
+    </tr>
+
+    </tbody>
+</table>

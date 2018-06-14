@@ -327,7 +327,7 @@ class flowModel extends Model
 	
 	/**
 	*	读取展示数据
-	*	$lx 0pc, 1移动
+	*	$lx 0-pc, 1-移动，2-自定义页面
 	*/
 	public function getdatalog($lx=0)
 	{
@@ -343,7 +343,7 @@ class flowModel extends Model
 		$arr['status']   = arrvalue($this->rs,'status');
 		$arr['logarr']	 = $this->getlog();
 		$contview 	 	 = '';
-		$path 			 = ''.P.'/flow/page/view_'.$this->modenum.'_'.$lx.'.html';
+		$path 			 = ''.P.'/flow/page/view_'.$this->modenum.'_'.$lx.'.html';  //自定义模板的路径
 		$fstr			 = $fobj->getstr($this->mtable, $this->id, 2);
 		$issubtabs		 = 0;
 		if($fstr != ''){
@@ -2071,7 +2071,7 @@ class flowModel extends Model
 				$upgcont 	= str_replace(array('{now}','{date}','{uid}','{adminid}','{admin}','{sm}','{cname}','{cnameid}'),array($this->rock->now,$this->rock->date, $this->adminid, $this->adminid, $this->adminname, $sm, $cname, $cnameid), $upgcont);
 				$this->update($upgcont, $this->id);
 			}
-			$this->flowoptmenu($ors, $barrs);
+			$msg = $this->flowoptmenu($ors, $barrs);
 		}
 		if($msg=='')$msg='ok';
 		return $msg;

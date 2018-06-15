@@ -1,8 +1,8 @@
 //流程模块【rent.租机登记】下录入页面自定义js页面,初始函数
 function initbodys(){
     $.getScript('js/rmb.js');
-
-    $(form('remark')).click(function(){
+    form('totalmoney').readOnly=true;
+    $(form('totalmoney')).click(function(){
         cchangtongss();
     });
     addchengesss();
@@ -27,6 +27,7 @@ function addchengesss(){
 function cchangtongss(){
     var d=c.getsubdata(0);
     var i,len=d.length;
+    var moneys=0;
     for(i=0;i<len;i++){
         if(i == 0){
             form('lastnum0_'+i).value = form('exceedingb').value;
@@ -52,8 +53,11 @@ function cchangtongss(){
             d[i].exceedingmoney = d[i].exceedingnum * form('priceb').value + d[i].exceedingnumc * form('pricec').value;
             form('exceedingmoney0_'+i).value=d[i].exceedingmoney+'';
 
-            form('remainder0_'+i).value = js.float(d[i].exceedingmoney + parseFloat(form('rental').value));
+            var remainder = js.float(d[i].exceedingmoney + parseFloat(form('rental').value));
+            form('remainder0_'+i).value = remainder;
+            moneys =  Number(moneys) + Number(remainder);
         }
+        form('totalmoney').value = moneys;
     }
 }
 

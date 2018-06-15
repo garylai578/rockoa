@@ -14,11 +14,22 @@ class crmClassModel extends Model
 		$rows 	= $this->getrows("`status`=1 and ((`uid`='$uid') or (`id`=$id) or (".$s."))",'id as value,name,id','`name`');
 		return $rows;
 	}
-	
+
+    /** 读取uid的所有客户，如果uid为空，则读取所有客户
+     * @param $uid 操作人的id
+     * @return mixed 客户信息
+     */
+    public function getCustomer($uid){
+        $where = '`uid`='.$uid;
+        if(!isset($uid) || isempt($uid)) $where = '';
+        $rows = m('customer')->getrows($where, 'id as value, name, id', '`name`');
+        return $rows;
+    }
+
 	//读取所有的公司名称和id
-    public function getCompany($id=0){
+    public function getCompany($id){
 	    $where = '`id`='.$id;
-	    if(isempt($id)) $where = '';
+	    if(!isset($id) || isempt($id)) $where = '';
 	    $rows = m('company')->getrows($where, 'id as value, name, id', '`name`');
 	    return $rows;
     }

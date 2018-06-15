@@ -62,7 +62,7 @@ class mode_rentClassAction extends inputAction{
     //客户名称的数据来源
     public function selectcust()
     {
-        $rows = m('crm')->getmycust($this->adminid, $this->rock->arrvalue($this->rs, 'custid'));
+        $rows = m('crm')->getCustomer("");
         return $rows;
     }
 

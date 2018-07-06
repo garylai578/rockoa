@@ -153,6 +153,7 @@
         js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, key2:key2, status:status}, function (a){
             if(!a.length)
                 alert("没有销售数据！");
+            var totalnum=0, moneys=0.0;
             for(j = 0 ,num=a.length; j < num; ++j) {
                 var ids = a.ids;
                 var str = "<tr oi='0' dataid='undefined' style=''>" + "<input type='hidden' id='pid_"+j+"' value='"+(a[j].id)+"'>" +
@@ -178,7 +179,12 @@
                 str += "<td style='' row='0' cell='16' align='center' id='remark_"+j+"'>"+(a[j].remark?a[j].remark:"")+"</td>" +
                     "<td style='' row='0' cell='17' align='center' id='paydate_"+j+"'>"+(a[j].paydate?a[j].paydate:"")+"</td>";
                 $("#salechattbody").append(str);
+                totalnum = parseInt(totalnum) + parseInt(a[j].num);
+                moneys = parseFloat(moneys) + parseFloat(a[j].money);
             }
+            var str = "<tr><td colspan='1' align='center'>合计</td><td/><td/><td/><td/><td/><td/><td/><td/><td/><td align='center'>"
+                +totalnum+"</td><td align='center'>"+ moneys+"</td><td/><td/></tr>";
+            $("#salechattbody").append(str);
         },'get,json'); //不要忘记加最后'get,json'这个参数，否则系统会认为是字符串，而不是json数据。调试这个花了半天时间。
     }
 
@@ -257,22 +263,13 @@
             <td style="padding-right:10px">
                 <button class="btn btn-default" click="reload" type="button"><i class="icon-refresh"></i></button>
             </td>
-            <td style="padding-right:10px">
-                <div style="width:120px" class="input-group">
-                    <input readonly placeholder="月份从" class="form-control" id="start_{rand}" >
-                    <span class="input-group-btn">
-				<button onclick="return js.selectdate(this,'start_{rand}','month')" class="btn btn-default" type="button"><i class="icon-calendar"></i></button>
-			</span>
-                </div>
-            </td>
-            <td nowrap>至&nbsp; </td>
+            <td nowrap>日期&nbsp;</td>
             <td>
-                <div style="width:120px" class="input-group">
-                    <input readonly class="form-control" id="end_{rand}" >
-                    <span class="input-group-btn">
-				<button onclick="return js.selectdate(this,'end_{rand}','month')" class="btn btn-default" type="button"><i class="icon-calendar"></i></button>
-			</span>
-                </div>
+                <input onclick="js.datechange(this,'date')" style="width:110px" readonly class="form-control datesss" id="start_{rand}" >
+            </td>
+            <td>&nbsp;至&nbsp;</td>
+            <td align="left">
+                <input onclick="js.datechange(this,'date')" style="width:110px" readonly class="form-control datesss" id="end_{rand}" >
             </td>
             <td>&nbsp;&nbsp;</td>
             <td>

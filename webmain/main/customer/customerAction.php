@@ -212,14 +212,14 @@ class customerClassAction extends Action
         foreach ($rs as $k=>$v) {
             if ($v) {
                 if (isset($start) && $start != "") {
-                    $start .= "-01";
-                    if ($v['applydt'] < $start) {
+//                    $start .= "-01";
+                    if ($v['date'] < $start) {
                         unset($rs[$k]);
                         continue;
                     } else {
                         if (isset($end) && $end != "") {
-                            $end .= "-31";
-                            if ($v['applydt'] > $end) {
+//                            $end .= "-31";
+                            if ($v['date'] > $end) {
                                 unset($rs[$k]);
                                 continue;
                             }

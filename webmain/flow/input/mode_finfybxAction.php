@@ -3,10 +3,10 @@
 *	此文件是流程模块【finfybx.费用报销】对应接口文件。
 *	可在页面上创建更多方法如：public funciton testactAjax()，用js.getajaxurl('testact','mode_finfybx|input','flow')调用到对应方法
 */
-class mode_finfybxClassAction extends inputAction{
-	
 
-	protected function savebefore($table, $arr, $id, $addbo){
+class mode_finfybxClassAction extends inputAction{
+
+    protected function savebefore($table, $arr, $id, $addbo){
         $paytype  = $arr['paytype'];
         $cardid = $arr['cardid'];
         $openbank = $arr['openbank'];
@@ -84,6 +84,18 @@ class mode_finfybxClassAction extends inputAction{
     public function listchangeAjax(){
         $mid 	= (int)$this->get('ractid');
         $rows = m('custractlist')->getall('mid='.$mid.'', "id,sort,name,unit,num,price,money,buynums,remark", "sort");
+        $this->returnjson($rows);
+    }
+
+    public function getDetailAjax() {
+        $start = $this->get('dt1');
+        $end = $this->get('dt2');
+        $where='status=1 and `category` is not null  and type=0 ';
+        if($start && $start !='')
+            $where .= " and `applydt`>='".$start."' ";
+        if($end && $end != '')
+            $where .= " and `applydt`<='".$end."' ";
+        $rows = m('fininfom')->getall($where,'id,optname,applydt,projectName,category,money,paydt,paytype,cardid,openbank,buyer,`explain`','optname');
         $this->returnjson($rows);
     }
 }

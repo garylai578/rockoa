@@ -5,6 +5,7 @@
 */
 defined('HOST') or die ('not access');
 ?>
+<script type="text/javascript" src="webmain/flow/input/inputjs/mode_finfybx.js"></script>
 <script>
 $(document).ready(function(){
 	var myChart = [],darr=[];
@@ -118,6 +119,7 @@ $(document).ready(function(){
 			<div class="list-group-item  list-group-item-info">
 				<i class="icon-bar-chart"></i> 根据费用类别统计
 				<span style="float:right" ><a click="reload,0"><i class="icon-refresh"></i></a></span>
+                <span style="float: right;"><a href="javascript:void(0);" onclick="exportExcel(get('dt1_{rand}').value,get('dt2_{rand}').value)">导出明细</a>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 			</div>
 			<div id="view0_{rand}"></div>
 			<div id="viewchats0_{rand}" style="width:100%;height:250px;border:1px #dddddd solid;border-top:0px"></div>

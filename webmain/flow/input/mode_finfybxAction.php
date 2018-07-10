@@ -98,6 +98,22 @@ class mode_finfybxClassAction extends inputAction{
         $rows = m('fininfom')->getall($where,'id,optname,applydt,projectName,category,money,paydt,paytype,cardid,openbank,buyer,`explain`','optname');
         $this->returnjson($rows);
     }
+
+    /**公共读取数据之后处理，展示列数。这里进行了重写，用于抄机通知的过滤。
+     * @param $table 表名
+     * @param $rows  从表中查询出的数据
+     * @return arr 需要展示的数据
+     */
+    public function storeaftershow($table, $rows){
+        $arr = parent::storeaftershow($table, $rows);
+        $moneys = 0.00;
+        foreach ($rows as $k=>$v){
+            $moneys += $v['money'];
+        }
+        $total = array('money'=>number_format($moneys,2),'base_name'=>"合计");
+        array_push($arr['rows'], $total);
+        return $arr;
+    }
 }
 
 			

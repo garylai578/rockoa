@@ -1521,7 +1521,16 @@ class flowModel extends Model
 		if($iszhuanyi == 0 && $zt!=2){
 			foreach($flowinfor['checkfields'] as $chef=>$chefv){
 				$ufied[$chef] = $this->rock->post('cfields_'.$chef.''); //通过前端modeview.js里面的check(lx)方法获取需要审批人员填写的字段信息。
-				if(isempt($ufied[$chef]))$this->echomsg(''.$chefv['name'].'不能为空');
+				if(isempt($ufied[$chef])) {
+                    if($this->modenum=='salelist' && $chef=='paydate') { //如果是销售单，则判断所填说明是否日期，如果是，则更新为付款日期。
+                        $paydate = strtotime($sm);
+                        if($paydate===FALSE || $paydate==-1)
+                            $this->echomsg('输入的日期格式不正确');
+                        $ufied[$chef] = $sm;
+                    }
+                    else
+                        $this->echomsg('' . $chefv['name'] . '不能为空');
+                }
 				$_str = $this->savedatastr($ufied[$chef], $chefv['fieldsarr'], $this->rs);
 				if($_str!='')$this->echomsg($_str);
 			}

@@ -214,9 +214,9 @@ var c={
 							this.showtx('['+sda.zbname+']第'+(j1+1)+'行上'+sda.name+'不能为空');
 							return false;
 						}
-						if(flx=='number'&&parseFloat(val)==0){
+						if(flx=='number'&&parseFloat(val)<0){
 							if(form(fid))form(fid).focus();
-							this.showtx('['+sda.zbname+']第'+(j1+1)+'行上'+sda.name+'不能为0');
+							this.showtx('['+sda.zbname+']第'+(j1+1)+'行上'+sda.name+'不能小于0');
 							return false;
 						}
 					}

@@ -1,1 +1,85 @@
-<table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%"><tbody><tr><td class="ys1" align="right" height="34" width="15%">*客户名称<br /></td><td class="ys2" width="35%">{custname}{custid}<br /></td><td class="ys1" align="right" width="15%">*报价公司<br /></td><td class="ys2" width="35%">{company}{companyid}<br /></td></tr><tr><td class="ys1" align="right" width="15%">*报价单号<br /></td><td class="ys2" width="35%">{listid}<br /></td><td class="ys1" align="right" width="15%">*报价日期<br /></td><td class="ys2" width="35%">{quotedt}<br /></td></tr><tr><td class="ys1" align="right" height="34" width="15%">*收件人<br /></td><td class="ys2" width="35%">{receiver}<br /></td><td class="ys1" align="right" width="15%">*收件人电话<br /></td><td class="ys2" width="35%">{receviertel}<br /></td></tr><tr><td class="ys1" align="right" height="34">*发件人<br /></td><td class="ys2">{from}<br /></td><td class="ys1" align="right">*发件人电话<br /></td><td class="ys2">{fromtel}<br /></td></tr><tr><td class="ys1" align="right" height="34">*报价有效期<br /></td><td class="ys2">{expdt}<br /></td><td class="ys1" align="right">*报价税率<br /></td><td class="ys2">{rate}<br /></td></tr><tr><td class="ys2" style="background-color:#CCCCCC;" colspan="4"><strong>销售清单</strong><br /></td></tr><tr><td class="ys0" colspan="4"><table class="tablesub ke-zeroborder" id="tablesub0" style="width:100%;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td width="10%">序号</td><td><br /></td><td>*产品名称<br /></td><td>规格说明<br /></td><td>*单位<br /></td><td>*数量<br /></td><td>*单价<br /></td><td>*金额<br /></td><td>备注<br /></td><td>操作</td></tr><tr><td>[xuhao0,0]</td><td><br /></td><td>[product0,0][listid0,0]<br /></td><td>[spec0,0]<br /></td><td>[unit0,0]<br /></td><td>[num0,0]<br /></td><td>[price0,0]<br /></td><td>[money0,0]<br /></td><td>[remark0,0]<br /></td><td>{删,0}</td></tr></tbody></table><div style="background-color:#F1F1F1;">{新增,0}</div></td></tr><tr><td class="ys1" align="right" height="34">*合计</td><td class="ys2">{moneys}<br /></td><td class="ys1" align="right">*大写金额</td><td class="ys2">{moneyscn}<br /></td></tr><tr><td class="ys1" align="right" height="34">说明</td><td class="ys2" colspan="3">{explain}<br /></td></tr><tr><td class="ys1" align="right" height="34">相关文件</td><td class="ys2" colspan="3">{file_content}</td></tr></tbody></table>
+<table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%">
+    <tbody>
+    <tr>
+        <td class="ys1" align="right" height="34" width="15%">*客户名称<br/></td>
+        <td class="ys2" width="35%">{custname}{custid}<br/></td>
+        <td class="ys1" align="right" width="15%">*报价公司<br/></td>
+        <td class="ys2" width="35%">{company}{companyid}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" width="15%">*报价单号<br/></td>
+        <td class="ys2" width="35%">{listid}<br/></td>
+        <td class="ys1" align="right" width="15%">*报价日期<br/></td>
+        <td class="ys2" width="35%">{quotedt}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" height="34" width="15%">*收件人<br/></td>
+        <td class="ys2" width="35%">{receiver}<br/></td>
+        <td class="ys1" align="right" width="15%">*收件人电话<br/></td>
+        <td class="ys2" width="35%">{receviertel}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" height="34">*发件人<br/></td>
+        <td class="ys2">{from}<br/></td>
+        <td class="ys1" align="right">*发件人电话<br/></td>
+        <td class="ys2">{fromtel}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" height="34">*报价有效期<br/></td>
+        <td class="ys2">{expdt}<br/></td>
+        <td class="ys1" align="right">*报价税率<br/></td>
+        <td class="ys2">{rate}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys2" style="background-color:#CCCCCC;" colspan="4"><strong>销售清单</strong><br/></td>
+    </tr>
+    <tr>
+        <td class="ys0" colspan="4">
+            <table class="tablesub ke-zeroborder" id="tablesub0" style="width:100%;" cellspacing="0" cellpadding="0"
+                   border="0">
+                <tbody>
+                <tr>
+                    <td width="10%">序号</td>
+                    <td><br/></td>
+                    <td>*产品名称<br/></td>
+                    <td>规格说明<br/></td>
+                    <td>*单位<br/></td>
+                    <td>*数量<br/></td>
+                    <td>*单价<br/></td>
+                    <td>*金额<br/></td>
+                    <td>备注<br/></td>
+                    <td>操作</td>
+                </tr>
+                <tr>
+                    <td>[xuhao0,0]</td>
+                    <td><br/></td>
+                    <td>[product0,0][listid0,0]<br/></td>
+                    <td>[spec0,0]<br/></td>
+                    <td>[unit0,0]<br/></td>
+                    <td>[num0,0]<br/></td>
+                    <td>[price0,0]<br/></td>
+                    <td>[money0,0]<br/></td>
+                    <td>[remark0,0]<br/></td>
+                    <td>{删,0}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div style="background-color:#F1F1F1;">{新增,0}</div>
+        </td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" height="34">*合计</td>
+        <td class="ys2">{moneys}<br/></td>
+        <td class="ys1" align="right">*大写金额</td>
+        <td class="ys2">{moneyscn}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" height="34">说明</td>
+        <td class="ys2" colspan="3">{explain}<br/></td>
+    </tr>
+    <tr>
+        <td class="ys1" align="right" height="34">相关文件</td>
+        <td class="ys2" colspan="3">{file_content}</td>
+    </tr>
+    </tbody>
+</table>

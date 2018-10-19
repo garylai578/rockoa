@@ -73,6 +73,7 @@ $(document).ready(function(){
 			a.setparams({
 				key:get('key_{rand}').value,
 				dt1:get('dt1_{rand}').value,
+                dt2:get('dt2_{rand}').value,
 				modeid:get('mode_{rand}').value
 			},true);
 		},
@@ -168,12 +169,20 @@ $(document).ready(function(){
 	</td>
 	<td  style="padding-left:10px">
 		<div style="width:130px"  class="input-group">
-			<input placeholder="申请日期" readonly class="form-control" id="dt1_{rand}" >
+			<input placeholder="开始日期" readonly class="form-control" id="dt1_{rand}" >
 			<span class="input-group-btn">
 				<button class="btn btn-default" click="clickdt,1" type="button"><i class="icon-calendar"></i></button>
 			</span>
 		</div>
 	</td>
+        <td>
+            <div style="width:130px"  class="input-group">
+                <input placeholder="结束日期" readonly class="form-control" id="dt2_{rand}" >
+                <span class="input-group-btn">
+				<button class="btn btn-default" click="clickdt,2" type="button"><i class="icon-calendar"></i></button>
+			</span>
+            </div>
+        </td>
 	<td  style="padding-left:10px">
 		<input class="form-control" style="width:160px" id="key_{rand}"   placeholder="姓名/部门/单号">
 	</td>

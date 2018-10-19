@@ -88,9 +88,10 @@ class mode_rentClassAction extends inputAction{
         for ($j=0, $len = sizeof($rows); $j<$len; ++$j){
             $today = strtotime(date("Y-m-d"));
             $lastdt = strtotime($rows[$j]['nextdt']);
+            $state = $rows[$j]['state'];
             $interval = round(($lastdt-$today)/3600/24);    //计算上次抄机时间距离现在的天数
             //如果距离提醒超过5天的，删除，不进行提醒。
-            if($interval > 5) {
+            if($state != "在用" || $interval > 5) {
                 unset($rows[$j]);
             }
         }

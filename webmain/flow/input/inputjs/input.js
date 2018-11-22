@@ -615,8 +615,21 @@ var c={
 	repaixuhao:function(xu){
 		var o=$('#tablesub'+xu+'').find("input[temp='xuhao']");
 		for(var i=0;i<o.length;i++){
+        	var obro = $(o[i].parentNode).siblings();
+        	for(var j=0; j<obro.length; ++j) {
+                var inputs = $(obro[j]).find("input");
+                var inputName = inputs.prevObject[0].children[0];
+                if (inputName.name) {
+					var end = inputName.name.indexOf("_");
+					if(end > 0) {
+                        newName = inputName.name.substring(0, end+1) + i;
+                        inputName.name = newName;
+                    }
+          	  }
+			}
 			o[i].value=(i+1);
 		}
+		form('sub_totals'+xu+'').value=o.length;
 	},
 	insertrow:function(xu, d, isad){
 		var o2 = get('tablesub'+xu+'');

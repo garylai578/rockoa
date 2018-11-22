@@ -102,7 +102,7 @@ function cchangtongss(){
     var d=c.getsubdata(0);
     var to=0,i,len=d.length;
     for(i=0;i<len;i++){
-        if(d[i].product!=''){
+        if(d[i].product!='' && (typeof(form('money0_'+i))!="undefined")){
             d[i].money = d[i].price * d[i].num;
             form('money0_'+i).value=d[i].money+'';
             to=to+parseFloat(d[i].money);

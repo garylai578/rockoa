@@ -18,18 +18,18 @@ function initbodys(){
 				form('paytype').value=d.paytype;
 				form('cardid').value=d.cardid;
 				form('openbank').value=d.openbank;
-				form('fullname').value=d.fullname;
+				form('buyer').value=d.fullname;
 			}
 		},'get,json');
 	}
 
-    $(form('project')).change(function(){
-/*        var val = this.value,txt='';
-        listchange(val);*/ //取消合同清单的加载-2018.2.26
+/*    $(form('project')).change(function(){
+/!*        var val = this.value,txt='';
+        listchange(val);*!/ //取消合同清单的加载-2018.2.26
         var sel = document.getElementsByName('project');
         var index = sel[0].selectedIndex;
         form('projectName').value = sel[0][index].innerHTML;
-    });
+    });*/
 }
 function addchengesss(){
 	if(isedit==0)return;

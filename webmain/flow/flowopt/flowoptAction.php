@@ -86,7 +86,18 @@ class flowoptClassAction extends Action
 		$barr['rows'] = $rows;
 		echo json_encode($barr);
 	}
-	
+
+    /**
+     *	模块统计
+     */
+    public function flowRentTotalAjax()
+    {
+        $modenum= $this->post('modenum');
+        $rows 	= m('flow')->initflow($modenum)->flowRentTotal();
+        $barr['rows'] = $rows;
+        echo json_encode($barr);
+    }
+
 	/**
 	*	将异常单据标识已完成
 	*/

@@ -45,5 +45,22 @@ class mode_finlaiClassAction extends inputAction{
         }
         return $arr;
     }
+
+    /**
+     * 待收发票页面增加合计一栏
+     * @param $table
+     * @param $rows
+     * @return mixed
+     */
+    public function storeaftershow($table, $rows){
+        $arr = parent::storeaftershow($table, $rows);
+        $moneys = 0.00;
+        foreach ($rows as $k=>$v){
+            $moneys += $v['money'];
+        }
+        $total = array('money'=>number_format($moneys,2),'base_name'=>"合计");
+        array_push($arr['rows'], $total);
+        return $arr;
+    }
 }	
 			

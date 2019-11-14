@@ -4,7 +4,7 @@
  */
 defined('HOST') or die ('not access');
 ?>
-<script type="text/javascript" src="webmain/flow/input/inputjs/mode_finfybx.js"></script>
+<script type="text/javascript" src="webmain/flow/input/inputjs/mode_rent.js"></script>
 <script>
     $(document).ready(function(){
         var myChart = [],darr=[];
@@ -17,6 +17,8 @@ defined('HOST') or die ('not access');
                         text:nas,dataIndex:'name'
                     },{
                         text:'金额',dataIndex:'value'
+                    },{
+                        text:'成本',dataIndex:'cost'
                     },{
                         text:'比例',dataIndex:'bili'
                     }],
@@ -36,8 +38,11 @@ defined('HOST') or die ('not access');
                 for(i=0;i<len;i++){
                     if(rows[i].name!='合计'){
                         xAxis.push(rows[i].name);
-                        v = rows[i].value;if(v=='')v=0;
-                        data.push({value:parseFloat(v),name:rows[i].name});
+                        v = rows[i].value;
+                        if(v=='')v=0;
+                        cc = rows[i].cost;
+                        if(cc=='')cc=0;
+                        data.push({value:parseFloat(v),name:rows[i].name,cost:parseFloat(cc)});
                     }
                 }
 
@@ -69,9 +74,6 @@ defined('HOST') or die ('not access');
                     'soufields_checkdt_end':get('dt2_{rand}').value,
                 };
                 darr[0].setparams(cnas, true);
-                darr[1].setparams(cnas, true);
-                darr[2].setparams(cnas, true);
-                darr[3].setparams(cnas, true);
             }
         };
 
@@ -115,7 +117,7 @@ defined('HOST') or die ('not access');
                     <div class="list-group-item  list-group-item-info">
                         <i class="icon-bar-chart"></i> 根据客户统计
                         <span style="float:right" ><a click="reload,0"><i class="icon-refresh"></i></a></span>
-                        <span style="float: right;"><a href="javascript:void(0);" onclick="exportExcel(get('dt1_{rand}').value,get('dt2_{rand}').value)">导出明细</a>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="float: right;"><a href="javascript:void(0);" onclick="exportRentExcel(get('dt1_{rand}').value,get('dt2_{rand}').value)">导出明细</a>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                     </div>
                     <div id="view0_{rand}"></div>
                     <div id="viewchats0_{rand}" style="width:100%;height:250px;border:1px #dddddd solid;border-top:0px"></div>

@@ -2557,23 +2557,30 @@ class flowModel extends Model
         $val1  	= $this->rock->post('soufields_checkdt_start');
         $val2  	= $this->rock->post('soufields_checkdt_end');
         if(!isempt($val1))
-            $where .=" and b.checkdt>='".$val1."'";
+            $where .=" and checkdt>='".$val1."'";
         if(!isempt($val2))
-            $where .= " and b.checkdt<='".$val2."'";
+            $where .= " and checkdt<='".$val2."'";
 
-        $sql = 'select '.$fields.' as `name`, sum(b.`remainder`)'.' as value from `[Q]rent` a left join (select max(checkdt) as checkdt, mid, remainder from `[Q]rentdetail` group by `mid`) b on b.`mid`= a.`id`  where 1=1 and a.`state`="在用" '.$where.' group by '.$fields.'';
+        $sql = 'select a.id, a.`custname` as `name`, sum(b.`remainder`) as value, sum(c.`cost`) as cost from `[Q]rent` a left join (select max(checkdt) as checkdt, mid, sum(remainder) as remainder from `[Q]rentdetail` where 1=1 ' . $where . ' group by `mid`) b on b.`mid`= a.`id` left join ' . '(select mid, checkdt, sum(total) as cost from `[Q]rentcost` where 1=1 ' . $where . ' group by `mid`) c on c.`mid`=a.`id` ' . ' group by a.`custname`';
 
         $rows 	= $this->db->getall($sql);
         $total	= 0;
+        $totalCost = 0;
         if($rows){
-            foreach($rows as $k=>$rs)$total+=floatval($rs['value']);
-            if($total>0)foreach($rows as $k=>$rs){
-                $rows[$k]['bili'] = $this->rock->number($rs['value']*100/$total).'%';
+            foreach($rows as $k=>$rs) {
+                $total += floatval($rs['value']);
+                $totalCost += floatval($rs['cost']);
             }
-            if($type!='avg' && count($rows)>1)$rows[] = array('name' 	=> '合计','value' => $total,'bili'	=> '');
+            if($total>0)
+                foreach($rows as $k=>$rs) {
+                    $rows[$k]['bili'] = $this->rock->number($rs['value'] * 100 / $total) . '%';
+                }
+            if($type!='avg' && count($rows)>1)
+                $rows[] = array('name' 	=> '合计','value' => $total, 'cost' => $totalCost, 'bili'	=> '');
         }else{
             $rows = $rowa;
         }
+
         return $rows;
     }
 }

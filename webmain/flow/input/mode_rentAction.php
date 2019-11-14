@@ -89,13 +89,14 @@ class mode_rentClassAction extends inputAction{
             $today = strtotime(date("Y-m-d"));
             $lastdt = strtotime($rows[$j]['nextdt']);
             $state = $rows[$j]['state'];
-            $interval = round(($lastdt-$today)/3600/24);    //计算上次抄机时间距离现在的天数
+            $interval = round(($lastdt-$today)/3600/24);    //计算下次抄机时间距离现在的天数
             //如果距离提醒超过5天的，删除，不进行提醒。
             if($state != "在用" || $interval > 5) {
                 unset($rows[$j]);
             }
         }
-        $barr['rows'] = $rows;
+
+        $barr['rows'] = array_values($rows); //需要重新排序后前端才能显示出来，否则会出现显示不了的情况。但由于是对当前查询结果的处理，所以如果全部删除的话，该页为空
         return $barr;
     }
 
@@ -108,6 +109,44 @@ class mode_rentClassAction extends inputAction{
             $rs['lastdt'] = $rows[0]['checkdt'];
         }
         echo json_encode($rs);
+    }
+
+    public function getDetailAjax() {
+        $start = $this->get('dt1');
+        $end = $this->get('dt2');
+        $where 	= "";
+        if(!isempt($start))
+            $where .=" and checkdt>='".$start."'";
+        if(!isempt($end))
+            $where .= " and checkdt<='".$end."'";
+
+        $sql = 'select a.id, a.`custname` as `name`, sum(b.`remainder`) as value, sum(c.`cost`) as cost from `[Q]rent` a left join (select max(checkdt) as checkdt, mid, sum(remainder) as remainder from `[Q]rentdetail` where 1=1 ' . $where . ' group by `mid`) b on b.`mid`= a.`id` left join ' . '(select mid, checkdt, sum(total) as cost from `[Q]rentcost` where 1=1 ' . $where . ' group by `mid`) c on c.`mid`=a.`id` ' . ' group by a.`custname`';
+
+        $rowa 	= array();
+        $rowa[] = array(
+            'name' 	=> '暂无数据',
+            'value' => 0,
+            'bili'	=> ''
+        );
+        $rows 	= $this->db->getall($sql);
+        $total	= 0;
+        $totalCost = 0;
+        if($rows){
+            foreach($rows as $k=>$rs) {
+                $total += floatval($rs['value']);
+                $totalCost += floatval($rs['cost']);
+            }
+            if($total>0)
+                foreach($rows as $k=>$rs) {
+                    $rows[$k]['bili'] = $this->rock->number($rs['value'] * 100 / $total) . '%';
+                }
+            if(count($rows)>1)
+                $rows[] = array('name' 	=> '合计','value' => $total, 'cost' => $totalCost, 'bili'	=> '');
+        }else{
+            $rows = $rowa;
+        }
+
+        $this->returnjson($rows);
     }
 
 }	

@@ -6,6 +6,11 @@ function initbodys(){
         cchangtongss();
     });
     addchengesss();
+
+    form('totalcost').readOnly=true;
+    $(form('totalcost')).click(function(){
+        cchangcost();
+    });
 }
 
 function addchengesss(){
@@ -30,8 +35,8 @@ function cchangtongss(){
     var moneys=0;
     for(i=0;i<len;i++){
         if(i == 0){
-            form('lastnum0_'+i).value = form('exceedingb').value;
-            form('lastnumc0_'+i).value = form('exceedingc').value;
+            d[i].lastnum = form('lastnum0_'+i).value = form('exceedingb').value;
+            d[i].lastnumc = form('lastnumc0_'+i).value = form('exceedingc').value;
         }else{
             form('lastnum0_'+i).value = d[i-1].thisnum;
             form('lastnumc0_'+i).value = d[i-1].thisnumc;
@@ -61,17 +66,30 @@ function cchangtongss(){
     }
 }
 
+function cchangcost() {
+    var d=c.getsubdata(1);
+    var i,len=d.length;
+    var moneys=0;
+    for(i=0;i<len;i++){
+        moneys=moneys+parseFloat(d[i].total);
+    }
+    form('totalcost').value=js.float(moneys)+'';
+}
+
 function changesubmit(){
 }
 function changesubmitbefore(){
     cchangtongss();
+    cchangcost();
 }
 function eventaddsubrows(){
     cchangtongss();
     addchengesss();
+    cchangcost();
 }
 function eventdelsubrows(){
     cchangtongss();
+    cchangcost();
 }
 
 function getRentDetail(mid){
@@ -80,4 +98,37 @@ function getRentDetail(mid){
         detail = a;
     },'get,json',"", "", false);
     return detail;
+}
+
+
+/**
+ * 在租机报表中，将详细列表导出为excel
+ * @param dt1 开始日期
+ * @param dt2 结束日期
+ */
+function exportRentExcel(dt1, dt2) {
+    var url = js.getajaxurl('getDetail','mode_rent|input','flow'); // 调用mode_rentAction.php中的getDetailAjax()方法
+    js.ajax(url,{dt1:dt1,dt2:dt2},function(a){
+        var str = 'id,客户名称,金额,成本,比例\n';
+        //增加\t为了不让表格显示科学计数法或者其他格式
+        for(var i = 0 ; i < a.length ; i++ ){
+            for(var item in a[i]){
+                if(a[i][item]==null)
+                    a[i][item]="";
+                str+= a[i][item] + '\t ,';
+            }
+            str+='\n';
+        }
+        //encodeURIComponent解决中文乱码
+        var uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+        //通过创建a标签实现
+        var link = document.createElement("a");
+        link.href = uri;
+        //对下载的文件命名
+        link.download =  "租机报表明细.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },'get,json');
+    // alert(dt1+'--'+dt2);
 }

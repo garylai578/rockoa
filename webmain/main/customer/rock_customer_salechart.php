@@ -142,7 +142,12 @@
     var num = 0;
     $(document).ready(function(){
         {params}
-        showdata();
+        var now = new Date(); //当前日期
+        var nowMonth = now.getMonth(); //当前月
+        var nowYear = now.getFullYear(); //当前年
+        //本月的开始时间
+        var monthStartDate = new Date(nowYear, nowMonth, 1);
+        showdata(monthStartDate, now);
     });
 
     function showdata(startdt, enddt, key, key2, status) {
@@ -152,8 +157,8 @@
 
         js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, key2:key2, status:status}, function (a){
             if(!a.length)
-                alert("没有销售数据！");
-            var totalnum=0, moneys=0.0;
+                alert("没有销售数据，请重新选择日期！");
+            var totalnum=0, moneys=0.0, costMoneys=0.0, otherCost=0.0, totalCost=0.0;
             for(j = 0 ,num=a.length; j < num; ++j) {
                 var ids = a.ids;
                 var str = "<tr oi='0' dataid='undefined' style=''>" + "<input type='hidden' id='pid_"+j+"' value='"+(a[j].id)+"'>" +
@@ -175,15 +180,20 @@
                         "<td style='' row='0' cell='13' align='center' id='costmoney_"+j+"'>"+(a[j].costmoney?a[j].costmoney:"")+"</td>" +
                         "<td style='' row='0' cell='14' align='center' id='othercost_"+j+"'>"+a[j].othercost+"</td>" +
                         "<td style='' row='0' cell='15' align='center' id='totalcost_"+j+"'>"+(a[j].totalcost?a[j].totalcost:"")+"</td>";
+                    a[j].costmoney = a[j].costmoney?a[j].costmoney:0.0;
+                    a[j].totalcost = a[j].totalcost?a[j].totalcost:0.0;
                 }
                 str += "<td style='' row='0' cell='16' align='center' id='remark_"+j+"'>"+(a[j].remark?a[j].remark:"")+"</td>" +
                     "<td style='' row='0' cell='17' align='center' id='paydate_"+j+"'>"+(a[j].paydate?a[j].paydate:"")+"</td>";
                 $("#salechattbody").append(str);
                 totalnum = parseInt(totalnum) + parseInt(a[j].num);
                 moneys = parseFloat(moneys) + parseFloat(a[j].money);
+                costMoneys = parseFloat(costMoneys) + parseFloat(a[j].costmoney);
+                otherCost = parseFloat(otherCost) + parseFloat(a[j].othercost);
+                totalCost = parseFloat(totalCost) + parseFloat(a[j].totalcost);
             }
             var str = "<tr><td colspan='1' align='center'>合计</td><td/><td/><td/><td/><td/><td/><td/><td/><td/><td align='center'>"
-                +totalnum+"</td><td align='center'>"+ moneys+"</td><td/><td/></tr>";
+                +totalnum+"</td><td align='center'>"+ moneys.toFixed(2)+"</td><td/><td/><td align='center'>" + costMoneys.toFixed(2)+"</td><td align='center'>" +otherCost.toFixed(2)+"</td><td align='center'>"+totalCost.toFixed(2)+"</td><td/><td/></tr>";
             $("#salechattbody").append(str);
         },'get,json'); //不要忘记加最后'get,json'这个参数，否则系统会认为是字符串，而不是json数据。调试这个花了半天时间。
     }
@@ -265,11 +275,11 @@
             </td>
             <td nowrap>日期&nbsp;</td>
             <td>
-                <input onclick="js.datechange(this,'date')" style="width:110px" readonly class="form-control datesss" id="start_{rand}" >
+                <input onclick="js.datechange(this,'date')" style="width:110px" readonly class="form-control datesss" id="start_{rand}" value="<?php echo date('Y-m-01', strtotime(date('Y-m-d'))); ?>" >
             </td>
             <td>&nbsp;至&nbsp;</td>
             <td align="left">
-                <input onclick="js.datechange(this,'date')" style="width:110px" readonly class="form-control datesss" id="end_{rand}" >
+                <input onclick="js.datechange(this,'date')" style="width:110px" readonly class="form-control datesss" id="end_{rand}" value="<?php echo date('Y-m-d'); ?>" >
             </td>
             <td>&nbsp;&nbsp;</td>
             <td>

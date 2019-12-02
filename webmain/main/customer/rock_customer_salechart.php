@@ -136,6 +136,17 @@
         $('#month_{rand}').val(month);
     });
 </script-->
+
+<?php
+$mid = 1; // 该菜单的id，这里是1。菜单名和id都是手工添加的！！！
+$rs = m('sjoin')->getrows('mid='.$mid.' and type="other"', 'sid');
+$ids = array();
+foreach($rs as $k=>$v){
+    array_push($ids, $v['sid']);
+}
+$userid = $_SESSION[QOM.'adminid'];
+?>
+
 <script type="text/javascript" src="webmain/task/mode/modeview.js"></script>
 
 <script>
@@ -299,6 +310,10 @@
 
             </td>
             <td align="right" nowrap>
+                <?php
+                if(in_array($userid, $ids))
+                echo  " <button class=\"btn btn-default\" onclick=\"javascript:exportExcel('salechattable')\" type=\"button\">导出当前页</button>";
+                ?>
                 <button class="btn btn-default" onclick="javascript:createCheckbill()" type="button">生成对账单</button>
             </td>
         </tr>
@@ -311,13 +326,6 @@
     <table id="salechattable" class="table table-striped table-bordered table-hover" style="margin:0px">
         <thead><tr><th nowrap=""><div lfields="choose" align="center"><input type='checkbox' id='chooseAll' onclick="javascript:chooseAll()"/>&nbsp;全选</div></th><th nowrap=""><div lfields="index" align="center">序号</div></th><th nowrap=""><div lfields="company" align="center">所属公司</div></th><th nowrap=""><div lfields="date" align="center">销售日期</div></th><th nowrap=""><div lfields="cusname" align="center">客户</div></th><th nowrap=""><div lfields="dept" align="center">部门</div></th><th nowrap=""><div lfields="listid" align="center">单号</div></th><th nowrap=""><div lfields="product" align="center">产品名称</div></th><th nowrap=""><div lfields="unit" align="center">单位</div></th><th nowrap=""><div lfields="price" align="center">单价</div></th><th nowrap=""><div lfields="num" align="center">数量</div></th><th nowrap=""><div lfields="money" align="center">金额</div></th>
             <?php
-            $mid = 1; // 该菜单的id，这里是1。菜单名和id都是手工添加的！！！
-            $rs = m('sjoin')->getrows('mid='.$mid.' and type="other"', 'sid');
-            $ids = array();
-            foreach($rs as $k=>$v){
-                array_push($ids, $v['sid']);
-            }
-            $userid = $_SESSION[QOM.'adminid'];
             if(in_array($userid, $ids))
              echo "<th nowrap=''><div lfields='costprice' align='center'>成本单价</div></th><th nowrap=''><div lfields='costnum' align='center'>成本数量</div></th><th nowrap=''><div lfields='costmoney' align='center'>成本金额</div></th><th nowrap=''><div lfields='othercost' align='center'>其他成本</div></th><th nowrap=''><div lfields='totalcost' align='center'>总成本</div></th>";
             ?>

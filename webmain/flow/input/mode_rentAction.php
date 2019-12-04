@@ -122,7 +122,7 @@ class mode_rentClassAction extends inputAction{
 
         $sql = 'select a.id, a.`custname` as `name`, sum(b.`remainder`) as value, sum(c.`cost`) as cost from `[Q]rent` a left join (select max(checkdt) as checkdt, mid, sum(remainder) as remainder from `[Q]rentdetail` where 1=1 ' . $where . ' group by `mid`) b on b.`mid`= a.`id` left join ' . '(select mid, checkdt, sum(total) as cost from `[Q]rentcost` where 1=1 ' . $where . ' group by `mid`) c on c.`mid`=a.`id` ' . ' group by a.`custname`';
 
-        $rowa 	= array();
+        $rowa 	= array("暂无数据");
         $rowa[] = array(
             'name' 	=> '暂无数据',
             'value' => 0,
@@ -149,5 +149,40 @@ class mode_rentClassAction extends inputAction{
         $this->returnjson($rows);
     }
 
+    /**
+     * 获取租机报表的详细信息
+     */
+    public function getRentDetailAjax() {
+        $start = $this->get('startdt');
+        $end = $this->get('enddt');
+        $where 	= "";
+        if(!isempt($start))
+            $where .=" and checkdt>='".$start."'";
+        if(!isempt($end))
+            $where .= " and checkdt<='".$end."'";
+
+        // 搜索出rent表的id，客户名称，部门，品牌，型号，基本月租，rentdetail表的id，超量金额，抄表日期
+        $sql = 'select a.id, a.`custname` as `name`, a.dept, a.brand, a.model, a.rental, (b.`id`) as detailID, b.exceedingmoney, b.checkdt  from `[Q]rent` a left join (select id, mid, exceedingmoney, checkdt from `[Q]rentdetail` where 1=1 ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null';
+
+        $rows 	= $this->db->getall($sql);
+        if($rows){
+            foreach($rows as $k=>$rs) {
+                $id = $rs['id'];
+                $firstDate = date("Y-m-01", strtotime($rs['checkdt']));
+                $lastDate = date("Y-m-d", strtotime("$firstDate +1 month -1 day "));
+                $where = "mid=$id and checkdt >= '$firstDate' and checkdt <= '$lastDate' ";
+                $sql2 = "select sum(total) as costTotal from  `[Q]rentcost` where $where group by mid";
+                $cost = $this->db->getall($sql2);
+                if($cost)
+                    $rows[$k]['costTotal'] = $cost[0]['costTotal'];
+                else
+                    $rows[$k]['costTotal'] = 0;
+            }
+        }else{
+//            $rows = array("");
+        }
+
+        echo json_encode($rows);;
+    }
 }	
 			

@@ -57,6 +57,43 @@ class mode_rentClassAction extends inputAction{
             );
             $rid = m('flow_remind')->insert($remind);
         }
+
+        //在抄表的同时新增租机成本：先获取最近一次抄表时间，如果没有录入租机成本，则新增。
+        $sub_totals0 = $_POST['sub_totals0'] - 1;
+        if($sub_totals0 >= 0){
+            $lastcheckdt = $_POST['checkdt0_'.$sub_totals0];
+            if($lastcheckdt == "" && ($sub_totals0 >= 1))
+                $lastcheckdt = $_POST['checkdt0_'.($sub_totals0-1)];
+            //把设备损耗作为成本，在抄机的同时计入
+            if($lastcheckdt!= "" && $arr['wastage'] > 0){
+                //如果还没有记录过，则插入
+                $sort = m('rentcost')->getone("`mid`=".$id, "sort", "sort desc")['sort'];
+                $row = m('rentcost')->getone("`mid`=".$id." and `remark`='根据设备损耗自动生成' ", "checkdt", "checkdt desc");
+                if($row['checkdt'] != $lastcheckdt){
+                    if($sort=="")
+                        $sort = 0;
+                    else
+                        $sort++;
+                    $cost = array(
+                        'mid' => $id,
+                        'sort' => $sort,
+                        'checkdt' => $lastcheckdt,
+                        'costname' => '设备损耗',
+                        'num' => 1,
+                        'price' => $arr['wastage'],
+                        'total' => $arr['wastage'],
+                        'remark' => '根据设备损耗自动生成',
+                    );
+                    //如果有空记录，则更新
+                    $isFirstRec = m('rentcost')->getone("`mid`=".$id." and checkdt is null ", "*");
+                    if($isFirstRec){
+                        m('rentcost')->update($cost, "`id`=".$isFirstRec["id"]);
+                    }else {
+                        $rid = m('rentcost')->insert($cost);
+                    }
+                }
+            }
+        }
 	}
 
     //客户名称的数据来源

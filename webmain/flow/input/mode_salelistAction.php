@@ -43,7 +43,7 @@ class mode_salelistClassAction extends inputAction{
     //公司名称的数据来源
     public function selectcompany()
     {
-        $rows = m('crm')->getCompany($this->rock->arrvalue($this->rs, 'companyid'));
+        $rows = m('crm')->getCompanyInuse($this->rock->arrvalue($this->rs, 'companyid'));
         return $rows;
     }
 

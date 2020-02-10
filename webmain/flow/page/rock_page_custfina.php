@@ -9,7 +9,7 @@ defined('HOST') or die ('not access');
 <script>
 $(document).ready(function(){
 	{params}
-	var modenum = 'custfina',modename='收付款单',isflow=1,modeid='36',atype = params.atype,pnum=params.pnum;
+	var modenum = 'custfina',modename='收付款单',isflow=0,modeid='36',atype = params.atype,pnum=params.pnum;
 	if(!atype)atype='';if(!pnum)pnum='';
 	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"optname","name":"\u6240\u5c5e\u4eba","fieldstype":"text","ispx":"1","isalign":"0","islb":"1"},{"fields":"htid","name":"\u5408\u540c","fieldstype":"select","ispx":"0","isalign":"0","islb":"0"},{"fields":"htnum","name":"\u5408\u540c\u7f16\u53f7","fieldstype":"hidden","ispx":"0","isalign":"0","islb":"1"},{"fields":"dt","name":"\u6240\u5c5e\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"1"},{"fields":"custname","name":"\u5ba2\u6237\u540d\u79f0","fieldstype":"selectdatafalse","ispx":"1","isalign":"0","islb":"1"},{"fields":"custid","name":"\u5ba2\u6237\u540d\u79f0","fieldstype":"hidden","ispx":"0","isalign":"0","islb":"0"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"select","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"1","isalign":"0","islb":"1"},{"fields":"ispay","name":"\u662f\u5426\u4ed8\u6b3e","fieldstype":"select","ispx":"1","isalign":"0","islb":"1"},{"fields":"bank","name":"\u6536\u6b3e\u94f6\u884c","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"paydt","name":"\u6536\u4ed8\u6b3e\u65f6\u95f4","fieldstype":"datetime","ispx":"0","isalign":"0","islb":"1"},{"fields":"plantime","name":"\u9884\u8ba1\u6536\u6b3e\u65f6\u95f4","fieldstype":"date","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"textarea","ispx":"0","isalign":"0","islb":"1"},{"fields":"createname","name":"\u521b\u5efa\u4eba","fieldstype":"text","ispx":"1","isalign":"0","islb":"1"}],fieldsselarr= [];
 	
@@ -194,7 +194,7 @@ $(document).ready(function(){
 		fanye:true,modenum:modenum,modename:modename,statuschange:false,tablename:jm.base64decode('Y3VzdGZpbmE:'),
 		url:c.storeurl(),storeafteraction:'storeaftershow',storebeforeaction:'storebeforeshow',
 		params:{atype:atype},
-		columns:[{text:"申请人",dataIndex:"base_name",sortable:true},{text:"申请人部门",dataIndex:"base_deptname",sortable:true},{text:"单号",dataIndex:"sericnum"},{text:"所属人",dataIndex:"optname",sortable:true},{text:"合同编号",dataIndex:"htnum"},{text:"所属日期",dataIndex:"dt"},{text:"客户名称",dataIndex:"custname",sortable:true},{text:"类型",dataIndex:"type"},{text:"金额",dataIndex:"money",sortable:true},{text:"是否付款",dataIndex:"ispay",sortable:true},{text:"收款银行",dataIndex:"bank"},{text:"收付款时间",dataIndex:"paydt"},{text:"预计收款时间",dataIndex:"plantime"},{text:"说明",dataIndex:"explain"},{text:"创建人",dataIndex:"createname",sortable:true},{text:"状态",dataIndex:"statustext"},{
+		columns:[{text:"所属人",dataIndex:"optname",sortable:true},{text:"合同编号",dataIndex:"htnum"},{text:"所属日期",dataIndex:"dt"},{text:"客户名称",dataIndex:"custname",sortable:true},{text:"类型",dataIndex:"type"},{text:"金额",dataIndex:"money",sortable:true},{text:"是否付款",dataIndex:"ispay",sortable:true},{text:"收款银行",dataIndex:"bank"},{text:"收付款时间",dataIndex:"paydt"},{text:"预计收款时间",dataIndex:"plantime"},{text:"说明",dataIndex:"explain"},{text:"创建人",dataIndex:"createname",sortable:true},{
 			text:'',dataIndex:'caozuo',callback:'opegs{rand}'
 		}],
 		itemdblclick:function(){
@@ -247,9 +247,9 @@ c.searchbtn=function(){
 	<tr>
 		<td style="padding-right:10px;" id="tdleft_{rand}" nowrap><button id="addbtn_{rand}" class="btn btn-primary" click="clickwin,0" disabled type="button"><i class="icon-plus"></i> 新增</button></td>
 		<td>
-			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字/申请人/单号">
+			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字">
 		</td>
-		<td style="padding-left:10px"><select class="form-control" style="width:120px" id="selstatus_{rand}"><option value="">-全部状态-</option><option style="color:blue" value="0">待处理</option><option style="color:green" value="1">已审核</option><option style="color:red" value="2">不同意</option><option style="color:#888888" value="5">已作废</option><option style="color:#17B2B7" value="23">退回</option></select></td>
+		
 		<td style="padding-left:10px">
 			<div style="width:85px" class="btn-group">
 			<button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button> 

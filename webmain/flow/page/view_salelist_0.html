@@ -1,5 +1,25 @@
 <script type="text/javascript">
+    //根据成本单价和成本数量自动计算成本金额
+    function getValue(id){
+        return document.getElementById(id);
+    }
 
+    function checkInt(o,index){
+/*        theV=isNaN(parseInt(o.value))?0:parseInt(o.value);
+        if(theV!=o.value){o.value=theV;}*/
+        getValue("costmoney0_"+""+index+"").value=getValue("costprice0_"+""+index+"").value*getValue("costnum0_"+""+index+"").value;
+    }
+
+    function checkP(o,index){
+        theV=isNaN(parseFloat(o.value))?0:parseFloat(o.value);
+        theV=parseInt(theV*100)/100;
+        if(theV!=o.value){
+            theV=(theV*100).toString();
+            theV=theV.substring(0,theV.length-2)+"."+theV.substring(theV.length-2,theV.length);
+            o.value=theV;
+        }
+        getValue("costmoney0_"+""+index+"").value=getValue("costprice0_"+""+index+"").value*getValue("costnum0_"+""+index+"").value;
+    }
 </script>
 
 <!--自定义销售单的详细页面-->

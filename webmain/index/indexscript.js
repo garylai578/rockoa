@@ -12,9 +12,9 @@
 		loadmenu(this);
 	});
 	loadmenu($("span[pmenuid]")[0]);
-	if(typeof(applicationCache)=='undefined'){
+/*	if(typeof(applicationCache)=='undefined'){
 		js.msg('msg','您的浏览器太低了无法达到想要的预览效果<br>建议使用IE10+，Firefox，Chrome等高级点的',60);
-	}
+	}*/
 	if(a.length<=1)$('.topmenubg').html('');
 	var ddsata=[{
 		name:'<i class="icon-lock"></i> 修改密码',num:'pass',url:'system,geren,pass',names:'修改密码'

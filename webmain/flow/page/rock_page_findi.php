@@ -11,7 +11,7 @@ $(document).ready(function(){
 	{params}
 	var modenum = 'findi',modename='抵票列表',isflow=0,modeid='75',atype = params.atype,pnum=params.pnum;
 	if(!atype)atype='';if(!pnum)pnum='';
-	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"fixed","ispx":"0","isalign":"0","islb":"1"},{"fields":"piaonum","name":"\u7968\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"1","isalign":"0","islb":"1"},{"fields":"applydt","name":"\u6536\u7968\u65e5\u671f","fieldstype":"datetime","ispx":"1","isalign":"0","islb":"1"},{"fields":"dkdt","name":"\u62b5\u6263\u65e5\u671f","fieldstype":"datetime","ispx":"0","isalign":"0","islb":"1"},{"fields":"dikouproject","name":"\u62b5\u6263\u9879\u76ee","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"fullname","name":"\u5f00\u7968\u516c\u53f8","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= [];
+	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"type","name":"\u7c7b\u578b","fieldstype":"fixed","ispx":"0","isalign":"0","islb":"0"},{"fields":"piaonum","name":"\u7968\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"money","name":"\u91d1\u989d","fieldstype":"number","ispx":"1","isalign":"0","islb":"1"},{"fields":"applydt","name":"\u6536\u7968\u65e5\u671f","fieldstype":"datetime","ispx":"1","isalign":"0","islb":"1"},{"fields":"dkdt","name":"\u62b5\u6263\u65e5\u671f","fieldstype":"datetime","ispx":"0","isalign":"0","islb":"1"},{"fields":"dikouproject","name":"\u62b5\u6263\u9879\u76ee","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"fullname","name":"\u5f00\u7968\u516c\u53f8","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"explain","name":"\u8bf4\u660e","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= [];
 	
 	var c = {
 		reload:function(){
@@ -194,7 +194,7 @@ $(document).ready(function(){
 		fanye:true,modenum:modenum,modename:modename,statuschange:false,tablename:jm.base64decode('ZmluaW5mb20:'),
 		url:c.storeurl(),storeafteraction:'storeaftershow',storebeforeaction:'storebeforeshow',
 		params:{atype:atype},
-		columns:[{text:"类型",dataIndex:"type"},{text:"票号",dataIndex:"piaonum"},{text:"金额",dataIndex:"money",sortable:true},{text:"收票日期",dataIndex:"applydt",sortable:true},{text:"抵扣日期",dataIndex:"dkdt"},{text:"抵扣项目",dataIndex:"dikouproject"},{text:"开票公司",dataIndex:"fullname"},{text:"说明",dataIndex:"explain"},{
+		columns:[{text:"票号",dataIndex:"piaonum"},{text:"金额",dataIndex:"money",sortable:true},{text:"收票日期",dataIndex:"applydt",sortable:true},{text:"抵扣日期",dataIndex:"dkdt"},{text:"抵扣项目",dataIndex:"dikouproject"},{text:"开票公司",dataIndex:"fullname"},{text:"说明",dataIndex:"explain"},{
 			text:'',dataIndex:'caozuo',callback:'opegs{rand}'
 		}],
 		itemdblclick:function(){

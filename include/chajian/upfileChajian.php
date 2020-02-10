@@ -117,7 +117,7 @@ class upfileChajian extends Chajian{
 		$file_type		= $_FILES[$name]['type'];
 		$file_error		= $_FILES[$name]['error'];
 		$file_tmp_name	= $_FILES[$name]['tmp_name'];
-		$zongmax		= $this->getmaxupsize();	
+		$zongmax		= $this->getmaxupsize();
 		if($file_size<=0 || $file_size > $zongmax){
 			return '文件为0字节/超过'.$this->formatsize($zongmax).'，不能上传';
 		}

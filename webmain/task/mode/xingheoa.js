@@ -74,6 +74,7 @@ var tableToExcel = (function() {
                     function(m, p) { return c[p]; }) }
         return function(table, name) {
             if (!table.nodeType) table = document.getElementById(table)
+            name =  "json数据表.xls";
             var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
 
             window.location.href = uri + base64(format(template, ctx))

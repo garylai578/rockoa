@@ -310,10 +310,7 @@ $userid = $_SESSION[QOM.'adminid'];
 
             </td>
             <td align="right" nowrap>
-                <?php
-                if(in_array($userid, $ids))
-                echo  " <button class=\"btn btn-default\" onclick=\"javascript:exportExcel('salechattable')\" type=\"button\">导出当前页</button>";
-                ?>
+                <button class="btn btn-default" onclick="javascript:exportExcel('salechattable')" type="button">导出当前页</button>
                 <button class="btn btn-default" onclick="javascript:createCheckbill()" type="button">生成对账单</button>
             </td>
         </tr>

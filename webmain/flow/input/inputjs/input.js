@@ -567,8 +567,12 @@ var c={
 					nasa=nas.split('_');
 					nle = nasa.length;
 					nna= nasa[0];
-					if(nle>2)nna+='_'+nasa[1]+'';
-					if(nle>3)nna+='_'+nasa[2]+'';
+					//if(nle>2)nna+='_'+nasa[1]+'';
+					//if(nle>3)nna+='_'+nasa[2]+'';
+					//子表名不限于最多3个下划线了
+					for(var k=1;k<nle-1;k++){
+						nna+='_'+nasa[k]+'';
+					}
 					fname.push(nna.substr(0,nna.length-1));
 				}
 				this.subtablefields[i]=fname;

@@ -199,9 +199,9 @@ var c={
 	},
 	daochuexcel:function () {
         var curTbl = document.getElementById('excelContant');
-        if(curTbl) // 如果设置了需要到处的excel的内容，则到处指定的内容
+        if(curTbl) // 如果设置了需要导出的excel的内容，则导出指定的内容
 			exportExcel('excelContant');
-        else {		// 否则到处系统默认的表格
+        else {		// 否则导出系统默认的表格
 			var url='task.php?a=p&num='+modenum+'&mid='+mid+'&stype=excel';
 			js.location(url);
         }

@@ -161,12 +161,12 @@ $userid = $_SESSION[QOM.'adminid'];
         showdata(monthStartDate, now);
     });
 
-    function showdata(startdt, enddt, key, key2, status) {
+    function showdata(startdt, enddt, key, companykey, custkey, deptkey, status) {
         var url = js.getajaxurl('getSaleChart','customer','main');
 
         var userid="<?php echo $_SESSION[QOM.'adminid'];?>";
 
-        js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, key2:key2, status:status}, function (a){
+        js.ajax(url, {userid:userid, startdt: startdt, enddt:enddt, key:key, companykey:companykey, custkey:custkey, deptkey:deptkey, status:status}, function (a){
             if(!a.length)
                 alert("没有销售数据，请重新选择日期！");
             var totalnum=0, moneys=0.0, costMoneys=0.0, otherCost=0.0, totalCost=0.0;
@@ -223,12 +223,14 @@ $userid = $_SESSION[QOM.'adminid'];
         var start = document.getElementById('start_{rand}').value;
         var end = document.getElementById('end_{rand}').value;
         var key = document.getElementById('key_{rand}').value;
-        var key2= document.getElementById('key2_{rand}').value;
+        var companykey= document.getElementById('companykey_{rand}').value;
+        var custkey= document.getElementById('custkey_{rand}').value;
+        var deptkey= document.getElementById('deptkey_{rand}').value;
         var status = document.getElementById('selstatus_{rand}').value;
         var salechatbody = document.getElementById("salechattbody");
         salechatbody.remove();
         $("#salechattable").append("<tbody id='salechattbody'></tbody>");
-        showdata(start, end, key, key2, status);
+        showdata(start, end, key, companykey, custkey,deptkey,status);
     }
 
     function chooseAll(){
@@ -294,7 +296,15 @@ $userid = $_SESSION[QOM.'adminid'];
             </td>
             <td>&nbsp;&nbsp;</td>
             <td>
-                <input class="form-control" style="width:200px" id="key2_{rand}"   placeholder="客户或所属公司关键字">
+                <input class="form-control" style="width:200px" id="companykey_{rand}"   placeholder="公司关键字">
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <input class="form-control" style="width:200px" id="custkey_{rand}"   placeholder="客户关键字">
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <input class="form-control" style="width:200px" id="deptkey_{rand}"   placeholder="部门关键字">
             </td>
             <td>&nbsp;&nbsp;</td>
             <td>

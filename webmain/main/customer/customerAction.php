@@ -178,8 +178,11 @@ class customerClassAction extends Action
         $start = $this->get('startdt');
         $end = $this->get('enddt');
         $key = $this->get('key');
-        $key2 = $this->get('key2');
+        $companykey = $this->get('companykey');
+        $custkey = $this->get('custkey');
+        $deptkey = $this->get('deptkey');
         $status = $this->get('status');
+        $flag = 0;
 
         $mid = 1; // 该菜单的id，这里是1。菜单名和id都是手工添加的！！！
         $rs = m('sjoin')->getrows('mid='.$mid.' and type="other"', 'sid');
@@ -193,16 +196,29 @@ class customerClassAction extends Action
             $productFields = 'id, product,unit,num,price,money,costnum,costprice,costmoney,remark,othercost,totalcost';
         }
 
-        if($key2 != ''){
-            $saleWhere = '(`cusname` like "%'.$key2.'%" or `company` like "%'.$key2.'%") ';
+        if($companykey != ''){
+            $saleWhere = ' `company` like "%'.$companykey.'%" ';
+            $flag = 1;
         }
+        if($custkey != "" ){
+            if($flag)
+                $saleWhere .= " and ";
+            $saleWhere .= ' `cusname` like "%'.$custkey.'%" ';
+            $flag = 1;
+        }
+        if($deptkey != "" ){
+            if($flag)
+                $saleWhere .= " and ";
+            $saleWhere .= ' `dept` = "'.$deptkey.'" ';
+            $flag =1;
+        }
+
         if($status == 1) {        //已收款
-            if($key2 != '')
+            if($flag)
                 $saleWhere .= " and ";
             $saleWhere .= ' `paydate` is not null ';
-        }
-        elseif($status == 2) {
-            if($key2 != '')
+        } elseif($status == 2) {
+            if($flag)
                 $saleWhere .= " and ";
             $saleWhere .= ' `paydate` is null ';
         }

@@ -5,6 +5,7 @@
 defined('HOST') or die ('not access');
 ?>
 <script type="text/javascript" src="webmain/flow/input/inputjs/mode_rent.js"></script>
+<script type="text/javascript" src="js/xlsx.full.min.js"></script>
 <script>
     $(document).ready(function(){
         var myChart = [],darr=[];
@@ -105,10 +106,88 @@ defined('HOST') or die ('not access');
                 var link = document.createElement("a");
                 link.href = uri;
                 //对下载的文件命名
-                link.download =  "租机报表明细.csv";
+                link.download =  "租机报表汇总.csv";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+            }
+        },'get,json');
+    }
+
+    // 导出租机对账单详细信息
+    function exportDebitNote() {
+        var url = js.getajaxurl('getDebitNote','mode_rent|input','flow',{'modeid':'rent'});
+        var startdt = document.getElementById('dt1_{rand}').value;
+        var enddt = document.getElementById('dt2_{rand}').value;
+
+        js.ajax(url, {startdt: startdt, enddt:enddt}, function (a){
+            if(a.length==0)
+                alert("没有数据，请重新选择日期后查询！");
+            else{
+                var filename = "租机报表明细.xlsx"; //文件名称
+                var ws_name = "汇总表"; //Excel第一个sheet的名称
+                var wb = XLSX.utils.book_new(), ws = XLSX.utils.json_to_sheet(a);
+                XLSX.utils.book_append_sheet(wb, ws, ws_name);  //将数据添加到工作薄
+
+                var cusname='', excelList=[];
+                for(var key in a){//遍历json数组时，这么写key为索引
+                    if(cusname=='') {
+                        wb = XLSX.utils.book_new();
+                        cusname = a[key].客户名称;
+                        excelList=[['东莞市星河办公设备有限公司',null,null,null,null,null,null,null,null,null],
+                            ['对账单',null,null,null,null,null,null,null,null,null], ['客户名称：'+cusname,null,null,null,null,null,null,null,null,null],
+                            ['日期', '部门', '产品名称', '单位', '数量', '单价', '含税金额', '不含税金额', '不含税合计金额', '备注']];
+                        ws['!merges'] = [
+                            // 设置A1-J1的单元格合并
+                            {s: {r: 0, c: 0}, e: {r: 0, c: 9}},
+                            {s: {r: 1, c: 0}, e: {r: 1, c: 9}},
+                            {s: {r: 2, c: 0}, e: {r: 2, c: 9}}
+                        ];
+                    }
+                    else if(cusname != a[key].客户名称){
+                        // 先导出已有数据
+                        ws = XLSX.utils.aoa_to_sheet(excelList); //Excel第一个sheet的名称
+                        XLSX.utils.book_append_sheet(wb, ws, cusname);
+                        // 然后重新写入数据
+                        cusname = a[key].客户名称;
+                        excelList=[['东莞市星河办公设备有限公司',null,null,null,null,null,null,null,null,null],
+                            ['对账单',null,null,null,null,null,null,null,null,null], ['客户名称：'+cusname,null,null,null,null,null,null,null,null,null],
+                            ['日期', '部门', '产品名称', '单位', '数量', '单价', '含税金额', '不含税金额', '不含税合计金额', '备注']];
+                        ws["A1"].s = { font: { sz: 24, bold: true},alignment:{vertical:'center',horizontal:'center'}};
+                        ws['!merges'] = [
+                            // 设置A1-J1、A2-J2、A3-J3的单元格合并，s-开始，r-行，c-列，e-结束，参考：https://www.cnblogs.com/liuxianan/p/js-excel.html
+                            {s: {r: 0, c: 0}, e: {r: 0, c: 9}},
+                            {s: {r: 1, c: 0}, e: {r: 1, c: 9}},
+                            {s: {r: 2, c: 0}, e: {r: 2, c: 9}}
+                        ];
+                    }
+                    excelList.push([a[key].抄表日期, a[key].部门, '复印机租金', '台', '1', a[key].月租金, a[key].月租金]);
+                    if(a[key].黑色超量数 != 0) {
+                        var priceb = a[key].黑色超量数 * a[key].黑色单价;
+                        excelList.push(['', '', '黑色超出张数', '张', a[key].黑色超量数, a[key].黑色单价, priceb]);
+                    }
+                    if(a[key].彩色超量数 != 0) {
+                        var pricec = a[key].彩色超量数 * a[key].彩色单价;
+                        excelList.push(['', '', '彩色超出张数', '张', a[key].彩色超量数, a[key].彩色单价, pricec]);
+                    }
+                }
+
+                XLSX.writeFile(wb, filename); //导出Excel
+            }
+        },'get,json');
+    }
+
+    // 根据模板导出租机对账单报表
+    function exporModelNote() {
+        var url = js.getajaxurl('getModelNote','mode_rent|input','flow',{'modeid':'rent'});
+        var startdt = document.getElementById('dt1_{rand}').value;
+        var enddt = document.getElementById('dt2_{rand}').value;
+
+        js.ajax(url, {startdt: startdt, enddt:enddt}, function (a){
+            if(a.length==0)
+                alert("没有数据，请重新选择日期后查询！");
+            else{
+                window.open(a.filename);
             }
         },'get,json');
     }
@@ -130,7 +209,10 @@ defined('HOST') or die ('not access');
                 <button class="btn btn-default" click="search" type="button">统计</button>
             </td>
             <td  style="padding-left:10px">
-                <button class="btn btn-default" onclick="javascript:exportDetail()" type="button">导出明细</button>
+                <button class="btn btn-default" onclick="javascript:exportDetail()" type="button">导出汇总报表</button>
+            </td>
+            <td  style="padding-left:10px">
+                <button class="btn btn-default" onclick="javascript:exporModelNote()" type="button">导出明细报表</button>
             </td>
             <td width="90%">
 

@@ -187,7 +187,7 @@ class mode_rentClassAction extends inputAction{
     }
 
     /**
-     * 获取租机报表的详细信息
+     * 获取租机报表的汇总信息
      */
     public function getRentDetailAjax() {
         $start = $this->get('startdt');
@@ -219,7 +219,149 @@ class mode_rentClassAction extends inputAction{
 //            $rows = array("");
         }
 
-        echo json_encode($rows);;
+        echo json_encode($rows);
+    }
+
+    /**
+     * 获取租机报表的详细信息，包括张数和耗材
+     */
+    public function getDebitNoteAjax() {
+        $start = $this->get('startdt');
+        $end = $this->get('enddt');
+        $where 	= "";
+        if(!isempt($start))
+            $where .=" and checkdt>='".$start."'";
+        if(!isempt($end))
+            $where .= " and checkdt<='".$end."'";
+
+        // 搜索出抄表记录明细
+        $sql = 'select a.id as `rent_id`, (b.`id`) as detail_id, a.`custname` as `客户名称`, a.dept as `部门`, a.brand as `设备品牌`, a.model as `设备型号`, b.checkdt as `抄表日期`, a.priceb as `黑色单价`, b.exceedingnum as `黑色超量数`, a.pricec as `彩色单价`,  b.exceedingnumc as `彩色超量数`, b.exceedingmoney as `超量租金`, a.rental as `月租金`, (a.rental+b.exceedingmoney) as `合计应收`  from `[Q]rent` a left join (select id, mid, exceedingnum,exceedingnumc,exceedingmoney, checkdt from `[Q]rentdetail` where checkdt is not NULL ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null order by a.custname, a.dept';
+        $rows = $this->db->getall($sql);
+        echo json_encode($rows);
+    }
+
+    /**
+     * 创建(导出)Excel数据表格到模板中
+     * @param  array   $list        要导出的数组格式的数据
+     * @param  string  $filename    导出的Excel表格数据表的文件名
+     * @param  array   $indexKey    $list数组中与Excel表格表头$header中每个项目对应的字段的名字(key值)
+     * @param  string  $custname    客户名称，会搜索是否有以客户名称命名的模板，没有的话会调用通用模板
+     * 比如: $indexKey与$list数组对应关系如下:
+     *     $indexKey = array('id','username','sex','age');
+     *     $list = array(array('id'=>1,'username'=>'YQJ','sex'=>'男','age'=>24));
+     */
+    protected function exportExcel($list,$filename,$indexKey=array(), $custname){
+        require_once ROOT_PATH . '/include/PHPExcel/IOFactory.php';
+        require_once ROOT_PATH . '/include/PHPExcel.php';
+        require_once ROOT_PATH . '/include/PHPExcel/Writer/Excel2007.php';
+
+        $header_arr = array('A','B','C','D','E','F','G','H','I','J','K','L','M', 'N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+
+        //$objPHPExcel = new PHPExcel();                        //初始化PHPExcel(),不使用模板
+        //加载excel文件,设置模板
+        $custTemplate = ROOT_PATH.'/web/template/'.iconv('utf-8','gbk',$custname).'-template.xls';  //特定模板
+        $stTemplate = ROOT_PATH.'/web/template/checkbill.xls';       //默认模板
+        if(file_exists($custTemplate))
+            $objPHPExcel = PHPExcel_IOFactory::load($custTemplate);
+        else
+            $objPHPExcel = PHPExcel_IOFactory::load($stTemplate);
+
+        $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);  //设置保存版本格式
+
+        //接下来就是写数据到表格里面去
+        $objActSheet = $objPHPExcel->getActiveSheet();
+        $objActSheet->setCellValue('A3',  "客户名称：".$custname);
+        $i = 5;
+        foreach ($list as $row) {
+            foreach ($indexKey as $key => $value){
+                //这里是设置单元格的内容
+                $objActSheet->setCellValue($header_arr[$key].$i,$row[$value]);
+            }
+            $i++;
+        }
+
+        // 保存至本地Excel表格
+        $objWriter->save($filename);
+
+        /* // 2.接下来当然是下载这个表格了，在浏览器输出就好了
+         header("Pragma: public");
+         header("Expires: 0");
+         header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+         header("Content-Type:application/force-download");
+         header("Content-Type:application/vnd.ms-execl");
+         header("Content-Type:application/octet-stream");
+         header("Content-Type:application/download");;
+         header('Content-Disposition:attachment;filename="'.$filename.'.xls"');
+         header("Content-Transfer-Encoding:binary");
+         $objWriter->save('php://output');*/
+    }
+
+    /**
+     * 获取租机报表的详细信息，按照模板导出所需报表excel
+     */
+    public function getModelNoteAjax(){
+        $downloadFiles = array();
+        $start = $this->get('startdt');
+        $end = $this->get('enddt');
+        $where 	= "";
+        if(!isempt($start))
+            $where .=" and checkdt>='".$start."'";
+        if(!isempt($end))
+            $where .= " and checkdt<='".$end."'";
+
+        // 搜索出抄表记录明细
+        $sql = 'select a.id as `rent_id`, (b.`id`) as detail_id, a.`custname` as `custname`, a.dept as `dept`, a.brand as `设备品牌`, a.model as `设备型号`, b.checkdt as `checkdt`, a.priceb as `priceb`, b.exceedingnum as `exceedingnum`, a.pricec as `pricec`,  b.exceedingnumc as `exceedingnumc`, b.exceedingmoney as `超量租金`, a.rental as `rental`, (a.rental+b.exceedingmoney) as `合计应收`  from `[Q]rent` a left join (select id, mid, exceedingnum,exceedingnumc,exceedingmoney, checkdt from `[Q]rentdetail` where checkdt is not NULL ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null order by a.custname, a.dept';
+        $rows = $this->db->getall($sql);
+        if($rows){
+            $custname='';
+            $list = array();
+            $indexKey = array('date','dept','product','unit','num','price','total','remark');
+            foreach($rows as $k=>$rs) {
+                if($custname == ''){
+                    $custname = $rs['custname'];
+                }elseif($custname != $rs['custname']){ //如果是不同公司
+                    //先导出已有数据
+                    $filename = "web/download/".iconv('utf-8','gbk',$custname).'.xls';
+                    $this->exportExcel($list, $filename, $indexKey, $custname);
+                    array_push($downloadFiles, $filename);
+                    //然后重置相关变量
+                    $custname = $rs['custname'];
+                    $list = array();
+                }
+                // 封装需要导出的内容。
+                array_push($list, array('date'=>$rs['checkdt'], 'dept'=>$rs['dept'], 'product'=>'复印机租金','unit'=>'台','num'=>'1','price'=>$rs['rental'],'total'=>$rs['rental'],'remark'=>''));
+                if($rs['exceedingnum'] != 0) {
+                    $priceb = $rs['exceedingnum'] * $rs['priceb'];
+                    array_push($list, array('date'=>'', 'dept'=>'', 'product'=>'黑色超出张数','unit'=>'张','num'=>$rs['exceedingnum'],'price'=>$rs['priceb'],'total'=>$priceb,'remark'=>''));
+                }
+                if($rs['exceedingnum'] != 0) {
+                    $pricec = $rs['exceedingnumc'] * $rs['pricec'];
+                    array_push($list, array('date'=>'', 'dept'=>'', 'product'=>'彩色超出张数','unit'=>'张','num'=>$rs['exceedingnumc'],'price'=>$rs['pricec'],'total'=>$pricec,'remark'=>''));
+                }
+            }
+            //导出最后一条数据
+            $filename = "web/download/".iconv('utf-8','gbk',$custname).'.xls';
+            $this->exportExcel($list, $filename, $indexKey, $custname);
+            array_push($downloadFiles, $filename);
+        }
+
+        // 生成压缩包
+        if($downloadFiles != ''){
+            $zipname = "web/download/zujibaobiao.zip";
+            if(file_exists($zipname))
+                unlink($zipname);
+            $zip = new ZipArchive();
+            $zip->open($zipname,ZipArchive::CREATE);   //打开压缩包
+            foreach($downloadFiles as $file){
+                setlocale(LC_ALL, 'zh_CN.GBK'); // 必须要设置环境，否则下面的basename()方法获取不到正确的中文名，导致压缩失败
+                $zip->addFile($file, basename($file));   //向压缩包中添加文件
+            }
+            $zip->close();  //关闭压缩包
+            // 删除excel文件
+            foreach ($downloadFiles as $file)
+                unlink($file);
+        }
+        echo json_encode(array("filename"=>$zipname));
     }
 }	
 			

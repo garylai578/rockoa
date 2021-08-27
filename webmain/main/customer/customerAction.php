@@ -167,7 +167,7 @@ class customerClassAction extends Action
         );
     }
 
-    //获取销售数据，用于销售报表菜单
+    //获取销售数据，用于销售详细报表菜单
     public function getSaleChartAjax()
     {
         $rows="";
@@ -264,6 +264,108 @@ class customerClassAction extends Action
 
         $rows['length'] = $length;
         echo json_encode($rows);
+    }
+
+
+    //获取销售数据，用于销售统计报表菜单
+    public function getSaleChart2Ajax()
+    {
+        $rows="";
+        $saleWhere = '';
+        $saleFields = 'id, company, cusname, custid, moneys, date';
+        $start = $this->get('startdt');
+        $end = $this->get('enddt');
+        $companykey = $this->get('companykey');
+        $custkey = $this->get('custkey');
+        $flag = 0;
+
+        if($companykey != ''){
+            $saleWhere = ' `company` like "%'.$companykey.'%" ';
+            $flag = 1;
+        }
+        if($custkey != "" ){
+            if($flag)
+                $saleWhere .= " and ";
+            $saleWhere .= ' `cusname` like "%'.$custkey.'%" ';
+        }
+
+        $rs = m("salelist")->getrows($saleWhere, $saleFields, " `custid` desc");
+        //根据输入的日期筛选，删除不符合条件的数据
+        foreach ($rs as $k=>$v) {
+            if ($v) {
+                if (isset($start) && $start != "") {
+//                    $start .= "-01";
+                    if ($v['date'] < $start) {
+                        unset($rs[$k]);
+                        continue;
+                    } else {
+                        if (isset($end) && $end != "") {
+//                            $end .= "-31";
+                            if ($v['date'] > $end) {
+                                unset($rs[$k]);
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //获取该销售单的产品列表并统计总成本合计
+        $length = 0;
+        $cid=0;
+        $totalMoneys = 0;
+        $pids=array();
+        $line=array();
+        foreach ($rs as $k=>$v) {
+            if ($v) {
+                if($cid == 0){ //初始化
+                    array_push($pids, $v['id']);
+                    $cid = $v['custid'];
+                    $line=$rs[$k];
+                    $totalMoneys = $v['moneys'];
+                }elseif($cid == $v['custid']) { //对于同一个客户，统计其销售列表
+                    array_push($pids, $v['id']);
+                    $totalMoneys += $v['moneys'];
+                }else{
+                    //对于同一客户的销售列表，统计其销售金额和成本
+                    $line['totalMoneys'] = $totalMoneys;
+                    $line['totalCost'] =  $this->calTotalCosts($pids);
+                    $rows[] = $line;
+                    $length++;
+
+                    //重新获取新客户的销售列表id
+                    $totalMoneys = $v['moneys'];
+                    $line = $rs[$k];
+                    $cid = $v['custid'];
+                    $pids = array();
+                    array_push($pids, $v['id']);
+                }
+            }
+        }
+
+        if($length > 0){
+            $line['totalMoneys'] = $totalMoneys;
+            $line['totalCost'] =  $this->calTotalCosts($pids);
+            $rows[] = $line;
+            $length++;
+        }
+        $rows['length'] = $length;
+        echo json_encode($rows);
+    }
+
+    private function calTotalCosts($pids=[]){
+        $totalCost = 0.0;
+        $inPids = "(";
+        foreach($pids as $key => $value){
+            $inPids .= $value.",";
+        }
+        $inPids[strlen($inPids) - 1] = ")";
+        $productWhere = '`mid` in' . $inPids . ' ';
+        $products = m("saleproducts")->getrows($productWhere, 'totalcost');
+        foreach ($products as $kk => $vv) {
+            $totalCost += $vv['totalcost'];
+        }
+        return $totalCost;
     }
 
     /**

@@ -259,12 +259,30 @@ class mode_rentClassAction extends inputAction{
 
         //$objPHPExcel = new PHPExcel();                        //初始化PHPExcel(),不使用模板
         //加载excel文件,设置模板
-        $custTemplate = ROOT_PATH.'/web/template/'.iconv('utf-8','gbk',$custname).'-template.xls';  //特定模板
+        $custTemplate = ROOT_PATH.'/web/template/'.iconv("utf-8", "gbk", $custname).'-template.xls';  //系统编码是utf8，文件系统编码是gbk
         $stTemplate = ROOT_PATH.'/web/template/checkbill.xls';       //默认模板
-        if(file_exists($custTemplate))
+
+/*        $dir = ROOT_PATH.'/web/template/';
+        if (is_dir($dir)){
+            if ($dh = opendir($dir)){
+                while (($file = readdir($dh)) !== false){
+                    $e=mb_detect_encoding($file, array('UTF-8', 'GBK','gb2312'));
+                    echo "filename:" . $file . ", e:".$e."<br>";
+                }
+                closedir($dh);
+            }
+        }*/
+
+/*        $e=mb_detect_encoding($custname, array('UTF-8', 'GBK','gb2312'));
+        echo "<br>e:".$e;*/
+
+        if(file_exists($custTemplate)) {
             $objPHPExcel = PHPExcel_IOFactory::load($custTemplate);
-        else
+//            echo("<br>i am here! cust:" . $custname . ", tmp:" . $custTemplate . " .lai . ");
+        }
+        else {
             $objPHPExcel = PHPExcel_IOFactory::load($stTemplate);
+        }
 
         $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);  //设置保存版本格式
 
@@ -281,7 +299,10 @@ class mode_rentClassAction extends inputAction{
         }
 
         // 保存至本地Excel表格
-        $objWriter->save($filename);
+        $file = iconv("utf-8", "gbk", $filename);
+//        echo("<br>filename:".$filename.', file:'.$file." . ");
+        $objWriter->save($file);   //系统编码是utf8，文件系统编码是gbk，用这个
+//        $objWriter->save($filename);   //系统编码是utf8，文件系统编码也是utf8，用这个
 
         /* // 2.接下来当然是下载这个表格了，在浏览器输出就好了
          header("Pragma: public");
@@ -321,7 +342,7 @@ class mode_rentClassAction extends inputAction{
                     $custname = $rs['custname'];
                 }elseif($custname != $rs['custname']){ //如果是不同公司
                     //先导出已有数据
-                    $filename = "web/download/".iconv('utf-8','gbk',$custname).'.xls';
+                    $filename = "web/download/".$custname.'.xls';
                     $this->exportExcel($list, $filename, $indexKey, $custname);
                     array_push($downloadFiles, $filename);
                     //然后重置相关变量
@@ -340,7 +361,7 @@ class mode_rentClassAction extends inputAction{
                 }
             }
             //导出最后一条数据
-            $filename = "web/download/".iconv('utf-8','gbk',$custname).'.xls';
+            $filename = "web/download/".$custname.'.xls';
             $this->exportExcel($list, $filename, $indexKey, $custname);
             array_push($downloadFiles, $filename);
         }
@@ -353,13 +374,17 @@ class mode_rentClassAction extends inputAction{
             $zip = new ZipArchive();
             $zip->open($zipname,ZipArchive::CREATE);   //打开压缩包
             foreach($downloadFiles as $file){
-                setlocale(LC_ALL, 'zh_CN.GBK'); // 必须要设置环境，否则下面的basename()方法获取不到正确的中文名，导致压缩失败
-                $zip->addFile($file, basename($file));   //向压缩包中添加文件
+//                setlocale(LC_ALL, 'zh_CN.GBK'); // 必须要设置环境，否则下面的basename()方法获取不到正确的中文名，导致压缩失败
+                $file = iconv("utf-8", "gbk", $file); //系统编码是utf8，文件系统编码是gbk，用这个
+                //系统编码是utf8，文件系统编码也是utf8，直接压缩
+                $zip->addFile($file);   //向压缩包中添加文件
             }
             $zip->close();  //关闭压缩包
             // 删除excel文件
-            foreach ($downloadFiles as $file)
+            foreach ($downloadFiles as $file) {
+                $file = iconv("utf-8", "gbk", $file); //系统编码是utf8，文件系统编码是gbk，用这个
                 unlink($file);
+            }
         }
         echo json_encode(array("filename"=>$zipname));
     }

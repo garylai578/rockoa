@@ -34,6 +34,14 @@ class crmClassModel extends Model
 	    return $rows;
     }
 
+    public function getCompanyInuse($id){
+        $where = '`id`='.$id.' and ';
+        if(!isset($id) || isempt($id)) $where = '';
+        $where .= " state='在用'";
+        $rows = m('company')->getrows($where, 'id as value, name, id', '`name`');
+        return $rows;
+    }
+
     public function getDept($custId)
     {
         if(isempt($custId)) return null;

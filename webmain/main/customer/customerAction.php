@@ -203,7 +203,7 @@ class customerClassAction extends Action
         if($custkey != "" ){
             if($flag)
                 $saleWhere .= " and ";
-            $saleWhere .= ' `cusname` like "%'.$custkey.'%" ';
+            $saleWhere .= ' `cusname` = "'.$custkey.'" ';
             $flag = 1;
         }
         if($deptkey != "" ){

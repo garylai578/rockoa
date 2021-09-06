@@ -353,11 +353,13 @@ class mode_rentClassAction extends inputAction{
                 array_push($list, array('date'=>$rs['checkdt'], 'dept'=>$rs['dept'], 'product'=>'复印机租金','unit'=>'台','num'=>'1','price'=>$rs['rental'],'total'=>$rs['rental'],'remark'=>''));
                 if($rs['exceedingnum'] != 0) {
                     $priceb = $rs['exceedingnum'] * $rs['priceb'];
-                    array_push($list, array('date'=>'', 'dept'=>'', 'product'=>'黑色超出张数','unit'=>'张','num'=>$rs['exceedingnum'],'price'=>$rs['priceb'],'total'=>$priceb,'remark'=>''));
+                    if($priceb > 0)
+                        array_push($list, array('date'=>'', 'dept'=>'', 'product'=>'黑色超出张数','unit'=>'张','num'=>$rs['exceedingnum'],'price'=>$rs['priceb'],'total'=>$priceb,'remark'=>''));
                 }
-                if($rs['exceedingnum'] != 0) {
+                if($rs['exceedingnumc'] != 0) {
                     $pricec = $rs['exceedingnumc'] * $rs['pricec'];
-                    array_push($list, array('date'=>'', 'dept'=>'', 'product'=>'彩色超出张数','unit'=>'张','num'=>$rs['exceedingnumc'],'price'=>$rs['pricec'],'total'=>$pricec,'remark'=>''));
+                    if($pricec > 0)
+                        array_push($list, array('date'=>'', 'dept'=>'', 'product'=>'彩色超出张数','unit'=>'张','num'=>$rs['exceedingnumc'],'price'=>$rs['pricec'],'total'=>$pricec,'remark'=>''));
                 }
             }
             //导出最后一条数据

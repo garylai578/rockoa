@@ -7,11 +7,14 @@
         document.getElementById("bank").textContent = "开户银行：" + detail.bank;
         document.getElementById("account").textContent = "开户户名：" + detail.account;
         document.getElementById("accountNum").textContent = "开户账号：" + detail.accountNum;
-
+        var money = 0.00, money2= 0.00;
         for(j = 0; j < detail.lengths; ++j) {
-            var str = "<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ (j+1) + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ detail["date_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ detail["dept_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["product_"+j] +"</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["unit_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["num_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["price_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["money_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid;border-right:none' align='center'></td></tr>"
+            var str = "<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ (j+1) + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ detail["date_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ detail["dept_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["product_"+j] +"</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["unit_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["num_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["price_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail["money_"+j] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + (detail["money_"+j]/1.13).toFixed(2) + "</td><td style='padding:3px;border:1px #cccccc solid;border-right:none' align='center'></td></tr>"
+            money = parseFloat(money)+ parseFloat(detail["money_"+j]);
+            money2 = parseFloat(money2) + parseFloat((detail['money_'+j]/1.13).toFixed(2));
             $("#checkbillbody").append(str);
         }
+        $("#checkbillbody").append("<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'>合计</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+money.toFixed(2)+"</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+money2+"</td><td style='padding:3px;border:1px #cccccc solid;border-right:none' align='center'></td></tr>");
     };
 
 </script>
@@ -19,7 +22,7 @@
  <table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%" id="excelContant">
     <tbody>
     <tr>
-        <td height="54" colspan="7" class="ptitle">{company}对账单</td>
+        <td height="54" colspan="10" class="ptitle">{company}对账单</td>
     </tr>
     <tr>
         <td colspan="3">致：&nbsp;&nbsp;{custname}</td>
@@ -33,19 +36,16 @@
     </tr>
 
     <tr>
-        <td class="ys0" colspan="7">
+        <td class="ys0" colspan="10">
             <table width="100%" class="createrows" border="0" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse;">
                 <tbody id="checkbillbody">
-                <tr><td style="padding:3px;border:1px #cccccc solid;border-top:none;border-left:none" bgcolor="#eeeeee" align="center"><b>序号</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>日期</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>部门</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>产品名称</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单位</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>数量</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单价</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>应收金额</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none;border-right:none" bgcolor="#eeeeee" align="center"><b>备注</b></td></tr>
+                <tr><td style="padding:3px;border:1px #cccccc solid;border-top:none;border-left:none" bgcolor="#eeeeee" align="center"><b>序号</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>日期</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>部门</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>产品名称</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单位</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>数量</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单价</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>含税金额</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>不含税金额</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none;border-right:none" bgcolor="#eeeeee" align="center"><b>备注</b></td></tr>
                 </tbody>
             </table>
             <div style="background-color:#F1F1F1;"></div>
         </td>
     </tr>
 
-    <tr class="ys0">
-        <td colspan="7" align="right" class="ys0">合计：{moneys} &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </td>
-    </tr>
     <tr>
         <td colspan="7">惠请将上述款项存入如下账户：</td>
     </tr>

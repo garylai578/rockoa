@@ -422,7 +422,7 @@ class customerClassAction extends Action
             $rs['custname'] = $checkbill['custname'];
             $rs['company'] = $checkbill['company'];
             $rs['moneys'] = $checkbill['moneys'];
-            $pids = explode(',', $checkbill['pids']);
+            $pids = array_reverse(explode(',', $checkbill['pids'])); // 按时间顺序排序
             $rs['lengths'] = sizeof($pids);
 
             $company = m("company")->getone('`id`='.$checkbill['companyid'], "bank, account, accountNum");

@@ -7,3 +7,9 @@ function initbodys(){
 		if(form('shi'))form('shi').value = d.cityname;
 	}
 }
+
+
+function changesubmit(){
+	var jg = parseFloat(form('discount').value);
+	if(jg<0 || jg > 1) return  '折扣率区间是[0,1]';
+}

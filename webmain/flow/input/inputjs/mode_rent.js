@@ -100,6 +100,14 @@ function getRentDetail(mid){
     return detail;
 }
 
+function getRentDetail2(mid,startdt, enddt) {
+    //根据mid获取对账单的相关信息
+    var detail="";
+    js.ajax(geturlact("getSingleDetailNote"), {rentid:mid,startdt:startdt,enddt:enddt}, function (a){
+        detail = a;
+    },'get,json',"", "", false);
+    return detail;
+}
 
 /**
  * 在租机报表中，将详细列表导出为excel

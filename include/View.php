@@ -5,9 +5,13 @@ $p			= PROJECT;
 if(!isset($m))$m='index';
 if(!isset($a))$a='default';
 if(!isset($d))$d='';
+if(!isset($startdt))$startdt='';
+if(!isset($enddt))$enddt='';
 $m			= $rock->get('m', $m);
 $a			= $rock->get('a', $a);
 $d			= $rock->get('d', $d);
+$startdt	= $rock->get('startdt', $startdt);
+$enddt  	= $rock->get('enddt', $enddt);
 
 define('M', $m);
 define('A', $a);
@@ -59,6 +63,8 @@ if($xhrock->display && ($ajaxbool == 'html' || $ajaxbool == 'false')){
 	$xhrock->smartydata['m']	= $m;
 	$xhrock->smartydata['d']	= $d;
 	$xhrock->smartydata['rand']	= $rand;
+    $xhrock->smartydata['startdt']= $startdt;
+    $xhrock->smartydata['enddt']= $enddt;
 	$xhrock->smartydata['qom']	= QOM;
 	$xhrock->smartydata['path']	= PATH;
 	$xhrock->smartydata['sysurl']= SYSURL;

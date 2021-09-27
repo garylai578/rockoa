@@ -136,6 +136,49 @@ class modeClassAction extends ActionNot
         }
         $this->smartydata['inputjspath']	= $inputjspath;
     }
+
+    /**
+     * 自定义租机报表页面
+     */
+    public function rentAction()
+    {
+        $num = $this->get('modenum');
+        if($num=='')$num=$this->get('num');
+
+        $mid 	 = (int)$this->get('mid');
+        if($num=='' || $mid==0)exit('无效请求');
+        $stype 			= $this->get('stype');
+
+        $arr 	 		= m('flow')->getdatalog($num, $mid, 3); //3表示使用结尾为3的html模板
+
+        $pagetitle 		= $arr['title'];
+        $this->title 	= $arr['title'];
+        if($pagetitle=='')$pagetitle = $arr['modename'];
+        $this->smartydata['arr'] = $arr;
+
+        $spagepath 	= P.'/flow/page/viewpage_'.$num.'_3.html';
+        if(!file_exists($spagepath))
+            $spagepath 	= P.'/flow/page/viewpage_'.$num.'.html';
+        if(!file_exists($spagepath)){
+            $spagepath = '';
+        }
+        $this->smartydata['spagepath']		= $spagepath;
+        $this->smartydata['pagetitle']		= $pagetitle;
+        $this->assign('stype', $stype);
+        if($stype=='word'){
+            m('file')->fileheader($arr['modename'].'.doc', "doc");
+        }
+        if($stype=='excel'){
+            m('file')->fileheader($arr['modename'].'.xls', "xls");
+        }
+        $this->smartydata['bordercolor']	= getconfig('bcolorxiang', '#888888');
+
+        $inputjspath	= P.'/flow/input/inputjs/mode_'.$num.'.js';
+        if(!file_exists($inputjspath)){
+            $inputjspath = '';
+        }
+        $this->smartydata['inputjspath']	= $inputjspath;
+    }
 	
 	//下载
 	public function downAction()

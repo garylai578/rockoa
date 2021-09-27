@@ -148,6 +148,42 @@ class mode_rentClassAction extends inputAction{
         echo json_encode($rs);
     }
 
+    /**
+     * 租机报表中，双击某条记录后，获取其详细的租机报表信息
+     * @return 出错信息或者详细的租机报表信息
+     */
+    public function getSingleDetailNoteAjax(){
+        $rentid = $this->post('rentid');
+        $startdt = $this->post('startdt');
+        $enddt = $this->post('enddt');
+        if(isempt($rentid))
+            return "rent id is empty!";
+
+        $where 	= "";
+        if(!isempt($startdt))
+            $where .=" and checkdt>='".$startdt."'";
+        if(!isempt($enddt))
+            $where .= " and checkdt<='".$enddt."'";
+
+        $row = $this->db->getone('[Q]rent',"`id`='".$rentid."'");
+        if($row){
+            $custname = $row['custname'];
+        }else{
+            return "there is no rent id in the db: rentid=".$rentid;
+        }
+
+        $sql = 'select a.`id` as `rent_id`, (b.`id`) as detail_id, a.`custname`, a.`dept`, b.`checkdt` as `checkdt`,  a.`priceb` as `bprice`, b.`exceedingnum` as `bnum`,  a.`pricec` as `cprice`,  b.`exceedingnumc` as `cnum`, a.rental as `rental` from `[Q]rent` a left join (select id, mid, exceedingnum,exceedingnumc,exceedingmoney, checkdt from `[Q]rentdetail` where checkdt is not NULL' . $where . ') b on b.`mid`= a.`id` where a.`custname`= "' . $custname . '" and b.`id` is not null order by b.`checkdt`';
+        $rows 	= $this->db->getall($sql);
+        $rows["lengths"] = sizeof($rows);
+        $company = m("company")->getone('`name`="广东星河办公设备有限公司"', "bank, account, accountNum");
+        if($company) {
+            $rows['bank'] = $company['bank'];
+            $rows['account'] = $company['account'];
+            $rows['accountNum'] = $company['accountNum'];
+        }
+        echo json_encode($rows);
+    }
+
     public function getDetailAjax() {
         $start = $this->get('dt1');
         $end = $this->get('dt2');

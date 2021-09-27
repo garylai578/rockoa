@@ -9,6 +9,8 @@ defined('HOST') or die ('not access');
 <script>
     $(document).ready(function(){
         var myChart = [],darr=[];
+        {params}
+        var modenum = 'rent',modename='租机报表',isflow=0,modeid='81',atype = params.atype,pnum=params.pnum;
         var c = {
             getparams:function(xu,tfid,nas,chatlx){
                 var cans = {
@@ -25,7 +27,10 @@ defined('HOST') or die ('not access');
                     }],
                     load:function(a){
                         c.loadcharts(this.xuhao,this.chatlx);
-                    }
+                    },
+                    itemdblclick:function(a){ // 双击触发事件
+                        c.dbclick(this.xuhao,this.chatlx);
+                    },
                 };
                 return cans;
             },
@@ -69,6 +74,22 @@ defined('HOST') or die ('not access');
                 }
                 myChart[oi].setOption(option);
             },
+            dbclick:function(oi,tlx){
+                var d=darr[0].changedata;
+ /*               var url = js.getajaxurl('getSingleDetailNote','mode_rent|input','flow',{'modeid':'rent'});
+                var startdt = document.getElementById('dt1_{rand}').value;
+                var enddt = document.getElementById('dt2_{rand}').value;
+
+                js.ajax(url, {rentid:d.id, startdt: startdt, enddt:enddt}, function (a) {
+                    if (a.length == 0)
+                        alert("没有数据，请重新选择日期后查询！");
+                    else { //构建展示页面
+                    }
+                },'get,json');*/
+                var url = 'task.php?a=rent&num='+modenum+'&mid='+d.id+'&startdt='+get('dt1_{rand}').value+'&enddt='+get('dt2_{rand}').value;
+                if(modenum.indexOf('?')>-1){url=modenum+'&callback='+'opegs{rand}'+'';}else{url+='&callback='+'opegs{rand}'+'';}
+                js.winiframe(modename,url);
+            },
             search:function(){
                 var cnas = {
                     'soufields_checkdt_start':get('dt1_{rand}').value,
@@ -83,7 +104,7 @@ defined('HOST') or die ('not access');
         js.initbtn(c);
     });
 
-    //导出租机报表的详细信息
+    //导出汇总报表
     function exportDetail(){
         var url = js.getajaxurl('getRentDetail','mode_rent|input','flow',{'modeid':'rent'});
         var startdt = document.getElementById('dt1_{rand}').value;
@@ -177,7 +198,7 @@ defined('HOST') or die ('not access');
         },'get,json');
     }
 
-    // 根据模板导出租机对账单报表
+    // 导出明细报表
     function exporModelNote() {
         var url = js.getajaxurl('getModelNote','mode_rent|input','flow',{'modeid':'rent'});
         var startdt = document.getElementById('dt1_{rand}').value;

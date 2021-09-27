@@ -1,0 +1,95 @@
+<script type="text/javascript" src="webmain/flow/input/inputjs/mode_rent.js"></script>
+
+<script type="text/javascript">
+
+    window.onload = function(){
+        // var myDate = new Date();
+        // document.getElementById("mydate").textContent =myDate.getFullYear()+"年"+(myDate.getMonth()+1)+"月"+myDate.getDate()+"日";
+        var detail = getRentDetail2(mid,startdt, enddt);
+        document.getElementById("bank").textContent = "开户银行：" + detail.bank;
+        document.getElementById("account").textContent = "开户户名：" + detail.account;
+        document.getElementById("accountNum").textContent = "开户账号：" + detail.accountNum;
+        var money = 0, money2= 0;
+/*        var jslength=0;
+        for(var js2 in detail){
+            jslength++;
+        }*/
+        for(j = 0; j < detail["lengths"]; ++j) {
+            var m2 = parseFloat(detail[j]["rental"]/1.13).toFixed(2);
+            money = (parseFloat(money) + parseFloat(detail[j]["rental"])).toFixed(2);
+            money2 = (parseFloat(money2) + parseFloat(m2)).toFixed(2);
+            var str = "<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ detail[j]["checkdt"] + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ detail[j]["dept"] + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>复印机租金</td><td style='padding:3px;border:1px #cccccc solid' align='center'>台</td><td style='padding:3px;border:1px #cccccc solid' align='center'>1</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail[j]["rental"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" +detail[j]["rental"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + m2 + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'></td></tr>";
+            $("#checkbillbody").append(str);
+            if(detail[j]["bnum"] > 0) {
+                var bm1 = parseFloat(detail[j]["bprice"]*detail[j]["bnum"]).toFixed(2);
+                var bm2 = parseFloat(bm1/1.13).toFixed(2)
+                money = (parseFloat(money)+parseFloat(bm1)).toFixed(2);
+                money2 = (parseFloat(money2)+parseFloat(bm2)).toFixed(2);
+                var str2 = "<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>黑色超出张数</td><td style='padding:3px;border:1px #cccccc solid' align='center'>张</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+detail[j]["bnum"]+"</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail[j]["bprice"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + bm1 + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + bm2 + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'></td></tr>";
+                $("#checkbillbody").append(str2);
+            }
+            if(detail[j]["cnum"] > 0) {
+                var cm1 = parseFloat(detail[j]["cprice"]*detail[j]["cnum"]).toFixed(2);
+                var cm2 = parseFloat(cm1/1.13).toFixed(2)
+                money =(parseFloat(money)+parseFloat(cm1)).toFixed(2);
+                money2 = (parseFloat(money2)+parseFloat(cm2)).toFixed(2);
+                var str2 = "<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>彩色超出张数</td><td style='padding:3px;border:1px #cccccc solid' align='center'>张</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+detail[j]["cnum"]+"</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail[j]["cprice"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + cm1 + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + cm2 + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'></td></tr>";
+                $("#checkbillbody").append(str2);
+            }
+        }
+        $("#checkbillbody").append("<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'>合计</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+money+"</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+money2+"</td><td style='padding:3px;border:1px #cccccc solid' align='center'></td></tr>");
+    };
+
+</script>
+
+<table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%" id="excelContant">
+    <tbody>
+    <tr>
+        <td height="50" colspan="9" class="ptitle">广东星河办公设备有限公司</td>
+    </tr>
+    <tr>
+        <td height="50" colspan="9" class="ptitle2">对账单</td>
+    </tr>
+    <tr>
+        <td colspan="9">客户名称：&nbsp;&nbsp;{custname}</td>
+    </tr>
+
+    <tr>
+        <td class="ys0" colspan="9">
+            <table width="100%" class="createrows" border="2" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse;">
+                <tbody id="checkbillbody">
+                <tr><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>日期</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>部门</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>产品名称</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单位</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>数量</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单价</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>应收金额</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>不含税金额</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none;border-right:none" bgcolor="#eeeeee" align="center"><b>备注</b></td></tr>
+                </tbody>
+            </table>
+            <div style="background-color:#F1F1F1;"></div>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="10" >(备注：若有数据不符，请列明不符项目及其金额，并与本公司人联系。如没问题就以此对账金额为准，感谢您的支持并合作愉快！)</td>
+    </tr>
+    <tr>
+        <td colspan="7">惠请将上述款项存入如下账户：</td>
+    </tr>
+    <tr>
+        <td colspan="5" id="bank">开户银行：</td>
+    </tr>
+    <tr>
+        <td colspan="7" id="account">开户户名：</td>
+    </tr>
+    <tr>
+        <td colspan="7" id="accountNum">开户账号：</td>
+    </tr>
+    <tr>
+        <td colspan="7">电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话：0769-81308818、81308828</td>
+    </tr>
+    <!--tr>
+        <td colspan="3" style="text-align:right">财务：王小姐</td>
+        <td colspan="3" style="text-align:center">电话：81308818</td>
+        <td colspan="3" style="text-align:right">制单:梁小姐</td>
+    </tr>
+    <tr>
+        <td colspan="9" , style="text-align:right" id="mydate">年月日</td>
+    </tr-->
+    </tbody>
+</table>

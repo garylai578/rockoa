@@ -91,7 +91,7 @@ $(document).ready(function(){
 			this.initpage();
 		},
 		initpage:function(){
-			
+
 		},
 		loaddata:function(d){
 			if(!d.atypearr)return;
@@ -202,6 +202,19 @@ $(document).ready(function(){
 		},
 		load:function(d){
 			c.loaddata(d);
+
+            str1 = "<tr>i am here</tr>";
+            var tablebody = $('#viewsalelist_{rand}')[0];
+            var tbodyid = tablebody.firstChild.id.replace("tablebody", "tbody");
+            var tbodychildren = document.getElementById(tbodyid).children;
+            var moneys = 0.0;
+            for(j = 0; j < tbodychildren.length; j++){
+                moneys = parseFloat(moneys) + parseFloat(tbodychildren[j].children[8].innerHTML);
+            }
+            var p = document.createElement("tr");
+            p.innerHTML = "<td/><td/><td/><td/><td/><td/><td/><td align=\"center\">合计：</td><td align=\"center\">"+moneys.toFixed(2)+"</td><td/><td/><td/><td/><td/>";
+            document.getElementById(tbodyid).appendChild(p);
+
 		}
 	};
 	c.initcolumns(false);
@@ -230,8 +243,8 @@ $(document).ready(function(){
 			if(d.lx==2)c.setfieldslist();
 		}
 	});
-	
-	
+
+
 });
 </script>
 <!--SCRIPTend-->

@@ -110,7 +110,7 @@ class htmlChajian extends Chajian{
 				}
 				$val 	 = isset($rs[$head[$h][0]]) ? $rs[$head[$h][0]] : '';
 
-				// 如果是销售单里的成本单价、成本数量和成本金额，允许修改。
+				// 如果是销售单里的成本单价、成本数量和成本金额，允许修改。此处修改对名字里含有cost或money的数据库字段有影响（如双击租机登记，租机成本的名称出不了），所以增加最后一个else
 				if(stripos($head[$h][0], "cost")!==false){
                     if(stripos($head[$h][0], "money") !== false) {
                         $pids .= $rs['id']."_";
@@ -120,6 +120,8 @@ class htmlChajian extends Chajian{
                         $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'"><span hidden fieidscheck="'.$head[$h][0].'0_'.$index.'">成本单价</span><input class="inputs" type="number" value="'.$val.'" onkeyup="checkP(this,'.$index.');" onpaste="checkP(this,'.$index.');" oncut="checkP(this,'.$index.');" ondrop="checkP(this,'.$index.');" onchange="checkP(this,'.$index.');"  id="'.$head[$h][0].'0_'.$index.'" name="'.$head[$h][0].'0_'.$index.'"></td>';
                     elseif(stripos($head[$h][0], "num") !==false)
                         $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'"><span hidden fieidscheck="'.$head[$h][0].'0_'.$index.'">成本数量</span><input class="inputs" type="number" value="'.$val.'"  onkeyup="checkInt(this,'.$index.');" onpaste="checkInt(this,'.$index.');" oncut="checkInt(this,'.$index.');" ondrop="checkInt(this,'.$index.');" onchange="checkInt(this,'.$index.');" id="'.$head[$h][0].'0_'.$index.'" name="'.$head[$h][0].'0_'.$index.'"></td>';
+                    else
+                        $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'">'.$val.'</td>';
             }
                 else{
                     $txt .= '<td style="'.$stls.'" align="'.$head[$h][2].'">'.$val.'</td>';

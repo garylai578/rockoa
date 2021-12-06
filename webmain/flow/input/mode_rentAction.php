@@ -235,27 +235,187 @@ class mode_rentClassAction extends inputAction{
             $where .= " and checkdt<='".$end."'";
 
         // 搜索出rent表的id，客户名称，部门，品牌，型号，基本月租，rentdetail表的id，超量金额，抄表日期
-        $sql = 'select a.id, a.`custname` as `name`, a.dept, a.brand, a.model, a.rental, (b.`id`) as detailID, b.exceedingmoney, b.checkdt  from `[Q]rent` a left join (select id, mid, exceedingmoney, checkdt from `[Q]rentdetail` where 1=1 ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null';
+//        $sql = 'select a.id, a.`custname` as `name`, a.dept, a.brand, a.model, a.rental, (b.`id`) as detailID, b.exceedingmoney, b.checkdt  from `[Q]rent` a left join (select id, mid, exceedingmoney, checkdt from `[Q]rentdetail` where 1=1 ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null';
+
+        $sql = 'select a.id, a.custname as `name`, a.dept, a.brand, a.model, a.rental, (b.`id`) as detailID, b.exceedingmoney, b.checkdt from `[Q]rent` a LEFT JOIN (select id, mid, exceedingmoney, checkdt from `[Q]rentdetail`where 1=1 ' . $where . ') b on b.`mid` = a.`id` ORDER BY a.custname,a.id,b.checkdt';
 
         $rows 	= $this->db->getall($sql);
+        $ress = array(); $costs = array();
+        $id=0;
         if($rows){
+            if(isempt($start))
+                $start = '2000-01-01';
+            if(isempt($end))
+                $end = date("Y-m-d", time()) ;
+
             foreach($rows as $k=>$rs) {
+                if($id != $rs['id']) {
+                    // 如果最后一条抄表日期之后，还有产生成本，则把所有成本都导出。
+                    if(sizeof($costs) > 0){
+                        foreach ($costs as $kk =>$cost) {
+                            $item = array(
+                                'id' => $id,
+                                'name' => $rs['name'],
+                                'dept' => $rs['dept'],
+                                'brand' => $rs['brand'],
+                                'model' => $rs['model'],
+                                'rental' => "",
+                                'detailID' => $cost['id'],
+                                'exceedingmoney' => "",
+                                'checkdt' => $cost['cmonth'],
+                                'costTotal' => $cost['ccost'],
+                            );
+                            array_push($ress, $item);
+                            unset($costs[$kk]);
+                        }
+                    }
+                    $id = $rs['id'];
+                    $sql2 = 'select id, DATE_FORMAT(checkdt,"%Y-%m") as cmonth, sum(total) as ccost from `[Q]rentcost` where mid ='. $id .' and checkdt >="'. $start .'" and checkdt <= "'.$end.'" group by cmonth order by cmonth';
+                    $costs 	= $this->db->getall($sql2);
+                }
+				$rows[$k]['costTotal']=0;
+				$flag=0;
+                foreach ($costs as $kk =>$cost) {
+					if(isempt($rs['checkdt'])){
+						$item = array(
+                            'id' => $id,
+                            'name' => $rs['name'],
+                            'dept' => $rs['dept'],
+                            'brand' => $rs['brand'],
+                            'model' => $rs['model'],
+                            'rental' => "",
+                            'detailID' => $cost['id'],
+                            'exceedingmoney' => "",
+                            'checkdt' => $cost['cmonth'],
+                            'costTotal' => $cost['ccost'],
+                        );
+                        array_push($ress, $item);
+						unset($costs[$kk]); 
+						continue;
+					}
+					
+                    $bcheckm = date("Y-m", strtotime($rs['checkdt']));
+					$bchecktime = strtotime($bcheckm."-01");
+					$cchecktime = strtotime($cost['cmonth']."-01");
+                    if ($bchecktime == $cchecktime) { // 如果抄表日期等于耗材日期，计算同一个月的成本，写到同一条记录里
+                        $flag=1;
+						$rows[$k]['costTotal'] += $cost['ccost'];
+						$rows[$k]['detailID'] .= ";".$cost['id'];
+                        unset($costs[$kk]); // 删除已经写入记录的元素
+                    } elseif ($bchecktime > $cchecktime) { //如果抄表日期大于耗材日期，则该耗材单独写一条记录，并继续查找
+                        $item = array(
+                            'id' => $id,
+                            'name' => $rs['name'],
+                            'dept' => $rs['dept'],
+                            'brand' => $rs['brand'],
+                            'model' => $rs['model'],
+                            'rental' => "",
+                            'detailID' => $cost['id'],
+                            'exceedingmoney' => "",
+                            'checkdt' => $cost['cmonth'],
+                            'costTotal' => $cost['ccost'],
+                        );
+                        array_push($ress, $item);
+						unset($costs[$kk]); 
+                    } elseif(($bchecktime < $cchecktime) and ($flag == 0)) { // 如果抄表日期小于耗材日期，则抄表单独写一条记录，并跳出循环
+                        array_push($ress, $rows[$k]);
+                        break;
+                    }
+                }
+				if(($flag==1 || sizeof($costs) == 0) && !isempt($rows[$k]['detailID'])){
+					array_push($ress, $rows[$k]);
+				}
+            }
+
+
+           /* $costids=array();
+               foreach($rows as $k=>$rs) {
                 $id = $rs['id'];
                 $firstDate = date("Y-m-01", strtotime($rs['checkdt']));
                 $lastDate = date("Y-m-d", strtotime("$firstDate +1 month -1 day "));
-                $where = "mid=$id and checkdt >= '$firstDate' and checkdt <= '$lastDate' ";
-                $sql2 = "select sum(total) as costTotal from  `[Q]rentcost` where $where group by mid";
-                $cost = $this->db->getall($sql2);
-                if($cost)
-                    $rows[$k]['costTotal'] = $cost[0]['costTotal'];
-                else
-                    $rows[$k]['costTotal'] = 0;
+                $where2 = "mid=$id and checkdt >= '$firstDate' and checkdt <= '$lastDate' ";
+//                $sql2 = "select sum(total) as costTotal from  `[Q]rentcost` where $where group by mid";
+                $sql2 = "select id, total from `[Q]rentcost` where $where2";
+                $costs = $this->db->getall($sql2);
+                $cost=0;
+                foreach ($costs as $kk=>$rr){
+                    $rows[$k]['detailID'] .= "; ".$rr['id'];
+                    array_push($costids, $rr['id']);
+                    $cost += $rr['total'];
+                }
+                $rows[$k]['costTotal'] = $cost;
             }
-        }else{
-//            $rows = array("");
+
+            //处理当月有成本，但是没有租金的情况（有少量这种情况）;还有从来没有成本的情况
+            $custnames 	= $this->db->getall('select custname from `[Q]rent` group by custname');
+            if($custnames){
+                foreach ($custnames as $ck=>$crs){
+                    $custids="";
+                    //根据客户获取对应的id数组
+                    $sql2= 'select id from `[Q]rent` where custname="'.$crs['custname'].'"';
+                    $cids = $this->db->getall($sql2);
+                    foreach ($cids as $cidk=>$cid){
+                        $custids .= $cid['id'].",";
+                    }
+                    if(strlen($custids) > 0)
+                        $custids = substr($custids, 0, strlen($custids)-1);
+                    else
+                        continue;
+                    $sql3 = "select * from `[Q]rentcost` where mid in($custids) $where";
+                    $cost3 = $this->db->getall($sql3);
+                    foreach ($cost3 as $kk=>$rr){
+                        if(!in_array($rr['id'], $costids)){
+                            $item = array(
+                                'id' => $id,
+                                'name' => $rs['name'],
+                                'dept' => $rs['dept'],
+                                'brand' => $rs['brand'],
+                                'model' => $rs['model'],
+                                'rental' => "",
+                                'detailID' => $rr['id'],
+                                'exceedingmoney' => "",
+                                'checkdt' => $rr['checkdt'],
+                                'costTotal' => $rr['total'],
+                            );
+                            array_push($rows, $item);
+//                            array_push($costids, $rr['id']);
+                        }
+                    }
+                }
+            }*/
+/*            $id=0;
+            foreach($rows as $k=>$rs) {
+                if($id == $rs['id']){
+                    continue;
+                }else{
+                    $id = $rs['id'];
+                }
+                $where3 = "mid=$id ".$where;
+                $sql3 = "select id, checkdt, total from  `[Q]rentcost` where $where3";
+                $cost3 = $this->db->getall($sql3);
+                foreach ($cost3 as $kk=>$rr){
+                    if(!in_array($rr['id'], $costids)){
+                        $item = array(
+                            'id' => $id,
+                            'name' => $rs['name'],
+                            'dept' => $rs['dept'],
+                            'brand' => $rs['brand'],
+                            'model' => $rs['model'],
+                            'rental' => "",
+                            'detailID' => $rr['id'],
+                            'exceedingmoney' => "",
+                            'checkdt' => $rr['checkdt'],
+                            'costTotal' => $rr['total']
+                        );
+                        array_push($rows, $item);
+                        array_push($costids, $rr['id']);
+                    }
+                }
+            }*/
+
         }
 
-        echo json_encode($rows);
+        echo json_encode($ress);
     }
 
     /**

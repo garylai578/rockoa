@@ -2300,7 +2300,7 @@ class flowModel extends Model
 				}else if($type=='month'){
 					$s.=" and {asqom}`$fields` like '$val%'";
 				}else{
-					$s.=" and {asqom}`$fields` like '%$val%'";
+					$s.=" and {asqom}`$fields` like '$val'"; //改为精准搜索，如果想模糊搜索，则输入的时候自行加入%
 				}
 			}
 		}

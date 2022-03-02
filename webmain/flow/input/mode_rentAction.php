@@ -455,7 +455,8 @@ class mode_rentClassAction extends inputAction{
 
         //$objPHPExcel = new PHPExcel();                        //初始化PHPExcel(),不使用模板
         //加载excel文件,设置模板
-        $custTemplate = ROOT_PATH.'/web/template/'.iconv("utf-8", "gbk", $custname).'-template.xls';  //系统编码是utf8，文件系统编码是gbk
+        $custTemplate = ROOT_PATH.'/web/template/'.$custname.'-template.xls';  //系统编码是utf8，文件系统编码是gbk
+        $custTemplate1 = ROOT_PATH.'/web/template/'.iconv("gbk", "utf-8", $custname).'-template.xls';  //系统编码是utf8，文件系统编码是gbk
         $stTemplate = ROOT_PATH.'/web/template/checkbill.xls';       //默认模板
 
 /*        $dir = ROOT_PATH.'/web/template/';
@@ -475,6 +476,9 @@ class mode_rentClassAction extends inputAction{
         if(file_exists($custTemplate)) {
             $objPHPExcel = PHPExcel_IOFactory::load($custTemplate);
 //            echo("<br>i am here! cust:" . $custname . ", tmp:" . $custTemplate . " .lai . ");
+        }
+        elseif(file_exists($custTemplate1)){
+            $objPHPExcel = PHPExcel_IOFactory::load($custTemplate1);
         }
         else {
             $objPHPExcel = PHPExcel_IOFactory::load($stTemplate);
@@ -527,7 +531,7 @@ class mode_rentClassAction extends inputAction{
             $where .= " and checkdt<='".$end."'";
 
         // 搜索出抄表记录明细
-        $sql = 'select a.id as `rent_id`, (b.`id`) as detail_id, a.`custname` as `custname`, a.dept as `dept`, a.brand as `设备品牌`, a.model as `设备型号`, b.checkdt as `checkdt`, a.priceb as `priceb`, b.exceedingnum as `exceedingnum`, a.pricec as `pricec`,  b.exceedingnumc as `exceedingnumc`, b.exceedingmoney as `超量租金`, a.rental as `rental`, (a.rental+b.exceedingmoney) as `合计应收`  from `[Q]rent` a left join (select id, mid, exceedingnum,exceedingnumc,exceedingmoney, checkdt from `[Q]rentdetail` where checkdt is not NULL ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null order by a.custname, a.dept';
+        $sql = 'select a.id as `rent_id`, (b.`id`) as detail_id, a.`custname` as `custname`, a.dept as `dept`, a.brand as `设备品牌`, a.model as `设备型号`, b.checkdt as `checkdt`, a.priceb as `priceb`, b.exceedingnum as `exceedingnum`, a.pricec as `pricec`,  b.exceedingnumc as `exceedingnumc`, b.exceedingmoney as `超量租金`, a.rental as `rental`, (a.rental+b.exceedingmoney) as `合计应收`  from `[Q]rent` a left join (select id, mid, exceedingnum,exceedingnumc,exceedingmoney, checkdt from `[Q]rentdetail` where checkdt is not NULL ' . $where . ') b on b.`mid`= a.`id` where b.`id` is not null order by a.custname, a.dept, b.checkdt';
         $rows = $this->db->getall($sql);
         if($rows){
             $custname='';

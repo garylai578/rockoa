@@ -11,8 +11,8 @@ $(document).ready(function(){
 	{params}
 	var modenum = 'rent',modename='租机登记',isflow=0,modeid='79',atype = params.atype,pnum=params.pnum;
 	if(!atype)atype='';if(!pnum)pnum='';
-	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"custname","name":"\u5ba2\u6237\u540d\u79f0","fieldstype":"selectdatafalse","ispx":"0","isalign":"0","islb":"1"},{"fields":"custid","name":"\u5ba2\u6237id","fieldstype":"hidden","ispx":"0","isalign":"0","islb":"0"},{"fields":"dept","name":"\u90e8\u95e8","fieldstype":"selectdatafalse","ispx":"0","isalign":"0","islb":"1"},{"fields":"brand","name":"\u673a\u5668\u54c1\u724c","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"model","name":"\u673a\u5668\u578b\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"series","name":"\u673a\u8eab\u7f16\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"0"},{"fields":"rentnum","name":"\u79df\u7ea6\u7f16\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"basenumb","name":"\u5408\u7ea6\u57fa\u672c\u91cf\uff08\u9ed1\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"basenumc","name":"\u5408\u7ea6\u57fa\u672c\u91cf\uff08\u5f69\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"priceb","name":"\u8d85\u7b97\u5355\u4ef7\uff08\u9ed1\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"pricec","name":"\u8d85\u7b97\u5355\u4ef7\uff08\u5f69\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"rental","name":"\u6708\u57fa\u672c\u79df\u91d1","fieldstype":"number","ispx":"0","isalign":"0","islb":"1"},{"fields":"interval","name":"\u6284\u8868\u95f4\u9694\uff08\u6708\uff09","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"exceedingb","name":"\u8d77\u7b97\u5f20\u6570\uff08\u9ed1\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"exceedingc","name":"\u8d77\u7b97\u5f20\u6570\uff08\u5f69\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"startdt","name":"\u5f00\u59cb\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"0"},{"fields":"enddt","name":"\u7ed3\u675f\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"0"},{"fields":"belong","name":"\u8bbe\u5907\u6240\u5c5e","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"0"},{"fields":"wastage","name":"\u8bbe\u5907\u8017\u635f","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"discount","name":"\u6298\u6263\u7387","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"remark","name":"\u5907\u6ce8","fieldstype":"textarea","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= {"columns_rent_remind":"custname,dept,rentnum,brand,model,caozuo"};
-
+	var fieldsarr = [{"name":"\u7533\u8bf7\u4eba","fields":"base_name"},{"name":"\u7533\u8bf7\u4eba\u90e8\u95e8","fields":"base_deptname"},{"name":"\u5355\u53f7","fields":"sericnum"},{"fields":"custname","name":"\u5ba2\u6237\u540d\u79f0","fieldstype":"selectdatafalse","ispx":"0","isalign":"0","islb":"1"},{"fields":"custid","name":"\u5ba2\u6237id","fieldstype":"hidden","ispx":"0","isalign":"0","islb":"0"},{"fields":"dept","name":"\u90e8\u95e8","fieldstype":"selectdatafalse","ispx":"0","isalign":"0","islb":"1"},{"fields":"brand","name":"\u673a\u5668\u54c1\u724c","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"model","name":"\u673a\u5668\u578b\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"series","name":"\u673a\u8eab\u7f16\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"0"},{"fields":"rentnum","name":"\u79df\u7ea6\u7f16\u53f7","fieldstype":"text","ispx":"0","isalign":"0","islb":"1"},{"fields":"basenumb","name":"\u5408\u7ea6\u57fa\u672c\u91cf\uff08\u9ed1\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"basenumc","name":"\u5408\u7ea6\u57fa\u672c\u91cf\uff08\u5f69\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"priceb","name":"\u8d85\u7b97\u5355\u4ef7\uff08\u9ed1\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"pricec","name":"\u8d85\u7b97\u5355\u4ef7\uff08\u5f69\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"rental","name":"\u6708\u57fa\u672c\u79df\u91d1","fieldstype":"number","ispx":"0","isalign":"0","islb":"1"},{"fields":"interval","name":"\u6284\u8868\u95f4\u9694\uff08\u6708\uff09","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"exceedingb","name":"\u8d77\u7b97\u5f20\u6570\uff08\u9ed1\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"exceedingc","name":"\u8d77\u7b97\u5f20\u6570\uff08\u5f69\uff09","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"startdt","name":"\u5f00\u59cb\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"0"},{"fields":"enddt","name":"\u7ed3\u675f\u65e5\u671f","fieldstype":"date","ispx":"0","isalign":"0","islb":"0"},{"fields":"belong","name":"\u8bbe\u5907\u6240\u5c5e","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"0"},{"fields":"wastage","name":"\u8bbe\u5907\u8017\u635f","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"discount","name":"\u6298\u6263\u7387","fieldstype":"number","ispx":"0","isalign":"0","islb":"0"},{"fields":"state","name":"\u79df\u673a\u72b6\u6001","fieldstype":"rockcombo","ispx":"0","isalign":"0","islb":"1"},{"fields":"remark","name":"\u5907\u6ce8","fieldstype":"textarea","ispx":"0","isalign":"0","islb":"1"},{"fields":"totalmoney","name":"\u5408\u8ba1\u91d1\u989d","fieldstype":"number","ispx":"0","isalign":"0","islb":"1"},{"fields":"totalcost","name":"\u603b\u6210\u672c","fieldstype":"number","ispx":"0","isalign":"0","islb":"1"}],fieldsselarr= {"columns_rent_":"custname,dept,brand,model,rentnum,rental,interval,state,remark,totalmoney,caozuo"};
+	
 	var c = {
 		reload:function(){
 			a.reload();
@@ -91,7 +91,7 @@ $(document).ready(function(){
 			this.initpage();
 		},
 		initpage:function(){
-
+			
 		},
 		loaddata:function(d){
 			if(!d.atypearr)return;
@@ -193,14 +193,14 @@ $(document).ready(function(){
 				}
 			});
 		}
-	};
-
+	};	
+	
 	//表格参数设定
 	var bootparams = {
 		fanye:true,modenum:modenum,modename:modename,statuschange:false,tablename:jm.base64decode('cmVudA::'),
 		url:c.storeurl(),storeafteraction:'storeaftershow',storebeforeaction:'storebeforeshow',
 		params:{atype:atype},
-		columns:[{text:"客户名称",dataIndex:"custname"},{text:"部门",dataIndex:"dept"},{text:"机器品牌",dataIndex:"brand"},{text:"机器型号",dataIndex:"model"},{text:"租约编号",dataIndex:"rentnum"},{text:"月基本租金",dataIndex:"rental"},{text:"抄表间隔（月）",dataIndex:"interval"},{text:"备注",dataIndex:"remark"},{
+		columns:[{text:"客户名称",dataIndex:"custname"},{text:"部门",dataIndex:"dept"},{text:"机器品牌",dataIndex:"brand"},{text:"机器型号",dataIndex:"model"},{text:"租约编号",dataIndex:"rentnum"},{text:"月基本租金",dataIndex:"rental"},{text:"抄表间隔（月）",dataIndex:"interval"},{text:"租机状态",dataIndex:"state"},{text:"备注",dataIndex:"remark"},{text:"合计金额",dataIndex:"totalmoney"},{text:"总成本",dataIndex:"totalcost"},{
 			text:'',dataIndex:'caozuo',callback:'opegs{rand}'
 		}],
 		itemdblclick:function(){
@@ -208,13 +208,26 @@ $(document).ready(function(){
 		},
 		load:function(d){
 			c.loaddata(d);
+            var tablebody = $('#viewrent_{rand}')[0];
+            var tbodyid = tablebody.firstChild.id.replace("tablebody", "tbody");
+            var tbodychildren = document.getElementById(tbodyid).children;
+            var tmoneys = 0.0, cmoneys = 0.0;
+            if(tbodychildren[0].children.length >= 12) {
+                for (j = 0; j < tbodychildren.length; j++) {
+                    tmoneys = parseFloat(tmoneys) + parseFloat(tbodychildren[j].children[10].innerHTML);
+                    cmoneys = parseFloat(cmoneys) + parseFloat(tbodychildren[j].children[11].innerHTML);
+                }
+                var p = document.createElement("tr");
+                p.innerHTML = "<td/><td/><td/><td/><td/><td/><td/><td/><td/><td align=\"center\">合计：</td><td align=\"center\">" + tmoneys.toFixed(2) + "</td><td align=\"center\">" + cmoneys.toFixed(2) + "</td><td/>";
+                document.getElementById(tbodyid).appendChild(p);
+            }
 		}
 	};
 	c.initcolumns(false);
 	opegs{rand}=function(){
 		c.reload();
 	}
-
+	
 //[自定义区域start]
 
 
@@ -236,8 +249,8 @@ $(document).ready(function(){
 			if(d.lx==2)c.setfieldslist();
 		}
 	});
-
-
+	
+	
 });
 </script>
 <!--SCRIPTend-->
@@ -249,16 +262,16 @@ $(document).ready(function(){
 		<td>
 			<input class="form-control" style="width:160px" id="key_{rand}" placeholder="关键字">
 		</td>
-
+		
 		<td style="padding-left:10px">
 			<div style="width:85px" class="btn-group">
-			<button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button>
+			<button class="btn btn-default" click="searchbtn" type="button">搜索</button><button class="btn btn-default" id="downbtn_{rand}" type="button" style="padding-left:8px;padding-right:8px"><i class="icon-angle-down"></i></button> 
 			</div>
 		</td>
 		<td  width="90%" style="padding-left:10px"><div id="changatype{rand}" class="btn-group"></div></td>
-
+	
 		<td align="right" id="tdright_{rand}" nowrap>
-			<button class="btn btn-default" click="daochu" type="button">导出 <i class="icon-angle-down"></i></button>
+			<button class="btn btn-default" click="daochu" type="button">导出 <i class="icon-angle-down"></i></button> 
 		</td>
 	</tr>
 	</table>

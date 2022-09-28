@@ -27,7 +27,14 @@ class mode_rentClassAction extends inputAction{
         // 自动设置租机编号:当前时间
         $rs = m('rent')->getone("`id`=".$id, "rentnum");
         if($rs['rentnum'] == null){
-            $rentnum = date("Ymdhms");
+            // 要确保rentnum是唯一的
+            while(1) {
+                $rentnum = date("Ymdhms");
+                $rentNumRes = m('rent')->getone("`rentnum`=" . $rentnum, "rentnum");
+                if(!$rentNumRes){
+                    break;
+                }
+            }
             $arr['rentnum'] = $rentnum;
             m('rent')->update("`rentnum`=".$rentnum, "`id`=".$id);
         }

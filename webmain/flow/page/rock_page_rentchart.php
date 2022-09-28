@@ -24,7 +24,9 @@ defined('HOST') or die ('not access');
                         text:'成本',dataIndex:'cost'
                     },{
                         text:'比例',dataIndex:'bili'
-                    }],
+                    },{
+                        text:'详情',dataIndex: 'detail'
+                    },],
                     load:function(a){
                         c.loadcharts(this.xuhao,this.chatlx);
                     },
@@ -86,7 +88,7 @@ defined('HOST') or die ('not access');
                     else { //构建展示页面
                     }
                 },'get,json');*/
-                var url = 'task.php?a=rent&num='+modenum+'&mid='+d.id+'&startdt='+get('dt1_{rand}').value+'&enddt='+get('dt2_{rand}').value;
+                var url = 'task.php?a=rent&num='+modenum+'&mid='+d.id+'&startdt='+get('dt1_{rand}').value+'&enddt='+get('dt2_{rand}').value+'&tmpId=3';
                 if(modenum.indexOf('?')>-1){url=modenum+'&callback='+'opegs{rand}'+'';}else{url+='&callback='+'opegs{rand}'+'';}
                 js.winiframe(modename,url);
             },
@@ -103,6 +105,14 @@ defined('HOST') or die ('not access');
 
         js.initbtn(c);
     });
+
+    // 展示详细的成本报表
+    function detailCost(id){
+        var modenum = 'rent', modename='租机报表';
+        var url = 'task.php?a=rent&num='+modenum+'&mid='+ id +'&startdt='+get('dt1_{rand}').value+'&enddt='+get('dt2_{rand}').value+'&tmpId=4';
+        if(modenum.indexOf('?')>-1){url=modenum+'&callback='+'opegs{rand}'+'';}else{url+='&callback='+'opegs{rand}'+'';}
+        js.winiframe(modename,url);
+    }
 
     //导出汇总报表
     function exportDetail(){

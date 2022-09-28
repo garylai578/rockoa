@@ -1,0 +1,62 @@
+<script type="text/javascript" src="webmain/flow/input/inputjs/mode_rent.js"></script>
+
+<script type="text/javascript">
+
+  window.onload = function(){
+    var detail = getCostDetail(mid,startdt, enddt);
+    var totalCost = 0, rentnum="", dept="";
+    for(j = 0; j < detail["lengths"]; ++j) {
+      totalCost = (parseFloat(totalCost) + parseFloat(detail[j]["total"])).toFixed(2);
+      var deptStr="", brand, model, rentnumStr="";
+      if(dept != detail[j]["dept"]){
+        dept = detail[j]["dept"];
+        deptStr = dept;
+      }else
+        deptStr = "";
+
+      if(rentnum != detail[j]["rentnum"]){
+        rentnum = detail[j]["rentnum"];
+        rentnumStr = rentnum;
+        brand = detail[j]["brand"];
+        model =detail[j]["model"];
+      }else {
+        rentnumStr = brand = model ="";
+      }
+
+      var str = "<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ deptStr + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>"+ brand + "</td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'>" + model + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + rentnumStr + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail[j]["checkdt"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" + detail[j]["costname"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" +detail[j]["num"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" +detail[j]["price"] + "</td><td style='padding:3px;border:1px #cccccc solid' align='center'>" +detail[j]["total"] + "</td></tr>";
+      $("#checkbillbody").append(str);
+    }
+    $("#checkbillbody").append("<tr><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid;border-left:none' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'></td><td style='padding:3px;border:1px #cccccc solid' align='center'>合计</td><td style='padding:3px;border:1px #cccccc solid' align='center'>"+totalCost+"</td></tr>");
+  };
+
+</script>
+
+<table class="ke-zeroborder" bordercolor="#000000" border="0" width="100%" id="excelContant">
+  <tbody>
+  <tr>
+    <td height="50" colspan="9" class="ptitle">{custname}</td>
+  </tr>
+  <tr>
+    <td height="50" colspan="9" class="ptitle2">成本明细</td>
+  </tr>
+  <tr>
+    <td>统计时间段：</td>
+    <td>
+    <script>document.write(startdt + "至" + enddt)</script>
+    </td>
+    <td>生成时间：</td>
+    <td><script>var date = new Date(); document.write(date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate())</script></td>
+  </tr>
+
+  <tr>
+    <td class="ys0" colspan="9">
+      <table width="100%" class="createrows" border="2" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse;">
+        <tbody id="checkbillbody">
+        <tr><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>部门</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>机器品牌</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>机器型号</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>租机编号</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>发生日期</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>耗材名称</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>数量</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none" bgcolor="#eeeeee" align="center"><b>单价</b></td><td style="padding:3px;border:1px #cccccc solid;border-top:none;border-right:none" bgcolor="#eeeeee" align="center"><b>小计</b></td></tr>
+        </tbody>
+      </table>
+      <div style="background-color:#F1F1F1;"></div>
+    </td>
+  </tr>
+  </tbody>
+</table>

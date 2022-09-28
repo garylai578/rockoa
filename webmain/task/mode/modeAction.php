@@ -147,16 +147,19 @@ class modeClassAction extends ActionNot
 
         $mid 	 = (int)$this->get('mid');
         if($num=='' || $mid==0)exit('无效请求');
+
+        $tmpId = (int)$this->get('tmpId');
+        if($tmpId=='')$tmpId=3;
         $stype 			= $this->get('stype');
 
-        $arr 	 		= m('flow')->getdatalog($num, $mid, 3); //3表示使用结尾为3的html模板
+        $arr 	 		= m('flow')->getdatalog($num, $mid, $tmpId); //$tmpId表示使用结尾为$tmpId的html模板
 
         $pagetitle 		= $arr['title'];
         $this->title 	= $arr['title'];
         if($pagetitle=='')$pagetitle = $arr['modename'];
         $this->smartydata['arr'] = $arr;
 
-        $spagepath 	= P.'/flow/page/viewpage_'.$num.'_3.html';
+        $spagepath 	= P.'/flow/page/viewpage_'.$num.'_'.$tmpId.'html';
         if(!file_exists($spagepath))
             $spagepath 	= P.'/flow/page/viewpage_'.$num.'.html';
         if(!file_exists($spagepath)){

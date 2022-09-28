@@ -2574,6 +2574,8 @@ class flowModel extends Model
             if($total>0)
                 foreach($rows as $k=>$rs) {
                     $rows[$k]['bili'] = $this->rock->number($rs['value'] * 100 / $total) . '%';
+                    $iid = $rows[$k]['id'];
+                    $rows[$k]['detail'] = "<button class=\"btn btn-default\" type=\"button\" onclick=\"javascript:detailCost($iid)\">成本详情</button>" ;
                 }
             if($type!='avg' && count($rows)>1)
                 $rows[] = array('name' 	=> '合计','value' => $total, 'cost' => $totalCost, 'bili'	=> '');

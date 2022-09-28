@@ -184,6 +184,57 @@ class mode_rentClassAction extends inputAction{
         echo json_encode($rows);
     }
 
+    /**
+     * 租机报表页面，获取单个公司的详细成本信息
+     */
+    public function getCostDetailNoteAjax(){
+        $rentid = $this->post('rentid');
+        $startdt = $this->post('startdt');
+        $enddt = $this->post('enddt');
+        $detail[] = array();
+        if(isempt($rentid))
+            return "rent id is empty!";
+
+        $where 	= "";
+        if(!isempt($startdt))
+            $where .=" and checkdt>='".$startdt."'";
+        if(!isempt($enddt))
+            $where .= " and checkdt<='".$enddt."'";
+
+        //第一步，获取对应的cust的名称
+        $row = $this->db->getone('[Q]rent',"`id`='".$rentid."'");
+        if($row){
+            $custname = $row['custname'];
+        }else{
+            return "there is no rent id in the db: rentid=".$rentid;
+        }
+        //第二步，获取该客户名下所有的租机信息
+        $rents = $this->db->getall('SELECT `id`, `dept`, `brand`, `model`, `rentnum` from `[Q]rent` WHERE custname="' . $custname. '" ORDER BY dept;');
+        //第三步，对于每一部机器，查询在某段时间内的耗材成本
+        $i=0;
+        foreach ($rents as $k=>$rs){
+            $sql = 'SELECT `checkdt`, `costname`, `num`, `price`, `total` from `[Q]rentcost` where mid ='.$rents[$k]['id'].$where.' ORDER BY mid, checkdt;';
+            $costs = $this->db->getall($sql);
+            if($costs) {
+                foreach ($costs as $kk => $vv) {
+                    $detail[$i]['dept'] = $rents[$k]['dept'];
+                    $detail[$i]['brand'] = $rents[$k]['brand'];
+                    $detail[$i]['model'] = $rents[$k]['model'];
+                    $detail[$i]['rentnum'] = $rents[$k]['rentnum'];
+                    $detail[$i]['checkdt'] = $costs[$kk]['checkdt'];
+                    $detail[$i]['costname'] = $costs[$kk]['costname'];
+                    $detail[$i]['num'] = $costs[$kk]['num'];
+                    $detail[$i]['price'] = $costs[$kk]['price'];
+                    $detail[$i]['total'] = $costs[$kk]['total'];
+                    $i++;
+                }
+            }
+        }
+        $detail["lengths"] = sizeof($detail);
+        echo json_encode($detail);
+    }
+
+    //该方法应该是不用了，改为调用webmain/model/flow/flow.php的flowRentTotal方法
     public function getDetailAjax() {
         $start = $this->get('dt1');
         $end = $this->get('dt2');

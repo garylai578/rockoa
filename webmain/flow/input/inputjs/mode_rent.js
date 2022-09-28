@@ -100,10 +100,32 @@ function getRentDetail(mid){
     return detail;
 }
 
+/**
+ * 租机报表页面，或者单个公司的详细账单信息
+ * @param mid
+ * @param startdt
+ * @param enddt
+ * @returns {string}
+ */
 function getRentDetail2(mid,startdt, enddt) {
     //根据mid获取对账单的相关信息
     var detail="";
     js.ajax(geturlact("getSingleDetailNote"), {rentid:mid,startdt:startdt,enddt:enddt}, function (a){
+        detail = a;
+    },'get,json',"", "", false);
+    return detail;
+}
+
+/**
+ * 租机报表页面，或者单个公司的详细成本信息
+ * @param mid 客户id
+ * @param startdt 开始时间
+ * @param enddt 结束时间
+ */
+function getCostDetail(mid, startdt, enddt) {
+    //根据mid获取成本的相关信息
+    var detail="";
+    js.ajax(geturlact("getCostDetailNote"), {rentid:mid,startdt:startdt,enddt:enddt}, function (a){
         detail = a;
     },'get,json',"", "", false);
     return detail;
